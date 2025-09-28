@@ -16,8 +16,13 @@
     "baseUrl": ".",
     "paths": {
       "@types/*": ["@types/*"]
-    }
+    },
+    "strictPropertyInitialization": false
   },
   "include": ["src", "@types"],
-  "exclude": ["node_modules", "dist"]
+  "exclude": ["node_modules", "dist"],
+  "ts-node": {
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
+  }
 }

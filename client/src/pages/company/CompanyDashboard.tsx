@@ -9,15 +9,19 @@ import {
   FileText,
   TrendingUp,
   Calendar,
-  Eye
+  Eye,
+  RotateCcw,
+  User
 } from 'lucide-react'
 import { companyApi } from '@/api/company.api'
+import { useNavigate } from 'react-router-dom'
 
 type ProfileStatus = 'not_created' | 'pending' | 'verified' | 'rejected'
 
 const CompanyDashboard = () => {
   const [profileStatus, setProfileStatus] = useState<ProfileStatus>('not_created')
   const [loading, setLoading] = useState(true)
+  const navigate = useNavigate()
 
   useEffect(() => {
     checkProfileStatus()
@@ -51,9 +55,34 @@ const CompanyDashboard = () => {
     )
   }
 
-  if (profileStatus !== 'verified') {
+  if (!profileStatus || profileStatus === 'not_created') {
     return <CompanyProfileStatus onStatusChange={setProfileStatus} />
+  } else if (profileStatus === 'rejected') {
+    return (
+      <Card className="border-orange-200 bg-orange-50">
+        <CardContent className="p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-lg font-semibold text-orange-800">
+                Verification Rejected
+              </h3>
+              <p className="text-orange-700 mt-1">
+                Your company verification has been rejected. You can update your information and reapply.
+              </p>
+            </div>
+            <Button 
+              onClick={() => navigate('/company/reapply')}
+              className="bg-orange-600 hover:bg-orange-700"
+            >
+              <RotateCcw className="h-4 w-4 mr-2" />
+              Reapply for Verification
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    )
   }
+
   const jobStats = [
     { day: 'Mon', views: 45, applied: 12 },
     { day: 'Tue', views: 67, applied: 18 },
@@ -77,9 +106,19 @@ const CompanyDashboard = () => {
                 Here is your job listings statistic report from July 19 - July 25.
               </p>
             </div>
-            <div className="flex items-center space-x-2 px-3 py-2 bg-white border border-gray-200 rounded-lg">
-              <Calendar className="h-3 w-3 text-[#4640DE]" />
-              <span className="text-sm font-semibold text-gray-900">Jul 19 - Jul 25</span>
+            <div className="flex items-center space-x-3">
+              <Button 
+                variant="outline" 
+                onClick={() => navigate('/company/profile')}
+                className="flex items-center space-x-2"
+              >
+                <User className="h-4 w-4" />
+                <span>View Profile</span>
+              </Button>
+              <div className="flex items-center space-x-2 px-3 py-2 bg-white border border-gray-200 rounded-lg">
+                <Calendar className="h-3 w-3 text-[#4640DE]" />
+                <span className="text-sm font-semibold text-gray-900">Jul 19 - Jul 25</span>
+              </div>
             </div>
           </div>
 

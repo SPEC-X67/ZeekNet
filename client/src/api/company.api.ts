@@ -1,5 +1,6 @@
 import { baseApi, uploadFile } from './base.api';
 import type { ApiEnvelope } from '@/interfaces/auth';
+import type { JobPostingResponse, JobPostingQuery } from '@/types/job';
 
 export interface CompanyProfileData {
   company_name: string
@@ -50,41 +51,6 @@ export interface JobPostingRequest {
   category_ids: string[]
 }
 
-export interface JobPostingResponse {
-  id: string
-  company_id: string
-  title: string
-  description: string
-  responsibilities: string[]
-  qualifications: string[]
-  nice_to_haves: string[]
-  benefits: string[]
-  salary: {
-    min: number
-    max: number
-  }
-  employment_types: string[]
-  location: string
-  skills_required: string[]
-  category_ids: string[]
-  is_active: boolean
-  view_count: number
-  application_count: number
-  createdAt: string
-  updatedAt: string
-}
-
-export interface JobPostingQuery {
-  page?: number
-  limit?: number
-  is_active?: boolean
-  category_ids?: string[]
-  employment_types?: string[]
-  salary_min?: number
-  salary_max?: number
-  location?: string
-  search?: string
-}
 
 interface CompanyDashboard {
   totalJobs: number;
@@ -115,6 +81,10 @@ export const companyApi = {
         'Content-Type': 'multipart/form-data',
       },
     });
+  },
+
+  async reapplyVerification(data: CompanyProfileData): Promise<ApiEnvelope<CompanyProfileResponse>> {
+    return baseApi.post<CompanyProfileResponse>('/api/company/reapply-verification')(data);
   },
 
   async uploadLogo(file: File): Promise<ApiEnvelope<{ url: string; filename: string }>> {

@@ -13,6 +13,7 @@ export {
   CreateCompanyProfileUseCase,
   UpdateCompanyProfileUseCase,
   GetCompanyProfileUseCase,
+  // ReapplyCompanyVerificationUseCase,
   CreateJobPostingUseCase,
   GetJobPostingUseCase,
   GetCompanyJobPostingsUseCase,
@@ -21,6 +22,9 @@ export {
   IncrementJobViewCountUseCase,
   UpdateJobStatusUseCase,
 } from './company';
+
+// Direct import to bypass potential circular dependency
+export { ReapplyCompanyVerificationUseCase } from './company/reapply-company-verification.use-case';
 
 export { GetAllUsersUseCase } from './admin/get-all-users.use-case';
 export { BlockUserUseCase } from './admin/block-user.use-case';

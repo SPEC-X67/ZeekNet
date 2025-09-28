@@ -1,6 +1,7 @@
 export { CreateCompanyProfileUseCase } from './create-company-profile.use-case';
 export { GetCompanyProfileUseCase } from './get-company-profile.use-case';
 export { UpdateCompanyProfileUseCase } from './update-company-profile.use-case';
+export { ReapplyCompanyVerificationUseCase } from './reapply-company-verification.use-case';
 
 export { CreateJobPostingUseCase } from './create-job-posting.use-case';
 export { GetJobPostingUseCase } from './get-job-posting.use-case';
