@@ -3,6 +3,10 @@ export const TYPES = {
   CompanyRepository: Symbol.for('CompanyRepository'),
   JobPostingRepository: Symbol.for('JobPostingRepository'),
 
+  CompanyProfileMapper: Symbol.for('CompanyProfileMapper'),
+  JobPostingMapper: Symbol.for('JobPostingMapper'),
+  UserMapper: Symbol.for('UserMapper'),
+  
   PasswordHasher: Symbol.for('PasswordHasher'),
   TokenService: Symbol.for('TokenService'),
   GoogleTokenVerifier: Symbol.for('GoogleTokenVerifier'),
@@ -25,6 +29,7 @@ export const TYPES = {
   CreateCompanyProfileUseCase: Symbol.for('CreateCompanyProfileUseCase'),
   UpdateCompanyProfileUseCase: Symbol.for('UpdateCompanyProfileUseCase'),
   GetCompanyProfileUseCase: Symbol.for('GetCompanyProfileUseCase'),
+  ReapplyCompanyVerificationUseCase: Symbol.for('ReapplyCompanyVerificationUseCase'),
 
   CreateJobPostingUseCase: Symbol.for('CreateJobPostingUseCase'),
   GetJobPostingUseCase: Symbol.for('GetJobPostingUseCase'),
@@ -51,6 +56,7 @@ export const TYPES = {
   CompanyJobPostingController: Symbol.for('CompanyJobPostingController'),
   SeekerController: Symbol.for('SeekerController'),
   OtpController: Symbol.for('OtpController'),
+  PublicJobController: Symbol.for('PublicJobController'),
 
   AppServer: Symbol.for('AppServer'),
   UserBlockedMiddleware: Symbol.for('UserBlockedMiddleware'),

@@ -15,6 +15,7 @@ import { createAuthRouter } from '../routes/auth.routes';
 import { createAdminRouter } from '../routes/admin.routes';
 import { createCompanyRouter } from '../routes/company.routes';
 import { createSeekerRoutes } from '../routes/seeker.routes';
+import { createPublicRouter } from '../routes/public.routes';
 import { authenticateToken } from '../middleware/auth.middleware';
 import { errorHandler } from '../middleware/error-handler';
 
@@ -27,6 +28,7 @@ import { AdminController } from '../controllers/admin/admin.controller';
 import { CompanyController } from '../controllers/company/company.controller';
 import { CompanyJobPostingController } from '../controllers/company/company-job-posting.controller';
 import { SeekerController } from '../controllers/seeker/seeker.controller';
+import { PublicJobController } from '../controllers/public/public-job.controller';
 import { UserBlockedMiddleware } from '../middleware/user-blocked.middleware';
 
 import { container } from '../../infrastructure/di/container';
@@ -72,6 +74,7 @@ export class AppServer {
     const companyController = container.get<CompanyController>(TYPES.CompanyController);
     const companyJobPostingController = container.get<CompanyJobPostingController>(TYPES.CompanyJobPostingController);
     const seekerController = container.get<SeekerController>(TYPES.SeekerController);
+    const publicJobController = container.get<PublicJobController>(TYPES.PublicJobController);
     const otpController = container.get<OtpController>(TYPES.OtpController);
     const userBlockedMiddleware = container.get<UserBlockedMiddleware>(TYPES.UserBlockedMiddleware);
 
@@ -89,6 +92,7 @@ export class AppServer {
     this.app.use('/api/admin', createAdminRouter(adminController, userBlockedMiddleware));
     this.app.use('/api/company', createCompanyRouter(companyController, companyJobPostingController, userBlockedMiddleware));
     this.app.use('/api/seeker', createSeekerRoutes(seekerController));
+    this.app.use('/api/public', createPublicRouter(publicJobController));
 
     this.app.use(errorHandler);
   }

@@ -75,7 +75,7 @@ export class CompanyProfile {
       this.isVerified,
       this.isBlocked,
       this.createdAt,
-      new Date(), // Update timestamp
+      new Date(),
     );
   }
 

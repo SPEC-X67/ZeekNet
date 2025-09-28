@@ -56,7 +56,7 @@ interface CompanyVerificationDocument extends Document {
   _id: unknown;
   companyId: string;
   taxId: string;
-  businessLicenseUrl?: string; // Make optional to match actual model
+  businessLicenseUrl?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -227,8 +227,8 @@ export class MongoCompanyRepository implements Partial<ICompanyRepository> {
     companyId: string,
     isVerified: 'pending' | 'rejected' | 'verified',
   ): Promise<void> {
-    await CompanyProfileModel.findOneAndUpdate(
-      { userId: companyId },
+    await CompanyProfileModel.findByIdAndUpdate(
+      companyId,
       { isVerified },
     ).exec();
   }

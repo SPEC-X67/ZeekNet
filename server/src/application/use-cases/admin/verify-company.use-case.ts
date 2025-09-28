@@ -9,10 +9,10 @@ export class VerifyCompanyUseCase {
     private readonly companyRepository: ICompanyRepository,
   ) {}
 
-  async execute(companyId: string, isVerified: boolean): Promise<void> {
+  async execute(companyId: string, isVerified: 'pending' | 'rejected' | 'verified'): Promise<void> {
     await this.companyRepository.updateVerificationStatus(
       companyId,
-      isVerified ? 'verified' : 'rejected',
+      isVerified,
     );
   }
 }

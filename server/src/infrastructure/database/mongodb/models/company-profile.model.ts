@@ -10,7 +10,7 @@ export interface CompanyProfileDocument extends Document {
   industry: string;
   organisation: string;
   aboutUs: string;
-  isVerified: string; // "pending", "rejected", "verified"
+  isVerified: string;
   isBlocked: boolean;
   createdAt: Date;
   updatedAt: Date;

@@ -32,6 +32,7 @@ import {
   CreateCompanyProfileUseCase,
   UpdateCompanyProfileUseCase,
   GetCompanyProfileUseCase,
+  ReapplyCompanyVerificationUseCase,
 } from '../../application/use-cases';
 
 import {
@@ -64,15 +65,21 @@ import { AdminController } from '../../presentation/controllers/admin/admin.cont
 import { CompanyController } from '../../presentation/controllers/company/company.controller';
 import { CompanyJobPostingController } from '../../presentation/controllers/company/company-job-posting.controller';
 import { SeekerController } from '../../presentation/controllers/seeker/seeker.controller';
+import { PublicJobController } from '../../presentation/controllers/public/public-job.controller';
 
 import { AppServer } from '../../presentation/server/app-server';
 import { UserBlockedMiddleware } from '../../presentation/middleware/user-blocked.middleware';
+import { CompanyProfileMapper, JobPostingMapper, UserMapper } from 'src/application/mappers';
 
 const container = new Container();
 
 container.bind(TYPES.UserRepository).to(MongoUserRepository);
 container.bind(TYPES.CompanyRepository).to(MongoCompanyRepository);
 container.bind(TYPES.JobPostingRepository).to(MongoJobPostingRepository);
+
+container.bind(TYPES.CompanyProfileMapper).to(CompanyProfileMapper);
+container.bind(TYPES.JobPostingMapper).to(JobPostingMapper);
+container.bind(TYPES.UserMapper).to(UserMapper);
 
 container.bind(TYPES.PasswordHasher).to(BcryptPasswordHasher);
 container.bind(TYPES.TokenService).to(JwtTokenService);
@@ -81,7 +88,6 @@ container.bind(TYPES.PasswordResetService).to(PasswordResetServiceImpl);
 container.bind(TYPES.OtpService).to(RedisOtpService);
 container.bind(TYPES.MailerService).to(NodemailerService);
 container.bind(TYPES.S3Service).to(S3Service);
-
 
 container.bind(TYPES.RegisterUserUseCase).to(RegisterUserUseCase);
 container.bind(TYPES.LoginUserUseCase).to(LoginUserUseCase);
@@ -97,6 +103,7 @@ container.bind(TYPES.GetUserByIdUseCase).to(AuthGetUserByIdUseCase);
 container.bind(TYPES.CreateCompanyProfileUseCase).to(CreateCompanyProfileUseCase);
 container.bind(TYPES.UpdateCompanyProfileUseCase).to(UpdateCompanyProfileUseCase);
 container.bind(TYPES.GetCompanyProfileUseCase).to(GetCompanyProfileUseCase);
+container.bind(TYPES.ReapplyCompanyVerificationUseCase).to(ReapplyCompanyVerificationUseCase);
 
 container.bind(TYPES.CreateJobPostingUseCase).to(CreateJobPostingUseCase);
 container.bind(TYPES.GetJobPostingUseCase).to(GetJobPostingUseCase);
@@ -123,6 +130,7 @@ container.bind(TYPES.CompanyController).to(CompanyController);
 container.bind(TYPES.CompanyJobPostingController).to(CompanyJobPostingController);
 container.bind(TYPES.SeekerController).to(SeekerController);
 container.bind(TYPES.OtpController).to(OtpController);
+container.bind(TYPES.PublicJobController).to(PublicJobController);
 
 container.bind(TYPES.AppServer).to(AppServer);
 container.bind(TYPES.UserBlockedMiddleware).to(UserBlockedMiddleware);

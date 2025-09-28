@@ -4,22 +4,27 @@ import { IS3Service } from '../../../application/interfaces';
 import { TYPES } from '../../../infrastructure/di/types';
 import {
   CreateCompanyProfileDto,
-  SimpleCompanyProfileDto,
-  UpdateCompanyProfileDto,
+  SimpleCompanyProfileDto
 } from '../../../application/dto/company';
 import {
   CreateCompanyProfileUseCase,
   UpdateCompanyProfileUseCase,
   GetCompanyProfileUseCase,
+  ReapplyCompanyVerificationUseCase
 } from '../../../application/use-cases';
 import { BaseController, AuthenticatedRequest } from '../../../shared';
 import { UploadService } from '../../../shared/services/upload.service';
+import { CompanyProfileMapper } from '../../../application/mappers';
 
 @injectable()
 export class CompanyController extends BaseController {
   constructor(
     @inject(TYPES.CreateCompanyProfileUseCase)
     private readonly createCompanyProfileUseCase: CreateCompanyProfileUseCase,
+    @inject(TYPES.ReapplyCompanyVerificationUseCase)
+    private readonly reapplyCompanyVerificationUseCase: ReapplyCompanyVerificationUseCase,
+    @inject(TYPES.CompanyProfileMapper)
+    private readonly companyProfileMapper: CompanyProfileMapper,
     @inject(TYPES.UpdateCompanyProfileUseCase)
     private readonly updateCompanyProfileUseCase: UpdateCompanyProfileUseCase,
     @inject(TYPES.GetCompanyProfileUseCase)
@@ -55,21 +60,7 @@ export class CompanyController extends BaseController {
         parsed.data,
       );
 
-      const responseData = {
-        id: profile.id,
-        company_name: profile.companyName,
-        email: parsed.data.email,
-        website: profile.websiteLink,
-        industry: profile.industry,
-        organisation: profile.organisation,
-        location: parsed.data.location,
-        employees: parsed.data.employees,
-        description: profile.aboutUs,
-        logo: profile.logo,
-        isVerified: profile.isVerified,
-        createdAt: profile.createdAt,
-        updatedAt: profile.updatedAt,
-      };
+      const responseData = this.companyProfileMapper.toDto(profile);
 
       this.sendSuccessResponse(res, 'Company profile created successfully', responseData, undefined, 201);
     } catch (error) {
@@ -114,7 +105,8 @@ export class CompanyController extends BaseController {
         return this.sendNotFoundResponse(res, 'Company profile not found');
       }
 
-      this.sendSuccessResponse(res, 'Company profile retrieved successfully', companyProfile);
+      const responseData = this.companyProfileMapper.toDetailedDto(companyProfile);
+      this.sendSuccessResponse(res, 'Company profile retrieved successfully', responseData);
     } catch (error) {
       this.handleAsyncError(error, next);
     }
@@ -152,6 +144,37 @@ export class CompanyController extends BaseController {
       };
 
       this.sendSuccessResponse(res, 'Company dashboard data retrieved successfully', dashboardData);
+    } catch (error) {
+      this.handleAsyncError(error, next);
+    }
+  };
+
+  reapplyVerification = async (
+    req: AuthenticatedRequest,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> => {
+    try {
+      const userId = this.validateUserId(req);
+      
+      // Validate request body
+      const parsed = SimpleCompanyProfileDto.safeParse(req.body);
+      if (!parsed.success) {
+        return this.handleValidationError('Invalid profile data', next);
+      }
+  
+      const updatedProfile = await this.reapplyCompanyVerificationUseCase.execute(
+        userId,
+        parsed.data
+      );
+      
+      const responseData = this.companyProfileMapper.toDto(updatedProfile);
+      
+      this.sendSuccessResponse(
+        res, 
+        'Verification reapplication submitted successfully. Your application is now under review.',
+        responseData
+      );
     } catch (error) {
       this.handleAsyncError(error, next);
     }

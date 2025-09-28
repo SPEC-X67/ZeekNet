@@ -5,7 +5,6 @@ import {
   CompanyVerification,
 } from '../entities/company-profile.entity';
 
-// Profile-specific operations
 export interface ICompanyProfileRepository {
   createProfile(
     profile: {
@@ -33,7 +32,6 @@ export interface ICompanyProfileRepository {
   existsByUserId(userId: string): Promise<boolean>;
 }
 
-// Contact-specific operations
 export interface ICompanyContactRepository {
   createContact(
     contact: Omit<CompanyContact, 'id' | 'createdAt' | 'updatedAt'>,
@@ -48,7 +46,6 @@ export interface ICompanyContactRepository {
   existsByCompanyId(companyId: string): Promise<boolean>;
 }
 
-// Location-specific operations
 export interface ICompanyLocationRepository {
   createLocation(
     location: Omit<CompanyLocation, 'id' | 'createdAt' | 'updatedAt'>,
@@ -65,7 +62,6 @@ export interface ICompanyLocationRepository {
   getHeadquartersByCompanyId(companyId: string): Promise<CompanyLocation | null>;
 }
 
-// Listing and search operations
 export interface ICompanyListingRepository {
   getAllCompanies(options: {
     page: number;
@@ -83,7 +79,6 @@ export interface ICompanyListingRepository {
   searchCompanies(query: string, limit?: number): Promise<CompanyProfile[]>;
 }
 
-// Verification-specific operations
 export interface ICompanyVerificationRepository {
   createVerification(
     verification: Omit<CompanyVerification, 'id' | 'createdAt' | 'updatedAt'>,
@@ -102,7 +97,6 @@ export interface ICompanyVerificationRepository {
   getPendingVerifications(): Promise<CompanyVerification[]>;
 }
 
-// Aggregate repository for backward compatibility
 export interface ICompanyRepository extends 
   ICompanyProfileRepository, 
   ICompanyContactRepository, 

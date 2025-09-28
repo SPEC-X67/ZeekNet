@@ -3,56 +3,36 @@ import { SimpleCompanyProfileRequestDto } from '../../dto/company/create-company
 import { TYPES } from '../../../infrastructure/di/types';
 import { ICompanyRepository } from '../../../domain/repositories';
 import { CompanyProfile } from '../../../domain/entities';
+import { CompanyProfileMapper } from '../../mappers';
 
 @injectable()
 export class CreateCompanyProfileUseCase {
   constructor(
     @inject(TYPES.CompanyRepository)
     private readonly companyRepository: ICompanyRepository,
+    @inject(TYPES.CompanyProfileMapper)
+    private readonly companyProfileMapper: CompanyProfileMapper,
   ) {}
 
   async execute(
     userId: string,
     data: SimpleCompanyProfileRequestDto,
   ): Promise<CompanyProfile> {
-    const profileDataObj = {
-      userId,
-      companyName: data.company_name,
-      logo: data.logo || '',
-      banner: '',
-      websiteLink: data.website || '',
-      employeeCount: data.employees ? parseInt(data.employees.split('-')[0]) : 0,
-      industry: data.industry,
-      organisation: data.organisation,
-      aboutUs: data.description,
-      isVerified: 'pending' as const,
-      isBlocked: false,
-    };
+    const profileData = this.companyProfileMapper.toDomain(data, userId);
+    const contactData = this.companyProfileMapper.toContactData(data, '');
+    const locationData = this.companyProfileMapper.toLocationData(data, '');
+    const verificationData = this.companyProfileMapper.toVerificationData(data, '');
 
-    const profile = await this.companyRepository.createProfile(profileDataObj);
+    const profile = await this.companyRepository.createProfile(profileData);
 
-    await this.companyRepository.createContact({
-      companyId: profile.id,
-      email: data.email,
-      phone: '',
-      twitterLink: '',
-      facebookLink: '',
-      linkedin: '',
-    });
+    contactData.companyId = profile.id;
+    await this.companyRepository.createContact(contactData);
 
-    await this.companyRepository.createLocation({
-      companyId: profile.id,
-      location: data.location,
-      officeName: 'Headquarters',
-      address: data.location,
-      isHeadquarters: true,
-    });
+    locationData.companyId = profile.id;
+    await this.companyRepository.createLocation(locationData);
 
-    await this.companyRepository.createVerification({
-      companyId: profile.id,
-      taxId: data.tax_id,
-      businessLicenseUrl: data.business_license || '',
-    });
+    verificationData.companyId = profile.id;
+    await this.companyRepository.createVerification(verificationData);
 
     return profile;
   }

@@ -13,6 +13,7 @@ import {
   UpdateJobPostingDto, 
   JobPostingQueryDto, 
 } from '../../application/dto/job-posting/job-posting.dto';
+import { SimpleCompanyProfileDto } from '../../application/dto/company';
 
 export function createCompanyRouter(
   companyController: CompanyController,
@@ -28,6 +29,8 @@ export function createCompanyRouter(
   router.put('/profile', companyController.updateCompanyProfile);
   router.get('/profile', companyController.getCompanyProfile);
   router.get('/profile/:profileId', companyController.getCompanyProfileById);
+
+  router.post('/reapply-verification', validateBody(SimpleCompanyProfileDto), companyController.reapplyVerification);
   router.get('/dashboard', companyController.getCompanyDashboard);
 
   router.post('/upload/logo', uploadSingle('logo'), companyController.uploadLogo);
