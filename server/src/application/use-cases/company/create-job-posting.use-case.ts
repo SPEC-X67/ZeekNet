@@ -4,18 +4,21 @@ import { CreateJobPostingRequestDto } from '../../dto/job-posting/job-posting.dt
 import { JobPosting } from '../../../domain/entities/job-posting.entity';
 import { AppError } from '../../../domain/errors/errors';
 import { TYPES } from '../../../infrastructure/di/types';
+import { JobPostingMapper } from '../../mappers/job-posting.mapper';
 
 @injectable()
 export class CreateJobPostingUseCase {
-  constructor(@inject(TYPES.JobPostingRepository) private jobPostingRepository: JobPostingRepository) {}
+  constructor(
+    @inject(TYPES.JobPostingRepository) 
+    private jobPostingRepository: JobPostingRepository,
+    @inject(TYPES.JobPostingMapper)
+    private jobPostingMapper: JobPostingMapper,
+  ) {}
 
   async execute(companyId: string, data: CreateJobPostingRequestDto): Promise<JobPosting> {
     try {
-      const jobPosting = await this.jobPostingRepository.create({
-        ...data,
-        company_id: companyId,
-      });
-
+      const jobPostingData = this.jobPostingMapper.toDomain(data, companyId);
+      const jobPosting = await this.jobPostingRepository.create(jobPostingData);
       return jobPosting;
     } catch (error) {
       console.error('CreateJobPostingUseCase error:', error);

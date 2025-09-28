@@ -11,6 +11,9 @@ import CompanyDashboard from './pages/company/CompanyDashboard'
 import CompanyProfileSetup from './pages/company/CompanyProfileSetup'
 import PostJob from './pages/company/PostJob'
 import UserDashboard from './pages/seeker/UserDashboard'
+import UserProfile from './pages/seeker/UserProfile'
+import JobListing from './pages/JobListing'
+import JobDetail from './pages/JobDetail'
 import NotFound from './pages/NotFound'
 import AdminLogin from './pages/admin/AdminLogin'
 import UserManagement from './pages/admin/UserManagement'
@@ -19,6 +22,8 @@ import PendingCompanies from './pages/admin/PendingCompanies'
 import ProtectedRoute from './components/common/ProtectedRoute'
 import AuthRedirect from './components/common/AuthRedirect'
 import { UserRole } from './constants/enums'
+import CompanyReapplication from './pages/company/CompanyReapplication'
+import CompanyProfile from './pages/company/CompanyProfile'
 
 function App() {
   return (
@@ -27,6 +32,8 @@ function App() {
         <Routes>
           {/* Public routes */}
           <Route path="/" element={<Landing />} />
+          <Route path="/jobs" element={<JobListing />} />
+          <Route path="/jobs/:id" element={<JobDetail />} />
           
           {/* Auth routes - redirect if already authenticated */}
           <Route path="/auth/login" element={
@@ -94,11 +101,27 @@ function App() {
               <PostJob />
             </ProtectedRoute>
           } />
+
+          <Route path="/company/reapply" element={
+            <ProtectedRoute allowedRoles={[UserRole.COMPANY]}>
+              <CompanyReapplication />
+            </ProtectedRoute>
+          } />
+          <Route path="/company/profile" element={
+            <ProtectedRoute allowedRoles={[UserRole.COMPANY]}>
+              <CompanyProfile />
+            </ProtectedRoute>
+          } />
           
           {/* Seeker routes */}
           <Route path="/seeker/dashboard" element={
             <ProtectedRoute allowedRoles={[UserRole.SEEKER]}>
               <UserDashboard />
+            </ProtectedRoute>
+          } />
+          <Route path="/seeker/profile" element={
+            <ProtectedRoute allowedRoles={[UserRole.SEEKER]}>
+              <UserProfile />
             </ProtectedRoute>
           } />
           

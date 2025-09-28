@@ -163,7 +163,7 @@ export class AdminController extends BaseController {
     try {
       await this.verifyCompanyUseCase.execute(
         parsed.data.companyId,
-        parsed.data.isVerified === 'verified',
+        parsed.data.isVerified,
       );
 
       const message = `Company ${parsed.data.isVerified} successfully`;

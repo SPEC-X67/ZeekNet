@@ -54,7 +54,7 @@ const Landing = () => {
                 Companies
               </a>
               <a
-                href="#"
+                href="/jobs"
                 className="text-foreground hover:text-primary transition-colors"
               >
                 Find Jobs
@@ -131,8 +131,11 @@ const Landing = () => {
                     className="pl-10 h-12 border-border"
                   />
                 </div>
-                <Button className="h-12 px-8 bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all duration-300">
-                  Find Jobs
+                <Button 
+                  className="h-12 px-8 bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all duration-300"
+                  asChild
+                >
+                  <a href="/jobs">Find Jobs</a>
                 </Button>
               </div>
             </div>
@@ -682,8 +685,11 @@ const Landing = () => {
                 Discover thousands of job opportunities that match your skills
                 and experience.
               </p>
-              <Button className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all duration-300">
-                Find Jobs
+              <Button 
+                className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all duration-300"
+                asChild
+              >
+                <a href="/jobs">Find Jobs</a>
               </Button>
             </Card>
             <Card className="text-center p-8 hover:shadow-xl hover:shadow-primary/10 transition-all duration-300 group hover:scale-[1.02]">
