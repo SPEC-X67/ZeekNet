@@ -28,7 +28,21 @@ export class UpdateCompanyProfileUseCase {
     }
 
     if (data.profile) {
-      await this.companyRepository.updateProfile(existingProfile.id, {
+      console.log('Updating profile with data:', {
+        profileId: existingProfile.id,
+        updateData: {
+          companyName: data.profile.company_name,
+          logo: data.profile.logo,
+          banner: data.profile.banner,
+          websiteLink: data.profile.website_link,
+          employeeCount: data.profile.employee_count,
+          industry: data.profile.industry,
+          organisation: existingProfile.organisation, // Keep existing value
+          aboutUs: data.profile.about_us,
+        }
+      });
+      
+      const updatedProfile = await this.companyRepository.updateProfile(existingProfile.id, {
         companyName: data.profile.company_name,
         logo: data.profile.logo,
         banner: data.profile.banner,
@@ -37,6 +51,11 @@ export class UpdateCompanyProfileUseCase {
         industry: data.profile.industry,
         organisation: existingProfile.organisation, // Keep existing value
         aboutUs: data.profile.about_us,
+      });
+      
+      console.log('Profile updated successfully:', {
+        id: updatedProfile.id,
+        aboutUs: updatedProfile.aboutUs
       });
     }
 

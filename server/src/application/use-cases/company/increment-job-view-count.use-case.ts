@@ -6,9 +6,12 @@ import { TYPES } from '../../../infrastructure/di/types';
 export class IncrementJobViewCountUseCase {
   constructor(@inject(TYPES.JobPostingRepository) private jobPostingRepository: JobPostingRepository) {}
 
-  async execute(id: string): Promise<void> {
+  async execute(id: string, userRole?: string): Promise<void> {
     try {
-      await this.jobPostingRepository.incrementViewCount(id);
+      // Only increment view count for seekers, not for companies or admins
+      if (userRole === 'seeker') {
+        await this.jobPostingRepository.incrementViewCount(id);
+      }
     } catch (error) {
       console.error('Failed to increment view count:', error);
     }

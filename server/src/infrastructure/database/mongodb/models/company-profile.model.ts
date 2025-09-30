@@ -10,6 +10,8 @@ export interface CompanyProfileDocument extends Document {
   industry: string;
   organisation: string;
   aboutUs: string;
+  foundedDate?: Date;
+  phone?: string;
   isVerified: string;
   isBlocked: boolean;
   createdAt: Date;
@@ -27,6 +29,8 @@ const CompanyProfileSchema = new Schema<CompanyProfileDocument>(
     industry: { type: String, required: true },
     organisation: { type: String, required: true },
     aboutUs: { type: String, default: '' },
+    foundedDate: { type: Date },
+    phone: { type: String, default: '' },
     isVerified: { type: String, enum: ['pending', 'rejected', 'verified'], default: 'pending' },
     isBlocked: { type: Boolean, default: false },
   },

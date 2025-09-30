@@ -15,7 +15,16 @@ export class UpdateJobStatusUseCase {
       throw new AppError('Job posting not found', 404);
     }
 
-    if (existingJob.company_id !== companyId) {
+    console.log('UpdateJobStatus - existingJob.company_id:', existingJob.company_id);
+    console.log('UpdateJobStatus - companyId:', companyId);
+    console.log('UpdateJobStatus - company_id match:', existingJob.company_id === companyId);
+
+    // If company_id is null or empty, update it with the current user's ID
+    if (!existingJob.company_id || existingJob.company_id === '') {
+      console.log('UpdateJobStatus - company_id is null/empty, updating with current user ID');
+      // First update the company_id, then proceed with the normal update
+      await this.jobPostingRepository.update(id, { company_id: companyId } as any);
+    } else if (existingJob.company_id !== companyId) {
       throw new AppError('Unauthorized to update this job posting', 403);
     }
 

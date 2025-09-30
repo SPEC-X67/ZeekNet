@@ -14,6 +14,8 @@ export class CompanyProfile {
     public readonly isBlocked: boolean,
     public readonly createdAt: Date,
     public readonly updatedAt: Date,
+    public readonly foundedDate?: Date,
+    public readonly phone?: string,
   ) {}
 
   static create(data: {
@@ -27,6 +29,8 @@ export class CompanyProfile {
     industry: string;
     organisation: string;
     aboutUs: string;
+    foundedDate?: Date;
+    phone?: string;
     isVerified?: 'pending' | 'rejected' | 'verified';
     isBlocked?: boolean;
     createdAt?: Date;
@@ -48,6 +52,8 @@ export class CompanyProfile {
       data.isBlocked ?? false,
       data.createdAt ?? now,
       data.updatedAt ?? now,
+      data.foundedDate,
+      data.phone,
     );
   }
 
@@ -60,6 +66,8 @@ export class CompanyProfile {
     industry?: string;
     organisation?: string;
     aboutUs?: string;
+    foundedDate?: Date;
+    phone?: string;
   }): CompanyProfile {
     return new CompanyProfile(
       this.id,
@@ -76,6 +84,8 @@ export class CompanyProfile {
       this.isBlocked,
       this.createdAt,
       new Date(),
+      updates.foundedDate ?? this.foundedDate,
+      updates.phone ?? this.phone,
     );
   }
 
@@ -99,6 +109,8 @@ export class CompanyProfile {
       this.isBlocked,
       this.createdAt,
       new Date(),
+      this.foundedDate,
+      this.phone,
     );
   }
 
@@ -122,6 +134,8 @@ export class CompanyProfile {
       this.isBlocked,
       this.createdAt,
       new Date(),
+      this.foundedDate,
+      this.phone,
     );
   }
 
@@ -145,6 +159,8 @@ export class CompanyProfile {
       true,
       this.createdAt,
       new Date(),
+      this.foundedDate,
+      this.phone,
     );
   }
 
@@ -168,6 +184,8 @@ export class CompanyProfile {
       false,
       this.createdAt,
       new Date(),
+      this.foundedDate,
+      this.phone,
     );
   }
 
@@ -233,6 +251,8 @@ export class CompanyProfile {
       industry: this.industry,
       organisation: this.organisation,
       aboutUs: this.aboutUs,
+      foundedDate: this.foundedDate?.toISOString(),
+      phone: this.phone,
       isVerified: this.isVerified,
       isBlocked: this.isBlocked,
       createdAt: this.createdAt.toISOString(),
@@ -256,6 +276,8 @@ export class CompanyProfile {
       data.isBlocked as boolean,
       new Date(data.createdAt as string),
       new Date(data.updatedAt as string),
+      data.foundedDate ? new Date(data.foundedDate as string) : undefined,
+      data.phone as string,
     );
   }
 }

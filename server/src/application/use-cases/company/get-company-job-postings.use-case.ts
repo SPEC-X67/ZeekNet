@@ -27,8 +27,8 @@ export class GetCompanyJobPostingsUseCase {
       return {
         jobs: result.jobs,
         pagination: {
-          page: query.page || 1,
-          limit: query.limit || 10,
+          page: query.page,
+          limit: query.limit,
           total: result.pagination.total,
           totalPages: result.pagination.totalPages,
         },

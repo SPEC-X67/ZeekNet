@@ -1,530 +1,970 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import CompanyLayout from '../../components/layouts/CompanyLayout'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Separator } from '@/components/ui/separator'
+import { Loading } from '@/components/ui/loading'
 import { 
   Building2, 
   Mail, 
-  Globe, 
   MapPin, 
   Users, 
-  Calendar,
   Edit3,
-  CheckCircle,
-  Clock,
-  XCircle,
-  FileText,
-  Award,
-  TrendingUp,
-  Target,
+  Plus,
+  ArrowRight,
   Heart,
-  Star,
-  Share2,
-  Download,
-  Eye,
+  Flame,
   ArrowLeft,
-  Phone,
   Linkedin,
   Twitter,
   Facebook,
   Instagram,
-  ExternalLink,
-  Briefcase,
-  DollarSign,
-  Zap,
-  Shield,
-  Activity
+  Phone,
+  Briefcase
 } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { companyApi, type CompanyProfileResponse } from '@/api/company.api'
+import { toast } from 'sonner'
 
-// Dummy data for the company profile
-const dummyCompanyData = {
-  id: "comp_001",
-  company_name: "TechFlow Solutions",
-  email: "contact@techflow.com",
-  website: "https://www.techflow.com",
-  industry: "Technology",
-  organisation: "Corporation",
-  location: "San Francisco, CA",
-  employees: "101-500",
-  description: "TechFlow Solutions is a leading technology company specializing in innovative software solutions, cloud computing, and digital transformation services. We help businesses of all sizes leverage cutting-edge technology to drive growth and efficiency.",
-  logo: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=200&h=200&fit=crop&crop=center",
-  business_license: "https://example.com/business-license.pdf",
-  tax_id: "TAX-123456789",
-  isVerified: "verified",
-  createdAt: "2023-01-15T10:30:00Z",
-  updatedAt: "2024-01-20T14:45:00Z",
-  // Additional profile data
-  founded: "2018",
-  headquarters: "San Francisco, CA",
-  phone: "+1 (555) 123-4567",
-  socialMedia: {
-    linkedin: "https://linkedin.com/company/techflow",
-    twitter: "https://twitter.com/techflow",
-    facebook: "https://facebook.com/techflow",
-    instagram: "https://instagram.com/techflow"
-  },
-  stats: {
-    totalJobs: 24,
-    activeJobs: 18,
-    totalApplications: 1247,
-    responseRate: 95,
-    avgResponseTime: "2 days"
-  },
-  benefits: [
-    "Health Insurance",
-    "Dental & Vision",
-    "401(k) Matching",
-    "Flexible PTO",
-    "Remote Work Options",
-    "Professional Development",
-    "Gym Membership",
-    "Free Meals"
-  ],
-  awards: [
-    "Best Tech Company 2023",
-    "Innovation Award 2022",
-    "Great Place to Work 2023"
-  ],
-  recentJobs: [
-    {
-      id: "job_001",
-      title: "Senior Software Engineer",
-      location: "San Francisco, CA",
-      type: "Full-time",
-      posted: "2 days ago",
-      applications: 45
-    },
-    {
-      id: "job_002", 
-      title: "Product Manager",
-      location: "Remote",
-      type: "Full-time",
-      posted: "1 week ago",
-      applications: 32
-    },
-    {
-      id: "job_003",
-      title: "UX Designer",
-      location: "San Francisco, CA",
-      type: "Full-time",
-      posted: "2 weeks ago",
-      applications: 28
-    }
-  ]
+// Import dialogs
+import EditContactDialog from '@/components/company/dialogs/EditContactDialog'
+import EditTechStackDialog from '@/components/company/dialogs/EditTechStackDialog'
+import EditBenefitsDialog from '@/components/company/dialogs/EditBenefitsDialog'
+import EditOfficeLocationDialog from '@/components/company/dialogs/EditOfficeLocationDialog'
+import EditAboutDialog from '@/components/company/dialogs/EditAboutDialog'
+import EditWorkplacePicturesDialog from '@/components/company/dialogs/EditWorkplacePicturesDialog'
+
+
+// Types for API responses
+interface CompanyContact {
+  id?: string;
+  email: string;
+  phone: string;
+  twitter_link: string;
+  facebook_link: string;
+  linkedin: string;
+}
+
+interface TechStackItem {
+  id?: string;
+  techStack: string;
+}
+
+interface Benefit {
+  id?: string;
+  perk: string;
+  description: string;
+}
+
+interface OfficeLocation {
+  id?: string;
+  location: string;
+  officeName: string;
+  address: string;
+  isHeadquarters: boolean;
+}
+
+interface TeamMember {
+  id?: string;
+  name: string;
+  role: string;
+  avatar?: string;
+  instagram?: string;
+  linkedin?: string;
+}
+
+interface WorkplacePicture {
+  id?: string;
+  pictureUrl: string;
+  caption?: string;
+}
+
+interface JobPosting {
+  id: string;
+  title: string;
+  description: string;
+  location: string;
+  employmentType: string;
+  salaryMin?: number;
+  salaryMax?: number;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
 }
 
 const CompanyProfile = () => {
-  const navigate = useNavigate()
-  const [isEditing, setIsEditing] = useState(false)
-  const company = dummyCompanyData
+  // State for company data
+  const [companyProfile, setCompanyProfile] = useState<CompanyProfileResponse | null>(null)
+  const [contact, setContact] = useState<CompanyContact | null>(null)
+  const [techStack, setTechStack] = useState<TechStackItem[]>([])
+  const [benefits, setBenefits] = useState<Benefit[]>([])
+  const [officeLocations, setOfficeLocations] = useState<OfficeLocation[]>([])
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([])
+  const [workplacePictures, setWorkplacePictures] = useState<WorkplacePicture[]>([])
+  const [jobPostings, setJobPostings] = useState<JobPosting[]>([])
+  
+  // Loading states
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
+  
+  // Dialog states
+  const [editContactDialog, setEditContactDialog] = useState(false)
+  const [editTechStackDialog, setEditTechStackDialog] = useState(false)
+  const [editBenefitsDialog, setEditBenefitsDialog] = useState(false)
+  const [editOfficeLocationDialog, setEditOfficeLocationDialog] = useState(false)
+  const [editAboutDialog, setEditAboutDialog] = useState(false)
+  const [editWorkplacePicturesDialog, setEditWorkplacePicturesDialog] = useState(false)
 
-  const getVerificationStatus = (status: string) => {
-    switch (status) {
-      case 'verified':
-        return {
-          icon: CheckCircle,
-          text: 'Verified',
-          color: 'text-green-600',
-          bgColor: 'bg-green-50',
-          borderColor: 'border-green-200'
-        }
-      case 'pending':
-        return {
-          icon: Clock,
-          text: 'Pending Review',
-          color: 'text-yellow-600',
-          bgColor: 'bg-yellow-50',
-          borderColor: 'border-yellow-200'
-        }
-      case 'rejected':
-        return {
-          icon: XCircle,
-          text: 'Rejected',
-          color: 'text-red-600',
-          bgColor: 'bg-red-50',
-          borderColor: 'border-red-200'
-        }
-      default:
-        return {
-          icon: Clock,
-          text: 'Not Verified',
-          color: 'text-gray-600',
-          bgColor: 'bg-gray-50',
-          borderColor: 'border-gray-200'
-        }
+  // Fetch company data
+  const fetchCompanyData = async () => {
+    try {
+      setLoading(true)
+      
+      // Fetch complete company profile in a single API call
+      const response = await companyApi.getCompleteProfile()
+
+      if (response.success && response.data) {
+        const { profile, contact, locations, techStack, benefits, team, workplacePictures, jobPostings } = response.data
+        
+        setCompanyProfile(profile)
+        setContact(contact)
+        // Map snake_case to camelCase for office locations
+        const mappedLocations = locations.map((location: any) => ({
+          id: location.id,
+          location: location.location,
+          officeName: location.office_name,
+          address: location.address,
+          isHeadquarters: location.is_headquarters
+        }))
+        setOfficeLocations(mappedLocations)
+        setTechStack(techStack)
+        setBenefits(benefits)
+        setTeamMembers(team)
+        setWorkplacePictures(workplacePictures)
+        setJobPostings(jobPostings || [])
+      }
+      
+    } catch (error) {
+      console.error('Error fetching company data:', error)
+      toast.error('Failed to load company data')
+    } finally {
+      setLoading(false)
     }
   }
 
-  const verificationStatus = getVerificationStatus(company.isVerified)
-  const StatusIcon = verificationStatus.icon
+  useEffect(() => {
+    fetchCompanyData()
+  }, [])
+
+  // Handle saving contact
+  const handleSaveContact = async (contactData: CompanyContact) => {
+    try {
+      setSaving(true)
+      // Map the contact data to the API format
+      const apiData = {
+        id: contactData.id,
+        email: contactData.email,
+        phone: contactData.phone,
+        twitter_link: contactData.twitter_link,
+        facebook_link: contactData.facebook_link,
+        linkedin: contactData.linkedin
+      }
+      const response = await companyApi.updateContact(apiData)
+      if (response.success) {
+        setContact(contactData)
+        toast.success('Contact information updated successfully')
+        } else {
+        toast.error('Failed to update contact information')
+        }
+      } catch (error) {
+      console.error('Error updating contact:', error)
+      toast.error('Failed to update contact information')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  // Handle saving tech stack
+  const handleSaveTechStack = async (techStackData: TechStackItem[]) => {
+    try {
+      setSaving(true)
+      
+      // Find items to delete (existing items not in the new list)
+      const itemsToDelete = techStack.filter(existingItem => 
+        existingItem.id && !techStackData.some(newItem => newItem.id === existingItem.id)
+      )
+      
+      // Delete removed items
+      for (const item of itemsToDelete) {
+        if (item.id) {
+          await companyApi.deleteTechStack(item.id)
+        }
+      }
+      
+      // Find items to create (new items without IDs)
+      const itemsToCreate = techStackData.filter(item => !item.id)
+      
+      // Create new items
+      for (const item of itemsToCreate) {
+        await companyApi.createTechStack(item)
+      }
+      
+      // Find items to update (existing items with changes)
+      const itemsToUpdate = techStackData.filter(item => 
+        item.id && techStack.some(existingItem => 
+          existingItem.id === item.id && existingItem.techStack !== item.techStack
+        )
+      )
+      
+      // Update changed items
+      for (const item of itemsToUpdate) {
+        if (item.id) {
+          await companyApi.updateTechStack(item.id, item)
+        }
+      }
+      
+      setTechStack(techStackData)
+      toast.success('Tech stack updated successfully')
+    } catch (error) {
+      console.error('Error updating tech stack:', error)
+      toast.error('Failed to update tech stack')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  // Handle saving benefits
+  const handleSaveBenefits = async (benefitsData: Benefit[]) => {
+    try {
+      setSaving(true)
+      
+      // Find benefits to delete (existing benefits not in the new list)
+      const benefitsToDelete = benefits.filter(existingBenefit => 
+        existingBenefit.id && !benefitsData.some(newBenefit => newBenefit.id === existingBenefit.id)
+      )
+      
+      // Delete removed benefits
+      for (const benefit of benefitsToDelete) {
+        if (benefit.id) {
+          await companyApi.deleteBenefit(benefit.id)
+        }
+      }
+      
+      // Find benefits to create (new benefits without IDs)
+      const benefitsToCreate = benefitsData.filter(benefit => !benefit.id)
+      
+      // Create new benefits
+      for (const benefit of benefitsToCreate) {
+        await companyApi.createBenefit({
+          perk: benefit.perk,
+          description: benefit.description
+        })
+      }
+      
+      // Find benefits to update (existing benefits with changes)
+      const benefitsToUpdate = benefitsData.filter(benefit => 
+        benefit.id && benefits.some(existingBenefit => 
+          existingBenefit.id === benefit.id && 
+          (existingBenefit.perk !== benefit.perk || existingBenefit.description !== benefit.description)
+        )
+      )
+      
+      // Update changed benefits
+      for (const benefit of benefitsToUpdate) {
+        if (benefit.id) {
+          await companyApi.updateBenefit(benefit.id, {
+            perk: benefit.perk,
+            description: benefit.description
+          })
+        }
+      }
+      
+      setBenefits(benefitsData)
+      toast.success('Benefits updated successfully')
+    } catch (error) {
+      console.error('Error updating benefits:', error)
+      toast.error('Failed to update benefits')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  // Handle saving office locations
+  const handleSaveOfficeLocations = async (locationsData: OfficeLocation[]) => {
+    try {
+      setSaving(true)
+      
+      // Find locations to delete (existing locations not in the new list)
+      const locationsToDelete = officeLocations.filter(existingLocation => 
+        existingLocation.id && !locationsData.some(newLocation => newLocation.id === existingLocation.id)
+      )
+      
+      // Delete removed locations
+      for (const location of locationsToDelete) {
+        if (location.id) {
+          await companyApi.deleteOfficeLocation(location.id)
+        }
+      }
+      
+      // Find locations to create (new locations without IDs)
+      const locationsToCreate = locationsData.filter(location => !location.id)
+      
+      // Create new locations
+      for (const location of locationsToCreate) {
+        await companyApi.createOfficeLocation({
+          location: location.location,
+          officeName: location.officeName,
+          address: location.address,
+          isHeadquarters: location.isHeadquarters
+        })
+      }
+      
+      // Find locations to update (existing locations with changes)
+      const locationsToUpdate = locationsData.filter(location => 
+        location.id && officeLocations.some(existingLocation => 
+          existingLocation.id === location.id && 
+          (existingLocation.location !== location.location || 
+           existingLocation.officeName !== location.officeName ||
+           existingLocation.address !== location.address ||
+           existingLocation.isHeadquarters !== location.isHeadquarters)
+        )
+      )
+      
+      // Update changed locations
+      for (const location of locationsToUpdate) {
+        if (location.id) {
+          await companyApi.updateOfficeLocation(location.id, {
+            location: location.location,
+            officeName: location.officeName,
+            address: location.address,
+            isHeadquarters: location.isHeadquarters
+          })
+        }
+      }
+      
+      setOfficeLocations(locationsData)
+      toast.success('Office locations updated successfully')
+    } catch (error) {
+      console.error('Error updating office locations:', error)
+      toast.error('Failed to update office locations')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  // Handle saving about section
+  const handleSaveAbout = async (aboutUs: string) => {
+    try {
+      setSaving(true)
+      const response = await companyApi.updateProfile({ about_us: aboutUs })
+      if (response.success) {
+        setCompanyProfile(prev => prev ? { ...prev, about_us: aboutUs } : null)
+        toast.success('About section updated successfully')
+      } else {
+        toast.error('Failed to update about section')
+      }
+    } catch (error) {
+      console.error('Error updating about section:', error)
+      toast.error('Failed to update about section')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  // Handle saving workplace pictures
+  const handleSaveWorkplacePictures = async (pictures: WorkplacePicture[]) => {
+    try {
+      setSaving(true)
+      
+      // Find pictures to delete (existing pictures not in the new list)
+      const picturesToDelete = workplacePictures.filter(existingPicture => 
+        existingPicture.id && !pictures.some(newPicture => newPicture.id === existingPicture.id)
+      )
+      
+      // Delete removed pictures
+      for (const picture of picturesToDelete) {
+        if (picture.id) {
+          await companyApi.deleteWorkplacePicture(picture.id)
+        }
+      }
+      
+      // Find pictures to create (new pictures without IDs)
+      const picturesToCreate = pictures.filter(picture => !picture.id)
+      
+      // Create new pictures
+      for (const picture of picturesToCreate) {
+        await companyApi.createWorkplacePicture({
+          pictureUrl: picture.pictureUrl,
+          caption: picture.caption
+        })
+      }
+      
+      // Find pictures to update (existing pictures with changes)
+      const picturesToUpdate = pictures.filter(picture => 
+        picture.id && workplacePictures.some(existingPicture => 
+          existingPicture.id === picture.id && 
+          (existingPicture.pictureUrl !== picture.pictureUrl || existingPicture.caption !== picture.caption)
+        )
+      )
+      
+      // Update changed pictures
+      for (const picture of picturesToUpdate) {
+        if (picture.id) {
+          await companyApi.updateWorkplacePicture(picture.id, {
+            pictureUrl: picture.pictureUrl,
+            caption: picture.caption
+          })
+        }
+      }
+      
+      setWorkplacePictures(pictures)
+      toast.success('Workplace pictures updated successfully')
+    } catch (error) {
+      console.error('Error updating workplace pictures:', error)
+      toast.error('Failed to update workplace pictures')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  if (loading) {
+    return (
+      <CompanyLayout>
+        <div className="flex items-center justify-center h-64">
+          <Loading />
+        </div>
+      </CompanyLayout>
+    )
+  }
+
+  if (!companyProfile) {
+    return (
+      <CompanyLayout>
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <p className="text-gray-500 mb-4">Failed to load company profile</p>
+            <Button onClick={fetchCompanyData}>Retry</Button>
+          </div>
+        </div>
+      </CompanyLayout>
+    )
+  }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between py-4">
-            <Button
-              variant="ghost"
-              onClick={() => navigate('/company/dashboard')}
-              className="flex items-center space-x-2"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              <span>Back to Dashboard</span>
-            </Button>
+    <CompanyLayout>
+      {/* Company Header Section */}
+      <div className="bg-white border-b border-gray-200 px-7 py-5">
+        <div className="flex items-start justify-between">
+          {/* Left Section - Company Info */}
+          <div className="flex items-start gap-5">
+            {/* Company Logo with Back Button Overlay */}
+            <div className="relative">
+              <div className="w-24 h-24 bg-green-500 rounded-full flex items-center justify-center">
+                <div className="text-white text-2xl font-bold">♫</div>
+              </div>
+              {/* Back Button Overlay */}
+              <Button variant="outline" size="sm" className="absolute -top-1.5 -left-1.5 w-7 h-7 p-0 bg-white border-purple-200">
+                <ArrowLeft className="h-3.5 w-3.5 text-purple-500" />
+              </Button>
+            </div>
             
-            <div className="flex items-center space-x-3">
-              <Button variant="outline" size="sm">
-                <Share2 className="h-4 w-4 mr-2" />
-                Share Profile
-              </Button>
-              <Button variant="outline" size="sm">
-                <Download className="h-4 w-4 mr-2" />
-                Export
-              </Button>
+            {/* Company Name, Website, and Stats */}
+            <div className="space-y-3.5">
+              {/* Company Name and Website */}
+              <div>
+                <div className="text-2xl font-bold text-gray-900 mb-1">{companyProfile.company_name}</div>
+                <div className="text-base font-semibold text-purple-500">{companyProfile.website_link || 'No website'}</div>
+              </div>
+              
+              {/* Company Stats Row */}
+              <div className="flex items-center gap-7">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 bg-gray-100 border border-gray-200 rounded-full flex items-center justify-center">
+                    <Flame className="h-4 w-4 text-blue-500" />
+                  </div>
+                  <div>
+                    <div className="text-xs text-gray-600">Founded</div>
+                    <div className="font-semibold text-gray-900 text-sm">{companyProfile.created_at ? new Date(companyProfile.created_at).getFullYear() : 'Not specified'}</div>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 bg-gray-100 border border-gray-200 rounded-full flex items-center justify-center">
+                    <Users className="h-4 w-4 text-blue-500" />
+                  </div>
+                  <div>
+                    <div className="text-xs text-gray-600">Employees</div>
+                    <div className="font-semibold text-gray-900 text-sm">{companyProfile.employee_count || 'Not specified'}</div>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 bg-gray-100 border border-gray-200 rounded-full flex items-center justify-center">
+                    <MapPin className="h-4 w-4 text-blue-500" />
+                  </div>
+                  <div>
+                    <div className="text-xs text-gray-600">Location</div>
+                    <div className="font-semibold text-gray-900 text-sm">{officeLocations.length > 0 ? officeLocations[0].location : 'Not specified'}</div>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 bg-gray-100 border border-gray-200 rounded-full flex items-center justify-center">
+                    <Building2 className="h-4 w-4 text-blue-500" />
+                  </div>
+                  <div>
+                    <div className="text-xs text-gray-600">Industry</div>
+                    <div className="font-semibold text-gray-900 text-sm">{companyProfile.industry}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          {/* Right Section - Profile Settings Button */}
+          <Button 
+            variant="outline" 
+            className="bg-purple-50 border-purple-200 text-purple-600 hover:bg-purple-100 px-3.5 py-1.5 text-sm"
+          >
+            <Plus className="h-3.5 w-3.5 mr-1.5" />
+            Profile Settings
+          </Button>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="flex gap-5 px-5 py-7">
+        {/* Left Content */}
+        <div className="flex-1 space-y-5">
+          {/* Company Profile Section */}
+          <div className="bg-white rounded-lg p-4">
+            <div className="flex items-center justify-between mb-3.5">
+              <h3 className="text-lg font-semibold">About us</h3>
               <Button 
-                onClick={() => setIsEditing(!isEditing)}
-                className="bg-primary hover:bg-primary/90"
+                variant="outline" 
+                size="sm" 
+                className="p-1.5"
+                onClick={() => setEditAboutDialog(true)}
+                disabled={saving}
               >
-                <Edit3 className="h-4 w-4 mr-2" />
-                {isEditing ? 'Cancel Edit' : 'Edit Profile'}
+                <Edit3 className="h-3.5 w-3.5" />
+              </Button>
+            </div>
+            <p className="text-gray-600 leading-relaxed text-sm">
+              {companyProfile.about_us || 'No description available. Click edit to add one.'}
+            </p>
+                    </div>
+                    
+          {/* Divider */}
+          <div className="border-t border-gray-200"></div>
+
+          {/* Contact Section */}
+          <div className="bg-white rounded-lg p-4">
+            <div className="flex items-center justify-between mb-3.5">
+              <h3 className="text-lg font-semibold">Contact</h3>
+              <div className="flex gap-1.5">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="p-1.5"
+                  onClick={() => setEditContactDialog(true)}
+                  disabled={saving}
+                >
+                  <Edit3 className="h-3.5 w-3.5" />
+                </Button>
+                  </div>
+                </div>
+                
+            {/* Contact Links */}
+            {contact ? (
+            <div className="space-y-2.5">
+              <div className="flex gap-2.5">
+                  {contact.twitter_link && (
+                <div className="flex items-center gap-3 px-2.5 py-1.5 border border-primary rounded-lg text-primary">
+                  <Twitter className="h-4 w-4" />
+                      <span className="font-medium text-sm">{contact.twitter_link}</span>
+                </div>
+                  )}
+                  {contact.facebook_link && (
+                <div className="flex items-center gap-3 px-2.5 py-1.5 border border-primary rounded-lg text-primary">
+                  <Facebook className="h-4 w-4" />
+                      <span className="font-medium text-sm">{contact.facebook_link}</span>
+                </div>
+                  )}
+                  </div>
+              <div className="flex gap-2.5">
+                  {contact.phone && (
+                <div className="flex items-center gap-3 px-2.5 py-1.5 border border-primary rounded-lg text-primary">
+                      <Phone className="h-4 w-4" />
+                      <span className="font-medium text-sm">{contact.phone}</span>
+                </div>
+                  )}
+                  {contact.email && (
+                <div className="flex items-center gap-3 px-2.5 py-1.5 border border-primary rounded-lg text-primary">
+                  <Mail className="h-4 w-4" />
+                      <span className="font-medium text-sm">{contact.email}</span>
+                    </div>
+                  )}
+                </div>
+                <div className="flex gap-2.5">
+                  {contact.linkedin && (
+                    <div className="flex items-center gap-3 px-2.5 py-1.5 border border-primary rounded-lg text-primary">
+                      <Linkedin className="h-4 w-4" />
+                      <span className="font-medium text-sm">{contact.linkedin}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div className="text-gray-500 text-sm">
+                No contact information available. Click edit to add contact details.
+            </div>
+            )}
+          </div>
+
+          {/* Divider */}
+          <div className="border-t border-gray-200"></div>
+
+          {/* Workplace Pictures Section */}
+          <div className="bg-white rounded-lg p-4">
+            <div className="flex items-center justify-between mb-3.5">
+              <h3 className="text-lg font-semibold">Workplace Pictures</h3>
+              <div className="flex gap-1.5">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="p-1.5"
+                  onClick={() => setEditWorkplacePicturesDialog(true)}
+                  disabled={saving}
+                >
+                  <Edit3 className="h-3.5 w-3.5" />
+                </Button>
+              </div>
+                </div>
+                
+            {/* Working Environment Images */}
+            {workplacePictures.length > 0 ? (
+            <div className="flex gap-2.5">
+                {workplacePictures.slice(0, 1).map((picture, index) => (
+                  <div key={picture.id || index} className="w-64 h-72 bg-gray-200 rounded-lg overflow-hidden">
+                    <img src={picture.pictureUrl} alt={picture.caption || "Workplace"} className="w-full h-full object-cover" />
+              </div>
+                ))}
+              <div className="flex flex-col gap-2.5">
+                  {workplacePictures.slice(1, 4).map((picture, index) => (
+                    <div key={picture.id || index} className="w-48 h-44 bg-gray-200 rounded-lg overflow-hidden">
+                      <img src={picture.pictureUrl} alt={picture.caption || "Workplace"} className="w-full h-full object-cover" />
+                </div>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div className="text-center py-8">
+                <div className="text-gray-500 text-sm mb-2">No workplace pictures added yet</div>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => setEditWorkplacePicturesDialog(true)}
+                  disabled={saving}
+                >
+                  <Plus className="h-3.5 w-3.5 mr-1.5" />
+                  Add Pictures
+                </Button>
+            </div>
+            )}
+          </div>
+
+          {/* Divider */}
+          <div className="border-t border-gray-200"></div>
+
+          {/* Team Section */}
+          <div className="bg-white rounded-lg p-4">
+            <div className="flex items-center justify-between mb-3.5">
+              <h3 className="text-lg font-semibold">Team</h3>
+              <div className="flex gap-1.5">
+                <Button variant="outline" size="sm" className="p-1.5">
+                  <Plus className="h-3.5 w-3.5" />
+                </Button>
+                <Button variant="outline" size="sm" className="p-1.5">
+                  <Edit3 className="h-3.5 w-3.5" />
+                </Button>
+              </div>
+            </div>
+            
+            {/* Team Members */}
+            {teamMembers.length > 0 ? (
+            <div className="grid grid-cols-3 gap-3.5">
+                {teamMembers.map((member, index) => (
+                  <div key={member.id || index} className="bg-gray-50 border border-gray-200 rounded-lg p-5 text-center">
+                  <Avatar className="w-16 h-16 mx-auto mb-3">
+                    <AvatarImage src={member.avatar} />
+                    <AvatarFallback>{member.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                  </Avatar>
+                  <h4 className="font-semibold text-sm">{member.name}</h4>
+                  <p className="text-gray-600 text-xs">{member.role}</p>
+                  <div className="flex justify-center gap-1.5 mt-2.5">
+                      {member.instagram && (
+                    <Button variant="ghost" size="sm" className="p-1">
+                      <Instagram className="h-3.5 w-3.5 text-gray-600" />
+                    </Button>
+                      )}
+                      {member.linkedin && (
+                    <Button variant="ghost" size="sm" className="p-1">
+                      <Linkedin className="h-3.5 w-3.5 text-gray-600" />
+                    </Button>
+                      )}
+                  </div>
+                </div>
+              ))}
+            </div>
+            ) : (
+              <div className="text-gray-500 text-sm">
+                No team members added yet. Click add to add team members.
+              </div>
+            )}
+            
+            <div className="flex justify-end mt-3.5">
+              <Button variant="ghost" className="text-primary text-sm">
+                View all core teams
+                <ArrowRight className="h-3.5 w-3.5 ml-1.5" />
               </Button>
             </div>
           </div>
-        </div>
-      </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left Column - Company Overview */}
-          <div className="lg:col-span-1 space-y-6">
-            {/* Company Card */}
-            <Card className="overflow-hidden">
-              <div className="h-32 bg-gradient-to-r from-primary/20 to-primary/10"></div>
-              <CardContent className="relative -mt-16 pb-6">
-                <div className="flex flex-col items-center text-center">
-                  <Avatar className="h-24 w-24 border-4 border-white shadow-lg">
-                    <AvatarImage src={company.logo} alt={company.company_name} />
-                    <AvatarFallback className="text-2xl font-bold">
-                      {company.company_name.split(' ').map(n => n[0]).join('')}
-                    </AvatarFallback>
-                  </Avatar>
-                  
-                  <div className="mt-4 space-y-2">
-                    <h1 className="text-2xl font-bold text-gray-900">{company.company_name}</h1>
-                    
-                    <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium border ${verificationStatus.bgColor} ${verificationStatus.color} ${verificationStatus.borderColor}`}>
-                      <StatusIcon className="h-4 w-4 mr-1" />
-                      {verificationStatus.text}
+          {/* Divider */}
+          <div className="border-t border-gray-200"></div>
+
+          {/* Benefits Section */}
+          <div className="bg-white rounded-lg p-4">
+            <div className="flex items-center justify-between mb-3.5">
+              <h3 className="text-lg font-semibold">Benefits</h3>
+              <div className="flex gap-1.5">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="p-1.5"
+                  onClick={() => setEditBenefitsDialog(true)}
+                  disabled={saving}
+                >
+                  <Edit3 className="h-3.5 w-3.5" />
+                </Button>
                     </div>
-                    
-                    <p className="text-gray-600 text-sm">{company.industry} • {company.organisation}</p>
-                    <p className="text-gray-500 text-sm">Founded {company.founded}</p>
+                  </div>
+                  
+            {/* Benefits Grid */}
+            {benefits.length > 0 ? (
+            <div className="grid grid-cols-3 gap-3.5">
+                {benefits.map((benefit, index) => (
+                  <div key={benefit.id || index} className="bg-gray-50 p-5 rounded-lg">
+                <div className="flex items-center gap-3.5 mb-3.5">
+                  <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
+                    <Heart className="h-5 w-5 text-white" />
+                  </div>
+                    <div>
+                        <h4 className="font-semibold text-sm">{benefit.perk}</h4>
+                        <p className="text-xs text-gray-600">{benefit.description}</p>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
-
-            {/* Quick Stats */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Activity className="h-5 w-5" />
-                  <span>Quick Stats</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <Briefcase className="h-4 w-4 text-gray-500" />
-                    <span className="text-sm text-gray-600">Active Jobs</span>
+                    </div>
+                ))}
                   </div>
-                  <span className="font-semibold">{company.stats.activeJobs}</span>
-                </div>
-                
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <Users className="h-4 w-4 text-gray-500" />
-                    <span className="text-sm text-gray-600">Total Applications</span>
+            ) : (
+              <div className="text-gray-500 text-sm">
+                No benefits added yet. Click edit to add benefits and perks.
                   </div>
-                  <span className="font-semibold">{company.stats.totalApplications.toLocaleString()}</span>
-                </div>
-                
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <TrendingUp className="h-4 w-4 text-gray-500" />
-                    <span className="text-sm text-gray-600">Response Rate</span>
-                  </div>
-                  <span className="font-semibold text-green-600">{company.stats.responseRate}%</span>
-                </div>
-                
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <Clock className="h-4 w-4 text-gray-500" />
-                    <span className="text-sm text-gray-600">Avg Response</span>
-                  </div>
-                  <span className="font-semibold">{company.stats.avgResponseTime}</span>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Contact Information */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Mail className="h-5 w-5" />
-                  <span>Contact Info</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="flex items-center space-x-3">
-                  <Mail className="h-4 w-4 text-gray-500" />
-                  <a href={`mailto:${company.email}`} className="text-sm text-primary hover:underline">
-                    {company.email}
-                  </a>
-                </div>
-                
-                <div className="flex items-center space-x-3">
-                  <Phone className="h-4 w-4 text-gray-500" />
-                  <span className="text-sm text-gray-600">{company.phone}</span>
-                </div>
-                
-                <div className="flex items-center space-x-3">
-                  <Globe className="h-4 w-4 text-gray-500" />
-                  <a 
-                    href={company.website} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="text-sm text-primary hover:underline flex items-center space-x-1"
-                  >
-                    <span>Visit Website</span>
-                    <ExternalLink className="h-3 w-3" />
-                  </a>
-                </div>
-                
-                <div className="flex items-center space-x-3">
-                  <MapPin className="h-4 w-4 text-gray-500" />
-                  <span className="text-sm text-gray-600">{company.headquarters}</span>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Social Media */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Social Media</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex space-x-3">
-                  <a href={company.socialMedia.linkedin} target="_blank" rel="noopener noreferrer" className="p-2 rounded-lg bg-blue-50 hover:bg-blue-100 transition-colors">
-                    <Linkedin className="h-5 w-5 text-blue-600" />
-                  </a>
-                  <a href={company.socialMedia.twitter} target="_blank" rel="noopener noreferrer" className="p-2 rounded-lg bg-sky-50 hover:bg-sky-100 transition-colors">
-                    <Twitter className="h-5 w-5 text-sky-600" />
-                  </a>
-                  <a href={company.socialMedia.facebook} target="_blank" rel="noopener noreferrer" className="p-2 rounded-lg bg-blue-50 hover:bg-blue-100 transition-colors">
-                    <Facebook className="h-5 w-5 text-blue-600" />
-                  </a>
-                  <a href={company.socialMedia.instagram} target="_blank" rel="noopener noreferrer" className="p-2 rounded-lg bg-pink-50 hover:bg-pink-100 transition-colors">
-                    <Instagram className="h-5 w-5 text-pink-600" />
-                  </a>
-                </div>
-              </CardContent>
-            </Card>
+            )}
           </div>
 
-          {/* Right Column - Detailed Information */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* About Section */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Building2 className="h-5 w-5" />
-                  <span>About {company.company_name}</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-700 leading-relaxed">{company.description}</p>
-                
-                <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="flex items-center space-x-3">
-                    <Users className="h-5 w-5 text-gray-500" />
-                    <div>
-                      <p className="text-sm font-medium text-gray-900">Company Size</p>
-                      <p className="text-sm text-gray-600">{company.employees} employees</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center space-x-3">
-                    <Calendar className="h-5 w-5 text-gray-500" />
-                    <div>
-                      <p className="text-sm font-medium text-gray-900">Founded</p>
-                      <p className="text-sm text-gray-600">{company.founded}</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center space-x-3">
-                    <MapPin className="h-5 w-5 text-gray-500" />
-                    <div>
-                      <p className="text-sm font-medium text-gray-900">Location</p>
-                      <p className="text-sm text-gray-600">{company.location}</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center space-x-3">
-                    <Shield className="h-5 w-5 text-gray-500" />
-                    <div>
-                      <p className="text-sm font-medium text-gray-900">Tax ID</p>
-                      <p className="text-sm text-gray-600">{company.tax_id}</p>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+          {/* Divider */}
+          <div className="border-t border-gray-200"></div>
 
-            {/* Benefits & Perks */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Heart className="h-5 w-5" />
-                  <span>Benefits & Perks</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {company.benefits.map((benefit, index) => (
-                    <div key={index} className="flex items-center space-x-2">
-                      <CheckCircle className="h-4 w-4 text-green-500 flex-shrink-0" />
-                      <span className="text-sm text-gray-700">{benefit}</span>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Awards & Recognition */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Award className="h-5 w-5" />
-                  <span>Awards & Recognition</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {company.awards.map((award, index) => (
-                    <div key={index} className="flex items-center space-x-3 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
-                      <Star className="h-5 w-5 text-yellow-500" />
-                      <span className="text-sm font-medium text-gray-900">{award}</span>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Recent Job Postings */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <Briefcase className="h-5 w-5" />
-                    <span>Recent Job Postings</span>
-                  </div>
-                  <Button variant="outline" size="sm">
-                    View All Jobs
-                  </Button>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {company.recentJobs.map((job) => (
-                    <div key={job.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition-colors">
+          {/* Open Positions */}
+          <div className="bg-white rounded-lg p-4">
+            <div className="flex items-center justify-between mb-3.5">
+              <h3 className="text-lg font-semibold">Open Positions</h3>
+              <Button variant="ghost" className="text-primary text-sm">
+                Show all jobs
+                <ArrowRight className="h-3.5 w-3.5 ml-1.5" />
+              </Button>
+            </div>
+            
+            {/* Job Listings */}
+            {jobPostings.length > 0 ? (
+              <div className="space-y-3">
+                {jobPostings.map((job) => (
+                  <div key={job.id} className="border border-gray-200 rounded-lg p-3 hover:border-primary/20 transition-colors">
+                    <div className="flex items-start justify-between">
                       <div className="flex-1">
-                        <h4 className="font-medium text-gray-900">{job.title}</h4>
-                        <div className="flex items-center space-x-4 mt-1 text-sm text-gray-600">
-                          <span className="flex items-center space-x-1">
+                        <h4 className="font-medium text-gray-900 mb-1">{job.title}</h4>
+                        <p className="text-sm text-gray-600 mb-2 line-clamp-2">{job.description}</p>
+                        <div className="flex items-center gap-4 text-xs text-gray-500">
+                          <span className="flex items-center gap-1">
                             <MapPin className="h-3 w-3" />
-                            <span>{job.location}</span>
+                            {job.location}
                           </span>
-                          <span className="flex items-center space-x-1">
+                          <span className="flex items-center gap-1">
                             <Briefcase className="h-3 w-3" />
-                            <span>{job.type}</span>
+                            {job.employmentType}
                           </span>
-                          <span className="flex items-center space-x-1">
-                            <Users className="h-3 w-3" />
-                            <span>{job.applications} applications</span>
-                          </span>
+                          {job.salaryMin && job.salaryMax && (
+                            <span className="flex items-center gap-1">
+                              <span className="font-medium">${job.salaryMin.toLocaleString()} - ${job.salaryMax.toLocaleString()}</span>
+                            </span>
+                          )}
                         </div>
                       </div>
-                      <div className="flex items-center space-x-2">
-                        <span className="text-sm text-gray-500">{job.posted}</span>
-                        <Button variant="ghost" size="sm">
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                      </div>
                     </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-gray-500 text-sm text-center py-4">
+                No active job postings available.
+              </div>
+            )}
+          </div>
+        </div>
 
-            {/* Verification Documents */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <FileText className="h-5 w-5" />
-                  <span>Verification Documents</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between p-3 border rounded-lg">
-                    <div className="flex items-center space-x-3">
-                      <FileText className="h-5 w-5 text-gray-500" />
+        {/* Right Sidebar */}
+        <div className="w-80 space-y-7">
+          {/* Tech Stack */}
+          <div className="bg-white rounded-lg p-4">
+            <div className="flex items-center justify-between mb-3.5">
+              <h3 className="text-lg font-semibold">Tech Stack</h3>
+              <div className="flex gap-1.5">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="p-1.5"
+                  onClick={() => setEditTechStackDialog(true)}
+                  disabled={saving}
+                >
+                  <Edit3 className="h-3.5 w-3.5" />
+                </Button>
+              </div>
+            </div>
+            
+            {/* Tech Icons */}
+            {techStack.length > 0 ? (
                       <div>
-                        <p className="text-sm font-medium text-gray-900">Business License</p>
-                        <p className="text-xs text-gray-500">Uploaded on Jan 15, 2023</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Badge variant="secondary" className="bg-green-50 text-green-700">
-                        <CheckCircle className="h-3 w-3 mr-1" />
-                        Verified
-                      </Badge>
-                      <Button variant="ghost" size="sm">
-                        <Download className="h-4 w-4" />
-                      </Button>
-                    </div>
+                {/* Display tech stack in rows of 3 */}
+                {Array.from({ length: Math.ceil(techStack.length / 3) }).map((_, rowIndex) => (
+                  <div key={rowIndex} className="flex gap-2.5 mb-2.5">
+                    {techStack.slice(rowIndex * 3, (rowIndex + 1) * 3).map((tech, index) => (
+                      <div key={tech.id || index} className="flex flex-col items-center gap-1.5 p-2.5">
+                  <div className="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center">
+                          <span className="text-xs font-semibold">{tech.techStack.charAt(0).toUpperCase()}</span>
                   </div>
-                  
-                  <div className="flex items-center justify-between p-3 border rounded-lg">
-                    <div className="flex items-center space-x-3">
-                      <FileText className="h-5 w-5 text-gray-500" />
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">Tax ID Document</p>
-                        <p className="text-xs text-gray-500">Uploaded on Jan 15, 2023</p>
+                        <span className="text-xs">{tech.techStack}</span>
+                </div>
+                    ))}
+                  </div>
+                ))}
+              
+              <div className="border-t border-gray-200 pt-3.5">
+                <Button variant="ghost" className="text-primary text-sm">
+                  View tech stack
+                  <ArrowRight className="h-3.5 w-3.5 ml-1.5" />
+                </Button>
+              </div>
+            </div>
+            ) : (
+              <div className="text-gray-500 text-sm">
+                No tech stack added yet. Click edit to add technologies.
+              </div>
+            )}
+          </div>
+
+          {/* Office Locations */}
+          <div className="bg-white rounded-lg p-4">
+            <div className="flex items-center justify-between mb-3.5">
+              <h3 className="text-lg font-semibold">Office Locations</h3>
+              <div className="flex gap-1.5">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="p-1.5"
+                  onClick={() => setEditOfficeLocationDialog(true)}
+                  disabled={saving}
+                >
+                  <Edit3 className="h-3.5 w-3.5" />
+                </Button>
                       </div>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <Badge variant="secondary" className="bg-green-50 text-green-700">
-                        <CheckCircle className="h-3 w-3 mr-1" />
-                        Verified
+            
+            {/* Locations List */}
+            {officeLocations.length > 0 ? (
+            <div className="space-y-2.5 mb-3.5">
+                {officeLocations.map((location, index) => (
+                  <div key={location.id || index} className="flex items-center gap-2.5">
+                    <div className="text-xl">🏢</div>
+                  <div className="flex-1">
+                      <div className="font-semibold text-xs">{location.location}</div>
+                      {location.isHeadquarters && (
+                      <Badge className="bg-blue-100 text-blue-700 text-xs mt-1 px-2 py-0.5">
+                          Headquarters
                       </Badge>
-                      <Button variant="ghost" size="sm">
-                        <Download className="h-4 w-4" />
-                      </Button>
-                    </div>
+                    )}
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+              ))}
+            </div>
+            ) : (
+              <div className="text-gray-500 text-sm mb-3.5">
+                No office locations added yet. Click edit to add locations.
+              </div>
+            )}
+            
+            <Button variant="ghost" className="text-primary text-sm">
+              View countries
+              <ArrowRight className="h-3.5 w-3.5 ml-1.5" />
+            </Button>
           </div>
         </div>
       </div>
-    </div>
+
+      {/* Dialogs */}
+      <EditContactDialog
+        isOpen={editContactDialog}
+        onClose={() => setEditContactDialog(false)}
+        onSave={handleSaveContact}
+        contact={contact || undefined}
+      />
+
+      <EditTechStackDialog
+        isOpen={editTechStackDialog}
+        onClose={() => setEditTechStackDialog(false)}
+        onSave={handleSaveTechStack}
+        techStack={techStack}
+      />
+
+      <EditBenefitsDialog
+        isOpen={editBenefitsDialog}
+        onClose={() => setEditBenefitsDialog(false)}
+        onSave={handleSaveBenefits}
+        benefits={benefits}
+      />
+
+      <EditOfficeLocationDialog
+        isOpen={editOfficeLocationDialog}
+        onClose={() => setEditOfficeLocationDialog(false)}
+        onSave={handleSaveOfficeLocations}
+        locations={officeLocations}
+      />
+
+      <EditAboutDialog
+        isOpen={editAboutDialog}
+        onClose={() => setEditAboutDialog(false)}
+        onSave={handleSaveAbout}
+        aboutUs={companyProfile.about_us || ''}
+      />
+
+      <EditWorkplacePicturesDialog
+        isOpen={editWorkplacePicturesDialog}
+        onClose={() => setEditWorkplacePicturesDialog(false)}
+        onSave={handleSaveWorkplacePictures}
+        pictures={workplacePictures}
+      />
+    </CompanyLayout>
   )
 }
 

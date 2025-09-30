@@ -1,0 +1,14 @@
+import { z } from 'zod';
+
+export const CreateCompanyOfficeLocationDto = z.object({
+  companyId: z.string().optional(), // Will be set by the system
+  location: z.string().min(1, 'Location cannot be empty'),
+  officeName: z.string().optional(),
+  address: z.string().optional(),
+  isHeadquarters: z.boolean().default(false),
+});
+
+export const UpdateCompanyOfficeLocationDto = CreateCompanyOfficeLocationDto.partial();
+
+export type CreateCompanyOfficeLocationDto = z.infer<typeof CreateCompanyOfficeLocationDto>;
+export type UpdateCompanyOfficeLocationDto = z.infer<typeof UpdateCompanyOfficeLocationDto>;
