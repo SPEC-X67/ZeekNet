@@ -47,6 +47,22 @@ export const TYPES = {
   GetCompaniesWithVerificationUseCase: Symbol.for('GetCompaniesWithVerificationUseCase'),
   VerifyCompanyUseCase: Symbol.for('VerifyCompanyUseCase'),
 
+  // Company profile section repositories
+  CompanyContactRepository: Symbol.for('CompanyContactRepository'),
+  CompanyTechStackRepository: Symbol.for('CompanyTechStackRepository'),
+  CompanyOfficeLocationRepository: Symbol.for('CompanyOfficeLocationRepository'),
+  CompanyBenefitsRepository: Symbol.for('CompanyBenefitsRepository'),
+  CompanyWorkplacePicturesRepository: Symbol.for('CompanyWorkplacePicturesRepository'),
+  CompanyTeamRepository: Symbol.for('CompanyTeamRepository'),
+
+  // Company profile section use cases
+  CompanyContactUseCase: Symbol.for('CompanyContactUseCase'),
+  CompanyTechStackUseCase: Symbol.for('CompanyTechStackUseCase'),
+  CompanyOfficeLocationUseCase: Symbol.for('CompanyOfficeLocationUseCase'),
+  CompanyBenefitsUseCase: Symbol.for('CompanyBenefitsUseCase'),
+  CompanyWorkplacePicturesUseCase: Symbol.for('CompanyWorkplacePicturesUseCase'),
+  CompanyTeamUseCase: Symbol.for('CompanyTeamUseCase'),
+
   RegistrationController: Symbol.for('RegistrationController'),
   LoginController: Symbol.for('LoginController'),
   TokenController: Symbol.for('TokenController'),

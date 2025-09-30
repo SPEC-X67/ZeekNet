@@ -10,8 +10,7 @@ import {
   TrendingUp,
   Calendar,
   Eye,
-  RotateCcw,
-  User
+  RotateCcw
 } from 'lucide-react'
 import { companyApi } from '@/api/company.api'
 import { useNavigate } from 'react-router-dom'
@@ -95,7 +94,7 @@ const CompanyDashboard = () => {
 
   return (
     <CompanyLayout>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen">
         {/* Main Content */}
         <div className="px-6 py-6">
           {/* Greeting Section */}
@@ -107,14 +106,6 @@ const CompanyDashboard = () => {
               </p>
             </div>
             <div className="flex items-center space-x-3">
-              <Button 
-                variant="outline" 
-                onClick={() => navigate('/company/profile')}
-                className="flex items-center space-x-2"
-              >
-                <User className="h-4 w-4" />
-                <span>View Profile</span>
-              </Button>
               <div className="flex items-center space-x-2 px-3 py-2 bg-white border border-gray-200 rounded-lg">
                 <Calendar className="h-3 w-3 text-[#4640DE]" />
                 <span className="text-sm font-semibold text-gray-900">Jul 19 - Jul 25</span>

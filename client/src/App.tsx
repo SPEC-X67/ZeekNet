@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+  import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { Toaster } from 'sonner'
 import Landing from './pages/Landing'
 import Login from './pages/auth/Login'
@@ -24,6 +24,10 @@ import AuthRedirect from './components/common/AuthRedirect'
 import { UserRole } from './constants/enums'
 import CompanyReapplication from './pages/company/CompanyReapplication'
 import CompanyProfile from './pages/company/CompanyProfile'
+import CompanyJobListing from './pages/company/JobListing'
+import CompanySettings from './pages/company/CompanySettings'
+import JobDetails from './pages/company/JobDetails'
+import EditJob from './pages/company/EditJob'
 
 function App() {
   return (
@@ -110,6 +114,26 @@ function App() {
           <Route path="/company/profile" element={
             <ProtectedRoute allowedRoles={[UserRole.COMPANY]}>
               <CompanyProfile />
+            </ProtectedRoute>
+          } />
+          <Route path="/company/job-listing" element={
+            <ProtectedRoute allowedRoles={[UserRole.COMPANY]}>
+              <CompanyJobListing />
+            </ProtectedRoute>
+          } />
+          <Route path="/company/settings" element={
+            <ProtectedRoute allowedRoles={[UserRole.COMPANY]}>
+              <CompanySettings />
+            </ProtectedRoute>
+          } />
+          <Route path="/company/job-details/:id" element={
+            <ProtectedRoute allowedRoles={[UserRole.COMPANY]}>
+              <JobDetails />
+            </ProtectedRoute>
+          } />
+          <Route path="/company/edit-job/:id" element={
+            <ProtectedRoute allowedRoles={[UserRole.COMPANY]}>
+              <EditJob />
             </ProtectedRoute>
           } />
           

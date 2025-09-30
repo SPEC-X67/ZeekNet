@@ -42,10 +42,12 @@ export class SeekerController extends BaseController {
   getJobPosting = async (req: Request, res: Response): Promise<void> => {
     try {
       const { id } = req.params;
+      const userRole = (req as any).user?.role;
       
       const jobPosting = await this.getJobPostingUseCase.execute(id);
       
-      this.incrementJobViewCountUseCase.execute(id).catch(console.error);
+      // Only increment view count for seekers
+      this.incrementJobViewCountUseCase.execute(id, userRole).catch(console.error);
       
       this.success(res, jobPosting, 'Job posting retrieved successfully');
     } catch (error) {

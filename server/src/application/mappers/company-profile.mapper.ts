@@ -14,8 +14,13 @@ import {
 
 interface CompanyProfileWithDetails {
   profile: CompanyProfile;
-  contact: CompanyContact | null;
-  locations: CompanyLocation[];
+  contact: any | null;
+  locations: any[];
+  techStack: any[];
+  benefits: any[];
+  team: any[];
+  workplacePictures: any[];
+  jobPostings?: any[];
 }
 
 @injectable()
@@ -95,26 +100,60 @@ export class CompanyProfileMapper {
       profile: this.toDto(domain.profile),
       contact: domain.contact ? this.mapContactToDto(domain.contact) : null,
       locations: domain.locations.map(location => this.mapLocationToDto(location)),
+      techStack: domain.techStack.map(tech => ({
+        id: tech.id,
+        techStack: tech.techStack,
+      })),
+      benefits: domain.benefits.map(benefit => ({
+        id: benefit.id,
+        perk: benefit.perk,
+        description: benefit.description,
+      })),
+      team: domain.team.map(member => ({
+        id: member.id,
+        name: member.name,
+        role: member.role,
+        avatar: member.avatar,
+        instagram: member.instagram,
+        linkedin: member.linkedin,
+      })),
+      workplacePictures: domain.workplacePictures.map(picture => ({
+        id: picture.id,
+        pictureUrl: picture.pictureUrl,
+        caption: picture.caption,
+      })),
+      jobPostings: domain.jobPostings ? domain.jobPostings.map(job => ({
+        id: job._id,
+        title: job.title,
+        description: job.description,
+        location: job.location,
+        employmentType: job.employment_types?.[0] || '',
+        salaryMin: job.salary?.min,
+        salaryMax: job.salary?.max,
+        isActive: job.is_active,
+        createdAt: job.createdAt,
+        updatedAt: job.updatedAt,
+      })) : [],
     };
   }
 
-  private mapContactToDto(contact: CompanyContact): CompanyContactResponseDto {
+  private mapContactToDto(contact: any): CompanyContactResponseDto {
     return {
       id: contact.id,
       email: contact.email,
-      phone: contact.phone,
-      twitter_link: contact.twitterLink,
-      facebook_link: contact.facebookLink,
-      linkedin: contact.linkedin,
+      phone: contact.phone || '',
+      twitter_link: contact.twitterLink || '',
+      facebook_link: contact.facebookLink || '',
+      linkedin: contact.linkedin || '',
     };
   }
 
-  private mapLocationToDto(location: CompanyLocation): CompanyLocationResponseDto {
+  private mapLocationToDto(location: any): CompanyLocationResponseDto {
     return {
       id: location.id,
       location: location.location,
-      office_name: location.officeName,
-      address: location.address,
+      office_name: location.officeName || '',
+      address: location.address || '',
       is_headquarters: location.isHeadquarters,
     };
   }

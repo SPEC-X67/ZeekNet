@@ -19,7 +19,7 @@ const CompanyLayout = ({ children }: CompanyLayoutProps) => {
           <CompanyHeader />
         </div>
 
-        <main className="flex-1 p-6 bg-muted/30 mt-16 overflow-y-auto">
+        <main className="flex-1 p-6 mt-16 overflow-y-auto">
           <div className="max-w-7xl mx-auto">
             {children}
           </div>

@@ -73,6 +73,40 @@ export interface CompanyProfileWithDetailsResponseDto {
   profile: CompanyProfileResponseDto;
   contact: CompanyContactResponseDto | null;
   locations: CompanyLocationResponseDto[];
+  techStack: {
+    id: string;
+    techStack: string;
+  }[];
+  benefits: {
+    id: string;
+    perk: string;
+    description: string;
+  }[];
+  team: {
+    id: string;
+    name: string;
+    role: string;
+    avatar?: string;
+    instagram?: string;
+    linkedin?: string;
+  }[];
+  workplacePictures: {
+    id: string;
+    pictureUrl: string;
+    caption?: string;
+  }[];
+  jobPostings: {
+    id: string;
+    title: string;
+    description: string;
+    location: string;
+    employmentType: string;
+    salaryMin?: number;
+    salaryMax?: number;
+    isActive: boolean;
+    createdAt: string;
+    updatedAt: string;
+  }[];
 }
 
 // Job Posting Types
@@ -108,8 +142,8 @@ export interface JobPostingResponseDto {
   is_active: boolean;
   view_count: number;
   application_count: number;
-  created_at: Date;
-  updated_at: Date;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 // User Types

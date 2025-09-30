@@ -5,6 +5,12 @@ import { TYPES } from './types';
 import { MongoUserRepository } from '../database/mongodb/repositories/user.repository';
 import { MongoCompanyRepository } from '../database/mongodb/repositories/company.repository';
 import { MongoJobPostingRepository } from '../database/mongodb/repositories/job-posting.repository';
+import { MongoCompanyContactRepository } from '../database/mongodb/repositories/company-contact.repository';
+import { MongoCompanyTechStackRepository } from '../database/mongodb/repositories/company-tech-stack.repository';
+import { MongoCompanyOfficeLocationRepository } from '../database/mongodb/repositories/company-office-location.repository';
+import { MongoCompanyBenefitsRepository } from '../database/mongodb/repositories/company-benefits.repository';
+import { MongoCompanyWorkplacePicturesRepository } from '../database/mongodb/repositories/company-workplace-pictures.repository';
+import { MongoCompanyTeamRepository } from '../database/mongodb/repositories/company-team.repository';
 
 import { BcryptPasswordHasher } from '../security/bcrypt-password-hasher';
 import { JwtTokenService } from '../security/jwt-token-service';
@@ -34,6 +40,15 @@ import {
   GetCompanyProfileUseCase,
   ReapplyCompanyVerificationUseCase,
 } from '../../application/use-cases';
+
+import {
+  CompanyContactUseCase,
+  CompanyTechStackUseCase,
+  CompanyOfficeLocationUseCase,
+  CompanyBenefitsUseCase,
+  CompanyWorkplacePicturesUseCase,
+  CompanyTeamUseCase,
+} from '../../application/use-cases/company';
 
 import {
   CreateJobPostingUseCase,
@@ -77,6 +92,14 @@ container.bind(TYPES.UserRepository).to(MongoUserRepository);
 container.bind(TYPES.CompanyRepository).to(MongoCompanyRepository);
 container.bind(TYPES.JobPostingRepository).to(MongoJobPostingRepository);
 
+// Company profile section repositories
+container.bind(TYPES.CompanyContactRepository).to(MongoCompanyContactRepository);
+container.bind(TYPES.CompanyTechStackRepository).to(MongoCompanyTechStackRepository);
+container.bind(TYPES.CompanyOfficeLocationRepository).to(MongoCompanyOfficeLocationRepository);
+container.bind(TYPES.CompanyBenefitsRepository).to(MongoCompanyBenefitsRepository);
+container.bind(TYPES.CompanyWorkplacePicturesRepository).to(MongoCompanyWorkplacePicturesRepository);
+container.bind(TYPES.CompanyTeamRepository).to(MongoCompanyTeamRepository);
+
 container.bind(TYPES.CompanyProfileMapper).to(CompanyProfileMapper);
 container.bind(TYPES.JobPostingMapper).to(JobPostingMapper);
 container.bind(TYPES.UserMapper).to(UserMapper);
@@ -104,6 +127,14 @@ container.bind(TYPES.CreateCompanyProfileUseCase).to(CreateCompanyProfileUseCase
 container.bind(TYPES.UpdateCompanyProfileUseCase).to(UpdateCompanyProfileUseCase);
 container.bind(TYPES.GetCompanyProfileUseCase).to(GetCompanyProfileUseCase);
 container.bind(TYPES.ReapplyCompanyVerificationUseCase).to(ReapplyCompanyVerificationUseCase);
+
+// Company profile section use cases
+container.bind(TYPES.CompanyContactUseCase).to(CompanyContactUseCase);
+container.bind(TYPES.CompanyTechStackUseCase).to(CompanyTechStackUseCase);
+container.bind(TYPES.CompanyOfficeLocationUseCase).to(CompanyOfficeLocationUseCase);
+container.bind(TYPES.CompanyBenefitsUseCase).to(CompanyBenefitsUseCase);
+container.bind(TYPES.CompanyWorkplacePicturesUseCase).to(CompanyWorkplacePicturesUseCase);
+container.bind(TYPES.CompanyTeamUseCase).to(CompanyTeamUseCase);
 
 container.bind(TYPES.CreateJobPostingUseCase).to(CreateJobPostingUseCase);
 container.bind(TYPES.GetJobPostingUseCase).to(GetJobPostingUseCase);

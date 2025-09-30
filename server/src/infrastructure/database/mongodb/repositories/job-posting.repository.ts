@@ -73,6 +73,13 @@ export class MongoJobPostingRepository implements JobPostingRepository {
     const jobPosting = await JobPostingModel.findById(id)
       .populate('company_id', 'companyName logo');
     
+    if (jobPosting) {
+      console.log('Repository findById - raw company_id:', jobPosting.company_id);
+      console.log('Repository findById - company_id type:', typeof jobPosting.company_id);
+      console.log('Repository findById - company_id toString:', jobPosting.company_id?.toString());
+      console.log('Repository findById - full job document:', JSON.stringify(jobPosting, null, 2));
+    }
+    
     return jobPosting ? this.mapDocumentToEntity(jobPosting) : null;
   }
 
@@ -89,6 +96,7 @@ export class MongoJobPostingRepository implements JobPostingRepository {
 
     const [jobs, total] = await Promise.all([
       JobPostingModel.find(query)
+        .select('_id title description location employment_types salary is_active application_count view_count createdAt updatedAt')
         .populate('company_id', 'companyName logo')
         .skip(skip)
         .limit(limit)

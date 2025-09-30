@@ -41,10 +41,12 @@ export class CompanyJobPostingController extends BaseController {
   getJobPosting = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
       const { id } = req.params;
+      const userRole = req.user?.role;
       
       const jobPosting = await this.getJobPostingUseCase.execute(id);
       
-      this.incrementJobViewCountUseCase.execute(id).catch(console.error);
+      // Only increment view count for seekers
+      this.incrementJobViewCountUseCase.execute(id, userRole).catch(console.error);
 
       const responseData = this.jobPostingMapper.toDto(jobPosting);
       this.success(res, responseData, 'Job posting retrieved successfully');
@@ -75,7 +77,13 @@ export class CompanyJobPostingController extends BaseController {
 
       const result = await this.getCompanyJobPostingsUseCase.execute(companyId, query);
       
-      this.success(res, result, 'Company job postings retrieved successfully');
+      // Map domain entities to DTOs
+      const responseData = {
+        jobs: result.jobs.map(job => this.jobPostingMapper.toDto(job)),
+        pagination: result.pagination
+      };
+      
+      this.success(res, responseData, 'Company job postings retrieved successfully');
     } catch (error) {
       this.handleError(res, error);
     }
@@ -86,6 +94,10 @@ export class CompanyJobPostingController extends BaseController {
     try {
       const { id } = req.params;
       const companyId = req.user?.id;
+      
+      console.log('UpdateJobPosting Controller - jobId:', id);
+      console.log('UpdateJobPosting Controller - companyId from req.user?.id:', companyId);
+      console.log('UpdateJobPosting Controller - req.user:', req.user);
       
       if (!companyId) {
         this.unauthorized(res, 'Company ID not found');
@@ -106,6 +118,10 @@ export class CompanyJobPostingController extends BaseController {
     try {
       const { id } = req.params;
       const companyId = req.user?.id;
+      
+      console.log('DeleteJobPosting Controller - jobId:', id);
+      console.log('DeleteJobPosting Controller - companyId from req.user?.id:', companyId);
+      console.log('DeleteJobPosting Controller - req.user:', req.user);
       
       if (!companyId) {
         this.unauthorized(res, 'Company ID not found');

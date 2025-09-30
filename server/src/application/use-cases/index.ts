@@ -32,3 +32,11 @@ export { GetUserByIdUseCase as AdminGetUserByIdUseCase } from './admin/get-user-
 export { GetAllCompaniesUseCase } from './admin/get-all-companies.use-case';
 export { GetCompaniesWithVerificationUseCase } from './admin/get-companies-with-verification.use-case';
 export { VerifyCompanyUseCase } from './admin/verify-company.use-case';
+
+// Company profile section use cases
+export { CompanyContactUseCase } from './company/company-contact.use-case';
+export { CompanyTechStackUseCase } from './company/company-tech-stack.use-case';
+export { CompanyOfficeLocationUseCase } from './company/company-office-location.use-case';
+export { CompanyBenefitsUseCase } from './company/company-benefits.use-case';
+export { CompanyWorkplacePicturesUseCase } from './company/company-workplace-pictures.use-case';
+export { CompanyTeamUseCase } from './company/company-team.use-case';
