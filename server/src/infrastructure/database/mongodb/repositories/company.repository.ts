@@ -116,6 +116,7 @@ export class MongoCompanyRepository implements Partial<ICompanyRepository> {
     
     console.log('MongoDB update result:', {
       found: !!updated,
+      logo: updated?.logo,
       aboutUs: updated?.aboutUs
     });
     

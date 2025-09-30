@@ -1,15 +1,9 @@
 import { injectable, inject } from 'inversify';
-import { UpdateCompanyProfileRequestDto } from '../../dto/company/create-company.dto';
+import { SimpleUpdateCompanyProfileRequestDto } from '../../dto/company/company-profile.dto';
 import { TYPES } from '../../../infrastructure/di/types';
 import { ICompanyRepository } from '../../../domain/repositories';
 import { CompanyProfile } from '../../../domain/entities';
 
-interface OfficeLocationData {
-  location: string;
-  office_name: string;
-  address: string;
-  is_headquarters: boolean;
-}
 
 @injectable()
 export class UpdateCompanyProfileUseCase {
@@ -20,7 +14,7 @@ export class UpdateCompanyProfileUseCase {
 
   async execute(
     userId: string,
-    data: UpdateCompanyProfileRequestDto,
+    data: { profile: SimpleUpdateCompanyProfileRequestDto },
   ): Promise<CompanyProfile> {
     const existingProfile = await this.companyRepository.getProfileByUserId(userId);
     if (!existingProfile) {
@@ -37,9 +31,15 @@ export class UpdateCompanyProfileUseCase {
           websiteLink: data.profile.website_link,
           employeeCount: data.profile.employee_count,
           industry: data.profile.industry,
-          organisation: existingProfile.organisation, // Keep existing value
+          organisation: data.profile.organisation || existingProfile.organisation,
           aboutUs: data.profile.about_us,
         }
+      });
+      
+      console.log('Logo field details:', {
+        logoFromRequest: data.profile.logo,
+        logoType: typeof data.profile.logo,
+        logoLength: data.profile.logo?.length
       });
       
       const updatedProfile = await this.companyRepository.updateProfile(existingProfile.id, {
@@ -49,40 +49,19 @@ export class UpdateCompanyProfileUseCase {
         websiteLink: data.profile.website_link,
         employeeCount: data.profile.employee_count,
         industry: data.profile.industry,
-        organisation: existingProfile.organisation, // Keep existing value
+        organisation: data.profile.organisation || existingProfile.organisation,
         aboutUs: data.profile.about_us,
       });
       
       console.log('Profile updated successfully:', {
         id: updatedProfile.id,
+        logo: updatedProfile.logo,
         aboutUs: updatedProfile.aboutUs
       });
     }
 
-    if (data.contact) {
-      await this.companyRepository.updateContact(existingProfile.id, {
-        email: data.contact.email,
-        phone: data.contact.phone,
-        twitterLink: data.contact.twitter_link,
-        facebookLink: data.contact.facebook_link,
-        linkedin: data.contact.linkedin,
-      });
-    }
-
-    if (data.office_locations) {
-      await this.companyRepository.deleteLocations(existingProfile.id);
-      await Promise.all(
-        data.office_locations.map((location: OfficeLocationData) =>
-          this.companyRepository.createLocation({
-            companyId: existingProfile.id,
-            location: location.location,
-            officeName: location.office_name,
-            address: location.address,
-            isHeadquarters: location.is_headquarters,
-          }),
-        ),
-      );
-    }
+    // Note: Contact and office locations are handled by separate endpoints
+    // This use case only handles profile updates
 
     const updatedProfile = await this.companyRepository.getProfileByUserId(userId);
     if (!updatedProfile) {

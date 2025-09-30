@@ -65,25 +65,8 @@ export const companyApi = {
   },
 
   async updateProfile(data: Partial<CompanyProfileData>): Promise<ApiEnvelope<CompanyProfileResponse>> {
-    // For simple text updates, send as JSON
-    if (!data.logo && !data.business_license) {
-      return baseApi.put<CompanyProfileResponse>('/api/company/profile')(data);
-    }
-
-    // For file uploads, use FormData
-    const formData = new FormData();
-
-    Object.entries(data).forEach(([key, value]) => {
-      if (value !== undefined && value !== null && key !== 'logo' && key !== 'business_license') {
-        formData.append(key, String(value));
-      }
-    });
-
-    return baseApi.put<CompanyProfileResponse>('/api/company/profile')(formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
+    // Always send as JSON for profile updates (logo is a URL string, not a file)
+    return baseApi.put<CompanyProfileResponse>('/api/company/profile')(data);
   },
 
   async reapplyVerification(data: CompanyProfileData): Promise<ApiEnvelope<CompanyProfileResponse>> {
