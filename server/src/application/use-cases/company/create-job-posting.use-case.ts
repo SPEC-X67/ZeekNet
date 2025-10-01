@@ -5,6 +5,7 @@ import { AppError } from '../../../domain/errors/errors';
 import { TYPES } from '../../../infrastructure/di/types';
 import { JobPostingMapper } from '../../mappers/job-posting.mapper';
 import { JobPostingResponseDto } from '../../mappers/types';
+import { ICompanyRepository } from '../../../domain/repositories';
 
 @injectable()
 export class CreateJobPostingUseCase {
@@ -13,11 +14,20 @@ export class CreateJobPostingUseCase {
     private jobPostingRepository: JobPostingRepository,
     @inject(TYPES.JobPostingMapper)
     private jobPostingMapper: JobPostingMapper,
+    @inject(TYPES.CompanyRepository)
+    private companyRepository: ICompanyRepository,
   ) {}
 
-  async execute(companyId: string, data: CreateJobPostingRequestDto): Promise<JobPostingResponseDto> {
+  async execute(userId: string, data: CreateJobPostingRequestDto): Promise<JobPostingResponseDto> {
     try {
-      const jobPostingData = this.jobPostingMapper.toDomain(data, companyId);
+      // Get company profile by user ID
+      const companyProfile = await this.companyRepository.getProfileByUserId(userId);
+      
+      if (!companyProfile) {
+        throw new AppError('Company profile not found', 404);
+      }
+
+      const jobPostingData = this.jobPostingMapper.toDomain(data, companyProfile.id);
       const jobPosting = await this.jobPostingRepository.create(jobPostingData);
       return this.jobPostingMapper.toDto(jobPosting);
     } catch (error) {
