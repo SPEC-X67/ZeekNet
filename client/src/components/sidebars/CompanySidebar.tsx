@@ -51,7 +51,7 @@ const CompanySidebar = () => {
     },
     {
       title: 'Job Listing',
-      href: '/company/jobs',
+      href: '/company/job-listing',
       icon: ClipboardList
     },
     {

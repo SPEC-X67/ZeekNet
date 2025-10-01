@@ -25,7 +25,7 @@ const AdminDashboard = () => {
     { label: 'Active Jobs', value: '924', icon: Briefcase, color: 'bg-green-100 text-green-600', iconColor: 'text-green-600' },
     { label: 'Expired Jobs', value: '10', icon: Briefcase, color: 'bg-yellow-100 text-yellow-600', iconColor: 'text-yellow-600' },
     { label: 'Pending Company', value: '16', icon: AlertCircle, color: 'bg-red-100 text-red-600', iconColor: 'text-red-600', clickable: true, route: '/admin/pending-companies' },
-    { label: 'All Jobs', value: '950', icon: Briefcase, color: 'bg-blue-100 text-blue-600', iconColor: 'text-blue-600' }
+    { label: 'All Jobs', value: '950', icon: Briefcase, color: 'bg-blue-100 text-blue-600', iconColor: 'text-blue-600', clickable: true, route: '/admin/jobs' }
   ]
 
   const recentJobs = [
@@ -41,12 +41,10 @@ const AdminDashboard = () => {
   return (
     <AdminLayout>
       <div className="space-y-6">
-        {/* Header */}
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
         </div>
 
-        {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {stats.map((stat, index) => (
             <Card 
@@ -74,9 +72,7 @@ const AdminDashboard = () => {
           ))}
         </div>
 
-        {/* Charts Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 w-full mx-auto">
-          {/* Earnings Overview */}
           <Card className="border-0 shadow-md">
             <CardHeader className="pb-4">
               <CardTitle className="text-lg font-semibold text-gray-800">Your Earnings Overview Of This Year</CardTitle>
@@ -111,7 +107,6 @@ const AdminDashboard = () => {
             </CardContent>
           </Card>
 
-          {/* Popular Location */}
           <Card className="border-0 shadow-md">
             <CardHeader className="pb-4">
               <CardTitle className="text-lg font-semibold text-gray-800">Popular Location</CardTitle>
@@ -120,7 +115,6 @@ const AdminDashboard = () => {
               <div className="flex">
                 <div className="w-32 h-32 mr-4 relative">
                   <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-                    {/* United States - 25% */}
                     <circle
                       cx="50"
                       cy="50"
@@ -131,7 +125,6 @@ const AdminDashboard = () => {
                       strokeDasharray={`${25 * 2.51} 251`}
                       strokeDashoffset="0"
                     />
-                    {/* United Kingdom - 18% */}
                     <circle
                       cx="50"
                       cy="50"
@@ -142,7 +135,6 @@ const AdminDashboard = () => {
                       strokeDasharray={`${18 * 2.51} 251`}
                       strokeDashoffset={`-${25 * 2.51}`}
                     />
-                    {/* Canada - 15% */}
                     <circle
                       cx="50"
                       cy="50"
@@ -153,7 +145,6 @@ const AdminDashboard = () => {
                       strokeDasharray={`${15 * 2.51} 251`}
                       strokeDashoffset={`-${(25 + 18) * 2.51}`}
                     />
-                    {/* Australia - 12% */}
                     <circle
                       cx="50"
                       cy="50"
@@ -164,7 +155,6 @@ const AdminDashboard = () => {
                       strokeDasharray={`${12 * 2.51} 251`}
                       strokeDashoffset={`-${(25 + 18 + 15) * 2.51}`}
                     />
-                    {/* Germany - 10% */}
                     <circle
                       cx="50"
                       cy="50"
@@ -175,7 +165,6 @@ const AdminDashboard = () => {
                       strokeDasharray={`${10 * 2.51} 251`}
                       strokeDashoffset={`-${(25 + 18 + 15 + 12) * 2.51}`}
                     />
-                    {/* France - 8% */}
                     <circle
                       cx="50"
                       cy="50"
@@ -186,7 +175,6 @@ const AdminDashboard = () => {
                       strokeDasharray={`${8 * 2.51} 251`}
                       strokeDashoffset={`-${(25 + 18 + 15 + 12 + 10) * 2.51}`}
                     />
-                    {/* Japan - 7% */}
                     <circle
                       cx="50"
                       cy="50"
@@ -197,7 +185,6 @@ const AdminDashboard = () => {
                       strokeDasharray={`${7 * 2.51} 251`}
                       strokeDashoffset={`-${(25 + 18 + 15 + 12 + 10 + 8) * 2.51}`}
                     />
-                    {/* India - 5% */}
                     <circle
                       cx="50"
                       cy="50"
@@ -235,14 +222,19 @@ const AdminDashboard = () => {
           </Card>
         </div>
 
-        {/* Tables Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Recently Published Jobs */}
           <Card className="border-0 shadow-md">
             <CardHeader className="pb-4">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-lg font-semibold text-gray-800">Recently Published Jobs</CardTitle>
-                <Button variant="outline" size="sm" className="text-blue-600 border-blue-200 hover:bg-blue-50">View All</Button>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="text-blue-600 border-blue-200 hover:bg-blue-50"
+                  onClick={() => navigate('/admin/jobs')}
+                >
+                  View All
+                </Button>
               </div>
             </CardHeader>
             <CardContent>
@@ -265,7 +257,6 @@ const AdminDashboard = () => {
             </CardContent>
           </Card>
 
-          {/* Recently Purchased Orders */}
           <Card className="border-0 shadow-md">
             <CardHeader className="pb-4">
               <div className="flex items-center justify-between">

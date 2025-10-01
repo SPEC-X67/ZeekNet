@@ -46,6 +46,7 @@ export class SeekerController extends BaseController {
       
       const jobPosting = await this.getJobPostingUseCase.execute(id);
       
+      // Only increment view count for seekers
       this.incrementJobViewCountUseCase.execute(id, userRole).catch(console.error);
       
       this.success(res, jobPosting, 'Job posting retrieved successfully');

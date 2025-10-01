@@ -98,16 +98,16 @@ export const UpdateJobPostingDto = z.object({
 });
 
 export const JobPostingQueryDto = z.object({
-  is_active: z.boolean().optional(),
-  category_ids: z.array(z.string()).optional(),
-  employment_types: z.array(EmploymentTypeSchema).optional(),
-  salary_min: z.number().min(0).optional(),
-  salary_max: z.number().min(0).optional(),
+  is_active: z.coerce.boolean().optional(),
+  category_ids: z.string().transform(val => val.split(',')).optional(),
+  employment_types: z.string().transform(val => val.split(',') as ('full-time' | 'part-time' | 'contract' | 'internship' | 'remote')[]).optional(),
+  salary_min: z.coerce.number().min(0).optional(),
+  salary_max: z.coerce.number().min(0).optional(),
   company_id: z.string().optional(),
   location: z.string().optional(),
   search: z.string().optional(),
-  page: z.number().int().min(1).default(1),
-  limit: z.number().int().min(1).max(100).default(10),
+  page: z.coerce.number().int().min(1).default(1),
+  limit: z.coerce.number().int().min(1).max(100).default(10),
 });
 
 export type CreateJobPostingRequestDto = z.infer<typeof CreateJobPostingRequestDto>;

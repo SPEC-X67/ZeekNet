@@ -103,13 +103,11 @@ export class MongoCompanyRepository implements Partial<ICompanyRepository> {
     profileId: string,
     updates: Partial<CompanyProfile>,
   ): Promise<CompanyProfile> {
-    
     const updated = await CompanyProfileModel.findByIdAndUpdate(
       profileId,
       updates,
       { new: true },
     ).exec();
-    
     
     if (!updated) throw new Error('Profile not found');
     return this.mapToProfile(updated as CompanyProfileDocument);

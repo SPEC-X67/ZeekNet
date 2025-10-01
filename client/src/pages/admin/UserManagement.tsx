@@ -58,7 +58,6 @@ const UserManagement = () => {
     try {
       setLoading(true)
       const response = await adminApi.getAllUsers(params)
-      console.log(response.users)
 
       if (response) {
         const transformedUsers: UserWithDisplayData[] = response.users.map((user: User) => ({

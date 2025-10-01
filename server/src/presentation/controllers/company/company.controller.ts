@@ -109,6 +109,7 @@ export class CompanyController extends BaseController {
 
     try {
       const userId = this.validateUserId(req);
+      // Wrap the data in the expected structure
       const updateData = {
         profile: parsed.data
       };
@@ -137,6 +138,7 @@ export class CompanyController extends BaseController {
         return this.sendNotFoundResponse(res, 'Company profile not found');
       }
 
+      // Get latest 3 active job postings
       const jobPostingsQuery = {
         page: 1,
         limit: 3,
@@ -149,6 +151,7 @@ export class CompanyController extends BaseController {
         search: undefined,
       };
       
+      // Use userId to fetch job postings (since job postings are created with userId)
       const jobPostings = await this.getCompanyJobPostingsUseCase.execute(userId, jobPostingsQuery);
       
       const responseData = this.companyProfileMapper.toDetailedDto({
@@ -266,6 +269,7 @@ export class CompanyController extends BaseController {
     }
   };
 
+  // Company Contact endpoints
   getCompanyContact = async (
     req: AuthenticatedRequest,
     res: Response,
@@ -297,17 +301,21 @@ export class CompanyController extends BaseController {
         return this.sendNotFoundResponse(res, 'Company profile not found');
       }
       
+      // Validate the request body
       const parsed = UpdateCompanyContactDto.safeParse(req.body);
       if (!parsed.success) {
         return this.handleValidationError(`Invalid contact data: ${parsed.error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join(', ')}`, next);
       }
       
+      // Check if contact exists
       const existingContacts = await this.companyContactUseCase.getContactsByCompanyId(companyProfile.profile.id);
       
       if (existingContacts.length > 0) {
+        // Update existing contact
         const contact = await this.companyContactUseCase.updateContact(existingContacts[0].id, parsed.data);
         this.sendSuccessResponse(res, 'Company contact updated successfully', contact);
       } else {
+        // Create new contact if none exists
         const contact = await this.companyContactUseCase.createContact(companyProfile.profile.id, parsed.data);
         this.sendSuccessResponse(res, 'Company contact created successfully', contact);
       }
@@ -316,6 +324,7 @@ export class CompanyController extends BaseController {
     }
   };
 
+  // Company Tech Stack endpoints
   getCompanyTechStacks = async (
     req: AuthenticatedRequest,
     res: Response,
@@ -368,6 +377,7 @@ export class CompanyController extends BaseController {
 
       const { id } = req.params;
       
+      // First, verify the tech stack belongs to this company
       const existingTechStack = await this.companyTechStackUseCase.getTechStackById(id);
       if (!existingTechStack || existingTechStack.companyId !== companyProfile.profile.id) {
         return this.sendNotFoundResponse(res, 'Tech stack not found');
@@ -394,6 +404,7 @@ export class CompanyController extends BaseController {
 
       const { id } = req.params;
       
+      // First, verify the tech stack belongs to this company
       const existingTechStack = await this.companyTechStackUseCase.getTechStackById(id);
       if (!existingTechStack || existingTechStack.companyId !== companyProfile.profile.id) {
         return this.sendNotFoundResponse(res, 'Tech stack not found');
@@ -406,6 +417,7 @@ export class CompanyController extends BaseController {
     }
   };
 
+  // Company Office Location endpoints
   getCompanyOfficeLocations = async (
     req: AuthenticatedRequest,
     res: Response,
@@ -458,6 +470,7 @@ export class CompanyController extends BaseController {
 
       const { id } = req.params;
       
+      // First, verify the location belongs to this company
       const existingLocation = await this.companyOfficeLocationUseCase.getOfficeLocationById(id);
       if (!existingLocation || existingLocation.companyId !== companyProfile.profile.id) {
         return this.sendNotFoundResponse(res, 'Office location not found');
@@ -484,6 +497,7 @@ export class CompanyController extends BaseController {
 
       const { id } = req.params;
       
+      // First, verify the location belongs to this company
       const existingLocation = await this.companyOfficeLocationUseCase.getOfficeLocationById(id);
       if (!existingLocation || existingLocation.companyId !== companyProfile.profile.id) {
         return this.sendNotFoundResponse(res, 'Office location not found');
@@ -496,6 +510,7 @@ export class CompanyController extends BaseController {
     }
   };
 
+  // Company Benefits endpoints
   getCompanyBenefits = async (
     req: AuthenticatedRequest,
     res: Response,
@@ -548,6 +563,7 @@ export class CompanyController extends BaseController {
 
       const { id } = req.params;
       
+      // First, verify the benefit belongs to this company
       const existingBenefit = await this.companyBenefitsUseCase.getBenefitById(id);
       if (!existingBenefit || existingBenefit.companyId !== companyProfile.profile.id) {
         return this.sendNotFoundResponse(res, 'Benefit not found');
@@ -574,6 +590,7 @@ export class CompanyController extends BaseController {
 
       const { id } = req.params;
       
+      // First, verify the benefit belongs to this company
       const existingBenefit = await this.companyBenefitsUseCase.getBenefitById(id);
       if (!existingBenefit || existingBenefit.companyId !== companyProfile.profile.id) {
         return this.sendNotFoundResponse(res, 'Benefit not found');
@@ -586,6 +603,7 @@ export class CompanyController extends BaseController {
     }
   };
 
+  // Company Workplace Pictures endpoints
   getCompanyWorkplacePictures = async (
     req: AuthenticatedRequest,
     res: Response,
@@ -638,6 +656,7 @@ export class CompanyController extends BaseController {
 
       const { id } = req.params;
       
+      // First, verify the picture belongs to this company
       const existingPicture = await this.companyWorkplacePicturesUseCase.getPictureById(id);
       if (!existingPicture || existingPicture.companyId !== companyProfile.profile.id) {
         return this.sendNotFoundResponse(res, 'Workplace picture not found');
@@ -664,6 +683,7 @@ export class CompanyController extends BaseController {
 
       const { id } = req.params;
       
+      // First, verify the picture belongs to this company
       const picture = await this.companyWorkplacePicturesUseCase.getPictureById(id);
       if (!picture || picture.companyId !== companyProfile.profile.id) {
         return this.sendNotFoundResponse(res, 'Workplace picture not found');
@@ -698,6 +718,7 @@ export class CompanyController extends BaseController {
     }
   };
 
+  // Company Team endpoints
   getCompanyTeam = async (
     req: AuthenticatedRequest,
     res: Response,

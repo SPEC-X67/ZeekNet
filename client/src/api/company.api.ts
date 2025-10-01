@@ -66,7 +66,25 @@ export const companyApi = {
   },
 
   async updateProfile(data: Partial<CompanyProfileData>): Promise<ApiEnvelope<CompanyProfileResponse>> {
-    return baseApi.put<CompanyProfileResponse>('/api/company/profile')(data);
+    // For simple text updates, send as JSON
+    if (!data.logo && !data.business_license) {
+      return baseApi.put<CompanyProfileResponse>('/api/company/profile')(data);
+    }
+
+    // For file uploads, use FormData
+    const formData = new FormData();
+
+    Object.entries(data).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && key !== 'logo' && key !== 'business_license') {
+        formData.append(key, String(value));
+      }
+    });
+
+    return baseApi.put<CompanyProfileResponse>('/api/company/profile')(formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
   },
 
   async reapplyVerification(data: CompanyProfileData): Promise<ApiEnvelope<CompanyProfileResponse>> {
@@ -158,6 +176,7 @@ export const companyApi = {
     return baseApi.patch<JobPostingResponse>(`/api/company/jobs/${id}/status`)({ is_active });
   },
 
+  // Company Contact API
   async getContact(): Promise<ApiEnvelope<any>> {
     return baseApi.get<any>('/api/company/contact')();
   },
@@ -166,6 +185,7 @@ export const companyApi = {
     return baseApi.put<any>('/api/company/contact')(data);
   },
 
+  // Company Tech Stack API
   async getTechStacks(): Promise<ApiEnvelope<any[]>> {
     return baseApi.get<any[]>('/api/company/tech-stacks')();
   },
@@ -182,6 +202,7 @@ export const companyApi = {
     return baseApi.delete<any>(`/api/company/tech-stacks/${id}`)();
   },
 
+  // Company Office Location API
   async getOfficeLocations(): Promise<ApiEnvelope<any[]>> {
     return baseApi.get<any[]>('/api/company/office-locations')();
   },
@@ -198,6 +219,7 @@ export const companyApi = {
     return baseApi.delete<any>(`/api/company/office-locations/${id}`)();
   },
 
+  // Company Benefits API
   async getBenefits(): Promise<ApiEnvelope<any[]>> {
     return baseApi.get<any[]>('/api/company/benefits')();
   },
@@ -214,6 +236,7 @@ export const companyApi = {
     return baseApi.delete<any>(`/api/company/benefits/${id}`)();
   },
 
+  // Company Workplace Pictures API
   async getWorkplacePictures(): Promise<ApiEnvelope<any[]>> {
     return baseApi.get<any[]>('/api/company/workplace-pictures')();
   },
@@ -234,6 +257,7 @@ export const companyApi = {
     return uploadFile<{ url: string; filename: string }>('/api/company/workplace-pictures/upload', file, 'image');
   },
 
+  // Company Team API
   async getTeam(): Promise<ApiEnvelope<any[]>> {
     return baseApi.get<any[]>('/api/company/team')();
   },

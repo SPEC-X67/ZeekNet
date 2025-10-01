@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { 
   Bell, 
@@ -9,6 +10,7 @@ import { useAppSelector } from '@/hooks/useRedux'
 import { companyApi } from '@/api/company.api'
 
 const CompanyHeader = () => {
+  const navigate = useNavigate()
   const { name } = useAppSelector((state) => state.auth)
   const [companyName, setCompanyName] = useState(name || 'ZeekNet')
   const [loading, setLoading] = useState(true)
@@ -80,6 +82,7 @@ const CompanyHeader = () => {
               fontSize: '14px',
               lineHeight: '1.6'
             }}
+            onClick={() => navigate('/company/post-job')}
           >
             <Plus className="h-5 w-5" />
             Post a job

@@ -18,7 +18,7 @@ export const clearAuthToken = () => {
 }
 
 export const api: AxiosInstance = axios.create({
-  baseURL: (import.meta as ImportMeta).env?.VITE_API_URL || 'http://localhost:4000',
+  baseURL: (import.meta as ImportMeta).env?.VITE_API_URL || '',
   withCredentials: true,
   headers: { 'Content-Type': 'application/json' },
 })
@@ -40,7 +40,6 @@ api.interceptors.response.use(
     const original = error.config
     const errorMessage = error?.response?.data?.message || ''
     
-    // Handle blocked user (403 status)
     if (error?.response?.status === 403) {
       if ((errorMessage.includes('blocked') || errorMessage.includes('Company account is blocked')) && logoutCallback) {
         logoutCallback()
@@ -48,7 +47,6 @@ api.interceptors.response.use(
       }
     }
     
-    // Handle invalid refresh token - don't retry, just logout
     if (error?.response?.status === 401 && errorMessage.includes('Invalid refresh token')) {
       if (logoutCallback) {
         logoutCallback()
@@ -68,7 +66,6 @@ api.interceptors.response.use(
             const newToken = resp.data?.token || resp.data?.data?.token || null
             return newToken
           } catch (refreshError: any) {
-            // If refresh fails with invalid token, logout immediately
             const refreshErrorMessage = refreshError?.response?.data?.message || ''
             if (refreshErrorMessage.includes('Invalid refresh token') && logoutCallback) {
               logoutCallback()

@@ -57,10 +57,10 @@ const CompanyManagement = () => {
 
       const response = await adminApi.getAllCompanies(params)
       
-      if (response && response.companies) {
-        setCompanies(response.companies)
-        setTotalPages(response.pagination.totalPages)
-        setTotalCompanies(response.pagination.total)
+      if (response && response.data && response.data.companies) {
+        setCompanies(response.data.companies)
+        setTotalPages(response.data.pagination.totalPages)
+        setTotalCompanies(response.data.pagination.total)
       } else {
         setError('Failed to fetch companies')
       }

@@ -41,8 +41,8 @@ export class JobPostingMapper {
       is_active: domain.is_active,
       view_count: domain.view_count,
       application_count: domain.application_count,
-      created_at: domain.createdAt,
-      updated_at: domain.updatedAt,
+      createdAt: domain.createdAt,
+      updatedAt: domain.updatedAt,
     };
   }
 }

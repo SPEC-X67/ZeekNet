@@ -4,7 +4,6 @@ import { BaseController, AuthenticatedRequest } from '../../../shared/base/base-
 import { CreateJobPostingUseCase, GetJobPostingUseCase, GetCompanyJobPostingsUseCase, UpdateJobPostingUseCase, DeleteJobPostingUseCase, IncrementJobViewCountUseCase, UpdateJobStatusUseCase } from '../../../application/use-cases/company';
 import { CreateJobPostingRequestDto, UpdateJobPostingRequestDto, JobPostingQueryRequestDto } from '../../../application/dto/job-posting/job-posting.dto';
 import { TYPES } from '../../../infrastructure/di/types';
-import { JobPostingMapper } from '../../../application/mappers';
 
 @injectable()
 export class CompanyJobPostingController extends BaseController {
@@ -16,7 +15,6 @@ export class CompanyJobPostingController extends BaseController {
     @inject(TYPES.DeleteJobPostingUseCase) private deleteJobPostingUseCase: DeleteJobPostingUseCase,
     @inject(TYPES.IncrementJobViewCountUseCase) private incrementJobViewCountUseCase: IncrementJobViewCountUseCase,
     @inject(TYPES.UpdateJobStatusUseCase) private updateJobStatusUseCase: UpdateJobStatusUseCase,
-    @inject(TYPES.JobPostingMapper) private jobPostingMapper: JobPostingMapper,
   ) {
     super();
   }
@@ -31,8 +29,7 @@ export class CompanyJobPostingController extends BaseController {
 
       const createJobPostingDto: CreateJobPostingRequestDto = req.body;
       const jobPosting = await this.createJobPostingUseCase.execute(companyId, createJobPostingDto);
-      const responseData = this.jobPostingMapper.toDto(jobPosting);
-      this.created(res, responseData, 'Job posting created successfully');
+      this.created(res, jobPosting, 'Job posting created successfully');
     } catch (error) {
       this.handleError(res, error);
     }
@@ -41,13 +38,13 @@ export class CompanyJobPostingController extends BaseController {
   getJobPosting = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
       const { id } = req.params;
+      const userRole = req.user?.role;
       
       const jobPosting = await this.getJobPostingUseCase.execute(id);
       
-      this.incrementJobViewCountUseCase.execute(id).catch(console.error);
+      this.incrementJobViewCountUseCase.execute(id, userRole).catch(console.error);
 
-      const responseData = this.jobPostingMapper.toDto(jobPosting);
-      this.success(res, responseData, 'Job posting retrieved successfully');
+      this.success(res, jobPosting, 'Job posting retrieved successfully');
     } catch (error) {
       this.handleError(res, error);
     }
@@ -56,8 +53,9 @@ export class CompanyJobPostingController extends BaseController {
   getCompanyJobPostings = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
       const companyId = req.user?.id;
-      if (!companyId) {
-        this.unauthorized(res, 'Company ID not found');
+      
+      if (!companyId || companyId === 'undefined') {
+        this.unauthorized(res, 'Company ID not found - user may not be authenticated');
         return;
       }
 
@@ -75,7 +73,12 @@ export class CompanyJobPostingController extends BaseController {
 
       const result = await this.getCompanyJobPostingsUseCase.execute(companyId, query);
       
-      this.success(res, result, 'Company job postings retrieved successfully');
+      const responseData = {
+        jobs: result.jobs,
+        pagination: result.pagination
+      };
+      
+      this.success(res, responseData, 'Company job postings retrieved successfully');
     } catch (error) {
       this.handleError(res, error);
     }
@@ -86,6 +89,7 @@ export class CompanyJobPostingController extends BaseController {
     try {
       const { id } = req.params;
       const companyId = req.user?.id;
+      
       
       if (!companyId) {
         this.unauthorized(res, 'Company ID not found');
@@ -106,6 +110,7 @@ export class CompanyJobPostingController extends BaseController {
     try {
       const { id } = req.params;
       const companyId = req.user?.id;
+      
       
       if (!companyId) {
         this.unauthorized(res, 'Company ID not found');
