@@ -3,6 +3,7 @@ import { JobPosting, CreateJobPostingRequest, UpdateJobPostingRequest, JobPostin
 export interface IJobPostingRepository {
   create(data: CreateJobPostingRequest): Promise<JobPosting>;
   findById(id: string): Promise<JobPosting | null>;
+  findByIdForClient(id: string): Promise<any>;
   update(id: string, data: UpdateJobPostingRequest): Promise<JobPosting | null>;
   delete(id: string): Promise<boolean>;
 }

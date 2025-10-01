@@ -25,11 +25,13 @@ import { TokenController } from '../controllers/auth/token.controller';
 import { PasswordController } from '../controllers/auth/password.controller';
 import { OtpController } from '../controllers/auth/otp.controller';
 import { AdminController } from '../controllers/admin/admin.controller';
+import { AdminJobController } from '../controllers/admin/admin-job.controller';
 import { CompanyController } from '../controllers/company/company.controller';
 import { CompanyJobPostingController } from '../controllers/company/company-job-posting.controller';
 import { SeekerController } from '../controllers/seeker/seeker.controller';
 import { PublicJobController } from '../controllers/public/public-job.controller';
 import { UserBlockedMiddleware } from '../middleware/user-blocked.middleware';
+import { CompanyVerificationMiddleware } from '../middleware/company-verification.middleware';
 
 import { container } from '../../infrastructure/di/container';
 import { TYPES } from '../../infrastructure/di/types';
@@ -71,12 +73,14 @@ export class AppServer {
     const tokenController = container.get<TokenController>(TYPES.TokenController);
     const passwordController = container.get<PasswordController>(TYPES.PasswordController);
     const adminController = container.get<AdminController>(TYPES.AdminController);
+    const adminJobController = container.get<AdminJobController>(TYPES.AdminJobController);
     const companyController = container.get<CompanyController>(TYPES.CompanyController);
     const companyJobPostingController = container.get<CompanyJobPostingController>(TYPES.CompanyJobPostingController);
     const seekerController = container.get<SeekerController>(TYPES.SeekerController);
     const publicJobController = container.get<PublicJobController>(TYPES.PublicJobController);
     const otpController = container.get<OtpController>(TYPES.OtpController);
     const userBlockedMiddleware = container.get<UserBlockedMiddleware>(TYPES.UserBlockedMiddleware);
+    const companyVerificationMiddleware = container.get<CompanyVerificationMiddleware>(TYPES.CompanyVerificationMiddleware);
 
     this.app.get('/health', (req, res) => res.json({ 
       status: 'OK', 
@@ -89,8 +93,8 @@ export class AppServer {
     );
 
     this.app.use('/api/auth', createAuthRouter(registrationController, loginController, tokenController, passwordController, otpController));
-    this.app.use('/api/admin', createAdminRouter(adminController, userBlockedMiddleware));
-    this.app.use('/api/company', createCompanyRouter(companyController, companyJobPostingController, userBlockedMiddleware));
+    this.app.use('/api/admin', createAdminRouter(adminController, adminJobController, userBlockedMiddleware));
+    this.app.use('/api/company', createCompanyRouter(companyController, companyJobPostingController, userBlockedMiddleware, companyVerificationMiddleware));
     this.app.use('/api/seeker', createSeekerRoutes(seekerController));
     this.app.use('/api/public', createPublicRouter(publicJobController));
 

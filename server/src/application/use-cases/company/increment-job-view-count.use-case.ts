@@ -8,7 +8,6 @@ export class IncrementJobViewCountUseCase {
 
   async execute(id: string, userRole?: string): Promise<void> {
     try {
-      // Only increment view count for seekers, not for companies or admins
       if (userRole === 'seeker') {
         await this.jobPostingRepository.incrementViewCount(id);
       }

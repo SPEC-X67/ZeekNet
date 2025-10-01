@@ -8,6 +8,7 @@ import {
 import { uploadSingle } from '../middleware/upload.middleware';
 import { validateBody, validateQuery } from '../middleware/validation.middleware';
 import { UserBlockedMiddleware } from '../middleware/user-blocked.middleware';
+import { CompanyVerificationMiddleware } from '../middleware/company-verification.middleware';
 import { 
   CreateJobPostingRequestDto, 
   UpdateJobPostingDto, 
@@ -19,6 +20,7 @@ export function createCompanyRouter(
   companyController: CompanyController,
   jobPostingController: CompanyJobPostingController,
   userBlockedMiddleware: UserBlockedMiddleware,
+  companyVerificationMiddleware: CompanyVerificationMiddleware,
 ): Router {
   const router = Router();
   router.use(authenticateToken);
@@ -29,44 +31,39 @@ export function createCompanyRouter(
   router.put('/profile', companyController.updateCompanyProfile);
   router.get('/profile', companyController.getCompanyProfile);
   router.get('/profile/:profileId', companyController.getCompanyProfileById);
-
   router.post('/reapply-verification', validateBody(SimpleCompanyProfileDto), companyController.reapplyVerification);
-  router.get('/dashboard', companyController.getCompanyDashboard);
 
   router.post('/upload/logo', uploadSingle('logo'), companyController.uploadLogo);
   router.post('/upload/business-license', uploadSingle('business_license'), companyController.uploadBusinessLicense);
   router.delete('/upload/delete', companyController.deleteImage);
 
-  // Company Contact routes
+  router.use(companyVerificationMiddleware.checkCompanyVerified);
+  router.get('/dashboard', companyController.getCompanyDashboard);
+
   router.get('/contact', companyController.getCompanyContact);
   router.put('/contact', companyController.updateCompanyContact);
 
-  // Company Tech Stack routes
   router.get('/tech-stacks', companyController.getCompanyTechStacks);
   router.post('/tech-stacks', companyController.createCompanyTechStack);
   router.put('/tech-stacks/:id', companyController.updateCompanyTechStack);
   router.delete('/tech-stacks/:id', companyController.deleteCompanyTechStack);
 
-  // Company Office Location routes
   router.get('/office-locations', companyController.getCompanyOfficeLocations);
   router.post('/office-locations', companyController.createCompanyOfficeLocation);
   router.put('/office-locations/:id', companyController.updateCompanyOfficeLocation);
   router.delete('/office-locations/:id', companyController.deleteCompanyOfficeLocation);
 
-  // Company Benefits routes
   router.get('/benefits', companyController.getCompanyBenefits);
   router.post('/benefits', companyController.createCompanyBenefit);
   router.put('/benefits/:id', companyController.updateCompanyBenefit);
   router.delete('/benefits/:id', companyController.deleteCompanyBenefit);
 
-  // Company Workplace Pictures routes
   router.get('/workplace-pictures', companyController.getCompanyWorkplacePictures);
   router.post('/workplace-pictures', companyController.createCompanyWorkplacePicture);
   router.put('/workplace-pictures/:id', companyController.updateCompanyWorkplacePicture);
   router.delete('/workplace-pictures/:id', companyController.deleteCompanyWorkplacePicture);
   router.post('/workplace-pictures/upload', uploadSingle('image'), companyController.uploadWorkplacePicture);
 
-  // Company Team routes
   router.get('/team', companyController.getCompanyTeam);
   router.post('/team', companyController.createCompanyTeamMember);
   router.put('/team/:id', companyController.updateCompanyTeamMember);

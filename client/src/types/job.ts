@@ -23,6 +23,10 @@ export interface JobPostingResponse {
   company?: {
     companyName: string;
     logo?: string;
+    workplacePictures?: {
+      pictureUrl: string;
+      caption?: string;
+    }[];
   };
 }
 

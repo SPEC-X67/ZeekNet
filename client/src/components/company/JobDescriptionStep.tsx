@@ -12,7 +12,6 @@ const JobDescriptionStep: React.FC<JobPostingStepProps> = ({
 }) => {
   const { errors, handleFieldChange, validateFields } = useJobDescriptionForm(data, onDataChange);
 
-  // Wrapper function to handle array field changes
   const handleArrayFieldChange = (field: keyof JobPostingData, value: string[]) => {
     handleFieldChange(field, value as string | string[]);
   };

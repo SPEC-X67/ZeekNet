@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { 
@@ -8,8 +7,10 @@ import {
   MapPin, 
   Filter, 
   X,
-  DollarSign,
-  Briefcase
+  IndianRupee,
+  Briefcase,
+  Sliders,
+  Crosshair
 } from "lucide-react";
 import type { JobPostingQuery } from "@/types/job";
 
@@ -27,12 +28,12 @@ const employmentTypes = [
 ];
 
 const salaryRanges = [
-  { value: '0-50000', label: 'Under $50K', min: 0, max: 50000 },
-  { value: '50000-75000', label: '$50K - $75K', min: 50000, max: 75000 },
-  { value: '75000-100000', label: '$75K - $100K', min: 75000, max: 100000 },
-  { value: '100000-150000', label: '$100K - $150K', min: 100000, max: 150000 },
-  { value: '150000-200000', label: '$150K - $200K', min: 150000, max: 200000 },
-  { value: '200000+', label: '$200K+', min: 200000, max: 999999999 },
+  { value: '0-500000', label: 'Under ₹5L', min: 0, max: 500000 },
+  { value: '500000-1000000', label: '₹5L - ₹10L', min: 500000, max: 1000000 },
+  { value: '1000000-2000000', label: '₹10L - ₹20L', min: 1000000, max: 2000000 },
+  { value: '2000000-5000000', label: '₹20L - ₹50L', min: 2000000, max: 5000000 },
+  { value: '5000000-10000000', label: '₹50L - ₹1Cr', min: 5000000, max: 10000000 },
+  { value: '10000000+', label: '₹1Cr+', min: 10000000, max: 999999999 },
 ];
 
 const JobSearchFilters = ({ onSearch, loading = false }: JobSearchFiltersProps) => {
@@ -80,67 +81,84 @@ const JobSearchFilters = ({ onSearch, loading = false }: JobSearchFiltersProps) 
   return (
     <div className="space-y-4">
       {/* Main Search Bar */}
-      <Card className="border border-gray-200 shadow-sm">
-        <CardContent className="p-6">
-          <div className="flex flex-col md:flex-row gap-4">
+      <Card className="border border-gray-100 shadow-sm bg-white">
+        <CardContent className="p-3">
+          <div className="flex items-center gap-3">
             {/* Search Input */}
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-              <Input
-                placeholder="Job title, keywords, or company"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 h-12 border-gray-300 focus:border-primary focus:ring-primary"
-                onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-              />
+              <div className="flex items-center bg-white border border-gray-200 rounded-lg">
+                <div className="flex items-center px-3 py-3 border-r border-gray-200">
+                  <Search className="w-5 h-5 text-gray-400" />
+                </div>
+                <input
+                  type="text"
+                  placeholder="Search by: Job title, Position, Keyword..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="flex-1 px-3 py-3 text-sm placeholder-gray-400 focus:outline-none"
+                  onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                />
+              </div>
             </div>
+            
+            {/* Divider */}
+            <div className="w-px h-12 bg-gray-200"></div>
             
             {/* Location Input */}
             <div className="flex-1 relative">
-              <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-              <Input
-                placeholder="City, state, or remote"
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-                className="pl-10 h-12 border-gray-300 focus:border-primary focus:ring-primary"
-                onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-              />
+              <div className="flex items-center bg-white border border-gray-200 rounded-lg">
+                <div className="flex items-center px-3 py-3 border-r border-gray-200">
+                  <Crosshair className="w-5 h-5 text-gray-400" />
+                </div>
+                <input
+                  type="text"
+                  placeholder="City, state or zip code"
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  className="flex-1 px-3 py-3 text-sm placeholder-gray-400 focus:outline-none"
+                  onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                />
+                <div className="px-3 py-3">
+                  <MapPin className="w-5 h-5 text-primary" />
+                </div>
+              </div>
             </div>
             
-            {/* Search Button */}
-            <Button 
-              onClick={handleSearch}
-              disabled={loading}
-              className="h-12 px-8 bg-primary hover:bg-primary/90 text-white shadow-md hover:shadow-lg transition-all"
-            >
-              {loading ? "Searching..." : "Search Jobs"}
-            </Button>
+            {/* Filter and Search Buttons */}
+            <div className="flex items-center gap-3">
+              <Button
+                variant="outline"
+                onClick={() => setShowFilters(!showFilters)}
+                className="flex items-center gap-2 bg-gray-50 border-gray-200 hover:bg-gray-100"
+              >
+                <Sliders className="w-4 h-4" />
+                Filters
+                {hasActiveFilters && (
+                  <Badge variant="secondary" className="ml-2 bg-primary text-white">
+                    {[
+                      searchQuery && 1,
+                      location && 1,
+                      selectedEmploymentTypes.length,
+                      selectedSalaryRange && 1
+                    ].reduce((a, b) => (a || 0) + (b || 0), 0)}
+                  </Badge>
+                )}
+              </Button>
+              <Button 
+                onClick={handleSearch}
+                disabled={loading}
+                className="bg-primary hover:bg-primary/90 text-white px-6"
+              >
+                {loading ? "Searching..." : "Find Job"}
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Filters Toggle */}
-      <div className="flex items-center justify-between">
-        <Button
-          variant="outline"
-          onClick={() => setShowFilters(!showFilters)}
-          className="flex items-center gap-2"
-        >
-          <Filter className="w-4 h-4" />
-          Filters
-          {hasActiveFilters && (
-            <Badge variant="secondary" className="ml-2 bg-primary text-white">
-              {[
-                searchQuery && 1,
-                location && 1,
-                selectedEmploymentTypes.length,
-                selectedSalaryRange && 1
-              ].reduce((a, b) => (a || 0) + (b || 0), 0)}
-            </Badge>
-          )}
-        </Button>
-        
-        {hasActiveFilters && (
+      {/* Clear Filters */}
+      {hasActiveFilters && (
+        <div className="flex items-center justify-end">
           <Button
             variant="ghost"
             onClick={clearFilters}
@@ -148,8 +166,8 @@ const JobSearchFilters = ({ onSearch, loading = false }: JobSearchFiltersProps) 
           >
             Clear all filters
           </Button>
-        )}
-      </div>
+        </div>
+      )}
 
       {/* Advanced Filters */}
       {showFilters && (
@@ -188,7 +206,7 @@ const JobSearchFilters = ({ onSearch, loading = false }: JobSearchFiltersProps) 
             {/* Salary Range */}
             <div>
               <h4 className="font-medium text-gray-900 mb-3 flex items-center gap-2">
-                <DollarSign className="w-4 h-4" />
+                <IndianRupee className="w-4 h-4" />
                 Salary Range
               </h4>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-2">

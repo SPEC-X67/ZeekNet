@@ -20,19 +20,21 @@ export function authenticateToken(
   const token = authHeader?.startsWith('Bearer ')
     ? authHeader.substring(7)
     : undefined;
+  
   if (!token) {
     return next(new AuthenticationError('Missing access token'));
   }
   try {
     const tokenService = container.get<TokenService>(TYPES.TokenService);
     const payload = tokenService.verifyAccess(token);
+    
     req.user = {
       id: payload.sub,
       email: payload.email || '',
       role: payload.role || 'seeker',
     };
     next();
-  } catch {
+  } catch (error) {
     next(new AuthenticationError('Invalid or expired token'));
   }
 }

@@ -83,14 +83,12 @@ const JobDetails = () => {
     )
   }
 
-  // Use real data from API response
   const responsibilities = jobData.responsibilities || []
   const whoYouAre = jobData.qualifications || []
   const niceToHaves = jobData.nice_to_haves || []
   const requiredSkills = jobData.skills_required || []
   const benefits = jobData.benefits || []
 
-  // Map benefits to display format
   const benefitsList = [
     {
       icon: Heart,
@@ -125,11 +123,10 @@ const JobDetails = () => {
     {
       icon: Globe,
       title: 'We give back.',
-      description: 'We anonymously match any donation our employees make (up to $/€ 600) so they can support the organizations they care about most—times two.'
+      description: 'We anonymously match any donation our employees make (up to ₹50,000) so they can support the organizations they care about most—times two.'
     }
   ]
 
-  // Format dates
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
@@ -138,15 +135,13 @@ const JobDetails = () => {
     })
   }
 
-  // Format salary
   const formatSalary = () => {
     if (jobData.salary?.min && jobData.salary?.max) {
-      return `$${jobData.salary.min.toLocaleString()}-$${jobData.salary.max.toLocaleString()} USD`
+      return `₹${jobData.salary.min.toLocaleString()}-₹${jobData.salary.max.toLocaleString()}`
     }
     return 'Salary not specified'
   }
 
-  // Get employment type
   const getEmploymentType = () => {
     return jobData.employment_types?.[0] || 'Not specified'
   }
