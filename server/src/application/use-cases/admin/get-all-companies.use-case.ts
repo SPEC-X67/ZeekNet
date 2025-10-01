@@ -2,10 +2,11 @@ import { injectable, inject } from 'inversify';
 import { GetAllCompaniesRequestDto } from '../../dto/admin/user-management.dto';
 import { TYPES } from '../../../infrastructure/di/types';
 import { ICompanyRepository } from '../../../domain/repositories';
-import { CompanyProfile } from '../../../domain/entities';
+import { CompanyProfileMapper } from '../../mappers/company-profile.mapper';
+import { CompanyProfileResponseDto } from '../../mappers/types';
 
 interface GetAllCompaniesResult {
-  companies: CompanyProfile[];
+  companies: CompanyProfileResponseDto[];
   pagination: {
     page: number;
     limit: number;
@@ -21,6 +22,8 @@ export class GetAllCompaniesUseCase {
   constructor(
     @inject(TYPES.CompanyRepository)
     private readonly companyRepository: ICompanyRepository,
+    @inject(TYPES.CompanyProfileMapper)
+    private readonly companyProfileMapper: CompanyProfileMapper,
   ) {}
 
   async execute(options: GetAllCompaniesRequestDto): Promise<GetAllCompaniesResult> {
@@ -34,7 +37,7 @@ export class GetAllCompaniesUseCase {
     };
     const result = await this.companyRepository.getAllCompanies(convertedOptions);
     return {
-      companies: result.companies,
+      companies: result.companies.map(company => this.companyProfileMapper.toDto(company)),
       pagination: {
         page: convertedOptions.page,
         limit: convertedOptions.limit,

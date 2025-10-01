@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import CompanyLayout from '../../components/layouts/CompanyLayout'
-import CompanyProfileStatus from '../../components/company/CompanyProfileStatus'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -9,79 +8,16 @@ import {
   FileText,
   TrendingUp,
   Calendar,
-  Eye,
-  RotateCcw,
-  User
+  Eye
 } from 'lucide-react'
 import { companyApi } from '@/api/company.api'
-import { useNavigate } from 'react-router-dom'
-
-type ProfileStatus = 'not_created' | 'pending' | 'verified' | 'rejected'
 
 const CompanyDashboard = () => {
-  const [profileStatus, setProfileStatus] = useState<ProfileStatus>('not_created')
   const [loading, setLoading] = useState(true)
-  const navigate = useNavigate()
 
   useEffect(() => {
-    checkProfileStatus()
+    setLoading(false)
   }, [])
-
-  const checkProfileStatus = async () => {
-    try {
-      setLoading(true)
-      const res = await companyApi.getDashboard()
-      
-      if (res.success && res.data) {
-        const status = (res.data.profileStatus || 'not_created') as ProfileStatus
-        setProfileStatus(status)
-      }
-    } catch (err) {
-      console.error('Failed to check profile status:', err)
-      setProfileStatus('not_created')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="flex flex-col items-center space-y-4">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-          <p className="text-muted-foreground">Loading...</p>
-        </div>
-      </div>
-    )
-  }
-
-  if (!profileStatus || profileStatus === 'not_created') {
-    return <CompanyProfileStatus onStatusChange={setProfileStatus} />
-  } else if (profileStatus === 'rejected') {
-    return (
-      <Card className="border-orange-200 bg-orange-50">
-        <CardContent className="p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-lg font-semibold text-orange-800">
-                Verification Rejected
-              </h3>
-              <p className="text-orange-700 mt-1">
-                Your company verification has been rejected. You can update your information and reapply.
-              </p>
-            </div>
-            <Button 
-              onClick={() => navigate('/company/reapply')}
-              className="bg-orange-600 hover:bg-orange-700"
-            >
-              <RotateCcw className="h-4 w-4 mr-2" />
-              Reapply for Verification
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-    )
-  }
 
   const jobStats = [
     { day: 'Mon', views: 45, applied: 12 },
@@ -95,7 +31,7 @@ const CompanyDashboard = () => {
 
   return (
     <CompanyLayout>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen">
         {/* Main Content */}
         <div className="px-6 py-6">
           {/* Greeting Section */}
@@ -107,14 +43,6 @@ const CompanyDashboard = () => {
               </p>
             </div>
             <div className="flex items-center space-x-3">
-              <Button 
-                variant="outline" 
-                onClick={() => navigate('/company/profile')}
-                className="flex items-center space-x-2"
-              >
-                <User className="h-4 w-4" />
-                <span>View Profile</span>
-              </Button>
               <div className="flex items-center space-x-2 px-3 py-2 bg-white border border-gray-200 rounded-lg">
                 <Calendar className="h-3 w-3 text-[#4640DE]" />
                 <span className="text-sm font-semibold text-gray-900">Jul 19 - Jul 25</span>

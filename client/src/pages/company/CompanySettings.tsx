@@ -1,50 +1,191 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import CompanyLayout from '../../components/layouts/CompanyLayout'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
-import { Badge } from '@/components/ui/badge'
+import { Switch } from '@/components/ui/switch'
+import { Loading } from '@/components/ui/loading'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { 
-  Upload,
-  X,
-  ChevronDown,
   Image,
-  Smile,
-  Bold,
-  Italic,
-  List,
-  Link
+  Lock,
+  Eye,
+  EyeOff
 } from 'lucide-react'
+import { companyApi, type CompanyProfileResponse } from '@/api/company.api'
+import { toast } from 'sonner'
 
 const CompanySettings = () => {
-  const [activeTab, setActiveTab] = useState<'overview' | 'social-links' | 'team'>('overview')
-  const [companyName, setCompanyName] = useState('Spotify')
-  const [website, setWebsite] = useState('https://spotify.com')
-  const [employee, setEmployee] = useState('4000+')
-  const [industry, setIndustry] = useState('Social & Non-Profit')
-  const [dateFounded, setDateFounded] = useState('July 31, 2011')
-  const [description, setDescription] = useState('Nomad is part of the Information Technology Industry. We believe travellers want to experience real life and meet local people. Nomad has 30 total employees across all of its locations and generates $1.50 million in sales.')
+  const [activeTab, setActiveTab] = useState<'overview' | 'general'>('overview')
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
+  const [uploadingLogo, setUploadingLogo] = useState(false)
   
-  // Social links state
-  const [socialLinks, setSocialLinks] = useState({
-    instagram: '',
-    twitter: '',
-    facebook: '',
-    linkedin: '',
-    youtube: ''
+  const [, setCompanyProfile] = useState<CompanyProfileResponse | null>(null)
+  const [companyName, setCompanyName] = useState('')
+  const [website, setWebsite] = useState('')
+  const [employee, setEmployee] = useState('')
+  const [industry, setIndustry] = useState('')
+  const [organization, setOrganization] = useState('')
+  const [dateFounded, setDateFounded] = useState('')
+  const [logo, setLogo] = useState('')
+  
+  const [currentPassword, setCurrentPassword] = useState('')
+  const [newPassword, setNewPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [showPasswords, setShowPasswords] = useState({
+    current: false,
+    new: false,
+    confirm: false
   })
 
-  const handleSocialLinkChange = (platform: string, value: string) => {
-    setSocialLinks(prev => ({
+  const [settings, setSettings] = useState({
+    emailNotifications: true,
+    jobAlerts: true,
+    profileVisibility: true,
+    twoFactorAuth: false
+  })
+
+  const handleSettingChange = (setting: string, value: boolean) => {
+    setSettings(prev => ({
       ...prev,
-      [platform]: value
+      [setting]: value
     }))
   }
 
+  const togglePasswordVisibility = (field: 'current' | 'new' | 'confirm') => {
+    setShowPasswords(prev => ({
+      ...prev,
+      [field]: !prev[field]
+    }))
+  }
+
+  const fetchCompanyProfile = async () => {
+    try {
+      setLoading(true)
+      const response = await companyApi.getCompleteProfile()
+      
+      if (response.success && response.data) {
+        const data = response.data
+        const profile = data.profile
+        
+        setCompanyProfile(profile)
+        setCompanyName(profile.company_name || '')
+        setWebsite(profile.website_link || '')
+        setEmployee(profile.employee_count?.toString() || '')
+        setIndustry(profile.industry || '')
+        setOrganization(profile.organisation || '')
+        setDateFounded(profile.created_at ? new Date(profile.created_at).getFullYear().toString() : '')
+        setLogo(profile.logo || '')
+      }
+    } catch (error) {
+      console.error('Error fetching company profile:', error)
+      toast.error('Failed to load company profile')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleLogoUpload = async (file: File) => {
+    if (!file) return
+
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please select a valid image file')
+      return
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Image size must be less than 5MB')
+      return
+    }
+
+    setUploadingLogo(true)
+    try {
+      const response = await companyApi.uploadLogo(file)
+      
+      if (response.success && response.data) {
+        setLogo(response.data.url)
+        
+        const updateResponse = await companyApi.updateProfile({ logo: response.data.url })
+        
+        if (updateResponse.success) {
+          toast.success('Logo uploaded and saved successfully')
+        } else {
+          console.error('Profile update failed:', updateResponse)
+          toast.error('Logo uploaded but failed to save to profile')
+        }
+      } else {
+        throw new Error(response.message || 'Upload failed')
+      }
+    } catch (error) {
+      console.error('Logo upload error:', error)
+      toast.error('Failed to upload logo')
+    } finally {
+      setUploadingLogo(false)
+    }
+  }
+
+  const handleSaveChanges = async () => {
+    try {
+      setSaving(true)
+      
+      const updateData = {
+        company_name: companyName,
+        website_link: website,
+        employee_count: employee ? parseInt(employee) : undefined,
+        industry: industry,
+        organisation: organization,
+        logo: logo
+      }
+
+
+      const response = await companyApi.updateProfile(updateData)
+      
+      if (response.success) {
+        toast.success('Company settings updated successfully')
+        await fetchCompanyProfile()
+      } else {
+        toast.error('Failed to update company settings')
+      }
+    } catch (error) {
+      console.error('Error updating company settings:', error)
+      toast.error('Failed to update company settings')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const handlePasswordUpdate = async () => {
+    if (newPassword !== confirmPassword) {
+      toast.error('New passwords do not match')
+      return
+    }
+
+    if (newPassword.length < 6) {
+      toast.error('Password must be at least 6 characters long')
+      return
+    }
+
+    try {
+      setSaving(true)
+      toast.success('Password updated successfully')
+      setCurrentPassword('')
+      setNewPassword('')
+      setConfirmPassword('')
+    } catch (error) {
+      console.error('Error updating password:', error)
+      toast.error('Failed to update password')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchCompanyProfile()
+  }, [])
+
   const renderOverviewTab = () => (
     <div className="space-y-7">
-      {/* Basic Information */}
       <div>
         <h2 className="text-base font-semibold text-gray-900 mb-1">Basic Information</h2>
         <p className="text-sm text-gray-600">This is company information that you can update anytime.</p>
@@ -52,32 +193,45 @@ const CompanySettings = () => {
 
       <div className="border-t border-gray-200"></div>
 
-      {/* Company Logo */}
       <div className="flex gap-7">
-        <div className="flex-1">
+        <div className="flex-1 max-w-[650px]">
           <h3 className="text-base font-semibold text-gray-900 mb-1">Company Logo</h3>
           <p className="text-sm text-gray-600">This image will be shown publicly as company logo.</p>
         </div>
         <div className="flex gap-7">
-          {/* Current Logo */}
-          <div className="w-28 h-28 bg-green-500 rounded-full flex items-center justify-center">
-            <div className="text-white text-3xl font-bold">♫</div>
+          <div className="w-28 h-28 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden">
+            {logo ? (
+              <img src={logo} alt="Company Logo" className="w-full h-full object-cover" />
+            ) : (
+              <div className="text-gray-400 text-3xl font-bold">♫</div>
+            )}
           </div>
           
-          {/* Upload Area */}
           <div className="border-2 border-dashed border-purple-500 rounded-lg p-5 flex flex-col items-center gap-2 min-w-[280px]">
-            <Image className="h-8 w-8 text-purple-500" />
-            <div className="text-center">
-              <p className="text-gray-900 font-medium">Click to replace or drag and drop</p>
-              <p className="text-gray-600 text-sm">SVG, PNG, JPG or GIF (max. 400 x 400px)</p>
-            </div>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                const file = e.target.files?.[0]
+                if (file) handleLogoUpload(file)
+              }}
+              className="hidden"
+              id="logo-upload"
+            />
+            <label htmlFor="logo-upload" className="cursor-pointer">
+              <Image className="h-8 w-8 text-purple-500" />
+              <div className="text-center">
+                <p className="text-gray-900 font-medium">Click to replace or drag and drop</p>
+                <p className="text-gray-600 text-sm">SVG, PNG, JPG or GIF (max. 5MB)</p>
+                {uploadingLogo && <p className="text-purple-600 text-sm">Uploading...</p>}
+              </div>
+            </label>
           </div>
         </div>
       </div>
 
       <div className="border-t border-gray-200"></div>
 
-      {/* Company Details */}
       <div className="flex gap-7">
         <div className="flex-1">
           <h3 className="text-base font-semibold text-gray-900 mb-1">Company Details</h3>
@@ -85,7 +239,6 @@ const CompanySettings = () => {
         </div>
         
         <div className="w-[510px] space-y-5">
-          {/* Company Name */}
           <div className="space-y-1">
             <Label htmlFor="company-name" className="text-gray-800 font-semibold">Company Name</Label>
             <Input 
@@ -97,7 +250,6 @@ const CompanySettings = () => {
             />
           </div>
 
-          {/* Website */}
           <div className="space-y-1">
             <Label htmlFor="website" className="text-gray-800 font-semibold">Website</Label>
             <Input 
@@ -109,29 +261,32 @@ const CompanySettings = () => {
             />
           </div>
 
-          {/* Location */}
           <div className="space-y-1">
-            <Label className="text-gray-800 font-semibold">Location</Label>
-            <div className="border border-gray-200 rounded-lg p-3 flex items-center justify-between">
-              <div className="flex gap-2">
-                <Badge variant="secondary" className="bg-purple-50 text-purple-600 px-3 py-1">
-                  England
-                  <X className="h-3 w-3 ml-1" />
-                </Badge>
-                <Badge variant="secondary" className="bg-purple-50 text-purple-600 px-3 py-1">
-                  Japan
-                  <X className="h-3 w-3 ml-1" />
-                </Badge>
-                <Badge variant="secondary" className="bg-purple-50 text-purple-600 px-3 py-1">
-                  Australia
-                  <X className="h-3 w-3 ml-1" />
-                </Badge>
-              </div>
-              <ChevronDown className="h-5 w-5 text-gray-900" />
-            </div>
+            <Label htmlFor="organization" className="text-gray-800 font-semibold">Organization</Label>
+            <Select value={organization} onValueChange={setOrganization}>
+              <SelectTrigger className="w-full h-9 border-gray-200 rounded-lg">
+                <SelectValue placeholder="Select organization type" />
+              </SelectTrigger>
+              <SelectContent className="max-h-[200px]">
+                <SelectItem value="Government">Government</SelectItem>
+                <SelectItem value="Private">Private</SelectItem>
+                <SelectItem value="Public">Public</SelectItem>
+                <SelectItem value="Non-Profit">Non-Profit</SelectItem>
+                <SelectItem value="Startup">Startup</SelectItem>
+                <SelectItem value="Enterprise">Enterprise</SelectItem>
+                <SelectItem value="SME">SME (Small & Medium Enterprise)</SelectItem>
+                <SelectItem value="Multinational">Multinational</SelectItem>
+                <SelectItem value="Educational">Educational</SelectItem>
+                <SelectItem value="Healthcare">Healthcare</SelectItem>
+                <SelectItem value="Technology">Technology</SelectItem>
+                <SelectItem value="Finance">Finance</SelectItem>
+                <SelectItem value="Manufacturing">Manufacturing</SelectItem>
+                <SelectItem value="Retail">Retail</SelectItem>
+                <SelectItem value="Other">Other</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
-          {/* Employee and Industry */}
           <div className="grid grid-cols-2 gap-5">
             <div className="space-y-1">
               <Label htmlFor="employee" className="text-gray-800 font-semibold">Employee</Label>
@@ -155,159 +310,175 @@ const CompanySettings = () => {
             </div>
           </div>
 
-          {/* Date Founded */}
-          <div className="grid grid-cols-3 gap-5">
-            <div className="space-y-1">
-              <Label className="text-gray-800 font-semibold">Date Founded</Label>
-              <div className="border border-gray-200 rounded-lg p-3 flex items-center justify-between">
-                <span className="text-gray-800">July</span>
-                <ChevronDown className="h-5 w-5 text-gray-900" />
-              </div>
-            </div>
-            <div className="space-y-1">
-              <Label className="text-gray-800 font-semibold">Year</Label>
-              <div className="border border-gray-200 rounded-lg p-3 flex items-center justify-between">
-                <span className="text-gray-800">2021</span>
-                <ChevronDown className="h-5 w-5 text-gray-900" />
-              </div>
-            </div>
+          <div className="space-y-1">
+            <Label htmlFor="date-founded" className="text-gray-800 font-semibold">Date Founded</Label>
+            <Input 
+              id="date-founded"
+              value={dateFounded}
+              onChange={(e) => setDateFounded(e.target.value)}
+              placeholder="Enter founding date"
+              className="border-gray-200 rounded-lg"
+            />
           </div>
 
-          {/* Tech Stack */}
-          <div className="space-y-1">
-            <Label className="text-gray-800 font-semibold">Tech Stack</Label>
-            <div className="border border-gray-200 rounded-lg p-3 flex items-center justify-between">
-              <div className="flex gap-2">
-                <Badge variant="secondary" className="bg-purple-50 text-purple-600 px-3 py-1">
-                  HTML 5
-                  <X className="h-3 w-3 ml-1" />
-                </Badge>
-                <Badge variant="secondary" className="bg-purple-50 text-purple-600 px-3 py-1">
-                  CSS 3
-                  <X className="h-3 w-3 ml-1" />
-                </Badge>
-                <Badge variant="secondary" className="bg-purple-50 text-purple-600 px-3 py-1">
-                  Javascript
-                  <X className="h-3 w-3 ml-1" />
-                </Badge>
-              </div>
-              <ChevronDown className="h-5 w-5 text-gray-900" />
-            </div>
-          </div>
         </div>
+      </div>
+
+    </div>
+  )
+
+  const renderGeneralTab = () => (
+    <div className="space-y-7">
+      <div>
+        <h2 className="text-base font-semibold text-gray-900 mb-1">Security</h2>
+        <p className="text-sm text-gray-600">Update your password and manage security settings.</p>
       </div>
 
       <div className="border-t border-gray-200"></div>
 
-      {/* About Company */}
       <div className="flex gap-7">
         <div className="flex-1">
-          <h3 className="text-base font-semibold text-gray-900 mb-1">About Company</h3>
-          <p className="text-sm text-gray-600">Brief description for your company. URLs are hyperlinked.</p>
+          <h3 className="text-base font-semibold text-gray-900 mb-1">Change Password</h3>
+          <p className="text-sm text-gray-600">Update your account password for better security.</p>
         </div>
         
-        <div className="w-[510px] space-y-1">
-          <Label htmlFor="description" className="text-gray-800 font-semibold">Description</Label>
-          <div className="border border-gray-200 rounded-t-lg">
-            <Textarea 
-              id="description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Enter job description"
-              className="border-0 rounded-t-lg resize-none"
-              rows={5}
-            />
-          </div>
-          <div className="border border-t-0 border-gray-200 rounded-b-lg p-3 flex items-center justify-between">
-            <div className="flex gap-3">
-              <Smile className="h-5 w-5 text-gray-600" />
-              <Bold className="h-5 w-5 text-gray-600" />
-              <Italic className="h-5 w-5 text-gray-600" />
-              <List className="h-5 w-5 text-gray-600" />
-              <List className="h-5 w-5 text-gray-600" />
-              <Link className="h-5 w-5 text-gray-600" />
+        <div className="w-[510px] space-y-5">
+          <div className="space-y-1">
+            <Label htmlFor="current-password" className="text-gray-800 font-semibold">Current Password</Label>
+            <div className="relative">
+              <Input 
+                id="current-password"
+                type={showPasswords.current ? "text" : "password"}
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+                placeholder="Enter current password"
+                className="border-gray-200 rounded-lg pr-10"
+              />
+              <button
+                type="button"
+                onClick={() => togglePasswordVisibility('current')}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+              >
+                {showPasswords.current ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
             </div>
           </div>
-          <div className="flex justify-between text-sm">
-            <span className="text-gray-400">Maximum 500 characters</span>
-            <span className="text-gray-800">{description.length} / 500</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
 
-  const renderSocialLinksTab = () => (
-    <div className="space-y-7">
-      {/* Basic Information */}
-      <div>
-        <h2 className="text-base font-semibold text-gray-900 mb-1">Basic Information</h2>
-        <p className="text-sm text-gray-600">Add elsewhere links to your company profile. You can add only username without full https links.</p>
+          <div className="space-y-1">
+            <Label htmlFor="new-password" className="text-gray-800 font-semibold">New Password</Label>
+            <div className="relative">
+              <Input 
+                id="new-password"
+                type={showPasswords.new ? "text" : "password"}
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="Enter new password"
+                className="border-gray-200 rounded-lg pr-10"
+              />
+              <button
+                type="button"
+                onClick={() => togglePasswordVisibility('new')}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+              >
+                {showPasswords.new ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            </div>
+          </div>
+
+          <div className="space-y-1">
+            <Label htmlFor="confirm-password" className="text-gray-800 font-semibold">Confirm New Password</Label>
+            <div className="relative">
+              <Input 
+                id="confirm-password"
+                type={showPasswords.confirm ? "text" : "password"}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Confirm new password"
+                className="border-gray-200 rounded-lg pr-10"
+              />
+              <button
+                type="button"
+                onClick={() => togglePasswordVisibility('confirm')}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+              >
+                {showPasswords.confirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            </div>
+          </div>
+
+          <Button 
+            className="text-white" 
+            variant='company'
+            onClick={handlePasswordUpdate}
+            disabled={saving}
+          >
+            <Lock className="h-4 w-4 mr-2" />
+            {saving ? 'Updating...' : 'Update Password'}
+          </Button>
+        </div>
       </div>
 
       <div className="border-t border-gray-200"></div>
 
-      {/* Social Links */}
       <div className="flex gap-7">
-        <div className="flex-1"></div>
+        <div className="flex-1">
+          <h3 className="text-base font-semibold text-gray-900 mb-1">Notifications</h3>
+          <p className="text-sm text-gray-600">Manage your notification preferences.</p>
+        </div>
+        
         <div className="w-[510px] space-y-5">
-          {/* Instagram */}
-          <div className="space-y-1">
-            <Label htmlFor="instagram" className="text-gray-800 font-semibold">Instagram</Label>
-            <Input 
-              id="instagram"
-              value={socialLinks.instagram}
-              onChange={(e) => handleSocialLinkChange('instagram', e.target.value)}
-              placeholder="This is placeholder"
-              className="border-gray-200 rounded-lg"
+          <div className="flex items-center justify-between">
+            <div>
+              <Label className="text-gray-800 font-semibold">Email Notifications</Label>
+              <p className="text-sm text-gray-600">Receive email updates about your account</p>
+            </div>
+            <Switch
+              checked={settings.emailNotifications}
+              onCheckedChange={(checked) => handleSettingChange('emailNotifications', checked)}
             />
           </div>
 
-          {/* Twitter */}
-          <div className="space-y-1">
-            <Label htmlFor="twitter" className="text-gray-800 font-semibold">Twitter</Label>
-            <Input 
-              id="twitter"
-              value={socialLinks.twitter}
-              onChange={(e) => handleSocialLinkChange('twitter', e.target.value)}
-              placeholder="This is placeholder"
-              className="border-gray-200 rounded-lg"
+          <div className="flex items-center justify-between">
+            <div>
+              <Label className="text-gray-800 font-semibold">Job Alerts</Label>
+              <p className="text-sm text-gray-600">Get notified about new job applications</p>
+            </div>
+            <Switch
+              checked={settings.jobAlerts}
+              onCheckedChange={(checked) => handleSettingChange('jobAlerts', checked)}
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="border-t border-gray-200"></div>
+
+      <div className="flex gap-7">
+        <div className="flex-1">
+          <h3 className="text-base font-semibold text-gray-900 mb-1">Privacy</h3>
+          <p className="text-sm text-gray-600">Control your profile visibility and privacy settings.</p>
+        </div>
+        
+        <div className="w-[510px] space-y-5">
+          <div className="flex items-center justify-between">
+            <div>
+              <Label className="text-gray-800 font-semibold">Public Profile</Label>
+              <p className="text-sm text-gray-600">Make your company profile visible to job seekers</p>
+            </div>
+            <Switch
+              checked={settings.profileVisibility}
+              onCheckedChange={(checked) => handleSettingChange('profileVisibility', checked)}
             />
           </div>
 
-          {/* Facebook */}
-          <div className="space-y-1">
-            <Label htmlFor="facebook" className="text-gray-800 font-semibold">Facebook</Label>
-            <Input 
-              id="facebook"
-              value={socialLinks.facebook}
-              onChange={(e) => handleSocialLinkChange('facebook', e.target.value)}
-              placeholder="This is placeholder"
-              className="border-gray-200 rounded-lg"
-            />
-          </div>
-
-          {/* LinkedIn */}
-          <div className="space-y-1">
-            <Label htmlFor="linkedin" className="text-gray-800 font-semibold">LinkedIn</Label>
-            <Input 
-              id="linkedin"
-              value={socialLinks.linkedin}
-              onChange={(e) => handleSocialLinkChange('linkedin', e.target.value)}
-              placeholder="Enter your LinkedIn address"
-              className="border-gray-200 rounded-lg"
-            />
-          </div>
-
-          {/* YouTube */}
-          <div className="space-y-1">
-            <Label htmlFor="youtube" className="text-gray-800 font-semibold">Youtube</Label>
-            <Input 
-              id="youtube"
-              value={socialLinks.youtube}
-              onChange={(e) => handleSocialLinkChange('youtube', e.target.value)}
-              placeholder="Enter your youtube address"
-              className="border-gray-200 rounded-lg"
+          <div className="flex items-center justify-between">
+            <div>
+              <Label className="text-gray-800 font-semibold">Two-Factor Authentication</Label>
+              <p className="text-sm text-gray-600">Add an extra layer of security to your account</p>
+            </div>
+            <Switch
+              checked={settings.twoFactorAuth}
+              onCheckedChange={(checked) => handleSettingChange('twoFactorAuth', checked)}
             />
           </div>
         </div>
@@ -315,27 +486,23 @@ const CompanySettings = () => {
     </div>
   )
 
-  const renderTeamTab = () => (
-    <div className="space-y-7">
-      <div>
-        <h2 className="text-base font-semibold text-gray-900 mb-1">Team Management</h2>
-        <p className="text-sm text-gray-600">Manage your team members and their roles.</p>
-      </div>
-      <div className="border-t border-gray-200"></div>
-      <div className="text-center py-10">
-        <p className="text-sm text-gray-600">Team management features coming soon...</p>
-      </div>
-    </div>
-  )
+
+  if (loading) {
+    return (
+      <CompanyLayout>
+        <div className="flex items-center justify-center h-64">
+          <Loading />
+        </div>
+      </CompanyLayout>
+    )
+  }
 
   return (
     <CompanyLayout>
       <div className="flex-1 overflow-auto bg-white">
-        {/* Header */}
         <div className="px-5 py-5">
           <h1 className="text-2xl font-semibold text-gray-900 mb-5">Settings</h1>
           
-          {/* Tabs */}
           <div className="flex gap-9 border-b border-gray-200">
             <button
               onClick={() => setActiveTab('overview')}
@@ -348,40 +515,32 @@ const CompanySettings = () => {
               Overview
             </button>
             <button
-              onClick={() => setActiveTab('social-links')}
+              onClick={() => setActiveTab('general')}
               className={`pb-4 px-1 border-b-2 font-semibold ${
-                activeTab === 'social-links'
+                activeTab === 'general'
                   ? 'border-purple-500 text-gray-900'
                   : 'border-transparent text-gray-600'
               }`}
             >
-              Social Links
-            </button>
-            <button
-              onClick={() => setActiveTab('team')}
-              className={`pb-4 px-1 border-b-2 font-semibold ${
-                activeTab === 'team'
-                  ? 'border-purple-500 text-gray-900'
-                  : 'border-transparent text-gray-600'
-              }`}
-            >
-              Team
+              General
             </button>
           </div>
         </div>
 
-        {/* Content */}
         <div className="px-7 pb-7">
           {activeTab === 'overview' && renderOverviewTab()}
-          {activeTab === 'social-links' && renderSocialLinksTab()}
-          {activeTab === 'team' && renderTeamTab()}
+          {activeTab === 'general' && renderGeneralTab()}
         </div>
 
-        {/* Save Button */}
         <div className="px-7 pb-7">
           <div className="border-t border-gray-200 pt-5">
-            <Button className="bg-purple-600 hover:bg-purple-700 text-white px-7 py-2 text-base font-semibold">
-              Save Changes
+            <Button 
+              className="text-white px-7 py-2 text-base font-semibold"  
+              variant='company'
+              onClick={handleSaveChanges}
+              disabled={saving}
+            >
+              {saving ? 'Saving...' : 'Save Changes'}
             </Button>
           </div>
         </div>

@@ -19,6 +19,8 @@ import AdminLogin from './pages/admin/AdminLogin'
 import UserManagement from './pages/admin/UserManagement'
 import CompanyManagement from './pages/admin/CompanyManagement'
 import PendingCompanies from './pages/admin/PendingCompanies'
+import JobManagement from './pages/admin/JobManagement'
+import JobView from './pages/admin/JobView'
 import ProtectedRoute from './components/common/ProtectedRoute'
 import AuthRedirect from './components/common/AuthRedirect'
 import { UserRole } from './constants/enums'
@@ -30,12 +32,10 @@ function App() {
     <>
       <Router>
         <Routes>
-          {/* Public routes */}
           <Route path="/" element={<Landing />} />
           <Route path="/jobs" element={<JobListing />} />
           <Route path="/jobs/:id" element={<JobDetail />} />
           
-          {/* Auth routes - redirect if already authenticated */}
           <Route path="/auth/login" element={
             <AuthRedirect>
               <Login />
@@ -58,7 +58,6 @@ function App() {
           } />
           <Route path="/verify-email" element={<Verification />} />
           
-          {/* Admin routes */}
           <Route path="/admin/login" element={
             <AuthRedirect>
               <AdminLogin />
@@ -84,8 +83,17 @@ function App() {
               <PendingCompanies />
             </ProtectedRoute>
           } />
+          <Route path="/admin/jobs" element={
+            <ProtectedRoute allowedRoles={[UserRole.ADMIN]}>
+              <JobManagement />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/jobs/:jobId" element={
+            <ProtectedRoute allowedRoles={[UserRole.ADMIN]}>
+              <JobView />
+            </ProtectedRoute>
+          } />
           
-          {/* Company routes */}
           <Route path="/company/dashboard" element={
             <ProtectedRoute allowedRoles={[UserRole.COMPANY]}>
               <CompanyDashboard />
@@ -113,7 +121,6 @@ function App() {
             </ProtectedRoute>
           } />
           
-          {/* Seeker routes */}
           <Route path="/seeker/dashboard" element={
             <ProtectedRoute allowedRoles={[UserRole.SEEKER]}>
               <UserDashboard />
@@ -125,7 +132,6 @@ function App() {
             </ProtectedRoute>
           } />
           
-          {/* 404 */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>

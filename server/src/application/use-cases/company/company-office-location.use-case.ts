@@ -30,8 +30,11 @@ export class CompanyOfficeLocationUseCase {
     if (!existingLocation) {
       throw new NotFoundError(`Company office location with ID ${locationId} not found`);
     }
-    const updatedLocation = existingLocation.updateOfficeLocation(data);
-    return this.companyOfficeLocationRepository.update(updatedLocation);
+    const updatedLocation = await this.companyOfficeLocationRepository.update(locationId, data);
+    if (!updatedLocation) {
+      throw new NotFoundError(`Failed to update company office location with ID ${locationId}`);
+    }
+    return updatedLocation;
   }
 
   async deleteOfficeLocation(locationId: string): Promise<void> {

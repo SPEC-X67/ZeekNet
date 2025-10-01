@@ -3,15 +3,14 @@ import type { ApiEnvelope } from '@/interfaces/auth';
 import type { JobPostingResponse, JobPostingQuery } from '@/types/job';
 
 export interface CompanyProfileData {
-  company_name: string
-  email: string
-  website?: string
-  industry: string
-  organisation: string
-  location: string
-  employees?: string
-  description?: string
+  company_name?: string
+  website_link?: string
+  industry?: string
+  organisation?: string
+  employee_count?: number
+  about_us?: string
   logo?: string
+  banner?: string
   business_license?: string
   tax_id?: string
 }
@@ -19,19 +18,17 @@ export interface CompanyProfileData {
 export interface CompanyProfileResponse {
   id: string
   company_name: string
-  email: string
-  website?: string
+  logo: string
+  banner: string
+  website_link: string
+  employee_count: number
   industry: string
   organisation: string
-  location: string
-  employees?: string
-  description?: string
-  logo?: string
-  business_license?: string
-  tax_id?: string
-  isVerified: string
-  createdAt: string
-  updatedAt: string
+  about_us: string
+  is_verified: 'pending' | 'rejected' | 'verified'
+  is_blocked: boolean
+  created_at: string
+  updated_at: string
 }
 
 export interface JobPostingRequest {
@@ -60,6 +57,7 @@ interface CompanyDashboard {
   recentApplications: unknown[];
   profileCompletion: number;
   profileStatus: string;
+  verificationStatus?: string;
 }
 
 export const companyApi = {
@@ -68,19 +66,7 @@ export const companyApi = {
   },
 
   async updateProfile(data: Partial<CompanyProfileData>): Promise<ApiEnvelope<CompanyProfileResponse>> {
-    const formData = new FormData();
-
-    Object.entries(data).forEach(([key, value]) => {
-      if (value && key !== 'logo' && key !== 'business_license') {
-        formData.append(key, value);
-      }
-    });
-
-    return baseApi.put<CompanyProfileResponse>('/api/company/profile')(formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
+    return baseApi.put<CompanyProfileResponse>('/api/company/profile')(data);
   },
 
   async reapplyVerification(data: CompanyProfileData): Promise<ApiEnvelope<CompanyProfileResponse>> {
@@ -103,6 +89,28 @@ export const companyApi = {
     return baseApi.get<CompanyProfileResponse>('/api/company/profile')();
   },
 
+  async getCompleteProfile(): Promise<ApiEnvelope<{
+    profile: CompanyProfileResponse;
+    contact: any | null;
+    locations: any[];
+    techStack: any[];
+    benefits: any[];
+    team: any[];
+    workplacePictures: any[];
+    jobPostings: any[];
+  }>> {
+    return baseApi.get<{
+      profile: CompanyProfileResponse;
+      contact: any | null;
+      locations: any[];
+      techStack: any[];
+      benefits: any[];
+      team: any[];
+      workplacePictures: any[];
+      jobPostings: any[];
+    }>('/api/company/profile')();
+  },
+
   async getProfileById(profileId: string): Promise<ApiEnvelope<CompanyProfileResponse>> {
     return baseApi.get<CompanyProfileResponse>(`/api/company/profile/${profileId}`)();
   },
@@ -116,20 +124,21 @@ export const companyApi = {
   },
 
   async getJobPostings(query?: JobPostingQuery): Promise<ApiEnvelope<{ jobs: JobPostingResponse[], total: number, page: number, limit: number }>> {
-    const queryString = query ? new URLSearchParams(
-      Object.entries(query).reduce((acc, [key, value]) => {
-        if (value !== undefined && value !== null) {
-          if (Array.isArray(value)) {
-            acc[key] = value.join(',');
-          } else {
-            acc[key] = value.toString();
-          }
-        }
-        return acc;
-      }, {} as Record<string, string>)
-    ).toString() : '';
+    const params = new URLSearchParams();
     
-    const endpoint = queryString ? `/api/company/jobs?${queryString}` : '/api/company/jobs';
+    if (query) {
+      if (query.page !== undefined) params.append('page', query.page.toString());
+      if (query.limit !== undefined) params.append('limit', query.limit.toString());
+      if (query.category_ids?.length) params.append('category_ids', query.category_ids.join(','));
+      if (query.employment_types?.length) params.append('employment_types', query.employment_types.join(','));
+      if (query.salary_min !== undefined) params.append('salary_min', query.salary_min.toString());
+      if (query.salary_max !== undefined) params.append('salary_max', query.salary_max.toString());
+      if (query.location) params.append('location', query.location);
+      if (query.search) params.append('search', query.search);
+      if (query.is_active !== undefined) params.append('is_active', query.is_active.toString());
+    }
+    
+    const endpoint = params.toString() ? `/api/company/jobs?${params.toString()}` : '/api/company/jobs';
     return baseApi.get<{ jobs: JobPostingResponse[], total: number, page: number, limit: number }>(endpoint)();
   },
 
@@ -147,5 +156,97 @@ export const companyApi = {
 
   async updateJobStatus(id: string, is_active: boolean): Promise<ApiEnvelope<JobPostingResponse>> {
     return baseApi.patch<JobPostingResponse>(`/api/company/jobs/${id}/status`)({ is_active });
+  },
+
+  async getContact(): Promise<ApiEnvelope<any>> {
+    return baseApi.get<any>('/api/company/contact')();
+  },
+
+  async updateContact(data: any): Promise<ApiEnvelope<any>> {
+    return baseApi.put<any>('/api/company/contact')(data);
+  },
+
+  async getTechStacks(): Promise<ApiEnvelope<any[]>> {
+    return baseApi.get<any[]>('/api/company/tech-stacks')();
+  },
+
+  async createTechStack(data: any): Promise<ApiEnvelope<any>> {
+    return baseApi.post<any>('/api/company/tech-stacks')(data);
+  },
+
+  async updateTechStack(id: string, data: any): Promise<ApiEnvelope<any>> {
+    return baseApi.put<any>(`/api/company/tech-stacks/${id}`)(data);
+  },
+
+  async deleteTechStack(id: string): Promise<ApiEnvelope<any>> {
+    return baseApi.delete<any>(`/api/company/tech-stacks/${id}`)();
+  },
+
+  async getOfficeLocations(): Promise<ApiEnvelope<any[]>> {
+    return baseApi.get<any[]>('/api/company/office-locations')();
+  },
+
+  async createOfficeLocation(data: any): Promise<ApiEnvelope<any>> {
+    return baseApi.post<any>('/api/company/office-locations')(data);
+  },
+
+  async updateOfficeLocation(id: string, data: any): Promise<ApiEnvelope<any>> {
+    return baseApi.put<any>(`/api/company/office-locations/${id}`)(data);
+  },
+
+  async deleteOfficeLocation(id: string): Promise<ApiEnvelope<any>> {
+    return baseApi.delete<any>(`/api/company/office-locations/${id}`)();
+  },
+
+  async getBenefits(): Promise<ApiEnvelope<any[]>> {
+    return baseApi.get<any[]>('/api/company/benefits')();
+  },
+
+  async createBenefit(data: any): Promise<ApiEnvelope<any>> {
+    return baseApi.post<any>('/api/company/benefits')(data);
+  },
+
+  async updateBenefit(id: string, data: any): Promise<ApiEnvelope<any>> {
+    return baseApi.put<any>(`/api/company/benefits/${id}`)(data);
+  },
+
+  async deleteBenefit(id: string): Promise<ApiEnvelope<any>> {
+    return baseApi.delete<any>(`/api/company/benefits/${id}`)();
+  },
+
+  async getWorkplacePictures(): Promise<ApiEnvelope<any[]>> {
+    return baseApi.get<any[]>('/api/company/workplace-pictures')();
+  },
+
+  async createWorkplacePicture(data: any): Promise<ApiEnvelope<any>> {
+    return baseApi.post<any>('/api/company/workplace-pictures')(data);
+  },
+
+  async updateWorkplacePicture(id: string, data: any): Promise<ApiEnvelope<any>> {
+    return baseApi.put<any>(`/api/company/workplace-pictures/${id}`)(data);
+  },
+
+  async deleteWorkplacePicture(id: string): Promise<ApiEnvelope<any>> {
+    return baseApi.delete<any>(`/api/company/workplace-pictures/${id}`)();
+  },
+
+  async uploadWorkplacePicture(file: File): Promise<ApiEnvelope<{ url: string; filename: string }>> {
+    return uploadFile<{ url: string; filename: string }>('/api/company/workplace-pictures/upload', file, 'image');
+  },
+
+  async getTeam(): Promise<ApiEnvelope<any[]>> {
+    return baseApi.get<any[]>('/api/company/team')();
+  },
+
+  async createTeamMember(data: any): Promise<ApiEnvelope<any>> {
+    return baseApi.post<any>('/api/company/team')(data);
+  },
+
+  async updateTeamMember(id: string, data: any): Promise<ApiEnvelope<any>> {
+    return baseApi.put<any>(`/api/company/team/${id}`)(data);
+  },
+
+  async deleteTeamMember(id: string): Promise<ApiEnvelope<any>> {
+    return baseApi.delete<any>(`/api/company/team/${id}`)();
   }
 }

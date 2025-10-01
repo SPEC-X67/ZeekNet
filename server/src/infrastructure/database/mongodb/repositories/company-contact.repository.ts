@@ -3,58 +3,18 @@ import { ICompanyContactRepository } from '../../../../domain/repositories/compa
 import { CompanyContact } from '../../../../domain/entities/company-contact.entity';
 import { CompanyContactModel } from '../models/company-contact.model';
 import { Types } from 'mongoose';
+import { MongoBaseRepository } from '../../../../shared/base';
 
 @injectable()
-export class MongoCompanyContactRepository implements ICompanyContactRepository {
-  async create(contact: CompanyContact): Promise<CompanyContact> {
-    const contactDoc = new CompanyContactModel({
-      companyId: new Types.ObjectId(contact.companyId),
-      twitterLink: contact.twitterLink,
-      facebookLink: contact.facebookLink,
-      linkedin: contact.linkedin,
-      email: contact.email,
-      phone: contact.phone,
-    });
-
-    const savedContact = await contactDoc.save();
-    return this.mapDocumentToEntity(savedContact);
+export class MongoCompanyContactRepository extends MongoBaseRepository<CompanyContact> implements ICompanyContactRepository {
+  constructor() {
+    super(CompanyContactModel);
   }
 
-  async findById(id: string): Promise<CompanyContact | null> {
-    const contact = await CompanyContactModel.findById(id);
-    return contact ? this.mapDocumentToEntity(contact) : null;
-  }
-
-  async findByCompanyId(companyId: string): Promise<CompanyContact[]> {
-    const contacts = await CompanyContactModel.find({ companyId: new Types.ObjectId(companyId) });
-    return contacts.map(contact => this.mapDocumentToEntity(contact));
-  }
-
-  async update(contact: CompanyContact): Promise<CompanyContact> {
-    const updatedContact = await CompanyContactModel.findByIdAndUpdate(
-      contact.id,
-      {
-        twitterLink: contact.twitterLink,
-        facebookLink: contact.facebookLink,
-        linkedin: contact.linkedin,
-        email: contact.email,
-        phone: contact.phone,
-      },
-      { new: true }
-    );
-
-    if (!updatedContact) {
-      throw new Error('Contact not found');
-    }
-
-    return this.mapDocumentToEntity(updatedContact);
-  }
-
-  async delete(id: string): Promise<void> {
-    await CompanyContactModel.findByIdAndDelete(id);
-  }
-
-  private mapDocumentToEntity(doc: any): CompanyContact {
+  /**
+   * Map MongoDB document to CompanyContact entity
+   */
+  protected mapToEntity(doc: any): CompanyContact {
     return CompanyContact.fromJSON({
       id: doc._id.toString(),
       companyId: doc.companyId.toString(),
@@ -66,6 +26,50 @@ export class MongoCompanyContactRepository implements ICompanyContactRepository 
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,
     });
+  }
+
+  /**
+   * Override create to handle ObjectId conversion
+   */
+  async create(contact: Omit<CompanyContact, 'id' | 'createdAt' | 'updatedAt'>): Promise<CompanyContact> {
+    const contactDoc = new CompanyContactModel({
+      companyId: new Types.ObjectId(contact.companyId),
+      twitterLink: contact.twitterLink,
+      facebookLink: contact.facebookLink,
+      linkedin: contact.linkedin,
+      email: contact.email,
+      phone: contact.phone,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+
+    const savedContact = await contactDoc.save();
+    return this.mapToEntity(savedContact);
+  }
+
+  async findByCompanyId(companyId: string): Promise<CompanyContact[]> {
+    const contacts = await CompanyContactModel.find({ companyId: new Types.ObjectId(companyId) });
+    return contacts.map(contact => this.mapToEntity(contact));
+  }
+
+  /**
+   * Override update to handle ObjectId conversion
+   */
+  async update(id: string, data: Partial<CompanyContact>): Promise<CompanyContact | null> {
+    if (!Types.ObjectId.isValid(id)) {
+      return null;
+    }
+
+    const updatedContact = await CompanyContactModel.findByIdAndUpdate(
+      id,
+      {
+        ...data,
+        updatedAt: new Date(),
+      },
+      { new: true }
+    );
+
+    return updatedContact ? this.mapToEntity(updatedContact) : null;
   }
 }
 

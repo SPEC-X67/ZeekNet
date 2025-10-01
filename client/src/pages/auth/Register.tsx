@@ -100,7 +100,6 @@ const Register = () => {
       password: formData.password,
       role: formData.role,
     }
-    console.log('Register submit:', payload)
     try {
       const res = await dispatch(registerThunk(payload)).unwrap()
       if (res?.success) {

@@ -25,7 +25,6 @@ import { useState, useEffect } from 'react'
 import { companyApi, type CompanyProfileResponse } from '@/api/company.api'
 import { toast } from 'sonner'
 
-// Import dialogs
 import EditContactDialog from '@/components/company/dialogs/EditContactDialog'
 import EditTechStackDialog from '@/components/company/dialogs/EditTechStackDialog'
 import EditBenefitsDialog from '@/components/company/dialogs/EditBenefitsDialog'
@@ -34,7 +33,6 @@ import EditAboutDialog from '@/components/company/dialogs/EditAboutDialog'
 import EditWorkplacePicturesDialog from '@/components/company/dialogs/EditWorkplacePicturesDialog'
 
 
-// Types for API responses
 interface CompanyContact {
   id?: string;
   email: string;
@@ -92,7 +90,6 @@ interface JobPosting {
 }
 
 const CompanyProfile = () => {
-  // State for company data
   const [companyProfile, setCompanyProfile] = useState<CompanyProfileResponse | null>(null)
   const [contact, setContact] = useState<CompanyContact | null>(null)
   const [techStack, setTechStack] = useState<TechStackItem[]>([])
@@ -102,11 +99,9 @@ const CompanyProfile = () => {
   const [workplacePictures, setWorkplacePictures] = useState<WorkplacePicture[]>([])
   const [jobPostings, setJobPostings] = useState<JobPosting[]>([])
   
-  // Loading states
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   
-  // Dialog states
   const [editContactDialog, setEditContactDialog] = useState(false)
   const [editTechStackDialog, setEditTechStackDialog] = useState(false)
   const [editBenefitsDialog, setEditBenefitsDialog] = useState(false)
@@ -114,12 +109,10 @@ const CompanyProfile = () => {
   const [editAboutDialog, setEditAboutDialog] = useState(false)
   const [editWorkplacePicturesDialog, setEditWorkplacePicturesDialog] = useState(false)
 
-  // Fetch company data
   const fetchCompanyData = async () => {
     try {
       setLoading(true)
       
-      // Fetch complete company profile in a single API call
       const response = await companyApi.getCompleteProfile()
 
       if (response.success && response.data) {
@@ -127,7 +120,6 @@ const CompanyProfile = () => {
         
         setCompanyProfile(profile)
         setContact(contact)
-        // Map snake_case to camelCase for office locations
         const mappedLocations = locations.map((location: any) => ({
           id: location.id,
           location: location.location,
@@ -155,11 +147,9 @@ const CompanyProfile = () => {
     fetchCompanyData()
   }, [])
 
-  // Handle saving contact
   const handleSaveContact = async (contactData: CompanyContact) => {
     try {
       setSaving(true)
-      // Map the contact data to the API format
       const apiData = {
         id: contactData.id,
         email: contactData.email,
@@ -183,39 +173,32 @@ const CompanyProfile = () => {
     }
   }
 
-  // Handle saving tech stack
   const handleSaveTechStack = async (techStackData: TechStackItem[]) => {
     try {
       setSaving(true)
       
-      // Find items to delete (existing items not in the new list)
       const itemsToDelete = techStack.filter(existingItem => 
         existingItem.id && !techStackData.some(newItem => newItem.id === existingItem.id)
       )
       
-      // Delete removed items
       for (const item of itemsToDelete) {
         if (item.id) {
           await companyApi.deleteTechStack(item.id)
         }
       }
       
-      // Find items to create (new items without IDs)
       const itemsToCreate = techStackData.filter(item => !item.id)
       
-      // Create new items
       for (const item of itemsToCreate) {
         await companyApi.createTechStack(item)
       }
       
-      // Find items to update (existing items with changes)
       const itemsToUpdate = techStackData.filter(item => 
         item.id && techStack.some(existingItem => 
           existingItem.id === item.id && existingItem.techStack !== item.techStack
         )
       )
       
-      // Update changed items
       for (const item of itemsToUpdate) {
         if (item.id) {
           await companyApi.updateTechStack(item.id, item)
@@ -232,27 +215,22 @@ const CompanyProfile = () => {
     }
   }
 
-  // Handle saving benefits
   const handleSaveBenefits = async (benefitsData: Benefit[]) => {
     try {
       setSaving(true)
       
-      // Find benefits to delete (existing benefits not in the new list)
       const benefitsToDelete = benefits.filter(existingBenefit => 
         existingBenefit.id && !benefitsData.some(newBenefit => newBenefit.id === existingBenefit.id)
       )
       
-      // Delete removed benefits
       for (const benefit of benefitsToDelete) {
         if (benefit.id) {
           await companyApi.deleteBenefit(benefit.id)
         }
       }
       
-      // Find benefits to create (new benefits without IDs)
       const benefitsToCreate = benefitsData.filter(benefit => !benefit.id)
       
-      // Create new benefits
       for (const benefit of benefitsToCreate) {
         await companyApi.createBenefit({
           perk: benefit.perk,
@@ -260,7 +238,6 @@ const CompanyProfile = () => {
         })
       }
       
-      // Find benefits to update (existing benefits with changes)
       const benefitsToUpdate = benefitsData.filter(benefit => 
         benefit.id && benefits.some(existingBenefit => 
           existingBenefit.id === benefit.id && 
@@ -268,7 +245,6 @@ const CompanyProfile = () => {
         )
       )
       
-      // Update changed benefits
       for (const benefit of benefitsToUpdate) {
         if (benefit.id) {
           await companyApi.updateBenefit(benefit.id, {
@@ -288,27 +264,22 @@ const CompanyProfile = () => {
     }
   }
 
-  // Handle saving office locations
   const handleSaveOfficeLocations = async (locationsData: OfficeLocation[]) => {
     try {
       setSaving(true)
       
-      // Find locations to delete (existing locations not in the new list)
       const locationsToDelete = officeLocations.filter(existingLocation => 
         existingLocation.id && !locationsData.some(newLocation => newLocation.id === existingLocation.id)
       )
       
-      // Delete removed locations
       for (const location of locationsToDelete) {
         if (location.id) {
           await companyApi.deleteOfficeLocation(location.id)
         }
       }
       
-      // Find locations to create (new locations without IDs)
       const locationsToCreate = locationsData.filter(location => !location.id)
       
-      // Create new locations
       for (const location of locationsToCreate) {
         await companyApi.createOfficeLocation({
           location: location.location,
@@ -318,7 +289,6 @@ const CompanyProfile = () => {
         })
       }
       
-      // Find locations to update (existing locations with changes)
       const locationsToUpdate = locationsData.filter(location => 
         location.id && officeLocations.some(existingLocation => 
           existingLocation.id === location.id && 
@@ -329,7 +299,6 @@ const CompanyProfile = () => {
         )
       )
       
-      // Update changed locations
       for (const location of locationsToUpdate) {
         if (location.id) {
           await companyApi.updateOfficeLocation(location.id, {
@@ -351,7 +320,6 @@ const CompanyProfile = () => {
     }
   }
 
-  // Handle saving about section
   const handleSaveAbout = async (aboutUs: string) => {
     try {
       setSaving(true)
@@ -370,27 +338,22 @@ const CompanyProfile = () => {
     }
   }
 
-  // Handle saving workplace pictures
   const handleSaveWorkplacePictures = async (pictures: WorkplacePicture[]) => {
     try {
       setSaving(true)
       
-      // Find pictures to delete (existing pictures not in the new list)
       const picturesToDelete = workplacePictures.filter(existingPicture => 
         existingPicture.id && !pictures.some(newPicture => newPicture.id === existingPicture.id)
       )
       
-      // Delete removed pictures
       for (const picture of picturesToDelete) {
         if (picture.id) {
           await companyApi.deleteWorkplacePicture(picture.id)
         }
       }
       
-      // Find pictures to create (new pictures without IDs)
       const picturesToCreate = pictures.filter(picture => !picture.id)
       
-      // Create new pictures
       for (const picture of picturesToCreate) {
         await companyApi.createWorkplacePicture({
           pictureUrl: picture.pictureUrl,
@@ -398,7 +361,6 @@ const CompanyProfile = () => {
         })
       }
       
-      // Find pictures to update (existing pictures with changes)
       const picturesToUpdate = pictures.filter(picture => 
         picture.id && workplacePictures.some(existingPicture => 
           existingPicture.id === picture.id && 
@@ -406,7 +368,6 @@ const CompanyProfile = () => {
         )
       )
       
-      // Update changed pictures
       for (const picture of picturesToUpdate) {
         if (picture.id) {
           await companyApi.updateWorkplacePicture(picture.id, {
@@ -451,31 +412,28 @@ const CompanyProfile = () => {
 
   return (
     <CompanyLayout>
-      {/* Company Header Section */}
       <div className="bg-white border-b border-gray-200 px-7 py-5">
         <div className="flex items-start justify-between">
-          {/* Left Section - Company Info */}
           <div className="flex items-start gap-5">
-            {/* Company Logo with Back Button Overlay */}
             <div className="relative">
               <div className="w-24 h-24 bg-green-500 rounded-full flex items-center justify-center">
-                <div className="text-white text-2xl font-bold">♫</div>
+                {companyProfile.logo ? (
+                  <img src={companyProfile.logo} alt="Company Logo" className="w-24 h-24 rounded-full object-cover" />  
+                ) : (
+                  <span className="text-3xl font-bold text-white">{companyProfile.company_name.charAt(0).toUpperCase()}</span>
+                )}  
               </div>
-              {/* Back Button Overlay */}
               <Button variant="outline" size="sm" className="absolute -top-1.5 -left-1.5 w-7 h-7 p-0 bg-white border-purple-200">
                 <ArrowLeft className="h-3.5 w-3.5 text-purple-500" />
               </Button>
             </div>
             
-            {/* Company Name, Website, and Stats */}
             <div className="space-y-3.5">
-              {/* Company Name and Website */}
               <div>
                 <div className="text-2xl font-bold text-gray-900 mb-1">{companyProfile.company_name}</div>
                 <div className="text-base font-semibold text-purple-500">{companyProfile.website_link || 'No website'}</div>
               </div>
               
-              {/* Company Stats Row */}
               <div className="flex items-center gap-7">
                 <div className="flex items-center gap-2.5">
                   <div className="w-9 h-9 bg-gray-100 border border-gray-200 rounded-full flex items-center justify-center">
@@ -520,7 +478,6 @@ const CompanyProfile = () => {
             </div>
           </div>
           
-          {/* Right Section - Profile Settings Button */}
           <Button 
             variant="outline" 
             className="bg-purple-50 border-purple-200 text-purple-600 hover:bg-purple-100 px-3.5 py-1.5 text-sm"
@@ -531,11 +488,8 @@ const CompanyProfile = () => {
         </div>
       </div>
 
-      {/* Main Content */}
       <div className="flex gap-5 px-5 py-7">
-        {/* Left Content */}
         <div className="flex-1 space-y-5">
-          {/* Company Profile Section */}
           <div className="bg-white rounded-lg p-4">
             <div className="flex items-center justify-between mb-3.5">
               <h3 className="text-lg font-semibold">About us</h3>
@@ -554,10 +508,8 @@ const CompanyProfile = () => {
             </p>
                     </div>
                     
-          {/* Divider */}
           <div className="border-t border-gray-200"></div>
 
-          {/* Contact Section */}
           <div className="bg-white rounded-lg p-4">
             <div className="flex items-center justify-between mb-3.5">
               <h3 className="text-lg font-semibold">Contact</h3>
@@ -574,7 +526,6 @@ const CompanyProfile = () => {
                   </div>
                 </div>
                 
-            {/* Contact Links */}
             {contact ? (
             <div className="space-y-2.5">
               <div className="flex gap-2.5">
@@ -621,10 +572,8 @@ const CompanyProfile = () => {
             )}
           </div>
 
-          {/* Divider */}
           <div className="border-t border-gray-200"></div>
 
-          {/* Workplace Pictures Section */}
           <div className="bg-white rounded-lg p-4">
             <div className="flex items-center justify-between mb-3.5">
               <h3 className="text-lg font-semibold">Workplace Pictures</h3>
@@ -641,7 +590,6 @@ const CompanyProfile = () => {
               </div>
                 </div>
                 
-            {/* Working Environment Images */}
             {workplacePictures.length > 0 ? (
             <div className="flex gap-2.5">
                 {workplacePictures.slice(0, 1).map((picture, index) => (
@@ -673,10 +621,8 @@ const CompanyProfile = () => {
             )}
           </div>
 
-          {/* Divider */}
           <div className="border-t border-gray-200"></div>
 
-          {/* Team Section */}
           <div className="bg-white rounded-lg p-4">
             <div className="flex items-center justify-between mb-3.5">
               <h3 className="text-lg font-semibold">Team</h3>
@@ -690,7 +636,6 @@ const CompanyProfile = () => {
               </div>
             </div>
             
-            {/* Team Members */}
             {teamMembers.length > 0 ? (
             <div className="grid grid-cols-3 gap-3.5">
                 {teamMembers.map((member, index) => (
@@ -730,10 +675,8 @@ const CompanyProfile = () => {
             </div>
           </div>
 
-          {/* Divider */}
           <div className="border-t border-gray-200"></div>
 
-          {/* Benefits Section */}
           <div className="bg-white rounded-lg p-4">
             <div className="flex items-center justify-between mb-3.5">
               <h3 className="text-lg font-semibold">Benefits</h3>
@@ -750,7 +693,6 @@ const CompanyProfile = () => {
                     </div>
                   </div>
                   
-            {/* Benefits Grid */}
             {benefits.length > 0 ? (
             <div className="grid grid-cols-3 gap-3.5">
                 {benefits.map((benefit, index) => (
@@ -774,10 +716,8 @@ const CompanyProfile = () => {
             )}
           </div>
 
-          {/* Divider */}
           <div className="border-t border-gray-200"></div>
 
-          {/* Open Positions */}
           <div className="bg-white rounded-lg p-4">
             <div className="flex items-center justify-between mb-3.5">
               <h3 className="text-lg font-semibold">Open Positions</h3>
@@ -787,7 +727,6 @@ const CompanyProfile = () => {
               </Button>
             </div>
             
-            {/* Job Listings */}
             {jobPostings.length > 0 ? (
               <div className="space-y-3">
                 {jobPostings.map((job) => (
@@ -807,7 +746,7 @@ const CompanyProfile = () => {
                           </span>
                           {job.salaryMin && job.salaryMax && (
                             <span className="flex items-center gap-1">
-                              <span className="font-medium">${job.salaryMin.toLocaleString()} - ${job.salaryMax.toLocaleString()}</span>
+                              <span className="font-medium">₹{job.salaryMin.toLocaleString()} - ₹{job.salaryMax.toLocaleString()}</span>
                             </span>
                           )}
                         </div>
@@ -824,9 +763,7 @@ const CompanyProfile = () => {
           </div>
         </div>
 
-        {/* Right Sidebar */}
         <div className="w-80 space-y-7">
-          {/* Tech Stack */}
           <div className="bg-white rounded-lg p-4">
             <div className="flex items-center justify-between mb-3.5">
               <h3 className="text-lg font-semibold">Tech Stack</h3>
@@ -843,10 +780,8 @@ const CompanyProfile = () => {
               </div>
             </div>
             
-            {/* Tech Icons */}
             {techStack.length > 0 ? (
                       <div>
-                {/* Display tech stack in rows of 3 */}
                 {Array.from({ length: Math.ceil(techStack.length / 3) }).map((_, rowIndex) => (
                   <div key={rowIndex} className="flex gap-2.5 mb-2.5">
                     {techStack.slice(rowIndex * 3, (rowIndex + 1) * 3).map((tech, index) => (
@@ -874,7 +809,6 @@ const CompanyProfile = () => {
             )}
           </div>
 
-          {/* Office Locations */}
           <div className="bg-white rounded-lg p-4">
             <div className="flex items-center justify-between mb-3.5">
               <h3 className="text-lg font-semibold">Office Locations</h3>
@@ -891,7 +825,6 @@ const CompanyProfile = () => {
                       </div>
                     </div>
             
-            {/* Locations List */}
             {officeLocations.length > 0 ? (
             <div className="space-y-2.5 mb-3.5">
                 {officeLocations.map((location, index) => (
@@ -922,7 +855,6 @@ const CompanyProfile = () => {
         </div>
       </div>
 
-      {/* Dialogs */}
       <EditContactDialog
         isOpen={editContactDialog}
         onClose={() => setEditContactDialog(false)}

@@ -33,13 +33,11 @@ export class UserBlockedMiddleware {
         return next();
       }
 
-      // Get the latest user data from database
       const user = await this.userRepository.findById(userId);
       if (!user) {
         return next();
       }
 
-      // Check if user is blocked
       if (user.isBlocked) {
         res.status(403).json({
           success: false,
@@ -49,7 +47,6 @@ export class UserBlockedMiddleware {
         return;
       }
 
-      // Check if company profile is blocked for company users
       if (user.role === UserRole.COMPANY) {
         const companyProfile = await this.companyRepository.getProfileByUserId(user.id);
         if (companyProfile && companyProfile.isBlocked) {

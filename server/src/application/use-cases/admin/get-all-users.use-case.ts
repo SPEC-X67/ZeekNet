@@ -2,21 +2,11 @@ import { injectable, inject } from 'inversify';
 import { GetAllUsersRequestDto } from '../../dto/admin/user-management.dto';
 import { TYPES } from '../../../infrastructure/di/types';
 import { IUserRepositoryFull } from '../../../domain/repositories';
-import { UserRole } from '../../../domain/enums/user-role.enum';
-
-interface AdminUserData {
-  id: string;
-  name: string | undefined;
-  email: string;
-  role: UserRole;
-  isVerified: boolean;
-  isBlocked: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-}
+import { UserMapper } from '../../mappers/user.mapper';
+import { UserResponseDto } from '../../mappers/types';
 
 interface GetAllUsersResult {
-  users: AdminUserData[];
+  users: UserResponseDto[];
   pagination: {
     page: number;
     limit: number;
@@ -32,6 +22,8 @@ export class GetAllUsersUseCase {
   constructor(
     @inject(TYPES.UserRepository)
     private readonly userRepository: IUserRepositoryFull,
+    @inject(TYPES.UserMapper)
+    private readonly userMapper: UserMapper,
   ) {}
 
   async execute(options: GetAllUsersRequestDto): Promise<GetAllUsersResult> {
@@ -44,16 +36,7 @@ export class GetAllUsersUseCase {
     };
     const result = await this.userRepository.findAllUsers(convertedOptions);
     return {
-      users: result.users.map((user) => ({
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        isVerified: user.isVerified,
-        isBlocked: user.isBlocked,
-        createdAt: user.createdAt,
-        updatedAt: user.updatedAt,
-      })),
+      users: result.users.map(user => this.userMapper.toDto(user)),
       pagination: {
         page: convertedOptions.page,
         limit: convertedOptions.limit,

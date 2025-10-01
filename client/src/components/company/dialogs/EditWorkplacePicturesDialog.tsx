@@ -38,13 +38,11 @@ const EditWorkplacePicturesDialog: React.FC<EditWorkplacePicturesDialogProps> = 
   const handleFileUpload = async (file: File, index: number) => {
     if (!file) return;
 
-    // Validate file type
     if (!file.type.startsWith('image/')) {
       toast.error('Please select a valid image file');
       return;
     }
 
-    // Validate file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
       toast.error('Image size must be less than 5MB');
       return;
@@ -94,7 +92,6 @@ const EditWorkplacePicturesDialog: React.FC<EditWorkplacePicturesDialogProps> = 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Filter out pictures without URLs
     const validPictures = picturesList.filter(picture => picture.pictureUrl.trim() !== '');
     
     if (validPictures.length === 0) {

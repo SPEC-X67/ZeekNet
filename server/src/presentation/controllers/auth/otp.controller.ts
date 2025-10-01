@@ -5,8 +5,10 @@ import {
   OtpService,
   PasswordHasher,
 } from '../../../application/interfaces';
-import { IUserRepositoryFull } from '../../../domain/repositories';
 import { TYPES } from '../../../infrastructure/di/types';
+import { GetUserByEmailUseCase } from '../../../application/use-cases/auth/get-user-by-email.use-case';
+import { UpdateUserVerificationStatusUseCase } from '../../../application/use-cases/auth/update-user-verification-status.use-case';
+import { UpdateUserRefreshTokenUseCase } from '../../../application/use-cases/auth/update-user-refresh-token.use-case';
 import { z } from 'zod';
 import { BaseController } from '../../../shared';
 import { env } from '../../../infrastructure/config/env';
@@ -25,7 +27,9 @@ export class OtpController extends BaseController {
   constructor(
     @inject(TYPES.OtpService) private readonly otpService: OtpService,
     @inject(TYPES.MailerService) private readonly mailer: MailerService,
-    @inject(TYPES.UserRepository) private readonly userRepository: IUserRepositoryFull,
+    @inject(TYPES.GetUserByEmailUseCase) private readonly getUserByEmailUseCase: GetUserByEmailUseCase,
+    @inject(TYPES.UpdateUserVerificationStatusUseCase) private readonly updateUserVerificationStatusUseCase: UpdateUserVerificationStatusUseCase,
+    @inject(TYPES.UpdateUserRefreshTokenUseCase) private readonly updateUserRefreshTokenUseCase: UpdateUserRefreshTokenUseCase,
     @inject(TYPES.TokenService) private readonly tokenService: TokenService,
     @inject(TYPES.PasswordHasher) private readonly passwordHasher: PasswordHasher,
   ) {
@@ -41,7 +45,7 @@ export class OtpController extends BaseController {
     if (!parsed.success) return this.handleValidationError('Invalid email', next);
     
     try {
-      const user = await this.userRepository.findByEmail(parsed.data.email);
+      const user = await this.getUserByEmailUseCase.execute(parsed.data.email);
       if (!user) {
         return this.handleValidationError('User not found', next);
       }
@@ -112,12 +116,12 @@ export class OtpController extends BaseController {
       );
       if (!ok) return this.handleValidationError('Invalid or expired OTP', next);
   
-      await this.userRepository.updateVerificationStatus(
+      await this.updateUserVerificationStatusUseCase.execute(
         parsed.data.email,
         true,
       );
 
-      const user = await this.userRepository.findByEmail(parsed.data.email);
+      const user = await this.getUserByEmailUseCase.execute(parsed.data.email);
       if (!user) {
         return this.handleValidationError('User not found', next);
       }
@@ -126,7 +130,7 @@ export class OtpController extends BaseController {
       const refreshToken = this.tokenService.signRefresh({ sub: user.id });
       const hashedRefresh = await this.passwordHasher.hash(refreshToken);
 
-      await this.userRepository.updateRefreshToken(user.id, hashedRefresh);
+      await this.updateUserRefreshTokenUseCase.execute(user.id, hashedRefresh);
       
       res.cookie(env.COOKIE_NAME_REFRESH!, refreshToken, createRefreshTokenCookieOptions());
   

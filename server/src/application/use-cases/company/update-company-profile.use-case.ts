@@ -1,46 +1,31 @@
 import { injectable, inject } from 'inversify';
-import { UpdateCompanyProfileRequestDto } from '../../dto/company/create-company.dto';
+import { SimpleUpdateCompanyProfileRequestDto } from '../../dto/company/company-profile.dto';
 import { TYPES } from '../../../infrastructure/di/types';
 import { ICompanyRepository } from '../../../domain/repositories';
-import { CompanyProfile } from '../../../domain/entities';
+import { CompanyProfileMapper } from '../../mappers/company-profile.mapper';
+import { CompanyProfileResponseDto } from '../../mappers/types';
 
-interface OfficeLocationData {
-  location: string;
-  office_name: string;
-  address: string;
-  is_headquarters: boolean;
-}
 
 @injectable()
 export class UpdateCompanyProfileUseCase {
   constructor(
     @inject(TYPES.CompanyRepository)
     private readonly companyRepository: ICompanyRepository,
+    @inject(TYPES.CompanyProfileMapper)
+    private readonly companyProfileMapper: CompanyProfileMapper,
   ) {}
 
   async execute(
     userId: string,
-    data: UpdateCompanyProfileRequestDto,
-  ): Promise<CompanyProfile> {
+    data: { profile: SimpleUpdateCompanyProfileRequestDto },
+  ): Promise<CompanyProfileResponseDto> {
     const existingProfile = await this.companyRepository.getProfileByUserId(userId);
     if (!existingProfile) {
       throw new Error('Company profile not found');
     }
 
     if (data.profile) {
-      console.log('Updating profile with data:', {
-        profileId: existingProfile.id,
-        updateData: {
-          companyName: data.profile.company_name,
-          logo: data.profile.logo,
-          banner: data.profile.banner,
-          websiteLink: data.profile.website_link,
-          employeeCount: data.profile.employee_count,
-          industry: data.profile.industry,
-          organisation: existingProfile.organisation, // Keep existing value
-          aboutUs: data.profile.about_us,
-        }
-      });
+      
       
       const updatedProfile = await this.companyRepository.updateProfile(existingProfile.id, {
         companyName: data.profile.company_name,
@@ -49,46 +34,18 @@ export class UpdateCompanyProfileUseCase {
         websiteLink: data.profile.website_link,
         employeeCount: data.profile.employee_count,
         industry: data.profile.industry,
-        organisation: existingProfile.organisation, // Keep existing value
+        organisation: data.profile.organisation || existingProfile.organisation,
         aboutUs: data.profile.about_us,
       });
       
-      console.log('Profile updated successfully:', {
-        id: updatedProfile.id,
-        aboutUs: updatedProfile.aboutUs
-      });
     }
 
-    if (data.contact) {
-      await this.companyRepository.updateContact(existingProfile.id, {
-        email: data.contact.email,
-        phone: data.contact.phone,
-        twitterLink: data.contact.twitter_link,
-        facebookLink: data.contact.facebook_link,
-        linkedin: data.contact.linkedin,
-      });
-    }
-
-    if (data.office_locations) {
-      await this.companyRepository.deleteLocations(existingProfile.id);
-      await Promise.all(
-        data.office_locations.map((location: OfficeLocationData) =>
-          this.companyRepository.createLocation({
-            companyId: existingProfile.id,
-            location: location.location,
-            officeName: location.office_name,
-            address: location.address,
-            isHeadquarters: location.is_headquarters,
-          }),
-        ),
-      );
-    }
 
     const updatedProfile = await this.companyRepository.getProfileByUserId(userId);
     if (!updatedProfile) {
       throw new Error('Failed to retrieve updated profile');
     }
 
-    return updatedProfile;
+    return this.companyProfileMapper.toDto(updatedProfile);
   }
 }

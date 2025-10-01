@@ -4,7 +4,7 @@ import { TYPES } from '../../../infrastructure/di/types';
 import { LoginDto, GoogleLoginDto } from '../../../application/dto/auth';
 import { LoginUserUseCase, AdminLoginUseCase, GoogleLoginUseCase } from '../../../application/use-cases';
 import { TokenService, PasswordHasher } from '../../../application/interfaces/infrastructure';
-import { IUserRepositoryFull } from '../../../domain/repositories';
+import { UpdateUserRefreshTokenUseCase } from '../../../application/use-cases/auth/update-user-refresh-token.use-case';
 import { BaseController, AuthenticatedRequest } from '../../../shared';
 import { 
   createRefreshTokenCookieOptions, 
@@ -19,7 +19,7 @@ export class LoginController extends BaseController {
     @inject(TYPES.GoogleLoginUseCase) private readonly googleLoginUseCase: GoogleLoginUseCase,
     @inject(TYPES.TokenService) private readonly tokenService: TokenService,
     @inject(TYPES.PasswordHasher) private readonly passwordHasher: PasswordHasher,
-    @inject(TYPES.UserRepository) private readonly userRepository: IUserRepositoryFull,
+    @inject(TYPES.UpdateUserRefreshTokenUseCase) private readonly updateUserRefreshTokenUseCase: UpdateUserRefreshTokenUseCase,
   ) {
     super();
   }
@@ -45,7 +45,7 @@ export class LoginController extends BaseController {
         const refreshToken = this.tokenService.signRefresh({ sub: user.id });
         const hashedRefresh = await this.passwordHasher.hash(refreshToken);
       
-        await this.userRepository.updateRefreshToken(user.id, hashedRefresh);
+        await this.updateUserRefreshTokenUseCase.execute(user.id, hashedRefresh);
         
         res.cookie(env.COOKIE_NAME_REFRESH!, refreshToken, createRefreshTokenCookieOptions());
         

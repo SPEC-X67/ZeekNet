@@ -42,7 +42,6 @@ export class GetCompanyProfileUseCase {
     const profile = await this.companyRepository.getProfileByUserId(userId);
     if (!profile) return null;
 
-    // Fetch all company data in parallel
     const [
       contact,
       locations,

@@ -3,56 +3,18 @@ import { ICompanyOfficeLocationRepository } from '../../../../domain/repositorie
 import { CompanyOfficeLocation } from '../../../../domain/entities/company-office-location.entity';
 import { CompanyOfficeLocationModel } from '../models/company-office-location.model';
 import { Types } from 'mongoose';
+import { MongoBaseRepository } from '../../../../shared/base';
 
 @injectable()
-export class MongoCompanyOfficeLocationRepository implements ICompanyOfficeLocationRepository {
-  async create(location: CompanyOfficeLocation): Promise<CompanyOfficeLocation> {
-    const locationDoc = new CompanyOfficeLocationModel({
-      companyId: new Types.ObjectId(location.companyId),
-      location: location.location,
-      isHeadquarters: location.isHeadquarters,
-      officeName: location.officeName,
-      address: location.address,
-    });
-
-    const savedLocation = await locationDoc.save();
-    return this.mapDocumentToEntity(savedLocation);
+export class MongoCompanyOfficeLocationRepository extends MongoBaseRepository<CompanyOfficeLocation> implements ICompanyOfficeLocationRepository {
+  constructor() {
+    super(CompanyOfficeLocationModel);
   }
 
-  async findById(id: string): Promise<CompanyOfficeLocation | null> {
-    const location = await CompanyOfficeLocationModel.findById(id);
-    return location ? this.mapDocumentToEntity(location) : null;
-  }
-
-  async findByCompanyId(companyId: string): Promise<CompanyOfficeLocation[]> {
-    const locations = await CompanyOfficeLocationModel.find({ companyId: new Types.ObjectId(companyId) });
-    return locations.map(location => this.mapDocumentToEntity(location));
-  }
-
-  async update(location: CompanyOfficeLocation): Promise<CompanyOfficeLocation> {
-    const updatedLocation = await CompanyOfficeLocationModel.findByIdAndUpdate(
-      location.id,
-      {
-        location: location.location,
-        isHeadquarters: location.isHeadquarters,
-        officeName: location.officeName,
-        address: location.address,
-      },
-      { new: true }
-    );
-
-    if (!updatedLocation) {
-      throw new Error('Office location not found');
-    }
-
-    return this.mapDocumentToEntity(updatedLocation);
-  }
-
-  async delete(id: string): Promise<void> {
-    await CompanyOfficeLocationModel.findByIdAndDelete(id);
-  }
-
-  private mapDocumentToEntity(doc: any): CompanyOfficeLocation {
+  /**
+   * Map MongoDB document to CompanyOfficeLocation entity
+   */
+  protected mapToEntity(doc: any): CompanyOfficeLocation {
     return CompanyOfficeLocation.fromJSON({
       id: doc._id.toString(),
       companyId: doc.companyId.toString(),
@@ -63,6 +25,49 @@ export class MongoCompanyOfficeLocationRepository implements ICompanyOfficeLocat
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,
     });
+  }
+
+  /**
+   * Override create to handle ObjectId conversion
+   */
+  async create(location: Omit<CompanyOfficeLocation, 'id' | 'createdAt' | 'updatedAt'>): Promise<CompanyOfficeLocation> {
+    const locationDoc = new CompanyOfficeLocationModel({
+      companyId: new Types.ObjectId(location.companyId),
+      location: location.location,
+      isHeadquarters: location.isHeadquarters,
+      officeName: location.officeName,
+      address: location.address,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+
+    const savedLocation = await locationDoc.save();
+    return this.mapToEntity(savedLocation);
+  }
+
+  async findByCompanyId(companyId: string): Promise<CompanyOfficeLocation[]> {
+    const locations = await CompanyOfficeLocationModel.find({ companyId: new Types.ObjectId(companyId) });
+    return locations.map(location => this.mapToEntity(location));
+  }
+
+  /**
+   * Override update to handle ObjectId conversion
+   */
+  async update(id: string, data: Partial<CompanyOfficeLocation>): Promise<CompanyOfficeLocation | null> {
+    if (!Types.ObjectId.isValid(id)) {
+      return null;
+    }
+
+    const updatedLocation = await CompanyOfficeLocationModel.findByIdAndUpdate(
+      id,
+      {
+        ...data,
+        updatedAt: new Date(),
+      },
+      { new: true }
+    );
+
+    return updatedLocation ? this.mapToEntity(updatedLocation) : null;
   }
 }
 

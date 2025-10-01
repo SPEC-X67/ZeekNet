@@ -1,6 +1,5 @@
 import { z } from 'zod';
 
-// Simple update DTO for individual field updates
 export const SimpleUpdateCompanyProfileDto = z.object({
   company_name: z.string().min(1).optional(),
   logo: z.string().optional(),

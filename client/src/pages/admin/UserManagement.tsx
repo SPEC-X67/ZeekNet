@@ -50,7 +50,7 @@ const UserManagement = () => {
     page: 1,
     limit: 10,
     search: '',
-    role: 'seeker', // Only fetch job seekers
+    role: 'seeker', 
     isBlocked: undefined
   })
 
@@ -92,7 +92,6 @@ const UserManagement = () => {
 
   const filteredUsers = users
 
-  console.log(users)
 
   const handleBlockClick = (user: User) => {
     setSelectedUser(user)
@@ -138,7 +137,6 @@ const UserManagement = () => {
   }
 
   const handleEmailConfirm = () => {
-    console.log('Toggling email verification for:', selectedUser?.email)
     toast.info('Email verification toggle not implemented yet')
     setEmailDialogOpen(false)
     setSelectedUser(null)

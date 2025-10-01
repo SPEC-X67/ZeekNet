@@ -30,8 +30,11 @@ export class CompanyBenefitsUseCase {
     if (!existingBenefit) {
       throw new NotFoundError(`Company benefit with ID ${benefitId} not found`);
     }
-    const updatedBenefit = existingBenefit.updateBenefit(data);
-    return this.companyBenefitsRepository.update(updatedBenefit);
+    const updatedBenefit = await this.companyBenefitsRepository.update(benefitId, data);
+    if (!updatedBenefit) {
+      throw new NotFoundError(`Failed to update company benefit with ID ${benefitId}`);
+    }
+    return updatedBenefit;
   }
 
   async deleteBenefit(benefitId: string): Promise<void> {

@@ -15,7 +15,7 @@ import {
   GetCompaniesWithVerificationUseCase,
   VerifyCompanyUseCase,
 } from '../../../application/use-cases';
-import { ICompanyRepository } from '../../../domain/repositories';
+import { BlockCompanyUseCase } from '../../../application/use-cases/admin/block-company.use-case';
 import { BaseController } from '../../../shared';
 
 @injectable()
@@ -33,8 +33,8 @@ export class AdminController extends BaseController {
     private readonly getCompaniesWithVerificationUseCase: GetCompaniesWithVerificationUseCase,
     @inject(TYPES.VerifyCompanyUseCase)
     private readonly verifyCompanyUseCase: VerifyCompanyUseCase,
-    @inject(TYPES.CompanyRepository)
-    private readonly companyRepository: ICompanyRepository,
+    @inject(TYPES.BlockCompanyUseCase)
+    private readonly blockCompanyUseCase: BlockCompanyUseCase,
   ) {
     super();
   }
@@ -185,7 +185,7 @@ export class AdminController extends BaseController {
     }
 
     try {
-      await this.companyRepository.updateProfile(companyId, { isBlocked });
+      await this.blockCompanyUseCase.execute(companyId, isBlocked);
       const message = `Company ${isBlocked ? 'blocked' : 'unblocked'} successfully`;
       this.sendSuccessResponse(res, message, null);
     } catch (error) {
