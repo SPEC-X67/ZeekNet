@@ -59,8 +59,8 @@ const UserManagement = () => {
       setLoading(true)
       const response = await adminApi.getAllUsers(params)
 
-      if (response && response.data) {
-        const transformedUsers: UserWithDisplayData[] = response.data.users.map((user: User) => ({
+      if (response) {
+        const transformedUsers: UserWithDisplayData[] = response.users.map((user: User) => ({
           ...user,
           name: user.email.split('@')[0], 
           appliedJobs: Math.floor(Math.random() * 15), 
@@ -75,7 +75,7 @@ const UserManagement = () => {
         }))
         
         setUsers(transformedUsers)
-        setPagination(response.data.pagination)
+        setPagination(response.pagination)
       }
     } catch (error) {
       console.error('Error fetching users:', error)
