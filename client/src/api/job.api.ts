@@ -2,7 +2,6 @@ import { api } from './index';
 import type { JobPostingResponse, JobPostingQuery, PaginatedJobPostings } from '@/types/job';
 
 export const jobApi = {
-  // Get all public job postings
   getAllJobs: async (query: JobPostingQuery = {}): Promise<{
     success: boolean;
     data?: PaginatedJobPostings;
@@ -20,7 +19,7 @@ export const jobApi = {
       if (query.location) params.append('location', query.location);
       if (query.search) params.append('search', query.search);
 
-      const response = await api.get(`/public/jobs?${params.toString()}`);
+      const response = await api.get(`/api/public/jobs?${params.toString()}`);
       return response.data;
     } catch (error: any) {
       console.error('Failed to fetch jobs:', error);
@@ -31,14 +30,13 @@ export const jobApi = {
     }
   },
 
-  // Get single job posting by ID (public)
   getJobById: async (id: string): Promise<{
     success: boolean;
     data?: JobPostingResponse;
     message?: string;
   }> => {
     try {
-      const response = await api.get(`/public/jobs/${id}`);
+      const response = await api.get(`/api/public/jobs/${id}`);
       return response.data;
     } catch (error: any) {
       console.error('Failed to fetch job:', error);

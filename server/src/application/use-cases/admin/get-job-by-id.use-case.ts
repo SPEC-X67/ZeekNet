@@ -1,12 +1,12 @@
 import { injectable, inject } from 'inversify';
 import { JobPostingRepository } from '../../../domain/repositories/job-posting.repository.interface';
-import { AppError } from '../../../domain/errors/errors';
 import { TYPES } from '../../../infrastructure/di/types';
+import { AppError } from '../../../domain/errors/errors';
 import { JobPostingMapper } from '../../mappers/job-posting.mapper';
 import { JobPostingResponseDto } from '../../mappers/types';
 
 @injectable()
-export class GetJobPostingUseCase {
+export class AdminGetJobByIdUseCase {
   constructor(
     @inject(TYPES.JobPostingRepository) 
     private jobPostingRepository: JobPostingRepository,
@@ -14,13 +14,20 @@ export class GetJobPostingUseCase {
     private jobPostingMapper: JobPostingMapper,
   ) {}
 
-  async execute(id: string): Promise<JobPostingResponseDto> {
-    const jobPosting = await this.jobPostingRepository.findById(id);
-    
-    if (!jobPosting) {
-      throw new AppError('Job posting not found', 404);
-    }
+  async execute(jobId: string): Promise<JobPostingResponseDto> {
+    try {
+      const job = await this.jobPostingRepository.findById(jobId);
+      
+      if (!job) {
+        throw new AppError('Job not found', 404);
+      }
 
-    return this.jobPostingMapper.toDto(jobPosting);
+      return this.jobPostingMapper.toDto(job);
+    } catch (error) {
+      if (error instanceof AppError) {
+        throw error;
+      }
+      throw new AppError('Failed to fetch job', 500);
+    }
   }
 }

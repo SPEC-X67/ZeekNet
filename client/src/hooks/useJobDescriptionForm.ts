@@ -82,16 +82,13 @@ export const useJobDescriptionForm = (
 
   const handleFieldChange = useCallback((field: keyof JobPostingData, value: string | string[]) => {
     if (field === 'responsibilities' || field === 'qualifications' || field === 'niceToHaves') {
-      // Handle array fields
       if (Array.isArray(value)) {
         onDataChange({ [field]: value });
       } else {
-        // Fallback for string input (split by newlines)
         const lines = value.split('\n').filter(line => line.trim());
         onDataChange({ [field]: lines });
       }
     } else {
-      // Handle string fields
       onDataChange({ [field]: value as string });
     }
     if (errors[field as string]) {

@@ -57,7 +57,6 @@ const EditJob = () => {
     },
   ];
 
-  // Fetch job data on component mount
   useEffect(() => {
     const fetchJobData = async () => {
       if (!id) {
@@ -73,7 +72,6 @@ const EditJob = () => {
         if (response.success && response.data) {
           const job = response.data;
           
-          // Map the job data to our form structure
           setJobData({
             title: job.title || "",
             employmentTypes: job.employment_types || [],
@@ -126,7 +124,6 @@ const EditJob = () => {
     }
 
     try {
-      // Validate required fields before sending
       if (!jobData.title || jobData.title.length < 5) {
         toast.error("Validation failed", {
           description: "Title must be at least 5 characters",

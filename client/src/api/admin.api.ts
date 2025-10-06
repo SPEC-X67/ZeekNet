@@ -1,147 +1,348 @@
-import { baseApi, buildQueryParams, buildPaginationQuery, buildFilterQuery } from './base.api';
+import { api } from './index';
+import type { JobPostingResponse, JobPostingQuery, PaginatedJobPostings } from '@/types/job';
 
+// Flattened admin API for easier usage
+export const adminApi = {
+  // Job Management
+  getAllJobs: async (query: JobPostingQuery & {
+      status?: 'all' | 'active' | 'inactive';
+      sortBy?: string;
+      sortOrder?: 'asc' | 'desc';
+    } = {}): Promise<{
+      success: boolean;
+      data?: PaginatedJobPostings;
+      message?: string;
+    }> => {
+      try {
+        const params = new URLSearchParams();
+        
+        if (query.page) params.append('page', query.page.toString());
+        if (query.limit) params.append('limit', query.limit.toString());
+        if (query.category_ids?.length) params.append('category_ids', query.category_ids.join(','));
+        if (query.employment_types?.length) params.append('employment_types', query.employment_types.join(','));
+        if (query.salary_min) params.append('salary_min', query.salary_min.toString());
+        if (query.salary_max) params.append('salary_max', query.salary_max.toString());
+        if (query.location) params.append('location', query.location);
+        if (query.search) params.append('search', query.search);
+        if (query.is_active !== undefined) params.append('is_active', query.is_active.toString());
+        if (query.status && query.status !== 'all') {
+          params.append('is_active', query.status === 'active' ? 'true' : 'false');
+        }
+        if (query.sortBy) params.append('sortBy', query.sortBy);
+        if (query.sortOrder) params.append('sortOrder', query.sortOrder);
+
+        const response = await api.get(`/api/admin/jobs?${params.toString()}`);
+        return response.data;
+      } catch (error: any) {
+        console.error('Failed to fetch admin jobs:', error);
+        return {
+          success: false,
+          message: error.response?.data?.message || 'Failed to fetch jobs',
+        };
+      }
+    },
+
+  getJobById: async (id: string): Promise<{
+      success: boolean;
+      data?: JobPostingResponse;
+      message?: string;
+    }> => {
+      try {
+        const response = await api.get(`/api/admin/jobs/${id}`);
+        return response.data;
+      } catch (error: any) {
+        console.error('Failed to fetch admin job:', error);
+        return {
+          success: false,
+          message: error.response?.data?.message || 'Failed to fetch job',
+        };
+      }
+    },
+
+  updateJobStatus: async (jobId: string, isActive: boolean): Promise<{
+      success: boolean;
+      message?: string;
+    }> => {
+      try {
+        const response = await api.patch(`/api/admin/jobs/${jobId}/status`, {
+          is_active: isActive
+        });
+        return response.data;
+      } catch (error: any) {
+        console.error('Failed to update job status:', error);
+        return {
+          success: false,
+          message: error.response?.data?.message || 'Failed to update job status',
+        };
+      }
+    },
+
+  deleteJob: async (jobId: string): Promise<{
+      success: boolean;
+      message?: string;
+    }> => {
+      try {
+        const response = await api.delete(`/api/admin/jobs/${jobId}`);
+        return response.data;
+      } catch (error: any) {
+        console.error('Failed to delete job:', error);
+        return {
+          success: false,
+          message: error.response?.data?.message || 'Failed to delete job',
+        };
+      }
+    },
+
+  getJobStats: async (): Promise<{
+      success: boolean;
+      data?: {
+        total: number;
+        active: number;
+        inactive: number;
+        totalApplications: number;
+        totalViews: number;
+      };
+      message?: string;
+    }> => {
+      try {
+        const response = await api.get('/api/admin/jobs/stats');
+        return response.data;
+      } catch (error: any) {
+        console.error('Failed to fetch job stats:', error);
+        return {
+          success: false,
+          message: error.response?.data?.message || 'Failed to fetch job statistics',
+        };
+      }
+    },
+
+  // User Management
+  getAllUsers: async (query: {
+      page?: number;
+      limit?: number;
+      search?: string;
+      isBlocked?: boolean;
+    } = {}): Promise<{
+      success: boolean;
+      data?: {
+        users: any[];
+        pagination: {
+          page: number;
+          limit: number;
+          total: number;
+          totalPages: number;
+        };
+      };
+      message?: string;
+    }> => {
+      try {
+        const params = new URLSearchParams();
+        
+        if (query.page) params.append('page', query.page.toString());
+        if (query.limit) params.append('limit', query.limit.toString());
+        if (query.search) params.append('search', query.search);
+        if (query.isBlocked !== undefined) params.append('isBlocked', query.isBlocked.toString());
+
+        const response = await api.get(`/api/admin/users?${params.toString()}`);
+        return response.data;
+      } catch (error: any) {
+        console.error('Failed to fetch users:', error);
+        return {
+          success: false,
+          message: error.response?.data?.message || 'Failed to fetch users',
+        };
+      }
+    },
+
+  getUserById: async (userId: string): Promise<{
+      success: boolean;
+      data?: any;
+      message?: string;
+    }> => {
+      try {
+        const response = await api.get(`/api/admin/users/${userId}`);
+        return response.data;
+      } catch (error: any) {
+        console.error('Failed to fetch user:', error);
+        return {
+          success: false,
+          message: error.response?.data?.message || 'Failed to fetch user',
+        };
+      }
+    },
+
+  blockUser: async (userId: string, isBlocked: boolean): Promise<{
+      success: boolean;
+      message?: string;
+    }> => {
+      try {
+        const response = await api.patch('/api/admin/users/block', {
+          userId,
+          isBlocked
+        });
+        return response.data;
+      } catch (error: any) {
+        console.error('Failed to block/unblock user:', error);
+        return {
+          success: false,
+          message: error.response?.data?.message || 'Failed to update user status',
+        };
+      }
+    },
+
+  // Company Management
+  getAllCompanies: async (query: {
+      page?: number;
+      limit?: number;
+      search?: string;
+      isVerified?: boolean;
+      isBlocked?: boolean;
+    } = {}): Promise<{
+      success: boolean;
+      data?: {
+        companies: any[];
+        pagination: {
+          page: number;
+          limit: number;
+          total: number;
+          totalPages: number;
+        };
+      };
+      message?: string;
+    }> => {
+      try {
+        const params = new URLSearchParams();
+        
+        if (query.page) params.append('page', query.page.toString());
+        if (query.limit) params.append('limit', query.limit.toString());
+        if (query.search) params.append('search', query.search);
+        if (query.isVerified !== undefined) params.append('isVerified', query.isVerified.toString());
+        if (query.isBlocked !== undefined) params.append('isBlocked', query.isBlocked.toString());
+
+        const response = await api.get(`/api/admin/companies?${params.toString()}`);
+        return response.data;
+      } catch (error: any) {
+        console.error('Failed to fetch companies:', error);
+        return {
+          success: false,
+          message: error.response?.data?.message || 'Failed to fetch companies',
+        };
+      }
+    },
+
+  getPendingCompanies: async (): Promise<{
+      success: boolean;
+      data?: any[];
+      message?: string;
+    }> => {
+      try {
+        const response = await api.get('/api/admin/companies/pending');
+        return response.data;
+      } catch (error: any) {
+        console.error('Failed to fetch pending companies:', error);
+        return {
+          success: false,
+          message: error.response?.data?.message || 'Failed to fetch pending companies',
+        };
+      }
+    },
+
+  getCompanyById: async (companyId: string): Promise<{
+      success: boolean;
+      data?: any;
+      message?: string;
+    }> => {
+      try {
+        const response = await api.get(`/api/admin/companies/${companyId}`);
+        return response.data;
+      } catch (error: any) {
+        console.error('Failed to fetch company:', error);
+        return {
+          success: false,
+          message: error.response?.data?.message || 'Failed to fetch company',
+        };
+      }
+    },
+
+  verifyCompany: async (data: { companyId: string; isVerified: string }): Promise<{
+      success: boolean;
+      message?: string;
+    }> => {
+      try {
+        const response = await api.patch('/api/admin/companies/verify', data);
+        return response.data;
+      } catch (error: any) {
+        console.error('Failed to verify company:', error);
+        return {
+          success: false,
+          message: error.response?.data?.message || 'Failed to verify company',
+        };
+      }
+    },
+
+  blockCompany: async (data: { companyId: string; isBlocked: boolean }): Promise<{
+      success: boolean;
+      message?: string;
+    }> => {
+      try {
+        const response = await api.patch('/api/admin/companies/block', data);
+        return response.data;
+      } catch (error: any) {
+        console.error('Failed to block/unblock company:', error);
+        return {
+          success: false,
+          message: error.response?.data?.message || 'Failed to update company status',
+        };
+      }
+    }
+};
+
+// Export types for convenience
 export interface User {
-  id: string
-  email: string
-  role: string
-  isVerified: boolean
-  isBlocked: boolean
-  createdAt: string
-  updatedAt: string
-}
-
-export interface PaginatedUsersResponse {
-  users: User[]
-  pagination: {
-    page: number
-    limit: number
-    total: number
-    totalPages: number
-    hasNext: boolean
-    hasPrev: boolean
-  }
-}
-
-export interface GetAllUsersParams {
-  page?: number
-  limit?: number
-  search?: string
-  role?: string
-  isBlocked?: boolean
-}
-
-export interface BlockUserPayload {
-  userId: string
-  isBlocked: boolean
+  id: string;
+  name?: string;
+  email: string;
+  role: string;
+  is_verified: boolean;
+  isBlocked: boolean;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface Company {
-  id: string
-  userId: string
-  companyName: string
-  logo: string
-  banner: string
-  websiteLink: string
-  employeeCount: number
-  industry: string
-  organisation: string
-  aboutUs: string
-  isVerified: 'pending' | 'rejected' | 'verified'
-  isBlocked: boolean
-  createdAt: string
-  updatedAt: string
+  id: string;
+  userId: string;
+  companyName: string;
+  logo: string;
+  banner: string;
+  websiteLink: string;
+  employeeCount: number;
+  industry: string;
+  organisation: string;
+  aboutUs: string;
+  isVerified: 'pending' | 'rejected' | 'verified';
+  isBlocked: boolean;
+  createdAt: string;
+  updatedAt: string;
   verification?: {
-    taxId: string
-    businessLicenseUrl: string
-  }
+    taxId: string;
+    businessLicenseUrl: string;
+  } | null;
 }
 
-export interface PaginatedCompaniesResponse {
-  companies: Company[]
-  pagination: {
-    page: number
-    limit: number
-    total: number
-    totalPages: number
-    hasNext: boolean
-    hasPrev: boolean
-  }
+export interface GetAllUsersParams {
+  page: number;
+  limit: number;
+  search?: string;
+  role?: string;
+  isBlocked?: boolean | string;
 }
 
 export interface GetAllCompaniesParams {
-  page?: number
-  limit?: number
-  search?: string
-  industry?: string
-  isVerified?: 'pending' | 'rejected' | 'verified'
-  isBlocked?: boolean
-}
-
-export interface CompanyVerificationPayload {
-  companyId: string
-  isVerified: 'pending' | 'rejected' | 'verified'
-  rejection_reason?: string
-}
-
-export const adminApi = {
-  async getAllUsers(params: GetAllUsersParams = {}): Promise<PaginatedUsersResponse> {
-    const queryParams = {
-      ...buildPaginationQuery(params.page || 1, params.limit || 10),
-      ...buildFilterQuery({
-        search: params.search,
-        role: params.role,
-        isBlocked: params.isBlocked,
-      }),
-    };
-    
-    const queryString = buildQueryParams(queryParams);
-    const response = await baseApi.get<PaginatedUsersResponse>(`/api/admin/users?${queryString}`)();
-    return response.data!;
-  },
-
-  async getUserById(userId: string): Promise<User> {
-    const response = await baseApi.get<User>(`/api/admin/users/${userId}`)();
-    return response.data!;
-  },
-
-  async blockUser(payload: BlockUserPayload): Promise<{ message: string }> {
-    const response = await baseApi.patch<null>('/api/admin/users/block')(payload);
-    return { message: response.message! };
-  },
-
-  async getAllCompanies(params: GetAllCompaniesParams = {}): Promise<PaginatedCompaniesResponse> {
-    const queryParams = {
-      ...buildPaginationQuery(params.page || 1, params.limit || 10),
-      ...buildFilterQuery({
-        search: params.search,
-        industry: params.industry,
-        isVerified: params.isVerified,
-        isBlocked: params.isBlocked,
-      }),
-    };
-    
-    const queryString = buildQueryParams(queryParams);
-    const response = await baseApi.get<PaginatedCompaniesResponse>(`/api/admin/companies?${queryString}`)();
-    return response.data!;
-  },
-
-  async getPendingCompanies(): Promise<PaginatedCompaniesResponse> {
-    const response = await baseApi.get<PaginatedCompaniesResponse>('/api/admin/companies/pending')();
-    return response.data!;
-  },
-
-  async getCompanyById(companyId: string): Promise<Company> {
-    const response = await baseApi.get<Company>(`/api/admin/companies/${companyId}`)();
-    return response.data!;
-  },
-
-  async verifyCompany(payload: CompanyVerificationPayload): Promise<{ message: string }> {
-    const response = await baseApi.patch<null>('/api/admin/companies/verify')(payload);
-    return { message: response.message! };
-  },
-
-  async blockCompany(payload: { companyId: string; isBlocked: boolean }): Promise<{ message: string }> {
-    const response = await baseApi.patch<null>('/api/admin/companies/block')(payload);
-    return { message: response.message! };
-  }
+  page: number;
+  limit: number;
+  search?: string;
+  industry?: string;
+  isVerified?: 'pending' | 'rejected' | 'verified';
+  isBlocked?: boolean | string;
 }

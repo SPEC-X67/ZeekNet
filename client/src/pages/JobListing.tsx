@@ -2,23 +2,20 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
 import { 
-  Search, 
-  MapPin, 
-  Filter, 
-  Grid, 
-  List,
   ChevronLeft,
   ChevronRight,
   Loader2,
   AlertCircle,
-  Briefcase
+  Briefcase,
+  Home
 } from "lucide-react";
 import JobCard from "@/components/jobs/JobCard";
 import JobSearchFilters from "@/components/jobs/JobSearchFilters";
 import { jobApi } from "@/api/job.api";
-import type { JobPostingResponse, JobPostingQuery, PaginatedJobPostings } from "@/types/job";
+import type { JobPostingResponse, JobPostingQuery } from "@/types/job";
+import PublicHeader from "@/components/layouts/PublicHeader";
+import PublicFooter from "@/components/layouts/PublicFooter";
 
 const JobListing = () => {
   const navigate = useNavigate();
@@ -33,9 +30,8 @@ const JobListing = () => {
     totalPages: 0,
   });
   const [currentQuery, setCurrentQuery] = useState<JobPostingQuery>({});
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [viewMode] = useState<'grid' | 'list'>('grid');
 
-  // Fetch jobs on component mount
   useEffect(() => {
     fetchJobs();
   }, []);
@@ -79,16 +75,13 @@ const JobListing = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleApplyJob = (jobId: string) => {
-    // Check if user is authenticated
+  const handleApplyJob = () => {
     const token = localStorage.getItem('token');
     if (!token) {
-      // Redirect to login with return URL
       navigate('/auth/login?redirect=/jobs');
       return;
     }
     
-    // For now, just show an alert
     alert('Application feature coming soon!');
   };
 
@@ -103,52 +96,45 @@ const JobListing = () => {
     const currentPage = pagination.page;
     const totalPages = pagination.totalPages;
 
-    // Previous button
     pages.push(
-      <Button
+      <button
         key="prev"
-        variant="outline"
-        size="sm"
         onClick={() => handlePageChange(currentPage - 1)}
         disabled={currentPage === 1}
-        className="flex items-center gap-1"
+        className="w-12 h-12 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        <ChevronLeft className="w-4 h-4" />
-        Previous
-      </Button>
+        <ChevronLeft className="w-4 h-4 text-gray-400" />
+      </button>
     );
 
-    // Page numbers
     const startPage = Math.max(1, currentPage - 2);
     const endPage = Math.min(totalPages, currentPage + 2);
 
     for (let i = startPage; i <= endPage; i++) {
       pages.push(
-        <Button
+        <button
           key={i}
-          variant={i === currentPage ? "default" : "outline"}
-          size="sm"
           onClick={() => handlePageChange(i)}
-          className={i === currentPage ? "bg-primary text-white" : ""}
+          className={`w-12 h-12 rounded-full flex items-center justify-center text-sm font-medium transition-colors ${
+            i === currentPage
+              ? 'bg-primary text-white'
+              : 'text-gray-600 hover:bg-gray-50'
+          }`}
         >
-          {i}
-        </Button>
+          {i.toString().padStart(2, '0')}
+        </button>
       );
     }
 
-    // Next button
     pages.push(
-      <Button
+      <button
         key="next"
-        variant="outline"
-        size="sm"
         onClick={() => handlePageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
-        className="flex items-center gap-1"
+        className="w-12 h-12 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center hover:bg-primary/20 disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        Next
-        <ChevronRight className="w-4 h-4" />
-      </Button>
+        <ChevronRight className="w-4 h-4 text-primary" />
+      </button>
     );
 
     return (
@@ -200,61 +186,42 @@ const JobListing = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200">
+    <div className="min-h-screen bg-background">
+      <PublicHeader />
+
+      <div className="bg-muted/30 border-b border-border">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">Find Your Dream Job</h1>
-              <p className="text-gray-600 mt-2">
-                Discover {pagination.total > 0 ? pagination.total : 'thousands of'} amazing job opportunities
-              </p>
+            <div className="flex items-center space-x-2">
+              <h1 className="text-lg font-medium text-foreground">Find Job</h1>
             </div>
-            <div className="flex items-center gap-2">
-              <Button
-                variant={viewMode === 'grid' ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setViewMode('grid')}
-                className="flex items-center gap-2"
-              >
-                <Grid className="w-4 h-4" />
-                Grid
-              </Button>
-              <Button
-                variant={viewMode === 'list' ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setViewMode('list')}
-                className="flex items-center gap-2"
-              >
-                <List className="w-4 h-4" />
-                List
-              </Button>
+            <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+              <Home className="w-4 h-4" />
+              <span>/</span>
+              <span className="text-foreground">Find job</span>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-8">
-        {/* Search and Filters */}
-        <div className="mb-8">
+      <div className="container mx-auto px-4 py-6">
+        <div className="mb-6">
           <JobSearchFilters onSearch={handleSearch} loading={searchLoading} />
         </div>
 
-        {/* Results Header */}
         {!loading && !error && jobs.length > 0 && (
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-4">
-              <h2 className="text-xl font-semibold text-gray-900">
+              <h2 className="text-xl font-semibold text-foreground">
                 {pagination.total} job{pagination.total !== 1 ? 's' : ''} found
               </h2>
               {currentQuery.search && (
-                <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+                <Badge variant="secondary" className="bg-primary/10 text-primary">
                   "{currentQuery.search}"
                 </Badge>
               )}
               {currentQuery.location && (
-                <Badge variant="secondary" className="bg-green-100 text-green-800">
+                <Badge variant="secondary" className="bg-primary/10 text-primary">
                   {currentQuery.location}
                 </Badge>
               )}
@@ -262,21 +229,17 @@ const JobListing = () => {
           </div>
         )}
 
-        {/* Loading State */}
         {loading && renderLoadingState()}
 
-        {/* Error State */}
         {error && !loading && renderErrorState()}
 
-        {/* Empty State */}
         {!loading && !error && jobs.length === 0 && renderEmptyState()}
 
-        {/* Jobs Grid/List */}
         {!loading && !error && jobs.length > 0 && (
           <>
             <div className={
               viewMode === 'grid' 
-                ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'
+                ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4'
                 : 'space-y-4'
             }>
               {jobs.map((job) => (
@@ -289,11 +252,12 @@ const JobListing = () => {
               ))}
             </div>
 
-            {/* Pagination */}
             {renderPagination()}
           </>
         )}
       </div>
+
+      <PublicFooter />
     </div>
   );
 };

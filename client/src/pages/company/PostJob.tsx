@@ -70,7 +70,6 @@ const PostJob = () => {
 
   const handleSubmit = async () => {
     try {
-      // Validate required fields before sending
       if (!jobData.title || jobData.title.length < 5) {
         toast.error("Validation failed", {
           description: "Title must be at least 5 characters",
@@ -154,7 +153,6 @@ const PostJob = () => {
         
         setCurrentStep(1);
       } else {
-        // Show the error message directly from the response
         toast.error("Failed to post job", {
           description: response.message || "Please try again later.",
         });

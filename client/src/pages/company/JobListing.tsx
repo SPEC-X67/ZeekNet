@@ -28,7 +28,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
-// Helper function to format date
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
   return date.toLocaleDateString('en-GB', { 
@@ -38,12 +37,10 @@ const formatDate = (dateString: string) => {
   });
 };
 
-// Helper function to get status badge
 const getStatusBadge = (isActive: boolean) => {
   return isActive ? 'Live' : 'Unlisted';
 };
 
-// Helper function to format employment types
 const formatEmploymentTypes = (types: string[]) => {
   if (types.length === 0) return 'Fulltime';
   return types.map(type => 
@@ -74,7 +71,6 @@ const CompanyJobListing = () => {
     isLoading: false
   })
 
-  // Fetch jobs from server
   const fetchJobs = async (page: number = 1, limit: number = 10) => {
     try {
       setLoading(true)
@@ -148,7 +144,6 @@ const CompanyJobListing = () => {
         toast.success('Job deleted successfully', {
           description: `"${deleteDialog.jobTitle}" has been deleted.`
         })
-        // Refresh the job list after successful deletion
         await fetchJobs(pagination.page, pagination.limit)
         setDeleteDialog({
           isOpen: false,
@@ -186,7 +181,6 @@ const CompanyJobListing = () => {
       const response = await companyApi.updateJobStatus(jobId, !currentStatus)
       
       if (response.success) {
-        // Refresh the job list after successful status update
         await fetchJobs(pagination.page, pagination.limit)
       } else {
         setError(response.message || 'Failed to update job status')
@@ -315,12 +309,12 @@ const CompanyJobListing = () => {
 
                     {/* Applicants */}
                     <div className="w-[114px]">
-                      <span className="text-xs text-[#25324B]">{job.application_count.toLocaleString()}</span>
+                      <span className="text-xs text-[#25324B]">{(job.application_count || 0).toLocaleString()}</span>
                     </div>
 
                     {/* Views */}
                     <div className="w-[98px] flex items-center justify-between">
-                      <span className="text-xs text-[#25324B]">{job.view_count.toLocaleString()}</span>
+                      <span className="text-xs text-[#25324B]">{(job.view_count || 0).toLocaleString()}</span>
                       
                       {/* Action Dropdown */}
                       <DropdownMenu>

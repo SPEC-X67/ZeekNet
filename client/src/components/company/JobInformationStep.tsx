@@ -88,7 +88,6 @@ const JobInformationStep: React.FC<JobPostingStepProps> = ({
   const validateFields = () => {
     const newErrors: Record<string, string> = {};
     
-    // Title validation
     if (!data.title.trim()) {
       newErrors.title = "Job title is required";
     } else if (data.title.trim().length < 5) {
@@ -97,7 +96,6 @@ const JobInformationStep: React.FC<JobPostingStepProps> = ({
       newErrors.title = "Title must not exceed 100 characters";
     }
     
-    // Location validation
     if (!data.location.trim()) {
       newErrors.location = "Location is required";
     } else if (data.location.trim().length < 2) {
@@ -106,11 +104,9 @@ const JobInformationStep: React.FC<JobPostingStepProps> = ({
       newErrors.location = "Location must not exceed 100 characters";
     }
     
-    // Employment types validation
     if (data.employmentTypes.length === 0) {
       newErrors.employmentTypes = "Please select at least one employment type";
     } else {
-      // Validate each employment type against allowed values
       const validTypes = ["full-time", "part-time", "contract", "internship", "remote"];
       const invalidTypes = data.employmentTypes.filter(type => !validTypes.includes(type));
       if (invalidTypes.length > 0) {
@@ -118,12 +114,10 @@ const JobInformationStep: React.FC<JobPostingStepProps> = ({
       }
     }
     
-    // Categories validation
     if (data.categoryIds.length === 0) {
       newErrors.categoryIds = "Please select at least one category";
     }
     
-    // Salary validation
     if (data.salary.min < 0) {
       newErrors.salary = "Minimum salary cannot be negative";
     } else if (data.salary.max < 0) {

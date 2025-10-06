@@ -1,10 +1,10 @@
 import { injectable, inject } from 'inversify';
 import { JobPostingRepository } from '../../../domain/repositories/job-posting.repository.interface';
 import { CreateJobPostingRequestDto } from '../../dto/job-posting/job-posting.dto';
-import { JobPosting } from '../../../domain/entities/job-posting.entity';
 import { AppError } from '../../../domain/errors/errors';
 import { TYPES } from '../../../infrastructure/di/types';
 import { JobPostingMapper } from '../../mappers/job-posting.mapper';
+import { JobPostingResponseDto } from '../../mappers/types';
 
 @injectable()
 export class CreateJobPostingUseCase {
@@ -15,11 +15,11 @@ export class CreateJobPostingUseCase {
     private jobPostingMapper: JobPostingMapper,
   ) {}
 
-  async execute(companyId: string, data: CreateJobPostingRequestDto): Promise<JobPosting> {
+  async execute(companyId: string, data: CreateJobPostingRequestDto): Promise<JobPostingResponseDto> {
     try {
       const jobPostingData = this.jobPostingMapper.toDomain(data, companyId);
       const jobPosting = await this.jobPostingRepository.create(jobPostingData);
-      return jobPosting;
+      return this.jobPostingMapper.toDto(jobPosting);
     } catch (error) {
       console.error('CreateJobPostingUseCase error:', error);
       if (error instanceof Error) {

@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MapPin, Clock, Users, DollarSign } from "lucide-react";
+import { MapPin, Clock, Users, IndianRupee, Bookmark } from "lucide-react";
 import type { JobPostingResponse } from "@/types/job";
 
 interface JobCardProps {
@@ -14,11 +14,11 @@ const JobCard = ({ job, onApply, onViewDetails }: JobCardProps) => {
   const formatSalary = (min: number, max: number) => {
     const formatNumber = (num: number) => {
       if (num >= 1000000) {
-        return `$${(num / 1000000).toFixed(1)}M`;
+        return `₹${(num / 1000000).toFixed(1)}M`;
       } else if (num >= 1000) {
-        return `$${(num / 1000).toFixed(0)}K`;
+        return `₹${(num / 1000).toFixed(0)}K`;
       }
-      return `$${num.toLocaleString()}`;
+      return `₹${num.toLocaleString()}`;
     };
     return `${formatNumber(min)} - ${formatNumber(max)}`;
   };
@@ -40,128 +40,74 @@ const JobCard = ({ job, onApply, onViewDetails }: JobCardProps) => {
     }
   };
 
-  const truncateDescription = (text: string, maxLength: number = 150) => {
-    if (text.length <= maxLength) return text;
-    return text.substring(0, maxLength) + '...';
+
+  const handleCardClick = () => {
+    if (onViewDetails) {
+      onViewDetails(job.id);
+    }
   };
 
   return (
-    <Card className="hover:shadow-lg transition-all duration-300 group hover:scale-[1.02] border border-gray-200">
-      <CardContent className="p-6">
-        {/* Header */}
-        <div className="flex items-start justify-between mb-4">
-          <div className="flex items-start space-x-4">
-            {/* Company Logo */}
-            <div className="w-12 h-12 bg-gradient-to-br from-primary to-primary/80 rounded-lg flex items-center justify-center shadow-md">
-              {job.company?.logo ? (
-                <img 
-                  src={job.company.logo} 
-                  alt={job.company.companyName}
-                  className="w-8 h-8 rounded object-cover"
-                />
-              ) : (
-                <span className="text-white font-bold text-lg">
-                  {job.company?.companyName?.charAt(0) || job.title.charAt(0)}
-                </span>
-              )}
-            </div>
-            
-            {/* Job Info */}
-            <div className="flex-1 min-w-0">
-              <h3 className="text-lg font-semibold text-gray-900 group-hover:text-primary transition-colors">
-                {job.title}
-              </h3>
-              <p className="text-primary font-medium text-sm">
-                {job.company?.companyName || 'Company'}
-              </p>
-              <div className="flex items-center text-gray-500 text-sm mt-1">
-                <MapPin className="w-4 h-4 mr-1" />
-                <span>{job.location}</span>
-              </div>
-            </div>
+    <Card 
+      className="hover:shadow-md transition-all duration-300 group border border-gray-100 bg-white cursor-pointer h-full"
+      onClick={handleCardClick}
+    >
+      <CardContent className="p-4 h-full flex flex-col">
+        <div className="mb-3 flex-1">
+          <div className="flex items-start justify-between mb-2">
+            <h3 className="text-sm font-medium text-gray-900 group-hover:text-primary transition-colors line-clamp-2 leading-tight">
+              {job.title}
+            </h3>
+            <Bookmark 
+              className="w-4 h-4 text-gray-200 hover:text-primary cursor-pointer transition-colors flex-shrink-0 ml-2" 
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+            />
           </div>
-
-          {/* Employment Type Badges */}
-          <div className="flex flex-wrap gap-1">
-            {job.employment_types.slice(0, 2).map((type) => (
-              <Badge
-                key={type}
-                variant="outline"
-                className={`text-xs ${getEmploymentTypeColor(type)}`}
-              >
-                {type.charAt(0).toUpperCase() + type.slice(1).replace('-', ' ')}
-              </Badge>
-            ))}
-            {job.employment_types.length > 2 && (
-              <Badge variant="outline" className="text-xs bg-gray-100 text-gray-600">
-                +{job.employment_types.length - 2}
-              </Badge>
-            )}
-          </div>
-        </div>
-
-        {/* Description */}
-        <p className="text-gray-600 text-sm mb-4 leading-relaxed">
-          {truncateDescription(job.description)}
-        </p>
-
-        {/* Job Stats */}
-        <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center">
-              <DollarSign className="w-4 h-4 mr-1" />
-              <span>{formatSalary(job.salary.min, job.salary.max)}</span>
-            </div>
-            <div className="flex items-center">
-              <Users className="w-4 h-4 mr-1" />
-              <span>{job.application_count} applicants</span>
-            </div>
-            <div className="flex items-center">
-              <Clock className="w-4 h-4 mr-1" />
-              <span>{new Date(job.createdAt).toLocaleDateString()}</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Skills */}
-        {job.skills_required && job.skills_required.length > 0 && (
-          <div className="mb-4">
-            <div className="flex flex-wrap gap-1">
-              {job.skills_required.slice(0, 3).map((skill) => (
+          
+          <div className="flex flex-col gap-1 mb-3">
+            <div className="flex items-center gap-1">
+              {job.employment_types.slice(0, 1).map((type) => (
                 <Badge
-                  key={skill}
-                  variant="secondary"
-                  className="text-xs bg-gray-100 text-gray-700"
+                  key={type}
+                  variant="outline"
+                  className={`text-xs px-2 py-0.5 ${getEmploymentTypeColor(type)}`}
                 >
-                  {skill}
+                  {type.charAt(0).toUpperCase() + type.slice(1).replace('-', ' ')}
                 </Badge>
               ))}
-              {job.skills_required.length > 3 && (
-                <Badge variant="secondary" className="text-xs bg-gray-100 text-gray-700">
-                  +{job.skills_required.length - 3} more
-                </Badge>
-              )}
+            </div>
+            <span className="text-xs text-gray-500">
+              {formatSalary(job.salary.min, job.salary.max)}
+            </span>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 mt-auto">
+          <div className="w-8 h-8 bg-gray-50 rounded flex items-center justify-center flex-shrink-0">
+            {job.company?.logo ? (
+              <img 
+                src={job.company.logo} 
+                alt={job.company.companyName}
+                className="w-6 h-6 rounded object-cover"
+              />
+            ) : (
+              <span className="text-gray-600 font-semibold text-sm">
+                {job.company?.companyName?.charAt(0) || job.title.charAt(0)}
+              </span>
+            )}
+          </div>
+          
+          <div className="flex-1 min-w-0">
+            <h4 className="text-sm font-medium text-gray-900 truncate">
+              {job.company?.companyName || 'Company'}
+            </h4>
+            <div className="flex items-center text-gray-500 text-xs">
+              <MapPin className="w-3 h-3 mr-1 flex-shrink-0" />
+              <span className="truncate">{job.location}</span>
             </div>
           </div>
-        )}
-
-        {/* Actions */}
-        <div className="flex items-center justify-between">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onViewDetails?.(job.id)}
-            className="hover:bg-primary hover:text-white transition-colors"
-          >
-            View Details
-          </Button>
-          <Button
-            size="sm"
-            onClick={() => onApply?.(job.id)}
-            className="bg-primary hover:bg-primary/90 text-white shadow-md hover:shadow-lg transition-all"
-          >
-            Apply Now
-          </Button>
         </div>
       </CardContent>
     </Card>

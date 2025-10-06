@@ -2,15 +2,26 @@ import { injectable, inject } from 'inversify';
 import { JobPostingRepository } from '../../../domain/repositories/job-posting.repository.interface';
 import { JobPostingQueryRequestDto } from '../../dto/job-posting/job-posting.dto';
 import { AppError } from '../../../domain/errors/errors';
-import { PaginatedJobPostings } from '../../../domain/entities/job-posting.entity';
 import { TYPES } from '../../../infrastructure/di/types';
+import { ICompanyRepository } from '../../../domain/repositories';
 
 @injectable()
 export class GetCompanyJobPostingsUseCase {
-  constructor(@inject(TYPES.JobPostingRepository) private jobPostingRepository: JobPostingRepository) {}
+  constructor(
+    @inject(TYPES.JobPostingRepository) 
+    private jobPostingRepository: JobPostingRepository,
+    @inject(TYPES.CompanyRepository)
+    private companyRepository: ICompanyRepository,
+  ) {}
 
-  async execute(companyId: string, query: JobPostingQueryRequestDto): Promise<PaginatedJobPostings> {
+  async execute(userId: string, query: JobPostingQueryRequestDto): Promise<any> {
     try {
+      const companyProfile = await this.companyRepository.getProfileByUserId(userId);
+      
+      if (!companyProfile) {
+        throw new AppError('Company profile not found', 404);
+      }
+
       const filters = {
         is_active: query.is_active,
         category_ids: query.category_ids,
@@ -22,18 +33,13 @@ export class GetCompanyJobPostingsUseCase {
         limit: query.limit,
       };
 
-      const result = await this.jobPostingRepository.findByCompanyId(companyId, filters);
+      const result = await this.jobPostingRepository.findByCompanyId(companyProfile.id, filters);
       
-      return {
-        jobs: result.jobs,
-        pagination: {
-          page: query.page,
-          limit: query.limit,
-          total: result.pagination.total,
-          totalPages: result.pagination.totalPages,
-        },
-      };
+      return result;
     } catch (error) {
+      if (error instanceof AppError) {
+        throw error;
+      }
       throw new AppError('Failed to fetch job postings', 500);
     }
   }

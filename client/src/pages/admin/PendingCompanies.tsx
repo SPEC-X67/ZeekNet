@@ -43,8 +43,8 @@ const PendingCompanies = () => {
 
       const response = await adminApi.getPendingCompanies()
       
-      if (response && response.companies) {
-        setCompanies(response.companies)
+      if (response && response.data && response.data.companies) {
+        setCompanies(response.data.companies)
       } else {
         setError('Failed to fetch pending companies')
       }

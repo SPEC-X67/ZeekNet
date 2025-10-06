@@ -25,6 +25,10 @@ export const TYPES = {
   RefreshTokenUseCase: Symbol.for('RefreshTokenUseCase'),
   LogoutUseCase: Symbol.for('LogoutUseCase'),
   GetUserByIdUseCase: Symbol.for('GetUserByIdUseCase'),
+  GetUserByEmailUseCase: Symbol.for('GetUserByEmailUseCase'),
+  UpdateUserVerificationStatusUseCase: Symbol.for('UpdateUserVerificationStatusUseCase'),
+  UpdateUserRefreshTokenUseCase: Symbol.for('UpdateUserRefreshTokenUseCase'),
+  GetCompanyProfileByUserIdUseCase: Symbol.for('GetCompanyProfileByUserIdUseCase'),
 
   CreateCompanyProfileUseCase: Symbol.for('CreateCompanyProfileUseCase'),
   UpdateCompanyProfileUseCase: Symbol.for('UpdateCompanyProfileUseCase'),
@@ -35,6 +39,7 @@ export const TYPES = {
   GetJobPostingUseCase: Symbol.for('GetJobPostingUseCase'),
   GetCompanyJobPostingsUseCase: Symbol.for('GetCompanyJobPostingsUseCase'),
   GetAllJobPostingsUseCase: Symbol.for('GetAllJobPostingsUseCase'),
+  GetJobPostingForPublicUseCase: Symbol.for('GetJobPostingForPublicUseCase'),
   UpdateJobPostingUseCase: Symbol.for('UpdateJobPostingUseCase'),
   DeleteJobPostingUseCase: Symbol.for('DeleteJobPostingUseCase'),
   IncrementJobViewCountUseCase: Symbol.for('IncrementJobViewCountUseCase'),
@@ -46,8 +51,14 @@ export const TYPES = {
   GetAllCompaniesUseCase: Symbol.for('GetAllCompaniesUseCase'),
   GetCompaniesWithVerificationUseCase: Symbol.for('GetCompaniesWithVerificationUseCase'),
   VerifyCompanyUseCase: Symbol.for('VerifyCompanyUseCase'),
+  BlockCompanyUseCase: Symbol.for('BlockCompanyUseCase'),
 
-  // Company profile section repositories
+  AdminGetAllJobsUseCase: Symbol.for('AdminGetAllJobsUseCase'),
+  AdminGetJobByIdUseCase: Symbol.for('AdminGetJobByIdUseCase'),
+  AdminUpdateJobStatusUseCase: Symbol.for('AdminUpdateJobStatusUseCase'),
+  AdminDeleteJobUseCase: Symbol.for('AdminDeleteJobUseCase'),
+  AdminGetJobStatsUseCase: Symbol.for('AdminGetJobStatsUseCase'),
+
   CompanyContactRepository: Symbol.for('CompanyContactRepository'),
   CompanyTechStackRepository: Symbol.for('CompanyTechStackRepository'),
   CompanyOfficeLocationRepository: Symbol.for('CompanyOfficeLocationRepository'),
@@ -55,7 +66,6 @@ export const TYPES = {
   CompanyWorkplacePicturesRepository: Symbol.for('CompanyWorkplacePicturesRepository'),
   CompanyTeamRepository: Symbol.for('CompanyTeamRepository'),
 
-  // Company profile section use cases
   CompanyContactUseCase: Symbol.for('CompanyContactUseCase'),
   CompanyTechStackUseCase: Symbol.for('CompanyTechStackUseCase'),
   CompanyOfficeLocationUseCase: Symbol.for('CompanyOfficeLocationUseCase'),
@@ -68,6 +78,7 @@ export const TYPES = {
   TokenController: Symbol.for('TokenController'),
   PasswordController: Symbol.for('PasswordController'),
   AdminController: Symbol.for('AdminController'),
+  AdminJobController: Symbol.for('AdminJobController'),
   CompanyController: Symbol.for('CompanyController'),
   CompanyJobPostingController: Symbol.for('CompanyJobPostingController'),
   SeekerController: Symbol.for('SeekerController'),
@@ -76,4 +87,5 @@ export const TYPES = {
 
   AppServer: Symbol.for('AppServer'),
   UserBlockedMiddleware: Symbol.for('UserBlockedMiddleware'),
+  CompanyVerificationMiddleware: Symbol.for('CompanyVerificationMiddleware'),
 };

@@ -2,8 +2,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { useAppSelector } from "@/hooks/useRedux";
-import UserProfileDropdown from "@/components/common/UserProfileDropdown";
+import PublicHeader from "@/components/layouts/PublicHeader";
+import PublicFooter from "@/components/layouts/PublicFooter";
 import {
   Search,
   MapPin,
@@ -18,80 +18,10 @@ import {
 } from "lucide-react";
 
 const Landing = () => {
-  const { isAuthenticated, isInitialized } = useAppSelector((state) => state.auth);
-
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center shadow-lg shadow-primary/25">
-                <div className="w-5 h-5 text-primary-foreground">✦</div>
-              </div>
-              <span className="text-xl font-bold text-foreground">
-                ZeekNet
-              </span>
-            </div>
-            <nav className="hidden md:flex items-center space-x-8">
-              <a
-                href="#"
-                className="text-foreground hover:text-primary transition-colors"
-              >
-                Home
-              </a>
-              <a
-                href="#"
-                className="text-foreground hover:text-primary transition-colors"
-              >
-                Recent Jobs
-              </a>
-              <a
-                href="#"
-                className="text-foreground hover:text-primary transition-colors"
-              >
-                Companies
-              </a>
-              <a
-                href="/jobs"
-                className="text-foreground hover:text-primary transition-colors"
-              >
-                Find Jobs
-              </a>
-              <a
-                href="#"
-                className="text-foreground hover:text-primary transition-colors"
-              >
-                Articles
-              </a>
-            </nav>
-            <div className="flex items-center space-x-4">
-              {isInitialized && isAuthenticated ? (
-                <UserProfileDropdown />
-              ) : (
-                <>
-                  <Button
-                    variant="ghost"
-                    className="text-foreground"
-                    asChild
-                  >
-                    <a href="/auth/login">Login</a>
-                  </Button>
-                  <Button
-                    className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all duration-300"
-                    asChild
-                  >
-                    <a href="/auth/register">Sign Up</a>
-                  </Button>
-                </>
-              )}
-            </div>
-          </div>
-        </div>
-      </header>
+      <PublicHeader />
 
-      {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-primary/5 via-primary/10 to-primary/5 py-20 overflow-hidden">
         <div className="absolute inset-0 bg-[url('/abstract-geometric-pattern.png')] opacity-5"></div>
         <div className="absolute top-10 right-10 w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center shadow-lg shadow-primary/20">
@@ -114,7 +44,6 @@ const Landing = () => {
               top companies and build your career with confidence.
             </p>
 
-            {/* Search Bar */}
             <div className="bg-card rounded-lg p-6 shadow-2xl shadow-primary/10 max-w-3xl mx-auto border border-border hover:shadow-3xl hover:shadow-primary/15 transition-all duration-300">
               <div className="flex flex-col md:flex-row gap-4">
                 <div className="flex-1 relative">
@@ -143,7 +72,6 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Company Logos */}
       <section className="py-8 bg-background border-y border-border">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-center space-x-8 md:space-x-12 opacity-60">
@@ -250,7 +178,6 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* How Expert Jobs Work */}
       <section className="py-20 bg-background">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16 relative">
@@ -298,7 +225,6 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Featured Jobs */}
       <section className="py-20 bg-primary/5">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16 relative">
@@ -479,7 +405,6 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Job Categories */}
       <section className="py-20 bg-background">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
@@ -513,7 +438,6 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Testimonials */}
       <section className="py-20 bg-primary/5">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
@@ -584,7 +508,6 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Statistics */}
       <section className="py-20 bg-background">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
@@ -659,7 +582,6 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* CTA Sections */}
       <section className="py-20 bg-muted/30">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -709,7 +631,6 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Recent Articles */}
       <section className="py-20 bg-background">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
@@ -780,143 +701,7 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-gradient-to-b from-primary/10 to-primary/20 py-16">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
-            <div className="md:col-span-1">
-              <div className="flex items-center space-x-2 mb-4">
-                <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center shadow-lg shadow-primary/25">
-                  <div className="w-5 h-5 text-primary-foreground">✦</div>
-                </div>
-                <span className="text-xl font-bold text-foreground">
-                  XMART JOBS
-                </span>
-              </div>
-              <p className="text-muted-foreground text-sm text-pretty">
-                Your trusted partner in finding the perfect job and building a
-                successful career.
-              </p>
-            </div>
-            <div>
-              <h4 className="font-semibold text-foreground mb-4">
-                For Candidates
-              </h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>
-                  <a href="#" className="hover:text-primary transition-colors">
-                    Browse Jobs
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-primary transition-colors">
-                    Career Advice
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-primary transition-colors">
-                    Resume Builder
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-primary transition-colors">
-                    Salary Guide
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold text-foreground mb-4">
-                For Employers
-              </h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>
-                  <a href="#" className="hover:text-primary transition-colors">
-                    Post a Job
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-primary transition-colors">
-                    Browse Resumes
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-primary transition-colors">
-                    Recruiting Solutions
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-primary transition-colors">
-                    Pricing
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold text-foreground mb-4">About Us</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>
-                  <a href="#" className="hover:text-primary transition-colors">
-                    Our Story
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-primary transition-colors">
-                    Careers
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-primary transition-colors">
-                    Press
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-primary transition-colors">
-                    Contact
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold text-foreground mb-4">
-                Helpful Resources
-              </h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>
-                  <a href="#" className="hover:text-primary transition-colors">
-                    Help Center
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-primary transition-colors">
-                    Privacy Policy
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-primary transition-colors">
-                    Terms of Service
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-primary transition-colors">
-                    Cookie Policy
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div className="border-t border-border mt-12 pt-8 text-center">
-            <p className="text-muted-foreground text-sm">
-              © 2024 XMART JOBS. All rights reserved.
-            </p>
-            <div className="mt-4 flex justify-center">
-              <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center shadow-lg shadow-primary/20">
-                <div className="text-primary text-2xl">✦</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <PublicFooter />
     </div>
   );
 };
