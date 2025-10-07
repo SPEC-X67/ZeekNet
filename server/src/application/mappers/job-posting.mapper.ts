@@ -1,9 +1,7 @@
-import { injectable } from 'inversify';
 import { CreateJobPostingRequestDto } from '../dto/job-posting/job-posting.dto';
 import { JobPosting } from '../../domain/entities/job-posting.entity';
 import { JobPostingData, JobPostingResponseDto } from './types';
 
-@injectable()
 export class JobPostingMapper {
   
   toDomain(dto: CreateJobPostingRequestDto, companyId: string): JobPostingData {

@@ -1,11 +1,9 @@
-import { injectable } from 'inversify';
-import { ICompanyWorkplacePicturesRepository } from '../../../../domain/repositories/company-workplace-pictures.repository';
+import { ICompanyWorkplacePicturesRepository } from '../../../../domain/interfaces/repositories/company-workplace-pictures.repository';
 import { CompanyWorkplacePictures } from '../../../../domain/entities/company-workplace-pictures.entity';
 import { CompanyWorkplacePicturesModel } from '../models/company-workplace-pictures.model';
 import { Types } from 'mongoose';
 import { MongoBaseRepository } from '../../../../shared/base';
 
-@injectable()
 export class MongoCompanyWorkplacePicturesRepository extends MongoBaseRepository<CompanyWorkplacePictures> implements ICompanyWorkplacePicturesRepository {
   constructor() {
     super(CompanyWorkplacePicturesModel);

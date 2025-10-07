@@ -1,16 +1,12 @@
-import { injectable, inject } from 'inversify';
 import { Request, Response, NextFunction } from 'express';
-import { TYPES } from '../../../infrastructure/di/types';
 import { RegisterDto } from '../../../application/dto/auth';
 import { RegisterUserUseCase } from '../../../application/use-cases/auth/register-user.use-case';
 import { BaseController } from '../../../shared';
 import { validateBody } from '../../middleware/validation.middleware';
 
-@injectable()
 export class RegistrationController extends BaseController {
   constructor(
-    @inject(TYPES.RegisterUserUseCase) 
-    private readonly registerUserUseCase: RegisterUserUseCase,
+    private readonly _registerUserUseCase: RegisterUserUseCase,
   ) {
     super();
   }
@@ -19,7 +15,7 @@ export class RegistrationController extends BaseController {
     validateBody(RegisterDto),
     async (req: Request, res: Response, next: NextFunction): Promise<void> => {
       try {
-        const result = await this.registerUserUseCase.execute(
+        const result = await this._registerUserUseCase.execute(
           req.body.email,
           req.body.password,
           req.body.role,

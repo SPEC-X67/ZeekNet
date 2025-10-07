@@ -1,5 +1,4 @@
-import { injectable } from 'inversify';
-import { IUserRepository } from '../../../../domain/repositories';
+import { IUserRepository, IUserAuthRepository, IUserManagementRepository } from '../../../../domain/interfaces/repositories';
 import { User } from '../../../../domain/entities';
 import { UserRole } from '../../../../domain/enums/user-role.enum';
 import { UserModel } from '../models/user.model';
@@ -12,8 +11,7 @@ import { Types } from 'mongoose';
  * This extends MongoBaseRepository to get basic CRUD operations
  * and adds user-specific methods
  */
-@injectable()
-export class BaseUserRepository extends MongoBaseRepository<User> implements IUserRepository {
+export class BaseUserRepository extends MongoBaseRepository<User> implements IUserRepository, IUserAuthRepository, IUserManagementRepository {
   constructor() {
     super(UserModel);
   }
@@ -151,5 +149,13 @@ export class BaseUserRepository extends MongoBaseRepository<User> implements IUs
       blockedUsers,
       usersByRole: roleStats,
     };
+  }
+
+  async updateUserBlockStatus(id: string, isBlocked: boolean): Promise<void> {
+    if (isBlocked) {
+      await this.blockUser(id);
+    } else {
+      await this.unblockUser(id);
+    }
   }
 }

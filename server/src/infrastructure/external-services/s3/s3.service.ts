@@ -3,7 +3,7 @@ import {
   PutObjectCommand,
   DeleteObjectCommand,
 } from '@aws-sdk/client-s3';
-import { IS3Service } from '../../../application/interfaces';
+import { IS3Service } from '../../../domain/interfaces';
 import { env } from '../../config/env';
 
 export class S3Service implements IS3Service {

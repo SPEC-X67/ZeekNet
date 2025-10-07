@@ -1,11 +1,9 @@
-import { injectable } from 'inversify';
-import { ICompanyOfficeLocationRepository } from '../../../../domain/repositories/company-office-location.repository';
+import { ICompanyOfficeLocationRepository } from '../../../../domain/interfaces/repositories/company-office-location.repository';
 import { CompanyOfficeLocation } from '../../../../domain/entities/company-office-location.entity';
 import { CompanyOfficeLocationModel } from '../models/company-office-location.model';
 import { Types } from 'mongoose';
 import { MongoBaseRepository } from '../../../../shared/base';
 
-@injectable()
 export class MongoCompanyOfficeLocationRepository extends MongoBaseRepository<CompanyOfficeLocation> implements ICompanyOfficeLocationRepository {
   constructor() {
     super(CompanyOfficeLocationModel);

@@ -1,11 +1,9 @@
-import { injectable } from 'inversify';
-import { ICompanyTeamRepository } from '../../../../domain/repositories/company-team.repository';
+import { ICompanyTeamRepository } from '../../../../domain/interfaces/repositories/company-team.repository';
 import { CompanyTeam } from '../../../../domain/entities/company-team.entity';
 import { CompanyTeamModel } from '../models/company-team.model';
 import { Types } from 'mongoose';
 import { MongoBaseRepository } from '../../../../shared/base';
 
-@injectable()
 export class MongoCompanyTeamRepository extends MongoBaseRepository<CompanyTeam> implements ICompanyTeamRepository {
   constructor() {
     super(CompanyTeamModel);

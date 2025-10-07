@@ -196,7 +196,6 @@ export class User {
     return emailRegex.test(email);
   }
 
-  // Security methods
   sanitizeForResponse(): {
     id: string;
     name: string;

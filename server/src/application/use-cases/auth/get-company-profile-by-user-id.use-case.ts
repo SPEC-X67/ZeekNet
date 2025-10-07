@@ -1,14 +1,10 @@
-import { injectable, inject } from 'inversify';
-import { TYPES } from '../../../infrastructure/di/types';
-import { ICompanyRepository } from '../../../domain/repositories';
+import { ICompanyRepository } from '../../../domain/interfaces/repositories';
 import { CompanyProfile } from '../../../domain/entities/company-profile.entity';
 import { AppError } from '../../../domain/errors/errors';
 
-@injectable()
 export class GetCompanyProfileByUserIdUseCase {
   constructor(
-    @inject(TYPES.CompanyRepository)
-    private readonly companyRepository: ICompanyRepository,
+    private readonly _companyRepository: ICompanyRepository,
   ) {}
 
   async execute(userId: string): Promise<CompanyProfile | null> {
@@ -17,7 +13,7 @@ export class GetCompanyProfileByUserIdUseCase {
         throw new AppError('User ID is required', 400);
       }
 
-      const companyProfile = await this.companyRepository.getProfileByUserId(userId);
+      const companyProfile = await this._companyRepository.getProfileByUserId(userId);
       return companyProfile;
     } catch (error) {
       if (error instanceof AppError) {

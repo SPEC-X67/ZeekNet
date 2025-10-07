@@ -1,25 +1,19 @@
-import { injectable, inject } from 'inversify';
 import { SimpleUpdateCompanyProfileRequestDto } from '../../dto/company/company-profile.dto';
-import { TYPES } from '../../../infrastructure/di/types';
-import { ICompanyRepository } from '../../../domain/repositories';
+import { ICompanyRepository } from '../../../domain/interfaces/repositories';
 import { CompanyProfileMapper } from '../../mappers/company-profile.mapper';
 import { CompanyProfileResponseDto } from '../../mappers/types';
 
-
-@injectable()
 export class UpdateCompanyProfileUseCase {
   constructor(
-    @inject(TYPES.CompanyRepository)
-    private readonly companyRepository: ICompanyRepository,
-    @inject(TYPES.CompanyProfileMapper)
-    private readonly companyProfileMapper: CompanyProfileMapper,
+    private readonly _companyRepository: ICompanyRepository,
+    private readonly _companyProfileMapper: CompanyProfileMapper,
   ) {}
 
   async execute(
     userId: string,
     data: { profile: SimpleUpdateCompanyProfileRequestDto },
   ): Promise<CompanyProfileResponseDto> {
-    const existingProfile = await this.companyRepository.getProfileByUserId(userId);
+    const existingProfile = await this._companyRepository.getProfileByUserId(userId);
     if (!existingProfile) {
       throw new Error('Company profile not found');
     }
@@ -27,7 +21,7 @@ export class UpdateCompanyProfileUseCase {
     if (data.profile) {
       
       
-      const updatedProfile = await this.companyRepository.updateProfile(existingProfile.id, {
+      const updatedProfile = await this._companyRepository.updateProfile(existingProfile.id, {
         companyName: data.profile.company_name,
         logo: data.profile.logo,
         banner: data.profile.banner,
@@ -41,11 +35,11 @@ export class UpdateCompanyProfileUseCase {
     }
 
 
-    const updatedProfile = await this.companyRepository.getProfileByUserId(userId);
+    const updatedProfile = await this._companyRepository.getProfileByUserId(userId);
     if (!updatedProfile) {
       throw new Error('Failed to retrieve updated profile');
     }
 
-    return this.companyProfileMapper.toDto(updatedProfile);
+    return this._companyProfileMapper.toDto(updatedProfile);
   }
 }

@@ -1,24 +1,20 @@
-import { injectable, inject } from 'inversify';
-import { JobPostingRepository } from '../../../domain/repositories/job-posting.repository.interface';
-import { TYPES } from '../../../infrastructure/di/types';
+import { IJobPostingRepositoryFull } from '../../../domain/interfaces/repositories';
 import { AppError } from '../../../domain/errors/errors';
 
-@injectable()
 export class AdminUpdateJobStatusUseCase {
   constructor(
-    @inject(TYPES.JobPostingRepository) 
-    private jobPostingRepository: JobPostingRepository
+    private readonly _jobPostingRepository: IJobPostingRepositoryFull
   ) {}
 
   async execute(jobId: string, isActive: boolean) {
     try {
-      const job = await this.jobPostingRepository.findById(jobId);
+      const job = await this._jobPostingRepository.findById(jobId);
       
       if (!job) {
         throw new AppError('Job not found', 404);
       }
 
-      const updatedJob = await this.jobPostingRepository.update(jobId, {
+      const updatedJob = await this._jobPostingRepository.update(jobId, {
         is_active: isActive
       });
 

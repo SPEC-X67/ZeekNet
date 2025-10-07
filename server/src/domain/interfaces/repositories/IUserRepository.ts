@@ -1,7 +1,7 @@
-import { User } from '../entities/user.entity';
-import { UserRole } from '../enums/user-role.enum';
+import { User } from '../../entities/user.entity';
+import { UserRole } from '../../enums/user-role.enum';
 
-export interface UserData {
+export interface IUserData {
   id?: string;
   name?: string;
   email: string;
@@ -15,7 +15,7 @@ export interface UserData {
 }
 
 export interface IUserRepository {
-  save(user: Omit<UserData, 'id' | 'createdAt' | 'updatedAt'>): Promise<User>;
+  save(user: Omit<IUserData, 'id' | 'createdAt' | 'updatedAt'>): Promise<User>;
   findById(id: string): Promise<User | null>;
   findByEmail(email: string): Promise<User | null>;
 }
@@ -37,4 +37,4 @@ export interface IUserManagementRepository {
   updateUserBlockStatus(id: string, isBlocked: boolean): Promise<void>;
 }
 
-export interface IUserRepositoryFull extends IUserRepository, IUserAuthRepository, IUserManagementRepository {}
+// Removed IUserRepositoryFull - use specific interfaces instead

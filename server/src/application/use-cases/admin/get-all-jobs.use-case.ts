@@ -1,6 +1,5 @@
-import { injectable, inject } from 'inversify';
-import { JobPostingRepository } from '../../../domain/repositories/job-posting.repository.interface';
-import { TYPES } from '../../../infrastructure/di/types';
+import { IJobPostingRepositoryFull } from '../../../domain/interfaces/repositories';
+import { IAdminGetAllJobsUseCase } from '../../../domain/interfaces/use-cases';
 import { AppError } from '../../../domain/errors/errors';
 import { JobPostingMapper } from '../../mappers/job-posting.mapper';
 import { JobPostingResponseDto } from '../../mappers/types';
@@ -19,13 +18,10 @@ export interface GetAllJobsQuery {
   sortOrder?: 'asc' | 'desc';
 }
 
-@injectable()
-export class AdminGetAllJobsUseCase {
+export class AdminGetAllJobsUseCase implements IAdminGetAllJobsUseCase {
   constructor(
-    @inject(TYPES.JobPostingRepository) 
-    private jobPostingRepository: JobPostingRepository,
-    @inject(TYPES.JobPostingMapper)
-    private jobPostingMapper: JobPostingMapper,
+    private readonly _jobPostingRepository: IJobPostingRepositoryFull,
+    private readonly _jobPostingMapper: JobPostingMapper,
   ) {}
 
   async execute(query: GetAllJobsQuery) {
@@ -43,9 +39,8 @@ export class AdminGetAllJobsUseCase {
         sortOrder: query.sortOrder || 'desc'
       };
 
-      const result = await this.jobPostingRepository.findAll(filters);
+      const result = await this._jobPostingRepository.findAll(filters);
       
-      // Repository's findAll already returns formatted client responses
       return result;
     } catch (error) {
       throw new AppError('Failed to fetch jobs', 500);

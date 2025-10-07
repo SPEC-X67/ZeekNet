@@ -1,7 +1,5 @@
-import { injectable, inject } from 'inversify';
 import { GetAllCompaniesRequestDto } from '../../dto/admin/user-management.dto';
-import { TYPES } from '../../../infrastructure/di/types';
-import { ICompanyRepository } from '../../../domain/repositories';
+import { ICompanyRepository } from '../../../domain/interfaces/repositories';
 import { CompanyProfileMapper } from '../../mappers/company-profile.mapper';
 import { CompanyProfileResponseDto } from '../../mappers/types';
 
@@ -17,13 +15,10 @@ interface GetAllCompaniesResult {
   };
 }
 
-@injectable()
 export class GetAllCompaniesUseCase {
   constructor(
-    @inject(TYPES.CompanyRepository)
-    private readonly companyRepository: ICompanyRepository,
-    @inject(TYPES.CompanyProfileMapper)
-    private readonly companyProfileMapper: CompanyProfileMapper,
+    private readonly _companyRepository: ICompanyRepository,
+    private readonly _companyProfileMapper: CompanyProfileMapper,
   ) {}
 
   async execute(options: GetAllCompaniesRequestDto): Promise<GetAllCompaniesResult> {
@@ -35,9 +30,9 @@ export class GetAllCompaniesUseCase {
       isVerified: options.isVerified,
       isBlocked: options.isBlocked ? options.isBlocked === 'true' : undefined,
     };
-    const result = await this.companyRepository.getAllCompanies(convertedOptions);
+    const result = await this._companyRepository.getAllCompanies(convertedOptions);
     return {
-      companies: result.companies.map(company => this.companyProfileMapper.toDto(company)),
+      companies: result.companies.map(company => this._companyProfileMapper.toDto(company)),
       pagination: {
         page: convertedOptions.page,
         limit: convertedOptions.limit,

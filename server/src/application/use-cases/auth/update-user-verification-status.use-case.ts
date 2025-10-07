@@ -1,13 +1,9 @@
-import { injectable, inject } from 'inversify';
-import { TYPES } from '../../../infrastructure/di/types';
-import { IUserRepositoryFull } from '../../../domain/repositories';
+import { IUserRepositoryFull } from '../../../domain/interfaces/repositories';
 import { AppError } from '../../../domain/errors/errors';
 
-@injectable()
 export class UpdateUserVerificationStatusUseCase {
   constructor(
-    @inject(TYPES.UserRepository)
-    private readonly userRepository: IUserRepositoryFull,
+    private readonly _userRepository: IUserRepositoryFull,
   ) {}
 
   async execute(email: string, isVerified: boolean): Promise<void> {
@@ -20,7 +16,7 @@ export class UpdateUserVerificationStatusUseCase {
         throw new AppError('isVerified must be a boolean value', 400);
       }
 
-      await this.userRepository.updateVerificationStatus(email, isVerified);
+      await this._userRepository.updateVerificationStatus(email, isVerified);
     } catch (error) {
       if (error instanceof AppError) {
         throw error;

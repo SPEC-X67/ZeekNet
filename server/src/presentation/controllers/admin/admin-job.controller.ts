@@ -1,6 +1,4 @@
-import { injectable, inject } from 'inversify';
 import { Request, Response, NextFunction } from 'express';
-import { TYPES } from '../../../infrastructure/di/types';
 import {
   AdminGetAllJobsDto,
   AdminUpdateJobStatusDto,
@@ -12,19 +10,13 @@ import { AdminDeleteJobUseCase } from '../../../application/use-cases/admin/dele
 import { AdminGetJobStatsUseCase } from '../../../application/use-cases/admin/get-job-stats.use-case';
 import { BaseController } from '../../../shared';
 
-@injectable()
 export class AdminJobController extends BaseController {
   constructor(
-    @inject(TYPES.AdminGetAllJobsUseCase)
-    private readonly getAllJobsUseCase: AdminGetAllJobsUseCase,
-    @inject(TYPES.AdminGetJobByIdUseCase)
-    private readonly getJobByIdUseCase: AdminGetJobByIdUseCase,
-    @inject(TYPES.AdminUpdateJobStatusUseCase)
-    private readonly updateJobStatusUseCase: AdminUpdateJobStatusUseCase,
-    @inject(TYPES.AdminDeleteJobUseCase)
-    private readonly deleteJobUseCase: AdminDeleteJobUseCase,
-    @inject(TYPES.AdminGetJobStatsUseCase)
-    private readonly getJobStatsUseCase: AdminGetJobStatsUseCase,
+    private readonly _getAllJobsUseCase: AdminGetAllJobsUseCase,
+    private readonly _getJobByIdUseCase: AdminGetJobByIdUseCase,
+    private readonly _updateJobStatusUseCase: AdminUpdateJobStatusUseCase,
+    private readonly _deleteJobUseCase: AdminDeleteJobUseCase,
+    private readonly _getJobStatsUseCase: AdminGetJobStatsUseCase,
   ) {
     super();
   }
@@ -40,7 +32,7 @@ export class AdminJobController extends BaseController {
     }
 
     try {
-      const result = await this.getAllJobsUseCase.execute(parsed.data);
+      const result = await this._getAllJobsUseCase.execute(parsed.data);
       this.sendSuccessResponse(res, 'Jobs retrieved successfully', result);
     } catch (error) {
       this.handleAsyncError(error, next);
@@ -58,7 +50,7 @@ export class AdminJobController extends BaseController {
     }
 
     try {
-      const job = await this.getJobByIdUseCase.execute(jobId);
+      const job = await this._getJobByIdUseCase.execute(jobId);
       this.sendSuccessResponse(res, 'Job retrieved successfully', job);
     } catch (error) {
       this.handleAsyncError(error, next);
@@ -81,7 +73,7 @@ export class AdminJobController extends BaseController {
     }
 
     try {
-      await this.updateJobStatusUseCase.execute(jobId, parsed.data.is_active);
+      await this._updateJobStatusUseCase.execute(jobId, parsed.data.is_active);
       const message = `Job ${parsed.data.is_active ? 'activated' : 'deactivated'} successfully`;
       this.sendSuccessResponse(res, message, null);
     } catch (error) {
@@ -100,7 +92,7 @@ export class AdminJobController extends BaseController {
     }
 
     try {
-      await this.deleteJobUseCase.execute(jobId);
+      await this._deleteJobUseCase.execute(jobId);
       this.sendSuccessResponse(res, 'Job deleted successfully', null);
     } catch (error) {
       this.handleAsyncError(error, next);
@@ -113,7 +105,7 @@ export class AdminJobController extends BaseController {
     next: NextFunction,
   ): Promise<void> => {
     try {
-      const stats = await this.getJobStatsUseCase.execute();
+      const stats = await this._getJobStatsUseCase.execute();
       this.sendSuccessResponse(res, 'Job statistics retrieved successfully', stats);
     } catch (error) {
       this.handleAsyncError(error, next);

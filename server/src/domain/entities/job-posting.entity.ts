@@ -1,23 +1,23 @@
 export interface JobPosting {
   _id: string;
-  company_id: string; // Reference to company_profiles
+  company_id: string; 
   
   title: string;
   description: string;
-  responsibilities: string[]; // Array of strings
-  qualifications: string[]; // Array of strings (Who You Are)
-  nice_to_haves: string[]; // Array of strings
-  benefits: string[]; // Array of strings
+  responsibilities: string[]; 
+  qualifications: string[]; 
+  nice_to_haves: string[]; 
+  benefits: string[];
   
   salary: {
     min: number;
     max: number;
   };
   
-  employment_types: string[]; // ["full-time", "part-time", "contract", "internship", "remote"]
+  employment_types: string[]; 
   location: string;
-  skills_required: string[]; // Array of skill ObjectIds
-  category_ids: string[]; // Array of category ObjectIds
+  skills_required: string[]; 
+  category_ids: string[];
   
   is_active: boolean;
   view_count: number;

@@ -1,6 +1,4 @@
-import { injectable, inject } from 'inversify';
 import { Request, Response, NextFunction } from 'express';
-import { TYPES } from '../../../infrastructure/di/types';
 import { ForgotPasswordDto, ResetPasswordDto, LogoutDto } from '../../../application/dto/auth';
 import { ForgotPasswordUseCase, ResetPasswordUseCase, LogoutUseCase } from '../../../application/use-cases';
 import { BaseController, AuthenticatedRequest } from '../../../shared';
@@ -9,12 +7,11 @@ import {
 } from '../../../shared/utils';
 import { env } from '../../../infrastructure/config/env';
 
-@injectable()
 export class PasswordController extends BaseController {
   constructor(
-    @inject(TYPES.ForgotPasswordUseCase) private readonly forgotPasswordUseCase: ForgotPasswordUseCase,
-    @inject(TYPES.ResetPasswordUseCase) private readonly resetPasswordUseCase: ResetPasswordUseCase,
-    @inject(TYPES.LogoutUseCase) private readonly logoutUseCase: LogoutUseCase,
+    private readonly _forgotPasswordUseCase: ForgotPasswordUseCase,
+    private readonly _resetPasswordUseCase: ResetPasswordUseCase,
+    private readonly _logoutUseCase: LogoutUseCase,
   ) {
     super();
   }
@@ -30,7 +27,7 @@ export class PasswordController extends BaseController {
     }
     
     try {
-      await this.forgotPasswordUseCase.execute(parsed.data.email);
+      await this._forgotPasswordUseCase.execute(parsed.data.email);
       this.sendSuccessResponse(res, 'Password reset link has been sent to your email.', null);
     } catch (error) {
       this.sendSuccessResponse(res, 'If the email exists, a password reset link has been sent.', null);
@@ -48,7 +45,7 @@ export class PasswordController extends BaseController {
     }
     
     try {
-      await this.resetPasswordUseCase.execute(
+      await this._resetPasswordUseCase.execute(
         parsed.data.token,
         parsed.data.newPassword,
       );
@@ -69,7 +66,7 @@ export class PasswordController extends BaseController {
 
       if (userId) {
         try {
-          await this.logoutUseCase.execute(userId);
+          await this._logoutUseCase.execute(userId);
         } catch (_err) {}
       }
       

@@ -3,13 +3,14 @@ import {
   AuthenticationError,
   AuthorizationError,
 } from '../../domain/errors/errors';
-import { TYPES } from '../../infrastructure/di/types';
-import { container } from '../../infrastructure/di/container';
-import { TokenService } from '../../application/interfaces';
+import { JwtTokenService } from '../../infrastructure/security/jwt-token-service';
 
 export interface AuthenticatedRequest extends Request {
   user?: { id: string; email: string; role: string };
 }
+
+// Create token service instance for manual dependency injection
+const tokenService = new JwtTokenService();
 
 export function authenticateToken(
   req: AuthenticatedRequest,
@@ -25,7 +26,6 @@ export function authenticateToken(
     return next(new AuthenticationError('Missing access token'));
   }
   try {
-    const tokenService = container.get<TokenService>(TYPES.TokenService);
     const payload = tokenService.verifyAccess(token);
     
     req.user = {

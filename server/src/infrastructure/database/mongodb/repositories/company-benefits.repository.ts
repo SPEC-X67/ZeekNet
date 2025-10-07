@@ -1,11 +1,9 @@
-import { injectable } from 'inversify';
-import { ICompanyBenefitsRepository } from '../../../../domain/repositories/company-benefits.repository';
+import { ICompanyBenefitsRepository } from '../../../../domain/interfaces/repositories/company-benefits.repository';
 import { CompanyBenefits } from '../../../../domain/entities/company-benefits.entity';
 import { CompanyBenefitsModel } from '../models/company-benefits.model';
 import { Types } from 'mongoose';
 import { MongoBaseRepository } from '../../../../shared/base';
 
-@injectable()
 export class MongoCompanyBenefitsRepository extends MongoBaseRepository<CompanyBenefits> implements ICompanyBenefitsRepository {
   constructor() {
     super(CompanyBenefitsModel);

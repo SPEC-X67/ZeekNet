@@ -1,15 +1,12 @@
-import { injectable, inject } from 'inversify';
-import { JobPostingRepository } from '../../../domain/repositories/job-posting.repository.interface';
-import { TYPES } from '../../../infrastructure/di/types';
+import { IJobPostingRepositoryFull } from '../../../domain/interfaces/repositories';
 
-@injectable()
 export class IncrementJobViewCountUseCase {
-  constructor(@inject(TYPES.JobPostingRepository) private jobPostingRepository: JobPostingRepository) {}
+  constructor(private readonly _jobPostingRepository: IJobPostingRepositoryFull) {}
 
   async execute(id: string, userRole?: string): Promise<void> {
     try {
       if (userRole === 'seeker') {
-        await this.jobPostingRepository.incrementViewCount(id);
+        await this._jobPostingRepository.incrementViewCount(id);
       }
     } catch (error) {
       console.error('Failed to increment view count:', error);

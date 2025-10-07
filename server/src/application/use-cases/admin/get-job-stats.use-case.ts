@@ -1,18 +1,14 @@
-import { injectable, inject } from 'inversify';
-import { JobPostingRepository } from '../../../domain/repositories/job-posting.repository.interface';
-import { TYPES } from '../../../infrastructure/di/types';
+import { IJobPostingRepositoryFull } from '../../../domain/interfaces/repositories';
 import { AppError } from '../../../domain/errors/errors';
 
-@injectable()
 export class AdminGetJobStatsUseCase {
   constructor(
-    @inject(TYPES.JobPostingRepository) 
-    private jobPostingRepository: JobPostingRepository
+    private readonly _jobPostingRepository: IJobPostingRepositoryFull
   ) {}
 
   async execute() {
     try {
-      const allJobs = await this.jobPostingRepository.findAll({ 
+      const allJobs = await this._jobPostingRepository.findAll({ 
         page: 1, 
         limit: 10000
       });

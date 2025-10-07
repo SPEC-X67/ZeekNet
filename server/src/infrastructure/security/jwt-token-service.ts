@@ -1,11 +1,9 @@
-import { injectable } from 'inversify';
 import jwt, { SignOptions } from 'jsonwebtoken';
-import { TokenPayload, TokenService } from '../../application/interfaces';
+import { ITokenPayload, ITokenService } from '../../domain/interfaces/services';
 import { env } from '../config/env';
 
-@injectable()
-export class JwtTokenService implements TokenService {
-  signAccess(payload: TokenPayload): string {
+export class JwtTokenService implements ITokenService {
+  signAccess(payload: ITokenPayload): string {
     const expiresIn =
       env.JWT_ACCESS_EXPIRES_IN as unknown as SignOptions['expiresIn'];
     return jwt.sign(payload as object, env.JWT_ACCESS_SECRET as string, {
@@ -13,7 +11,7 @@ export class JwtTokenService implements TokenService {
     });
   }
 
-  signRefresh(payload: TokenPayload): string {
+  signRefresh(payload: ITokenPayload): string {
     const expiresIn =
       env.JWT_REFRESH_EXPIRES_IN as unknown as SignOptions['expiresIn'];
     return jwt.sign(payload as object, env.JWT_REFRESH_SECRET as string, {
@@ -21,11 +19,11 @@ export class JwtTokenService implements TokenService {
     });
   }
 
-  verifyAccess(token: string): TokenPayload {
-    return jwt.verify(token, env.JWT_ACCESS_SECRET as string) as TokenPayload;
+  verifyAccess(token: string): ITokenPayload {
+    return jwt.verify(token, env.JWT_ACCESS_SECRET as string) as ITokenPayload;
   }
 
-  verifyRefresh(token: string): TokenPayload {
-    return jwt.verify(token, env.JWT_REFRESH_SECRET as string) as TokenPayload;
+  verifyRefresh(token: string): ITokenPayload {
+    return jwt.verify(token, env.JWT_REFRESH_SECRET as string) as ITokenPayload;
   }
 }

@@ -1,13 +1,11 @@
-import { injectable } from 'inversify';
-import { OtpService } from '../../../../application/interfaces';
+import { IOtpService } from '../../../../domain/interfaces/services';
 import { redisClient } from '../connection/redis';
 
 function generateCode(): string {
   return String(Math.floor(100000 + Math.random() * 900000));
 }
 
-@injectable()
-export class RedisOtpService implements OtpService {
+export class RedisOtpService implements IOtpService {
   async generateOtp(email: string): Promise<string> {
     return this.generateAndStoreOtp(email);
   }

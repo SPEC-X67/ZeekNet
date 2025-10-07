@@ -1,9 +1,7 @@
-import { injectable, inject } from 'inversify';
 import { Request, Response, NextFunction } from 'express';
-import { TYPES } from '../../../infrastructure/di/types';
 import { RefreshTokenDto } from '../../../application/dto/auth';
 import { RefreshTokenUseCase, AuthGetUserByIdUseCase } from '../../../application/use-cases';
-import { TokenService } from '../../../application/interfaces/infrastructure';
+import { ITokenService } from '../../../domain/interfaces/services';
 import { GetCompanyProfileByUserIdUseCase } from '../../../application/use-cases/auth/get-company-profile-by-user-id.use-case';
 import { BaseController, AuthenticatedRequest } from '../../../shared';
 import { 
@@ -12,13 +10,12 @@ import {
 import { env } from '../../../infrastructure/config/env';
 import { UserRole } from '../../../domain/enums/user-role.enum';
 
-@injectable()
 export class TokenController extends BaseController {
   constructor(
-    @inject(TYPES.RefreshTokenUseCase) private readonly refreshTokenUseCase: RefreshTokenUseCase,
-    @inject(TYPES.GetUserByIdUseCase) private readonly getUserByIdUseCase: AuthGetUserByIdUseCase,
-    @inject(TYPES.TokenService) private readonly tokenService: TokenService,
-    @inject(TYPES.GetCompanyProfileByUserIdUseCase) private readonly getCompanyProfileByUserIdUseCase: GetCompanyProfileByUserIdUseCase,
+    private readonly _refreshTokenUseCase: RefreshTokenUseCase,
+    private readonly _getUserByIdUseCase: AuthGetUserByIdUseCase,
+    private readonly _tokenService: ITokenService,
+    private readonly _getCompanyProfileByUserIdUseCase: GetCompanyProfileByUserIdUseCase,
   ) {
     super();
   }
@@ -40,7 +37,7 @@ export class TokenController extends BaseController {
     }
     
     try {
-      const result = await this.refreshTokenUseCase.execute(
+      const result = await this._refreshTokenUseCase.execute(
         parsed.data.refreshToken,
       );
       const { tokens, user } = result;
@@ -61,7 +58,7 @@ export class TokenController extends BaseController {
   ): Promise<void> => {
     try {
       const userId = this.validateUserId(req);
-      const user = await this.getUserByIdUseCase.execute(userId);
+      const user = await this._getUserByIdUseCase.execute(userId);
       
       if (!user) {
         return this.handleValidationError('User not found', next);
@@ -72,13 +69,13 @@ export class TokenController extends BaseController {
       }
 
       if (user.role === UserRole.COMPANY) {
-        const companyProfile = await this.getCompanyProfileByUserIdUseCase.execute(user.id);
+        const companyProfile = await this._getCompanyProfileByUserIdUseCase.execute(user.id);
         if (companyProfile && companyProfile.isBlocked) {
           return this.sendErrorResponse(res, 'Company account is blocked', 403);
         }
       }
 
-      const accessToken = this.tokenService.signAccess({ sub: user.id, role: user.role });
+      const accessToken = this._tokenService.signAccess({ sub: user.id, role: user.role });
       const userDetails = this.sanitizeUserForResponse(user);
       
       this.sendSuccessResponse(res, 'Authenticated', userDetails, accessToken);

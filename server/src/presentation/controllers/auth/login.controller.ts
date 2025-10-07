@@ -1,9 +1,7 @@
-import { injectable, inject } from 'inversify';
 import { Request, Response, NextFunction } from 'express';
-import { TYPES } from '../../../infrastructure/di/types';
 import { LoginDto, GoogleLoginDto } from '../../../application/dto/auth';
 import { LoginUserUseCase, AdminLoginUseCase, GoogleLoginUseCase } from '../../../application/use-cases';
-import { TokenService, PasswordHasher } from '../../../application/interfaces/infrastructure';
+import { ITokenService, IPasswordHasher } from '../../../domain/interfaces/services';
 import { UpdateUserRefreshTokenUseCase } from '../../../application/use-cases/auth/update-user-refresh-token.use-case';
 import { BaseController, AuthenticatedRequest } from '../../../shared';
 import { 
@@ -11,15 +9,14 @@ import {
 } from '../../../shared/utils';
 import { env } from '../../../infrastructure/config/env';
 
-@injectable()
 export class LoginController extends BaseController {
   constructor(
-    @inject(TYPES.LoginUserUseCase) private readonly loginUserUseCase: LoginUserUseCase,
-    @inject(TYPES.AdminLoginUseCase) private readonly adminLoginUseCase: AdminLoginUseCase,
-    @inject(TYPES.GoogleLoginUseCase) private readonly googleLoginUseCase: GoogleLoginUseCase,
-    @inject(TYPES.TokenService) private readonly tokenService: TokenService,
-    @inject(TYPES.PasswordHasher) private readonly passwordHasher: PasswordHasher,
-    @inject(TYPES.UpdateUserRefreshTokenUseCase) private readonly updateUserRefreshTokenUseCase: UpdateUserRefreshTokenUseCase,
+    private readonly _loginUserUseCase: LoginUserUseCase,
+    private readonly _adminLoginUseCase: AdminLoginUseCase,
+    private readonly _googleLoginUseCase: GoogleLoginUseCase,
+    private readonly _tokenService: ITokenService,
+    private readonly _passwordHasher: IPasswordHasher,
+    private readonly _updateUserRefreshTokenUseCase: UpdateUserRefreshTokenUseCase,
   ) {
     super();
   }
@@ -35,17 +32,17 @@ export class LoginController extends BaseController {
     }
     
     try {
-      const { user } = await this.loginUserUseCase.execute(
+      const { user } = await this._loginUserUseCase.execute(
         parsed.data.email,
         parsed.data.password,
       );      
       
       if (user.isVerified) {
-        const accessToken = this.tokenService.signAccess({ sub: user.id, role: user.role });
-        const refreshToken = this.tokenService.signRefresh({ sub: user.id });
-        const hashedRefresh = await this.passwordHasher.hash(refreshToken);
+        const accessToken = this._tokenService.signAccess({ sub: user.id, role: user.role });
+        const refreshToken = this._tokenService.signRefresh({ sub: user.id });
+        const hashedRefresh = await this._passwordHasher.hash(refreshToken);
       
-        await this.updateUserRefreshTokenUseCase.execute(user.id, hashedRefresh);
+        await this._updateUserRefreshTokenUseCase.execute(user.id, hashedRefresh);
         
         res.cookie(env.COOKIE_NAME_REFRESH!, refreshToken, createRefreshTokenCookieOptions());
         
@@ -71,7 +68,7 @@ export class LoginController extends BaseController {
     }
     
     try {
-      const { tokens, user } = await this.adminLoginUseCase.execute(
+      const { tokens, user } = await this._adminLoginUseCase.execute(
         parsed.data.email,
         parsed.data.password,
       );
@@ -96,7 +93,7 @@ export class LoginController extends BaseController {
     }
     
     try {
-      const { tokens, user } = await this.googleLoginUseCase.execute(
+      const { tokens, user } = await this._googleLoginUseCase.execute(
         parsed.data.idToken,
       );
 

@@ -1,4 +1,4 @@
-import { CompanyOfficeLocation } from '../entities/company-office-location.entity';
+import { CompanyOfficeLocation } from '../../entities/company-office-location.entity';
 import { IBaseRepository } from './base.repository';
 
 export interface ICompanyOfficeLocationRepository extends IBaseRepository<CompanyOfficeLocation> {
