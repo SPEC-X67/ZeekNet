@@ -18,8 +18,7 @@ export class UpdateCompanyProfileUseCase {
     }
 
     if (data.profile) {
-      
-      
+     
       const updatedProfile = await this._companyProfileRepository.updateProfile(existingProfile.id, {
         companyName: data.profile.company_name,
         logo: data.profile.logo,
