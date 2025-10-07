@@ -1,4 +1,4 @@
-import { ICompanyTechStackRepository } from '../../../domain/interfaces/repositories/company-tech-stack.repository';
+import { ICompanyTechStackRepository } from '../../../domain/interfaces/repositories';
 import { CompanyTechStack } from '../../../domain/entities/company-tech-stack.entity';
 import { CreateCompanyTechStackDto, UpdateCompanyTechStackDto } from '../../dto/company/company-tech-stack.dto';
 import { NotFoundError } from '../../../domain/errors/errors';

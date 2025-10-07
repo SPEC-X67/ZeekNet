@@ -1,5 +1,13 @@
 import { SimpleCompanyProfileRequestDto } from '../dto/company/create-company.dto';
-import { CompanyProfile, CompanyContact, CompanyLocation } from '../../domain/entities/company-profile.entity';
+import { CompanyProfile } from '../../domain/entities/company-profile.entity';
+import {
+  CompanyContact,
+  CompanyTechStack,
+  CompanyOfficeLocation,
+  CompanyBenefits,
+  CompanyWorkplacePictures,
+} from '../../domain/entities';
+import { JobPosting } from '../../domain/entities/job-posting.entity';
 import {
   CompanyProfileData,
   CompanyContactData,
@@ -8,30 +16,29 @@ import {
   CompanyProfileResponseDto,
   CompanyContactResponseDto,
   CompanyLocationResponseDto,
-  CompanyProfileWithDetailsResponseDto
+  CompanyProfileWithDetailsResponseDto,
 } from './types';
 
 interface CompanyProfileWithDetails {
   profile: CompanyProfile;
-  contact: any | null;
-  locations: any[];
-  techStack: any[];
-  benefits: any[];
-  team: any[];
-  workplacePictures: any[];
-  jobPostings?: any[];
+  contact: CompanyContact | null;
+  locations: CompanyOfficeLocation[];
+  techStack: CompanyTechStack[];
+  benefits: CompanyBenefits[];
+  workplacePictures: CompanyWorkplacePictures[];
+  jobPostings?: JobPosting[];
 }
 
 export class CompanyProfileMapper {
   
-  toDomain(dto: SimpleCompanyProfileRequestDto, userId: string): CompanyProfileData {
+  static toDomain(dto: SimpleCompanyProfileRequestDto, userId: string): CompanyProfileData {
     return {
       userId,
       companyName: dto.company_name,
       logo: dto.logo || '',
       banner: '',
       websiteLink: dto.website || '',
-      employeeCount: this.parseEmployeeCount(dto.employees),
+      employeeCount: CompanyProfileMapper.parseEmployeeCount(dto.employees),
       industry: dto.industry,
       organisation: dto.organisation,
       aboutUs: dto.description,
@@ -40,7 +47,7 @@ export class CompanyProfileMapper {
     };
   }
 
-  toContactData(dto: SimpleCompanyProfileRequestDto, companyId: string): CompanyContactData {
+  static toContactData(dto: SimpleCompanyProfileRequestDto, companyId: string): CompanyContactData {
     return {
       companyId,
       email: dto.email,
@@ -51,7 +58,7 @@ export class CompanyProfileMapper {
     };
   }
 
-  toLocationData(dto: SimpleCompanyProfileRequestDto, companyId: string): CompanyLocationData {
+  static toLocationData(dto: SimpleCompanyProfileRequestDto, companyId: string): CompanyLocationData {
     return {
       companyId,
       location: dto.location,
@@ -61,7 +68,7 @@ export class CompanyProfileMapper {
     };
   }
 
-  toVerificationData(dto: SimpleCompanyProfileRequestDto, companyId: string): CompanyVerificationData {
+  static toVerificationData(dto: SimpleCompanyProfileRequestDto, companyId: string): CompanyVerificationData {
     return {
       companyId,
       taxId: dto.tax_id,
@@ -69,13 +76,13 @@ export class CompanyProfileMapper {
     };
   }
 
-  private parseEmployeeCount(employees: string): number {
+  private static parseEmployeeCount(employees: string): number {
     if (!employees) return 0;
     const range = employees.split('-');
     return parseInt(range[0]) || 0;
   }
 
-  toDto(domain: CompanyProfile): CompanyProfileResponseDto {
+  static toDto(domain: CompanyProfile): CompanyProfileResponseDto {
     return {
       id: domain.id,
       company_name: domain.companyName,
@@ -93,11 +100,11 @@ export class CompanyProfileMapper {
     };
   }
 
-  toDetailedDto(domain: CompanyProfileWithDetails): CompanyProfileWithDetailsResponseDto {
+  static toDetailedDto(domain: CompanyProfileWithDetails): CompanyProfileWithDetailsResponseDto {
     return {
-      profile: this.toDto(domain.profile),
-      contact: domain.contact ? this.mapContactToDto(domain.contact) : null,
-      locations: domain.locations.map(location => this.mapLocationToDto(location)),
+      profile: CompanyProfileMapper.toDto(domain.profile),
+      contact: domain.contact ? CompanyProfileMapper.mapContactToDto(domain.contact) : null,
+      locations: domain.locations.map(location => CompanyProfileMapper.mapLocationToDto(location)),
       techStack: domain.techStack.map(tech => ({
         id: tech.id,
         techStack: tech.techStack,
@@ -105,15 +112,7 @@ export class CompanyProfileMapper {
       benefits: domain.benefits.map(benefit => ({
         id: benefit.id,
         perk: benefit.perk,
-        description: benefit.description,
-      })),
-      team: domain.team.map(member => ({
-        id: member.id,
-        name: member.name,
-        role: member.role,
-        avatar: member.avatar,
-        instagram: member.instagram,
-        linkedin: member.linkedin,
+        description: benefit.description || '',
       })),
       workplacePictures: domain.workplacePictures.map(picture => ({
         id: picture.id,
@@ -129,16 +128,16 @@ export class CompanyProfileMapper {
         salaryMin: job.salary?.min,
         salaryMax: job.salary?.max,
         isActive: job.is_active,
-        createdAt: job.createdAt,
-        updatedAt: job.updatedAt,
+        createdAt: job.createdAt.toISOString(),
+        updatedAt: job.updatedAt.toISOString(),
       })) : [],
     };
   }
 
-  private mapContactToDto(contact: any): CompanyContactResponseDto {
+  private static mapContactToDto(contact: CompanyContact): CompanyContactResponseDto {
     return {
       id: contact.id,
-      email: contact.email,
+      email: contact.email || '',
       phone: contact.phone || '',
       twitter_link: contact.twitterLink || '',
       facebook_link: contact.facebookLink || '',
@@ -146,7 +145,7 @@ export class CompanyProfileMapper {
     };
   }
 
-  private mapLocationToDto(location: any): CompanyLocationResponseDto {
+  private static mapLocationToDto(location: CompanyOfficeLocation): CompanyLocationResponseDto {
     return {
       id: location.id,
       location: location.location,

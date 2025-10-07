@@ -51,7 +51,14 @@ export class CompanyWorkplacePictures extends BaseEntity {
     };
   }
 
-  static fromJSON(data: any): CompanyWorkplacePictures {
+  static fromJSON(data: {
+    id: string;
+    companyId: string;
+    pictureUrl: string;
+    caption?: string;
+    createdAt: string | Date;
+    updatedAt: string | Date;
+  }): CompanyWorkplacePictures {
     return new CompanyWorkplacePictures(
       data.id,
       data.companyId,

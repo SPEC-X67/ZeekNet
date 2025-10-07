@@ -1,16 +1,14 @@
-import { Result } from '../../../shared/base/result';
 import { RegisterResult, LoginResult } from '../../../application/dto/auth/auth-response.dto';
 import { User } from '../../entities/user.entity';
 import { CompanyProfile } from '../../entities/company-profile.entity';
 
-// Auth Use Case Interfaces
 export interface IRegisterUserUseCase {
   execute(
     email: string,
     password: string,
-    role?: any,
+    role?: unknown,
     name?: string,
-  ): Promise<Result<RegisterResult, Error>>;
+  ): Promise<RegisterResult>;
 }
 
 export interface ILoginUserUseCase {

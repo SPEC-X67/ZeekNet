@@ -1,16 +1,14 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { MapPin, Clock, Users, IndianRupee, Bookmark } from "lucide-react";
+import { MapPin, Bookmark } from "lucide-react";
 import type { JobPostingResponse } from "@/types/job";
 
 interface JobCardProps {
   job: JobPostingResponse;
-  onApply?: (jobId: string) => void;
   onViewDetails?: (jobId: string) => void;
 }
 
-const JobCard = ({ job, onApply, onViewDetails }: JobCardProps) => {
+const JobCard = ({ job, onViewDetails }: JobCardProps) => {
   const formatSalary = (min: number, max: number) => {
     const formatNumber = (num: number) => {
       if (num >= 1000000) {

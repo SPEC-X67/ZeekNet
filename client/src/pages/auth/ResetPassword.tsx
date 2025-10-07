@@ -81,14 +81,13 @@ const ResetPassword = () => {
       toast.error('Password Reset Failed', {
         description: errorMessage
       })
-      console.error('Reset password error:', error)
     }
   }
 
   if (isPasswordReset) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
-        {/* Header */}
+        {}
         <header className="border-b bg-white/80 backdrop-blur-sm dark:bg-slate-900/80">
           <div className="container mx-auto px-4 py-4">
             <nav className="flex items-center justify-between">
@@ -149,7 +148,7 @@ const ResetPassword = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
-      {/* Header */}
+      {}
       <header className="border-b bg-white/80 backdrop-blur-sm dark:bg-slate-900/80">
         <div className="container mx-auto px-4 py-4">
           <nav className="flex items-center justify-between">

@@ -45,8 +45,7 @@ const JobDetails = () => {
           toast.error('Failed to load job details')
           navigate('/company/job-listing')
         }
-      } catch (error) {
-        console.error('Error fetching job details:', error)
+      } catch {
         toast.error('Failed to load job details')
         navigate('/company/job-listing')
       } finally {
@@ -149,7 +148,7 @@ const JobDetails = () => {
   return (
     <CompanyLayout>
       <div className="min-h-screen bg-white">
-        {/* Top Navigation Header */}
+        {}
         <div className="border-b border-[#D6DDEB]">
           <div className="px-2 py-2 ">
             <div className="flex items-center justify-between">
@@ -181,7 +180,7 @@ const JobDetails = () => {
           </div>
         </div>
 
-        {/* Tab Navigation */}
+        {}
         <div className="border-b border-[#D6DDEB]">
           <div className="px-7">
             <div className="flex gap-9">
@@ -198,9 +197,9 @@ const JobDetails = () => {
           </div>
         </div>
 
-        {/* Main Content */}
+        {}
         <div className="px-7 py-7">
-          {/* Job Header Card */}
+          {}
           <Card className="border border-[#D6DDEB] rounded-lg mb-7">
             <CardContent className="p-1">
               <div className="flex items-center justify-between">
@@ -218,21 +217,21 @@ const JobDetails = () => {
             </CardContent>
           </Card>
 
-          {/* Content Grid */}
+          {}
           <div className="grid grid-cols-3 gap-7">
-            {/* Left Column - Job Description */}
+            {}
             <div className="col-span-2 space-y-9">
-              {/* Description */}
+              {}
               <div>
                 <h3 className="text-xl font-semibold text-[#25324B] mb-3.5">Description</h3>
                 <p className="text-sm text-[#515B6F] leading-relaxed">{jobData.description || 'No description provided'}</p>
               </div>
 
-              {/* Responsibilities */}
+              {}
               <div>
                 <h3 className="text-xl font-semibold text-[#25324B] mb-3.5">Responsibilities</h3>
                 <div className="space-y-3.5">
-                  {responsibilities.map((item, index) => (
+                  {responsibilities.map((item: string, index: number) => (
                     <div key={index} className="flex items-start gap-2.5">
                       <CircleCheck className="w-5 h-5 text-[#56CDAD] mt-0.5 flex-shrink-0" />
                       <p className="text-sm text-[#515B6F]">{item}</p>
@@ -241,11 +240,11 @@ const JobDetails = () => {
                 </div>
               </div>
 
-              {/* Who You Are */}
+              {}
               <div>
                 <h3 className="text-xl font-semibold text-[#25324B] mb-3.5">Who You Are</h3>
                 <div className="space-y-3.5">
-                  {whoYouAre.map((item, index) => (
+                  {whoYouAre.map((item: string, index: number) => (
                     <div key={index} className="flex items-start gap-2.5">
                       <CircleCheck className="w-5 h-5 text-[#56CDAD] mt-0.5 flex-shrink-0" />
                       <p className="text-sm text-[#515B6F]">{item}</p>
@@ -254,11 +253,11 @@ const JobDetails = () => {
                 </div>
               </div>
 
-              {/* Nice-To-Haves */}
+              {}
               <div>
                 <h3 className="text-xl font-semibold text-[#25324B] mb-3.5">Nice-To-Haves</h3>
                 <div className="space-y-3.5">
-                  {niceToHaves.map((item, index) => (
+                  {niceToHaves.map((item: string, index: number) => (
                     <div key={index} className="flex items-start gap-2.5">
                       <CircleCheck className="w-5 h-5 text-[#56CDAD] mt-0.5 flex-shrink-0" />
                       <p className="text-sm text-[#515B6F]">{item}</p>
@@ -268,14 +267,14 @@ const JobDetails = () => {
               </div>
             </div>
 
-            {/* Right Column - Job Stats */}
+            {}
             <div className="space-y-7">
-              {/* About Role */}
+              {}
               <Card className="border border-[#D6DDEB] rounded-lg">
                 <CardContent className="p-3.5">
                   <h3 className="text-xl font-semibold text-[#25324B] mb-5">About this role</h3>
                   
-                  {/* Progress Bar */}
+                  {}
                   <div className="mb-5">
                     <div className="flex justify-between items-center mb-1.5">
                       <span className="text-sm font-semibold text-[#25324B]">{jobData.application_count || 0} applied</span>
@@ -285,7 +284,7 @@ const JobDetails = () => {
                     </div>
                   </div>
 
-                  {/* Job Details */}
+                  {}
                   <div className="space-y-3.5">
                     <div className="flex justify-between">
                       <span className="text-sm text-[#515B6F]">Job Posted On</span>
@@ -315,7 +314,7 @@ const JobDetails = () => {
                 </CardContent>
               </Card>
 
-              {/* Categories */}
+              {}
               <Card className="border border-[#D6DDEB] rounded-lg">
                 <CardContent className="p-3.5">
                   <h3 className="text-xl font-semibold text-[#25324B] mb-5">Categories</h3>
@@ -333,13 +332,13 @@ const JobDetails = () => {
                 </CardContent>
               </Card>
 
-              {/* Required Skills */}
+              {}
               <Card className="border border-[#D6DDEB] rounded-lg">
                 <CardContent className="p-3.5">
                   <h3 className="text-xl font-semibold text-[#25324B] mb-5">Required Skills</h3>
                   <div className="flex flex-wrap gap-1.5">
                     {requiredSkills.length > 0 ? (
-                      requiredSkills.map((skill, index) => (
+                      requiredSkills.map((skill: string, index: number) => (
                         <Badge 
                           key={index}
                           variant="outline" 
@@ -357,20 +356,20 @@ const JobDetails = () => {
             </div>
           </div>
 
-          {/* Divider */}
+          {}
           <div className="w-full h-px bg-[#D6DDEB] my-7"></div>
 
-          {/* Perks & Benefits */}
+          {}
           <div className="space-y-5">
             <div>
               <h3 className="text-xl font-semibold text-[#25324B] mb-1.5">Perks & Benefits</h3>
               <p className="text-sm text-[#515B6F]">This job comes with several perks and benefits</p>
             </div>
 
-            {/* Benefits Grid */}
+            {}
             {benefits.length > 0 ? (
               <div className="grid grid-cols-3 gap-7">
-                {benefits.map((benefit, index) => (
+                {benefits.map((benefit: string, index: number) => (
                   <Card key={index} className="border border-[#D6DDEB] rounded-lg">
                     <CardContent className="p-5">
                       <div className="flex items-start gap-5">

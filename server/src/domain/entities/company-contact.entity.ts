@@ -69,7 +69,17 @@ export class CompanyContact extends BaseEntity {
     };
   }
 
-  static fromJSON(data: any): CompanyContact {
+  static fromJSON(data: {
+    id: string;
+    companyId: string;
+    twitterLink?: string;
+    facebookLink?: string;
+    linkedin?: string;
+    email?: string;
+    phone?: string;
+    createdAt: string | Date;
+    updatedAt: string | Date;
+  }): CompanyContact {
     return new CompanyContact(
       data.id,
       data.companyId,

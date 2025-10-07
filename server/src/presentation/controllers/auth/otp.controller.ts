@@ -9,9 +9,15 @@ import { GetUserByEmailUseCase } from '../../../application/use-cases/auth/get-u
 import { UpdateUserVerificationStatusUseCase } from '../../../application/use-cases/auth/update-user-verification-status.use-case';
 import { UpdateUserRefreshTokenUseCase } from '../../../application/use-cases/auth/update-user-refresh-token.use-case';
 import { z } from 'zod';
-import { BaseController } from '../../../shared';
 import { env } from '../../../infrastructure/config/env';
-import { createRefreshTokenCookieOptions } from '../../../shared/utils';
+import {
+  createRefreshTokenCookieOptions,
+  handleValidationError,
+  handleAsyncError,
+  sendSuccessResponse,
+  sendErrorResponse,
+  sanitizeUserForResponse,
+} from '../../../shared/utils';
 import { welcomeTemplate } from '../../../infrastructure/messaging/templates/welcome.template';
 
 const RequestOtpDto = z.object({ email: z.string().email() });
@@ -20,7 +26,7 @@ const VerifyOtpDto = z.object({
   code: z.string().length(6),
 });
 
-export class OtpController extends BaseController {
+export class OtpController {
   constructor(
     private readonly _otpService: IOtpService,
     private readonly _mailer: IMailerService,
@@ -29,9 +35,7 @@ export class OtpController extends BaseController {
     private readonly _updateUserRefreshTokenUseCase: UpdateUserRefreshTokenUseCase,
     private readonly _tokenService: ITokenService,
     private readonly _passwordHasher: IPasswordHasher,
-  ) {
-    super();
-  }
+  ) {}
 
   request = async (
     req: Request,
@@ -39,15 +43,15 @@ export class OtpController extends BaseController {
     next: NextFunction,
   ): Promise<void> => {
     const parsed = RequestOtpDto.safeParse(req.body);
-    if (!parsed.success) return this.handleValidationError('Invalid email', next);
+    if (!parsed.success) return handleValidationError('Invalid email', next);
     
     try {
       const user = await this._getUserByEmailUseCase.execute(parsed.data.email);
       if (!user) {
-        return this.handleValidationError('User not found', next);
+        return handleValidationError('User not found', next);
       }
       if (user.isVerified) {
-        this.sendSuccessResponse(res, 'User already verified', null);
+        sendSuccessResponse(res, 'User already verified', null);
         return;
       }
 
@@ -56,7 +60,7 @@ export class OtpController extends BaseController {
         code = await this._otpService.generateAndStoreOtp(parsed.data.email);
       } catch (error: unknown) {
         if (error instanceof Error && error.message.includes('Please wait before requesting another OTP')) {
-          this.sendErrorResponse(res, 'Please wait 30 seconds before requesting another OTP', null, 429);
+          sendErrorResponse(res, 'Please wait 30 seconds before requesting another OTP', null, 429);
           return;
         }
         throw error;
@@ -92,9 +96,9 @@ export class OtpController extends BaseController {
         'Verify Your Email - ZeekNet Job Portal',
         htmlContent,
       );
-      this.sendSuccessResponse(res, 'OTP sent successfully', null);
+      sendSuccessResponse(res, 'OTP sent successfully', null);
     } catch (err) {
-      this.handleAsyncError(err, next);
+      handleAsyncError(err, next);
     }
   };
 
@@ -104,14 +108,14 @@ export class OtpController extends BaseController {
     next: NextFunction,
   ): Promise<void> => {
     const parsed = VerifyOtpDto.safeParse(req.body);
-    if (!parsed.success) return this.handleValidationError('Invalid OTP data', next);
+    if (!parsed.success) return handleValidationError('Invalid OTP data', next);
     
     try {
       const ok = await this._otpService.verifyOtp(
         parsed.data.email,
         parsed.data.code,
       );
-      if (!ok) return this.handleValidationError('Invalid or expired OTP', next);
+      if (!ok) return handleValidationError('Invalid or expired OTP', next);
   
       await this._updateUserVerificationStatusUseCase.execute(
         parsed.data.email,
@@ -120,7 +124,7 @@ export class OtpController extends BaseController {
 
       const user = await this._getUserByEmailUseCase.execute(parsed.data.email);
       if (!user) {
-        return this.handleValidationError('User not found', next);
+        return handleValidationError('User not found', next);
       }
 
       const accessToken = this._tokenService.signAccess({ sub: user.id, role: user.role });
@@ -138,10 +142,10 @@ export class OtpController extends BaseController {
         welcomeTemplate.html(user.name || 'User', dashboardLink),
       );
   
-      const userDetails = this.sanitizeUserForResponse(user);
-      this.sendSuccessResponse(res, 'OTP verified and user verified', userDetails, accessToken);
+      const userDetails = sanitizeUserForResponse(user);
+      sendSuccessResponse(res, 'OTP verified and user verified', userDetails, accessToken);
     } catch (err) {
-      this.handleAsyncError(err, next);
+      handleAsyncError(err, next);
     }
   };
 

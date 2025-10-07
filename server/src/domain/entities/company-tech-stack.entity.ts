@@ -47,7 +47,13 @@ export class CompanyTechStack extends BaseEntity {
     };
   }
 
-  static fromJSON(data: any): CompanyTechStack {
+  static fromJSON(data: {
+    id: string;
+    companyId: string;
+    techStack: string;
+    createdAt: string | Date;
+    updatedAt: string | Date;
+  }): CompanyTechStack {
     return new CompanyTechStack(
       data.id,
       data.companyId,

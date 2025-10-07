@@ -39,7 +39,7 @@ export interface JobPostingQuery {
   salary_max?: number;
   location?: string;
   search?: string;
-  is_active?: boolean; // For company API
+  is_active?: boolean;
 }
 
 export interface PaginatedJobPostings {

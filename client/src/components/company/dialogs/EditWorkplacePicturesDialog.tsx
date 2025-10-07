@@ -63,8 +63,7 @@ const EditWorkplacePicturesDialog: React.FC<EditWorkplacePicturesDialogProps> = 
       } else {
         throw new Error(result.message || 'Upload failed');
       }
-    } catch (error) {
-      console.error('Upload error:', error);
+    } catch {
       toast.error('Failed to upload image');
     } finally {
       setUploading(false);
@@ -130,7 +129,6 @@ const EditWorkplacePicturesDialog: React.FC<EditWorkplacePicturesDialogProps> = 
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* Image Upload */}
                   <div>
                     <Label htmlFor={`image-${index}`}>Upload Image</Label>
                     <div className="mt-2">
@@ -154,18 +152,18 @@ const EditWorkplacePicturesDialog: React.FC<EditWorkplacePicturesDialogProps> = 
                             />
                             <Button
                               type="button"
-                              variant="outline"
                               size="sm"
+                              variant="secondary"
                               onClick={() => document.getElementById(`image-${index}`)?.click()}
                               disabled={uploading}
                             >
-                              <Upload className="h-4 w-4" />
+                              Change
                             </Button>
                           </div>
                         </div>
                       ) : (
-                        <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-                          <ImageIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                        <div className="border-2 border-dashed rounded-lg p-8 text-center">
+                          <ImageIcon className="h-12 w-12 mx-auto text-gray-400 mb-2" />
                           <Input
                             id={`image-${index}`}
                             type="file"
@@ -183,26 +181,22 @@ const EditWorkplacePicturesDialog: React.FC<EditWorkplacePicturesDialogProps> = 
                             disabled={uploading}
                           >
                             <Upload className="h-4 w-4 mr-2" />
-                            {uploading ? 'Uploading...' : 'Upload Image'}
+                            Upload Image
                           </Button>
-                          <p className="text-sm text-gray-500 mt-2">
-                            PNG, JPG, GIF up to 5MB
-                          </p>
                         </div>
                       )}
                     </div>
                   </div>
 
-                  {/* Caption */}
                   <div>
                     <Label htmlFor={`caption-${index}`}>Caption</Label>
-                      <Input
-                        id={`caption-${index}`}
-                        value={picture.caption || ''}
-                        onChange={(e) => handleCaptionChange(index, e.target.value)}
-                        placeholder="Describe this workplace area..."
-                        className="mt-2"
-                      />
+                    <Input
+                      id={`caption-${index}`}
+                      value={picture.caption || ''}
+                      onChange={(e) => handleCaptionChange(index, e.target.value)}
+                      placeholder="Describe this workplace area..."
+                      className="mt-2"
+                    />
                   </div>
                 </div>
               </div>

@@ -1,4 +1,4 @@
-import { ICompanyWorkplacePicturesRepository } from '../../../domain/interfaces/repositories/company-workplace-pictures.repository';
+import { ICompanyWorkplacePicturesRepository } from '../../../domain/interfaces/repositories';
 import { CompanyWorkplacePictures } from '../../../domain/entities/company-workplace-pictures.entity';
 import { CreateCompanyWorkplacePicturesDto, UpdateCompanyWorkplacePicturesDto } from '../../dto/company/company-workplace-pictures.dto';
 import { NotFoundError } from '../../../domain/errors/errors';

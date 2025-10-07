@@ -1,16 +1,14 @@
-import { IJobPostingRepositoryFull } from '../../../domain/interfaces/repositories';
+import { IJobPostingRepository, ICompanyProfileRepository } from '../../../domain/interfaces/repositories';
 import { AppError } from '../../../domain/errors/errors';
-import { ICompanyRepository } from '../../../domain/interfaces/repositories';
 
 export class DeleteJobPostingUseCase {
   constructor(
-    private readonly _jobPostingRepository: IJobPostingRepositoryFull,
-    private readonly _companyRepository: ICompanyRepository,
+    private readonly _jobPostingRepository: IJobPostingRepository,
+    private readonly _companyProfileRepository: ICompanyProfileRepository,
   ) {}
 
   async execute(id: string, userId: string): Promise<void> {
-    // Get company profile by user ID
-    const companyProfile = await this._companyRepository.getProfileByUserId(userId);
+    const companyProfile = await this._companyProfileRepository.getProfileByUserId(userId);
     
     if (!companyProfile) {
       throw new AppError('Company profile not found', 404);
@@ -22,21 +20,10 @@ export class DeleteJobPostingUseCase {
       throw new AppError('Job posting not found', 404);
     }
 
-    console.log('DEBUG - Delete Job Authorization:');
-    console.log('User ID:', userId);
-    console.log('Company Profile ID:', companyProfile.id);
-    console.log('Job Company ID:', existingJob.company_id);
-    console.log('Match:', existingJob.company_id === companyProfile.id);
-
-    // Use company profile ID for comparison
     if (!existingJob.company_id || existingJob.company_id === '') {
-      await this._jobPostingRepository.update(id, { company_id: companyProfile.id } as any);
+      await this._jobPostingRepository.update(id, { company_id: companyProfile.id } as unknown);
     } else if (existingJob.company_id !== companyProfile.id) {
-      // Check if job was created with user ID instead of company profile ID
-      if (existingJob.company_id === userId) {
-        console.log('Job has user ID instead of company profile ID, allowing operation...');
-        // Don't update here for delete, just allow it to proceed
-      } else {
+      if (existingJob.company_id !== userId) {
         throw new AppError('Unauthorized to delete this job posting', 403);
       }
     }

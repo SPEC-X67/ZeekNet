@@ -24,7 +24,6 @@ export class CompanyRouter {
   }
 
   private initializeRoute(): void {
-    // Import repositories from companyDi
     const { companyRepository } = require('../../infrastructure/di/companyDi');
     const { userRepositoryFull } = require('../../infrastructure/di/authDi');
     
@@ -71,11 +70,6 @@ export class CompanyRouter {
     this.router.put('/workplace-pictures/:id', companyController.updateCompanyWorkplacePicture);
     this.router.delete('/workplace-pictures/:id', companyController.deleteCompanyWorkplacePicture);
     this.router.post('/workplace-pictures/upload', uploadSingle('image'), companyController.uploadWorkplacePicture);
-
-    this.router.get('/team', companyController.getCompanyTeam);
-    this.router.post('/team', companyController.createCompanyTeamMember);
-    this.router.put('/team/:id', companyController.updateCompanyTeamMember);
-    this.router.delete('/team/:id', companyController.deleteCompanyTeamMember);
 
     this.router.post('/jobs', validateBody(CreateJobPostingRequestDto), companyJobPostingController.createJobPosting);
     this.router.get('/jobs', validateQuery(JobPostingQueryDto), companyJobPostingController.getCompanyJobPostings);

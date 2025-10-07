@@ -23,8 +23,6 @@ const UserLayout = ({ children }: UserLayoutProps) => {
             {children}
           </div>
         </main>
-
-        {/* <UserFooter /> */}
       </div>
     </div>
   )

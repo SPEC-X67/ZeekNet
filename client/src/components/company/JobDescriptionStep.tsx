@@ -24,16 +24,16 @@ const JobDescriptionStep: React.FC<JobPostingStepProps> = ({
 
   return (
     <div className="flex flex-col items-end gap-5 px-4 py-6">
-      {/* Job Description Header */}
+      {}
       <div className="flex flex-col gap-1 w-full">
         <h2 className="text-base font-semibold text-[#25324B]">Job Description</h2>
         <p className="text-sm text-[#7C8493]">Add the description of the job, responsibilities, who you are, and nice-to-haves.</p>
       </div>
 
-      {/* Divider */}
+      {}
       <div className="w-full h-px bg-[#D6DDEB]"></div>
 
-      {/* Job Description */}
+      {}
       <JobDescriptionTextField
         field="description"
         label="Job Description"
@@ -45,10 +45,10 @@ const JobDescriptionStep: React.FC<JobPostingStepProps> = ({
         onChange={handleFieldChange}
       />
 
-      {/* Divider */}
+      {}
       <div className="w-full h-px bg-[#D6DDEB]"></div>
 
-      {/* Responsibilities */}
+      {}
       <ArrayInputField
         field="responsibilities"
         label="Responsibilities"
@@ -60,10 +60,10 @@ const JobDescriptionStep: React.FC<JobPostingStepProps> = ({
         onChange={handleArrayFieldChange}
       />
 
-      {/* Divider */}
+      {}
       <div className="w-full h-px bg-[#D6DDEB]"></div>
 
-      {/* Qualifications */}
+      {}
       <ArrayInputField
         field="qualifications"
         label="Who You Are"
@@ -75,10 +75,10 @@ const JobDescriptionStep: React.FC<JobPostingStepProps> = ({
         onChange={handleArrayFieldChange}
       />
 
-      {/* Divider */}
+      {}
       <div className="w-full h-px bg-[#D6DDEB]"></div>
 
-      {/* Nice-To-Haves */}
+      {}
       <ArrayInputField
         field="niceToHaves"
         label="Nice-To-Haves"
@@ -90,10 +90,10 @@ const JobDescriptionStep: React.FC<JobPostingStepProps> = ({
         onChange={handleArrayFieldChange}
       />
 
-      {/* Divider */}
+      {}
       <div className="w-full h-px bg-[#D6DDEB]"></div>
 
-      {/* Navigation Buttons */}
+      {}
       <NavigationButtons onPrevious={onPrevious} onNext={handleNext} />
     </div>
   );

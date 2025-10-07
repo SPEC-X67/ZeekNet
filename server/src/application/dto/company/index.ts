@@ -5,4 +5,3 @@ export * from './company-tech-stack.dto';
 export * from './company-office-location.dto';
 export * from './company-benefits.dto';
 export * from './company-workplace-pictures.dto';
-export * from './company-team.dto';

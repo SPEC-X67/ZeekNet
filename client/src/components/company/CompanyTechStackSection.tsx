@@ -50,7 +50,7 @@ const CompanyTechStackSection: React.FC<CompanyTechStackSectionProps> = ({
         </div>
       ) : (
         <div>
-          {/* Tech Stack Grid */}
+          {}
           <div className="grid grid-cols-3 gap-2.5 mb-5">
             {techStack.slice(0, 6).map((tech, index) => (
               <div key={tech.id || index} className="flex flex-col items-center gap-1.5 p-2.5">

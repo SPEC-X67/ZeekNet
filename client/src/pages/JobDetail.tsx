@@ -51,9 +51,8 @@ const JobDetail = () => {
         } else {
           setError(jobResponse.message || 'Failed to fetch job details');
         }
-      } catch (err) {
+      } catch {
         setError('Failed to fetch job details');
-        console.error('Error fetching job details:', err);
       } finally {
         setLoading(false);
       }

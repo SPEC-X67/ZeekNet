@@ -3,13 +3,17 @@ import { LoginDto, GoogleLoginDto } from '../../../application/dto/auth';
 import { LoginUserUseCase, AdminLoginUseCase, GoogleLoginUseCase } from '../../../application/use-cases';
 import { ITokenService, IPasswordHasher } from '../../../domain/interfaces/services';
 import { UpdateUserRefreshTokenUseCase } from '../../../application/use-cases/auth/update-user-refresh-token.use-case';
-import { BaseController, AuthenticatedRequest } from '../../../shared';
+import { AuthenticatedRequest } from '../../../shared/types';
 import { 
-  createRefreshTokenCookieOptions, 
+  createRefreshTokenCookieOptions,
+  handleValidationError,
+  handleAsyncError,
+  sanitizeUserForResponse,
+  sendSuccessResponse,
 } from '../../../shared/utils';
 import { env } from '../../../infrastructure/config/env';
 
-export class LoginController extends BaseController {
+export class LoginController {
   constructor(
     private readonly _loginUserUseCase: LoginUserUseCase,
     private readonly _adminLoginUseCase: AdminLoginUseCase,
@@ -17,9 +21,7 @@ export class LoginController extends BaseController {
     private readonly _tokenService: ITokenService,
     private readonly _passwordHasher: IPasswordHasher,
     private readonly _updateUserRefreshTokenUseCase: UpdateUserRefreshTokenUseCase,
-  ) {
-    super();
-  }
+  ) {}
 
   login = async (
     req: Request,
@@ -28,7 +30,7 @@ export class LoginController extends BaseController {
   ): Promise<void> => {
     const parsed = LoginDto.safeParse(req.body);
     if (!parsed.success) {
-      return this.handleValidationError('Invalid login credentials', next);
+      return handleValidationError('Invalid login credentials', next);
     }
     
     try {
@@ -46,14 +48,14 @@ export class LoginController extends BaseController {
         
         res.cookie(env.COOKIE_NAME_REFRESH!, refreshToken, createRefreshTokenCookieOptions());
         
-        const userDetails = this.sanitizeUserForResponse(user);
-        this.sendSuccessResponse(res, 'Login successful', userDetails, accessToken);
+        const userDetails = sanitizeUserForResponse(user);
+        sendSuccessResponse(res, 'Login successful', userDetails, accessToken);
       } else {
-        const userDetails = this.sanitizeUserForResponse(user);
-        this.sendSuccessResponse(res, 'Login successful, verification required', userDetails, undefined);
+        const userDetails = sanitizeUserForResponse(user);
+        sendSuccessResponse(res, 'Login successful, verification required', userDetails, undefined);
       }
     } catch (error) {
-      this.handleAsyncError(error, next);
+      handleAsyncError(error, next);
     }
   };
 
@@ -64,7 +66,7 @@ export class LoginController extends BaseController {
   ): Promise<void> => {
     const parsed = LoginDto.safeParse(req.body);
     if (!parsed.success) {
-      return this.handleValidationError('Invalid login credentials', next);
+      return handleValidationError('Invalid login credentials', next);
     }
     
     try {
@@ -75,10 +77,10 @@ export class LoginController extends BaseController {
       
       res.cookie(env.COOKIE_NAME_REFRESH!, tokens.refreshToken, createRefreshTokenCookieOptions());
       
-      const userDetails = this.sanitizeUserForResponse(user);
-      this.sendSuccessResponse(res, 'Admin login successful', userDetails, tokens.accessToken);
+      const userDetails = sanitizeUserForResponse(user);
+      sendSuccessResponse(res, 'Admin login successful', userDetails, tokens.accessToken);
     } catch (error) {
-      this.handleAsyncError(error, next);
+      handleAsyncError(error, next);
     }
   };
 
@@ -89,7 +91,7 @@ export class LoginController extends BaseController {
   ): Promise<void> => {
     const parsed = GoogleLoginDto.safeParse(req.body);
     if (!parsed.success) {
-      return this.handleValidationError('Invalid Google token', next);
+      return handleValidationError('Invalid Google token', next);
     }
     
     try {
@@ -99,10 +101,10 @@ export class LoginController extends BaseController {
 
       res.cookie(env.COOKIE_NAME_REFRESH!, tokens.refreshToken, createRefreshTokenCookieOptions());
       
-      const userDetails = this.sanitizeUserForResponse(user);
-      this.sendSuccessResponse(res, 'Login successful', userDetails, tokens.accessToken);
+      const userDetails = sanitizeUserForResponse(user);
+      sendSuccessResponse(res, 'Login successful', userDetails, tokens.accessToken);
     } catch (error) {
-      this.handleAsyncError(error, next);
+      handleAsyncError(error, next);
     }
   };
 }

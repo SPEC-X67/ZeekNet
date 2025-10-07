@@ -1,13 +1,15 @@
 import { LoginResult } from '../../dto/auth/auth-response.dto';
-import { IUserRepositoryFull, ICompanyRepository } from '../../../domain/interfaces/repositories';
+import { IUserRepository, IUserAuthRepository, ICompanyProfileRepository } from '../../../domain/interfaces/repositories';
 import { ITokenService, IPasswordHasher } from '../../../domain/interfaces/services';
+import { IRefreshTokenUseCase } from '../../../domain/interfaces/use-cases';
 import { AuthenticationError, NotFoundError, AuthorizationError } from '../../../domain/errors/errors';
 import { UserRole } from '../../../domain/enums/user-role.enum';
 
-export class RefreshTokenUseCase {
+export class RefreshTokenUseCase implements IRefreshTokenUseCase {
   constructor(
-    private readonly _userRepository: IUserRepositoryFull,
-    private readonly _companyRepository: ICompanyRepository,
+    private readonly _userRepository: IUserRepository,
+    private readonly _userAuthRepository: IUserAuthRepository,
+    private readonly _companyProfileRepository: ICompanyProfileRepository,
     private readonly _tokenService: ITokenService,
     private readonly _passwordHasher: IPasswordHasher,
   ) {}
@@ -22,20 +24,17 @@ export class RefreshTokenUseCase {
       throw new AuthenticationError('Invalid refresh token');
     }
     
-    // Compare the provided refresh token with the stored hashed token
     const isTokenValid = await this._passwordHasher.compare(refreshToken, user.refreshToken);
     if (!isTokenValid) {
       throw new AuthenticationError('Invalid refresh token');
     }
 
-    // Check if user is blocked
     if (user.isBlocked) {
       throw new AuthorizationError('User account is blocked');
     }
 
-    // Check if company profile is blocked for company users
     if (user.role === UserRole.COMPANY) {
-      const companyProfile = await this._companyRepository.getProfileByUserId(user.id);
+      const companyProfile = await this._companyProfileRepository.getProfileByUserId(user.id);
       if (companyProfile && companyProfile.isBlocked) {
         throw new AuthorizationError('Company account is blocked');
       }
@@ -44,7 +43,7 @@ export class RefreshTokenUseCase {
     const accessToken = this._tokenService.signAccess({ sub: user.id, role: user.role });
     const newRefreshToken = this._tokenService.signRefresh({ sub: user.id });
     const hashedNewRefresh = await this._passwordHasher.hash(newRefreshToken);
-    await this._userRepository.updateRefreshToken(user.id, hashedNewRefresh);
+    await this._userAuthRepository.updateRefreshToken(user.id, hashedNewRefresh);
 
     return {
       tokens: { accessToken, refreshToken: newRefreshToken },

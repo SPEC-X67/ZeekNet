@@ -36,7 +36,7 @@ const CompanyBenefitsSection: React.FC<CompanyBenefitsSectionProps> = ({
     if (perkLower.includes('skill') || perkLower.includes('learning') || perkLower.includes('development')) return Video;
     if (perkLower.includes('remote') || perkLower.includes('work from home')) return Coffee;
     if (perkLower.includes('commuter') || perkLower.includes('transport')) return Briefcase;
-    return Star; // Default icon
+    return Star;
   };
 
   return (

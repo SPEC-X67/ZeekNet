@@ -16,10 +16,8 @@ import {
 } from '@/components/ui/table'
 import { 
   Eye, 
-  Edit, 
   Trash2, 
   Search, 
-  Filter,
   MoreHorizontal,
   CheckCircle,
   XCircle,
@@ -37,7 +35,7 @@ import {
 import { ConfirmationDialog } from '@/components/ui/confirmation-dialog'
 import { toast } from 'sonner'
 import { adminApi } from '@/api/admin.api'
-import type { JobPostingResponse, PaginatedJobPostings } from '@/types/job'
+import type { JobPostingResponse } from '@/types/job'
 
 const JobManagement = () => {
   const navigate = useNavigate()
@@ -65,57 +63,6 @@ const JobManagement = () => {
     jobTitle: ''
   })
 
-  const mockJobs: JobPostingResponse[] = [
-    {
-      id: '1',
-      company_id: 'comp1',
-      title: 'Senior React Developer',
-      description: 'We are looking for a senior React developer...',
-      responsibilities: ['Develop React applications', 'Code review'],
-      qualifications: ['5+ years experience', 'React expertise'],
-      nice_to_haves: ['TypeScript', 'Next.js'],
-      benefits: ['Health insurance', 'Remote work'],
-      salary: { min: 80000, max: 120000 },
-      employment_types: ['Full-time'],
-      location: 'New York, NY',
-      skills_required: ['React', 'JavaScript', 'CSS'],
-      category_ids: ['tech'],
-      is_active: true,
-      view_count: 150,
-      application_count: 25,
-      createdAt: '2024-01-15T10:00:00Z',
-      updatedAt: '2024-01-15T10:00:00Z',
-      company: {
-        companyName: 'TechCorp Inc',
-        logo: '/logo.png'
-      }
-    },
-    {
-      id: '2',
-      company_id: 'comp2',
-      title: 'Product Manager',
-      description: 'Lead product development initiatives...',
-      responsibilities: ['Product strategy', 'Team management'],
-      qualifications: ['MBA preferred', '3+ years PM experience'],
-      nice_to_haves: ['Technical background'],
-      benefits: ['Stock options', 'Flexible hours'],
-      salary: { min: 100000, max: 150000 },
-      employment_types: ['Full-time'],
-      location: 'San Francisco, CA',
-      skills_required: ['Product Management', 'Analytics'],
-      category_ids: ['product'],
-      is_active: false,
-      view_count: 89,
-      application_count: 12,
-      createdAt: '2024-01-10T14:30:00Z',
-      updatedAt: '2024-01-12T09:15:00Z',
-      company: {
-        companyName: 'StartupXYZ',
-        logo: '/logo2.png'
-      }
-    }
-  ]
-
   useEffect(() => {
     fetchJobs()
   }, [pagination.page, filters])
@@ -123,7 +70,7 @@ const JobManagement = () => {
   const fetchJobs = async () => {
     setLoading(true)
     try {
-      const response = await adminApi.jobs.getAllJobs({
+      const response = await adminApi.getAllJobs({
         page: pagination.page,
         limit: pagination.limit,
         search: filters.search,
@@ -142,9 +89,8 @@ const JobManagement = () => {
       } else {
         toast.error(response.message || 'Failed to fetch jobs')
       }
-    } catch (error) {
+    } catch {
       toast.error('Failed to fetch jobs')
-      console.error('Error fetching jobs:', error)
     } finally {
       setLoading(false)
     }
@@ -156,7 +102,7 @@ const JobManagement = () => {
 
   const handleToggleStatus = async (jobId: string, currentStatus: boolean) => {
     try {
-      const response = await adminApi.jobs.updateJobStatus(jobId, !currentStatus)
+      const response = await adminApi.updateJobStatus(jobId, !currentStatus)
       
       if (response.success) {
         setJobs(jobs.map(job => 
@@ -168,9 +114,8 @@ const JobManagement = () => {
       } else {
         toast.error(response.message || 'Failed to update job status')
       }
-    } catch (error) {
+    } catch {
       toast.error('Failed to update job status')
-      console.error('Error updating job status:', error)
     }
   }
 
@@ -178,7 +123,7 @@ const JobManagement = () => {
     if (!deleteDialog.jobId) return
 
     try {
-      const response = await adminApi.jobs.deleteJob(deleteDialog.jobId)
+      const response = await adminApi.deleteJob(deleteDialog.jobId)
       
       if (response.success) {
         setJobs(jobs.filter(job => job.id !== deleteDialog.jobId))
@@ -187,9 +132,8 @@ const JobManagement = () => {
       } else {
         toast.error(response.message || 'Failed to delete job')
       }
-    } catch (error) {
+    } catch {
       toast.error('Failed to delete job')
-      console.error('Error deleting job:', error)
     }
   }
 
@@ -208,7 +152,7 @@ const JobManagement = () => {
   return (
     <AdminLayout>
       <div className="space-y-6">
-        {/* Header */}
+        {}
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold text-foreground">Job Management</h1>
           <div className="flex items-center space-x-2">
@@ -221,7 +165,7 @@ const JobManagement = () => {
           </div>
         </div>
 
-        {/* Filters */}
+        {}
         <Card>
           <CardContent className="p-6">
             <div className="flex flex-col md:flex-row gap-4">
@@ -267,7 +211,7 @@ const JobManagement = () => {
           </CardContent>
         </Card>
 
-        {/* Jobs Table */}
+        {}
         <Card>
           <CardHeader>
             <CardTitle>All Jobs</CardTitle>
@@ -400,7 +344,7 @@ const JobManagement = () => {
           </CardContent>
         </Card>
 
-        {/* Pagination */}
+        {}
         {pagination.totalPages > 1 && (
           <div className="flex items-center justify-between">
             <div className="text-sm text-gray-500">
@@ -433,7 +377,7 @@ const JobManagement = () => {
         )}
       </div>
 
-      {/* Delete Confirmation Dialog */}
+      {}
       <ConfirmationDialog
         isOpen={deleteDialog.isOpen}
         onClose={() => setDeleteDialog({ isOpen: false, jobId: null, jobTitle: '' })}
@@ -442,7 +386,7 @@ const JobManagement = () => {
         description={`Are you sure you want to delete "${deleteDialog.jobTitle}"? This action cannot be undone.`}
         confirmText="Delete"
         cancelText="Cancel"
-        variant="destructive"
+        variant="danger"
       />
     </AdminLayout>
   )

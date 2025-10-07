@@ -1,17 +1,17 @@
-import { IJobPostingRepositoryFull } from '../../../domain/interfaces/repositories';
+import { IJobPostingSearchRepository, ICompanyProfileRepository } from '../../../domain/interfaces/repositories';
 import { JobPostingQueryRequestDto } from '../../dto/job-posting/job-posting.dto';
 import { AppError } from '../../../domain/errors/errors';
-import { ICompanyRepository } from '../../../domain/interfaces/repositories';
+import { PaginatedJobPostings } from '../../../domain/entities/job-posting.entity';
 
 export class GetCompanyJobPostingsUseCase {
   constructor(
-    private readonly _jobPostingRepository: IJobPostingRepositoryFull,
-    private readonly _companyRepository: ICompanyRepository,
+    private readonly _jobPostingRepository: IJobPostingSearchRepository,
+    private readonly _companyProfileRepository: ICompanyProfileRepository,
   ) {}
 
-  async execute(userId: string, query: JobPostingQueryRequestDto): Promise<any> {
+  async execute(userId: string, query: JobPostingQueryRequestDto): Promise<PaginatedJobPostings> {
     try {
-      const companyProfile = await this._companyRepository.getProfileByUserId(userId);
+      const companyProfile = await this._companyProfileRepository.getProfileByUserId(userId);
       
       if (!companyProfile) {
         throw new AppError('Company profile not found', 404);

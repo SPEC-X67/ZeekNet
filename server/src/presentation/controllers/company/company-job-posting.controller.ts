@@ -1,9 +1,10 @@
 import { Request, Response } from 'express';
-import { BaseController, AuthenticatedRequest } from '../../../shared/base/base-controller';
+import { AuthenticatedRequest } from '../../../shared/types';
+import { handleValidationError, handleAsyncError, sendSuccessResponse, sendNotFoundResponse, badRequest, validateUserId, success, created, unauthorized, handleError } from '../../../shared/utils';
 import { CreateJobPostingUseCase, GetJobPostingUseCase, GetCompanyJobPostingsUseCase, UpdateJobPostingUseCase, DeleteJobPostingUseCase, IncrementJobViewCountUseCase, UpdateJobStatusUseCase } from '../../../application/use-cases/company';
 import { CreateJobPostingRequestDto, UpdateJobPostingRequestDto, JobPostingQueryRequestDto } from '../../../application/dto/job-posting/job-posting.dto';
 
-export class CompanyJobPostingController extends BaseController {
+export class CompanyJobPostingController {
   constructor(
     private readonly _createJobPostingUseCase: CreateJobPostingUseCase,
     private readonly _getJobPostingUseCase: GetJobPostingUseCase,
@@ -12,23 +13,21 @@ export class CompanyJobPostingController extends BaseController {
     private readonly _deleteJobPostingUseCase: DeleteJobPostingUseCase,
     private readonly _incrementJobViewCountUseCase: IncrementJobViewCountUseCase,
     private readonly _updateJobStatusUseCase: UpdateJobStatusUseCase,
-  ) {
-    super();
-  }
+  ) {  }
 
   createJobPosting = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
       const companyId = req.user?.id;
       if (!companyId) {
-        this.unauthorized(res, 'Company ID not found');
+        unauthorized(res, 'Company ID not found');
         return;
       }
 
       const createJobPostingDto: CreateJobPostingRequestDto = req.body;
       const jobPosting = await this._createJobPostingUseCase.execute(companyId, createJobPostingDto);
-      this.created(res, jobPosting, 'Job posting created successfully');
+      created(res, jobPosting, 'Job posting created successfully');
     } catch (error) {
-      this.handleError(res, error);
+      handleError(res, error);
     }
   };
 
@@ -41,9 +40,9 @@ export class CompanyJobPostingController extends BaseController {
       
       this._incrementJobViewCountUseCase.execute(id, userRole).catch(console.error);
 
-      this.success(res, jobPosting, 'Job posting retrieved successfully');
+      success(res, jobPosting, 'Job posting retrieved successfully');
     } catch (error) {
-      this.handleError(res, error);
+      handleError(res, error);
     }
   };
 
@@ -52,7 +51,7 @@ export class CompanyJobPostingController extends BaseController {
       const companyId = req.user?.id;
       
       if (!companyId || companyId === 'undefined') {
-        this.unauthorized(res, 'Company ID not found - user may not be authenticated');
+        unauthorized(res, 'Company ID not found - user may not be authenticated');
         return;
       }
 
@@ -72,12 +71,12 @@ export class CompanyJobPostingController extends BaseController {
       
       const responseData = {
         jobs: result.jobs,
-        pagination: result.pagination
+        pagination: result.pagination,
       };
       
-      this.success(res, responseData, 'Company job postings retrieved successfully');
+      success(res, responseData, 'Company job postings retrieved successfully');
     } catch (error) {
-      this.handleError(res, error);
+      handleError(res, error);
     }
   };
 
@@ -89,17 +88,17 @@ export class CompanyJobPostingController extends BaseController {
       
       
       if (!companyId) {
-        this.unauthorized(res, 'Company ID not found');
+        unauthorized(res, 'Company ID not found');
         return;
       }
 
       const updateJobPostingDto: UpdateJobPostingRequestDto = req.body;
       
-      const jobPosting = await this._updateJobPostingUseCase.execute(id, companyId, updateJobPostingDto);
+      const jobPosting = await this._updateJobPostingUseCase.execute(id, updateJobPostingDto);
       
-      this.success(res, jobPosting, 'Job posting updated successfully');
+      success(res, jobPosting, 'Job posting updated successfully');
     } catch (error) {
-      this.handleError(res, error);
+      handleError(res, error);
     }
   };
 
@@ -110,15 +109,15 @@ export class CompanyJobPostingController extends BaseController {
       
       
       if (!companyId) {
-        this.unauthorized(res, 'Company ID not found');
+        unauthorized(res, 'Company ID not found');
         return;
       }
 
       await this._deleteJobPostingUseCase.execute(id, companyId);
       
-      this.success(res, null, 'Job posting deleted successfully');
+      success(res, null, 'Job posting deleted successfully');
     } catch (error) {
-      this.handleError(res, error);
+      handleError(res, error);
     }
   };
 
@@ -129,20 +128,20 @@ export class CompanyJobPostingController extends BaseController {
       const { is_active } = req.body;
       
       if (!companyId) {
-        this.unauthorized(res, 'Company ID not found');
+        unauthorized(res, 'Company ID not found');
         return;
       }
 
       if (typeof is_active !== 'boolean') {
-        this.badRequest(res, 'is_active must be a boolean value');
+        badRequest(res, 'is_active must be a boolean value');
         return;
       }
 
-      const jobPosting = await this._updateJobStatusUseCase.execute(id, companyId, is_active);
+      const jobPosting = await this._updateJobStatusUseCase.execute(id, is_active);
       
-      this.success(res, jobPosting, 'Job status updated successfully');
+      success(res, jobPosting, 'Job status updated successfully');
     } catch (error) {
-      this.handleError(res, error);
+      handleError(res, error);
     }
   };
 }

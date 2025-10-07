@@ -84,8 +84,7 @@ const UserManagement = () => {
           hasPrev: response.data.pagination.page > 1
         })
       }
-    } catch (error) {
-      console.error('Error fetching users:', error)
+    } catch {
       toast.error('Failed to fetch users')
     } finally {
       setLoading(false)
@@ -130,8 +129,7 @@ const UserManagement = () => {
           )
         )
       }
-    } catch (error) {
-      console.error('Error updating user status:', error)
+    } catch {
       toast.error('Failed to update user status')
     } finally {
       setBlockDialogOpen(false)
@@ -174,7 +172,7 @@ const UserManagement = () => {
   return (
     <AdminLayout>
       <div className="space-y-6">
-        {/* Header */}
+        {}
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold text-foreground">Job Seekers Management</h1>
           <div className="flex items-center space-x-2">
@@ -186,7 +184,7 @@ const UserManagement = () => {
           </div>
         </div>
 
-        {/* Search and Filter Section */}
+        {}
         <div className="flex flex-col sm:flex-row gap-4">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
@@ -214,7 +212,7 @@ const UserManagement = () => {
           </div>
         </div>
 
-        {/* Candidates Table */}
+        {}
         <Card>
           <CardContent className="p-0">
             <div className="overflow-x-auto">
@@ -314,7 +312,7 @@ const UserManagement = () => {
           </CardContent>
         </Card>
 
-        {/* Pagination */}
+        {}
         {!loading && pagination.totalPages > 1 && (
           <div className="flex items-center justify-between">
             <div className="text-sm text-muted-foreground">
@@ -344,7 +342,7 @@ const UserManagement = () => {
           </div>
         )}
 
-        {/* Block Confirmation Dialog */}
+        {}
         <Dialog open={blockDialogOpen} onOpenChange={setBlockDialogOpen}>
           <DialogContent>
             <DialogHeader>
@@ -372,7 +370,7 @@ const UserManagement = () => {
           </DialogContent>
         </Dialog>
 
-        {/* Email Verification Dialog */}
+        {}
         <Dialog open={emailDialogOpen} onOpenChange={setEmailDialogOpen}>
           <DialogContent>
             <DialogHeader>

@@ -4,7 +4,7 @@ import {
   loginController, 
   tokenController, 
   passwordController, 
-  otpController 
+  otpController, 
 } from '../../infrastructure/di/authDi';
 import { authenticateToken } from '../middleware/auth.middleware';
 import { validateBody } from '../middleware/validation.middleware';
@@ -22,58 +22,58 @@ export class AuthRouter {
     this.router.post(
       '/register',
       validateBody(RegisterDto),
-      registrationController.register
+      registrationController.register,
     );
 
     this.router.post(
       '/login',
-      loginController.login
+      loginController.login,
     );
 
     this.router.post(
       '/admin-login',
-      loginController.adminLogin
+      loginController.adminLogin,
     );
 
     this.router.post(
       '/login/google',
-      loginController.googleLogin
+      loginController.googleLogin,
     );
 
     this.router.post(
       '/refresh',
-      tokenController.refresh
+      tokenController.refresh,
     );
 
     this.router.get(
       '/check-auth',
       authenticateToken,
-      tokenController.checkAuth
+      tokenController.checkAuth,
     );
 
     this.router.post(
       '/forgot-password',
-      passwordController.forgotPassword
+      passwordController.forgotPassword,
     );
 
     this.router.post(
       '/reset-password',
-      passwordController.resetPassword
+      passwordController.resetPassword,
     );
 
     this.router.post(
       '/logout',
-      passwordController.logout
+      passwordController.logout,
     );
 
     this.router.post(
       '/otp-request',
-      otpController.request
+      otpController.request,
     );
 
     this.router.post(
       '/otp-verify',
-      otpController.verify
+      otpController.verify,
     );
   }
 }

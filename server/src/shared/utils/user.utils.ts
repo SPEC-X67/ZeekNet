@@ -1,9 +1,5 @@
 import { User } from '../../domain/entities/user.entity';
 
-/**
- * User utility functions
- */
-
 export const sanitizeUserForResponse = (user: User) => ({
   id: user.id,
   name: user.name,

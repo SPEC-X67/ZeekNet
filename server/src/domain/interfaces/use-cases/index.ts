@@ -2,6 +2,7 @@ export * from './IAuthUseCases';
 export { 
   IGetAllUsersUseCase,
   IBlockUserUseCase,
+  IGetUserByIdUseCase,
   IGetAllCompaniesUseCase,
   IGetCompaniesWithVerificationUseCase,
   IVerifyCompanyUseCase,
@@ -10,7 +11,11 @@ export {
   IAdminGetJobByIdUseCase,
   IAdminUpdateJobStatusUseCase,
   IAdminDeleteJobUseCase,
-  IAdminGetJobStatsUseCase
+  IAdminGetJobStatsUseCase,
+  CompanyQueryOptions,
+  UserQueryOptions,
+  PaginatedCompanies,
+  PaginatedUsers,
 } from './IAdminUseCases';
 export * from './ICompanyUseCases';
 export * from './IPublicUseCases';

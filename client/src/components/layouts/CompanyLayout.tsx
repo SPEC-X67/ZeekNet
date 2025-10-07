@@ -16,7 +16,7 @@ const CompanyLayout = ({ children }: CompanyLayoutProps) => {
         </div>
 
         <div className="flex-1 flex flex-col ml-[235px]">
-          {/* Fixed Header */}
+          {}
           <div className="fixed top-0 right-0 left-[235px] z-20">
             <CompanyHeader />
           </div>

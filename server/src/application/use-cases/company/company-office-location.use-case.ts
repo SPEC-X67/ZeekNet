@@ -1,4 +1,4 @@
-import { ICompanyOfficeLocationRepository } from '../../../domain/interfaces/repositories/company-office-location.repository';
+import { ICompanyOfficeLocationRepository } from '../../../domain/interfaces/repositories';
 import { CompanyOfficeLocation } from '../../../domain/entities/company-office-location.entity';
 import { CreateCompanyOfficeLocationDto, UpdateCompanyOfficeLocationDto } from '../../dto/company/company-office-location.dto';
 import { NotFoundError } from '../../../domain/errors/errors';

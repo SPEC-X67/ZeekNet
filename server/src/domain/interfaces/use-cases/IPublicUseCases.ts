@@ -1,8 +1,10 @@
-// Public Use Case Interfaces
+import { PaginatedJobPostings, JobPostingFilters } from '../../entities/job-posting.entity';
+import { JobPostingDetailResponseDto } from '../../../application/mappers/types';
+
 export interface IGetAllJobPostingsUseCase {
-  execute(query: any): Promise<any>;
+  execute(query: JobPostingFilters): Promise<PaginatedJobPostings>;
 }
 
 export interface IGetJobPostingForPublicUseCase {
-  execute(jobId: string): Promise<any>;
+  execute(jobId: string): Promise<JobPostingDetailResponseDto>;
 }

@@ -16,11 +16,10 @@ const CompanyVerificationGuard: React.FC<CompanyVerificationGuardProps> = ({ chi
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  if (role !== UserRole.COMPANY || !isAuthenticated) {
-    return <>{children}</>;
-  }
-
   useEffect(() => {
+    if (role !== UserRole.COMPANY || !isAuthenticated) {
+      return;
+    }
     const checkVerificationStatus = async () => {
       try {
         setLoading(true);
@@ -42,7 +41,6 @@ const CompanyVerificationGuard: React.FC<CompanyVerificationGuardProps> = ({ chi
           }
         }
       } catch (err: any) {
-        console.error('Error checking verification status:', err);
         
         if (err.response?.data?.data?.verificationStatus) {
           const status = err.response.data.data.verificationStatus as ProfileStatus;
@@ -57,7 +55,11 @@ const CompanyVerificationGuard: React.FC<CompanyVerificationGuardProps> = ({ chi
     };
 
     checkVerificationStatus();
-  }, []);
+  }, [role, isAuthenticated]);
+
+  if (role !== UserRole.COMPANY || !isAuthenticated) {
+    return <>{children}</>;
+  }
 
   if (loading) {
     return (

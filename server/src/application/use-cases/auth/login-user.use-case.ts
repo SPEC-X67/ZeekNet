@@ -36,8 +36,6 @@ export class LoginUserUseCase implements ILoginUserUseCase {
       throw new AuthenticationError('Please use admin login endpoint');
     }
 
-    // Company blocking check can be added later if needed
-
     const isPasswordValid = await this._passwordHasher.compare(password, user.password);
     if (!isPasswordValid) {
       throw new AuthenticationError('Invalid credentials');

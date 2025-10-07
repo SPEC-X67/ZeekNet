@@ -16,4 +16,3 @@ export { CompanyTechStackUseCase } from './company-tech-stack.use-case';
 export { CompanyOfficeLocationUseCase } from './company-office-location.use-case';
 export { CompanyBenefitsUseCase } from './company-benefits.use-case';
 export { CompanyWorkplacePicturesUseCase } from './company-workplace-pictures.use-case';
-export { CompanyTeamUseCase } from './company-team.use-case';

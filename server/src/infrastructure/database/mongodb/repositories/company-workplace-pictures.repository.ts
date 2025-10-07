@@ -1,31 +1,19 @@
-import { ICompanyWorkplacePicturesRepository } from '../../../../domain/interfaces/repositories/company-workplace-pictures.repository';
+import { ICompanyWorkplacePicturesRepository } from '../../../../domain/interfaces/repositories/company/ICompanyWorkplacePicturesRepository';
 import { CompanyWorkplacePictures } from '../../../../domain/entities/company-workplace-pictures.entity';
-import { CompanyWorkplacePicturesModel } from '../models/company-workplace-pictures.model';
+import { CompanyWorkplacePicturesModel, CompanyWorkplacePicturesDocument } from '../models/company-workplace-pictures.model';
 import { Types } from 'mongoose';
-import { MongoBaseRepository } from '../../../../shared/base';
+import { RepositoryBase } from '../../../../shared/base';
+import { CompanyWorkplacePicturesMapper } from '../mappers';
 
-export class MongoCompanyWorkplacePicturesRepository extends MongoBaseRepository<CompanyWorkplacePictures> implements ICompanyWorkplacePicturesRepository {
+export class CompanyWorkplacePicturesRepository extends RepositoryBase<CompanyWorkplacePictures, CompanyWorkplacePicturesDocument> implements ICompanyWorkplacePicturesRepository {
   constructor() {
     super(CompanyWorkplacePicturesModel);
   }
 
-  /**
-   * Map MongoDB document to CompanyWorkplacePictures entity
-   */
-  protected mapToEntity(doc: any): CompanyWorkplacePictures {
-    return CompanyWorkplacePictures.fromJSON({
-      id: doc._id.toString(),
-      companyId: doc.companyId.toString(),
-      pictureUrl: doc.pictureUrl,
-      caption: doc.caption,
-      createdAt: doc.createdAt,
-      updatedAt: doc.updatedAt,
-    });
+  protected mapToEntity(doc: CompanyWorkplacePicturesDocument): CompanyWorkplacePictures {
+    return CompanyWorkplacePicturesMapper.toEntity(doc);
   }
 
-  /**
-   * Override create to handle ObjectId conversion
-   */
   async create(picture: Omit<CompanyWorkplacePictures, 'id' | 'createdAt' | 'updatedAt'>): Promise<CompanyWorkplacePictures> {
     const pictureDoc = new CompanyWorkplacePicturesModel({
       companyId: new Types.ObjectId(picture.companyId),
@@ -44,9 +32,6 @@ export class MongoCompanyWorkplacePicturesRepository extends MongoBaseRepository
     return pictures.map(picture => this.mapToEntity(picture));
   }
 
-  /**
-   * Override update to handle ObjectId conversion
-   */
   async update(id: string, data: Partial<CompanyWorkplacePictures>): Promise<CompanyWorkplacePictures | null> {
     if (!Types.ObjectId.isValid(id)) {
       return null;
@@ -58,7 +43,7 @@ export class MongoCompanyWorkplacePicturesRepository extends MongoBaseRepository
         ...data,
         updatedAt: new Date(),
       },
-      { new: true }
+      { new: true },
     );
 
     return updatedPicture ? this.mapToEntity(updatedPicture) : null;

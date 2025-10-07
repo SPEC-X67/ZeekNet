@@ -4,7 +4,7 @@ import { JobPostingData, JobPostingResponseDto } from './types';
 
 export class JobPostingMapper {
   
-  toDomain(dto: CreateJobPostingRequestDto, companyId: string): JobPostingData {
+  static toDomain(dto: CreateJobPostingRequestDto, companyId: string): JobPostingData {
     return {
       company_id: companyId,
       title: dto.title,
@@ -21,7 +21,7 @@ export class JobPostingMapper {
     };
   }
 
-  toDto(domain: JobPosting): JobPostingResponseDto {
+  static toDto(domain: JobPosting): JobPostingResponseDto {
     return {
       id: domain._id,
       company_id: domain.company_id,

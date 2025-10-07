@@ -61,15 +61,14 @@ const UserSidebar = () => {
     try {
       await dispatch(logoutThunk()).unwrap()
       navigate('/auth/login')
-    } catch (error) {
-      console.error('Logout failed:', error)
+    } catch {
       navigate('/auth/login')
     }
   }
 
   return (
     <div className="w-64 bg-white border-r border-gray-200 shadow-sm h-[100vh] relative">
-      {/* Logo Section */}
+      {}
       <div className="p-6 border-b border-gray-200">
         <div className="flex items-center space-x-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-lg">
@@ -81,7 +80,7 @@ const UserSidebar = () => {
         </div>
       </div>
       
-      {/* Navigation */}
+      {}
       <nav className="p-4">
         <div className="space-y-1">
           {navigationItems.map((item) => {
@@ -107,7 +106,7 @@ const UserSidebar = () => {
         </div>
       </nav>
 
-      {/* Settings Section */}
+      {}
       <div className="px-4 pb-4">
         <p className="text-xs text-gray-500 uppercase tracking-wider font-medium mb-2">SETTINGS</p>
         <div className="space-y-1">
@@ -134,7 +133,7 @@ const UserSidebar = () => {
         </div>
       </div>
       
-      {/* User Profile at Bottom */}
+      {}
       <div className="absolute bottom-0 w-64 p-4 border-t border-gray-200 bg-gray-50">
         <div className="flex items-center space-x-3 mb-3">
           <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
