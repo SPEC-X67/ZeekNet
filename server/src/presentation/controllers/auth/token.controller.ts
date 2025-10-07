@@ -4,7 +4,7 @@ import { TYPES } from '../../../infrastructure/di/types';
 import { RefreshTokenDto } from '../../../application/dto/auth';
 import { RefreshTokenUseCase, AuthGetUserByIdUseCase } from '../../../application/use-cases';
 import { TokenService } from '../../../application/interfaces/infrastructure';
-import { ICompanyRepository } from '../../../domain/repositories';
+import { GetCompanyProfileByUserIdUseCase } from '../../../application/use-cases/auth/get-company-profile-by-user-id.use-case';
 import { BaseController, AuthenticatedRequest } from '../../../shared';
 import { 
   createRefreshTokenCookieOptions, 
@@ -18,7 +18,7 @@ export class TokenController extends BaseController {
     @inject(TYPES.RefreshTokenUseCase) private readonly refreshTokenUseCase: RefreshTokenUseCase,
     @inject(TYPES.GetUserByIdUseCase) private readonly getUserByIdUseCase: AuthGetUserByIdUseCase,
     @inject(TYPES.TokenService) private readonly tokenService: TokenService,
-    @inject(TYPES.CompanyRepository) private readonly companyRepository: ICompanyRepository,
+    @inject(TYPES.GetCompanyProfileByUserIdUseCase) private readonly getCompanyProfileByUserIdUseCase: GetCompanyProfileByUserIdUseCase,
   ) {
     super();
   }
@@ -67,14 +67,12 @@ export class TokenController extends BaseController {
         return this.handleValidationError('User not found', next);
       }
 
-      // Check if user is blocked and return appropriate response
       if (user.isBlocked) {
         return this.sendErrorResponse(res, 'User account is blocked', 403);
       }
 
-      // Check if company profile is blocked for company users
       if (user.role === UserRole.COMPANY) {
-        const companyProfile = await this.companyRepository.getProfileByUserId(user.id);
+        const companyProfile = await this.getCompanyProfileByUserIdUseCase.execute(user.id);
         if (companyProfile && companyProfile.isBlocked) {
           return this.sendErrorResponse(res, 'Company account is blocked', 403);
         }

@@ -81,7 +81,6 @@ const CompanyReapplication = () => {
   })
   const [loadingProfile, setLoadingProfile] = useState(true)
 
-  // Load existing profile data
   useEffect(() => {
     const loadProfile = async () => {
       try {

@@ -30,8 +30,11 @@ export class CompanyWorkplacePicturesUseCase {
     if (!existingPicture) {
       throw new NotFoundError(`Company workplace picture with ID ${pictureId} not found`);
     }
-    const updatedPicture = existingPicture.updatePicture(data);
-    return this.companyWorkplacePicturesRepository.update(updatedPicture);
+    const updatedPicture = await this.companyWorkplacePicturesRepository.update(pictureId, data);
+    if (!updatedPicture) {
+      throw new NotFoundError(`Failed to update company workplace picture with ID ${pictureId}`);
+    }
+    return updatedPicture;
   }
 
   async deletePicture(pictureId: string): Promise<void> {

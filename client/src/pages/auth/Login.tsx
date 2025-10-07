@@ -64,7 +64,6 @@ const Login = () => {
         toast.error('Login Failed', { description: msg })
       }
     } catch (err) {
-      console.log('Login error:', err)
       const msg = typeof err === 'string' ? err : 'Login failed'
       toast.error('Login Failed', { description: msg })
     }

@@ -50,32 +50,39 @@ const UserManagement = () => {
     page: 1,
     limit: 10,
     search: '',
-    role: 'seeker', // Only fetch job seekers
+    role: 'seeker', 
     isBlocked: undefined
   })
 
-  const fetchUsers = async (params: GetAllUsersParams = {}) => {
+  const fetchUsers = async (params: GetAllUsersParams = { page: 1, limit: 10 }) => {
     try {
       setLoading(true)
-      const response = await adminApi.getAllUsers(params)
+      const response = await adminApi.getAllUsers({
+        ...params,
+        isBlocked: typeof params.isBlocked === 'string' ? params.isBlocked === 'true' : params.isBlocked
+      })
 
-      if (response) {
-        const transformedUsers: UserWithDisplayData[] = response.users.map((user: User) => ({
+      if (response && response.data && response.data.users) {
+        const transformedUsers: UserWithDisplayData[] = response.data.users.map((user: User) => ({
           ...user,
-          name: user.email.split('@')[0], 
+          name: user.name || user.email.split('@')[0], 
           appliedJobs: Math.floor(Math.random() * 15), 
-          accountStatus: user.isBlocked ? 'Blocked' : 'Active',
-          emailVerification: user.isVerified ? 'Verified' : 'Unverified',
-          joinedDate: new Date(user.createdAt).toLocaleDateString('en-GB', {
+          accountStatus: user.is_blocked ? 'Blocked' : 'Active',
+          emailVerification: user.is_verified ? 'Verified' : 'Unverified',
+          joinedDate: new Date(user.created_at).toLocaleDateString('en-GB', {
             day: '2-digit',
             month: 'short',
             year: 'numeric'
           }),
-          avatar: `https://api.dicebear.com/7.x/shapes/svg?seed=${encodeURIComponent(user.email.split('@')[0])}`
+          avatar: `https://api.dicebear.com/7.x/shapes/svg?seed=${encodeURIComponent(user.name || user.email.split('@')[0])}`
         }))
         
         setUsers(transformedUsers)
-        setPagination(response.pagination)
+        setPagination({
+          ...response.data.pagination,
+          hasNext: response.data.pagination.page < response.data.pagination.totalPages,
+          hasPrev: response.data.pagination.page > 1
+        })
       }
     } catch (error) {
       console.error('Error fetching users:', error)
@@ -91,7 +98,6 @@ const UserManagement = () => {
 
   const filteredUsers = users
 
-  console.log(users)
 
   const handleBlockClick = (user: User) => {
     setSelectedUser(user)
@@ -107,10 +113,7 @@ const UserManagement = () => {
     if (!selectedUser) return
     
     try {
-      const response = await adminApi.blockUser({
-        userId: selectedUser.id,
-        isBlocked: !selectedUser.isBlocked
-      })
+      const response = await adminApi.blockUser(selectedUser.id, !selectedUser.is_blocked)
       
       if (response && response.message) {
         toast.success(response.message)
@@ -120,8 +123,8 @@ const UserManagement = () => {
             user.id === selectedUser.id 
               ? { 
                   ...user, 
-                  isBlocked: !selectedUser.isBlocked,
-                  accountStatus: !selectedUser.isBlocked ? 'Blocked' : 'Active'
+                  is_blocked: !selectedUser.is_blocked,
+                  accountStatus: !selectedUser.is_blocked ? 'Blocked' : 'Active'
                 }
               : user
           )
@@ -137,7 +140,6 @@ const UserManagement = () => {
   }
 
   const handleEmailConfirm = () => {
-    console.log('Toggling email verification for:', selectedUser?.email)
     toast.info('Email verification toggle not implemented yet')
     setEmailDialogOpen(false)
     setSelectedUser(null)
@@ -348,8 +350,8 @@ const UserManagement = () => {
             <DialogHeader>
               <DialogTitle>Block User</DialogTitle>
               <DialogDescription>
-                Are you sure you want to {selectedUser?.isBlocked ? 'unblock' : 'block'} {selectedUser?.email}? 
-                {selectedUser?.isBlocked 
+                Are you sure you want to {selectedUser?.is_blocked ? 'unblock' : 'block'} {selectedUser?.email}? 
+                {selectedUser?.is_blocked 
                   ? ' This will restore their account access.' 
                   : ' This will prevent them from accessing their account.'
                 }
@@ -364,7 +366,7 @@ const UserManagement = () => {
                 onClick={handleBlockConfirm}
                 className="bg-orange-600 hover:bg-orange-700"
               >
-                {selectedUser?.isBlocked ? 'Unblock' : 'Block'} User
+                {selectedUser?.is_blocked ? 'Unblock' : 'Block'} User
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -376,8 +378,8 @@ const UserManagement = () => {
             <DialogHeader>
               <DialogTitle>Email Verification</DialogTitle>
               <DialogDescription>
-                Are you sure you want to {selectedUser?.isVerified ? 'unverify' : 'verify'} the email for {selectedUser?.email}? 
-                {selectedUser?.isVerified 
+                Are you sure you want to {selectedUser?.is_verified ? 'unverify' : 'verify'} the email for {selectedUser?.email}? 
+                {selectedUser?.is_verified 
                   ? ' This will mark their email as unverified.' 
                   : ' This will mark their email as verified.'
                 }
@@ -391,7 +393,7 @@ const UserManagement = () => {
                 onClick={handleEmailConfirm}
                 className="bg-cyan-600 hover:bg-cyan-700"
               >
-                {selectedUser?.isVerified ? 'Unverify' : 'Verify'} Email
+                {selectedUser?.is_verified ? 'Unverify' : 'Verify'} Email
               </Button>
             </DialogFooter>
           </DialogContent>

@@ -191,21 +191,17 @@ export const adminApi = {
     },
 
   // Company Management
-  getAllCompanies: async (query: {
-      page?: number;
-      limit?: number;
-      search?: string;
-      isVerified?: boolean;
-      isBlocked?: boolean;
-    } = {}): Promise<{
+  getAllCompanies: async (query: GetAllCompaniesParams = {} as GetAllCompaniesParams): Promise<{
       success: boolean;
       data?: {
-        companies: any[];
+        companies: Company[];
         pagination: {
           page: number;
           limit: number;
           total: number;
           totalPages: number;
+          hasNext: boolean;
+          hasPrev: boolean;
         };
       };
       message?: string;
@@ -216,7 +212,8 @@ export const adminApi = {
         if (query.page) params.append('page', query.page.toString());
         if (query.limit) params.append('limit', query.limit.toString());
         if (query.search) params.append('search', query.search);
-        if (query.isVerified !== undefined) params.append('isVerified', query.isVerified.toString());
+        if (query.industry) params.append('industry', query.industry);
+        if (query.isVerified) params.append('isVerified', query.isVerified);
         if (query.isBlocked !== undefined) params.append('isBlocked', query.isBlocked.toString());
 
         const response = await api.get(`/api/admin/companies?${params.toString()}`);
@@ -232,7 +229,17 @@ export const adminApi = {
 
   getPendingCompanies: async (): Promise<{
       success: boolean;
-      data?: any[];
+      data?: {
+        companies: Company[];
+        pagination: {
+          page: number;
+          limit: number;
+          total: number;
+          totalPages: number;
+          hasNext: boolean;
+          hasPrev: boolean;
+        };
+      };
       message?: string;
     }> => {
       try {
@@ -304,26 +311,26 @@ export interface User {
   email: string;
   role: string;
   is_verified: boolean;
-  isBlocked: boolean;
-  createdAt: string;
-  updatedAt: string;
+  is_blocked: boolean;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface Company {
   id: string;
-  userId: string;
-  companyName: string;
+  userId?: string;
+  company_name: string;
   logo: string;
   banner: string;
-  websiteLink: string;
-  employeeCount: number;
+  website_link: string;
+  employee_count: number;
   industry: string;
   organisation: string;
-  aboutUs: string;
-  isVerified: 'pending' | 'rejected' | 'verified';
-  isBlocked: boolean;
-  createdAt: string;
-  updatedAt: string;
+  about_us: string;
+  is_verified: 'pending' | 'rejected' | 'verified';
+  is_blocked: boolean;
+  created_at: string;
+  updated_at: string;
   verification?: {
     taxId: string;
     businessLicenseUrl: string;

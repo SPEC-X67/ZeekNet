@@ -26,8 +26,11 @@ export class CompanyContactUseCase {
     if (!existingContact) {
       throw new NotFoundError(`Company contact with ID ${contactId} not found`);
     }
-    const updatedContact = existingContact.updateContact(data);
-    return this.companyContactRepository.update(updatedContact);
+    const updatedContact = await this.companyContactRepository.update(contactId, data);
+    if (!updatedContact) {
+      throw new NotFoundError(`Failed to update company contact with ID ${contactId}`);
+    }
+    return updatedContact;
   }
 
   async deleteContact(contactId: string): Promise<void> {

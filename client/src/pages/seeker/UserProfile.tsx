@@ -27,7 +27,6 @@ import {
 } from "lucide-react";
 
 const UserProfile = () => {
-  // Dummy data for the profile
   const userProfile = {
     personalInfo: {
       name: "Jake Wilson",
@@ -144,7 +143,7 @@ const UserProfile = () => {
       status: "Open to opportunities",
       noticePeriod: "2 weeks",
       preferredLocation: "San Francisco, CA or Remote",
-      salaryExpectation: "$120,000 - $150,000"
+      salaryExpectation: "₹1,20,000 - ₹1,50,000"
     }
   };
 

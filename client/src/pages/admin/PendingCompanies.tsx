@@ -44,7 +44,7 @@ const PendingCompanies = () => {
       const response = await adminApi.getPendingCompanies()
       
       if (response && response.data && response.data.companies) {
-        setCompanies(response.data.companies)
+        setCompanies(response.data.companies as Company[])
       } else {
         setError('Failed to fetch pending companies')
       }
@@ -61,10 +61,10 @@ const PendingCompanies = () => {
 
   const filteredCompanies = companies.filter(company => {
     const matchesSearch = !searchTerm || 
-      company.companyName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      company.industry.toLowerCase().includes(searchTerm.toLowerCase())
+      company.company_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      company.industry?.toLowerCase().includes(searchTerm.toLowerCase())
     
-    const matchesStatus = !statusFilter || company.isVerified === statusFilter
+    const matchesStatus = !statusFilter || company.is_verified === statusFilter
     const matchesIndustry = !industryFilter || company.industry === industryFilter
     
     return matchesSearch && matchesStatus && matchesIndustry
@@ -94,7 +94,7 @@ const PendingCompanies = () => {
         isVerified: 'verified'
       })
       
-      toast.success(`Company ${selectedCompany.companyName} accepted successfully`)
+      toast.success(`Company ${selectedCompany.company_name || 'Unknown'} accepted successfully`)
     setAcceptDialogOpen(false)
     setSelectedCompany(null)
       fetchPendingCompanies()
@@ -109,11 +109,10 @@ const PendingCompanies = () => {
     try {
       await adminApi.verifyCompany({
         companyId: selectedCompany.id,
-        isVerified: 'rejected',
-        rejection_reason: 'Company verification rejected by admin'
+        isVerified: 'rejected'
       })
       
-      toast.success(`Company ${selectedCompany.companyName} rejected successfully`)
+      toast.success(`Company ${selectedCompany.company_name || 'Unknown'} rejected successfully`)
     setRejectDialogOpen(false)
     setSelectedCompany(null)
       fetchPendingCompanies()
@@ -260,13 +259,13 @@ const PendingCompanies = () => {
                       <td className="p-4">
                         <div className="flex items-center space-x-3">
                           <img 
-                              src={company.logo || 'https://api.dicebear.com/7.x/shapes/svg?seed=' + company.companyName.charAt(0)} 
-                              alt={company.companyName}
+                              src={company.logo || 'https://api.dicebear.com/7.x/shapes/svg?seed=' + (company.company_name?.charAt(0) || 'C')} 
+                              alt={company.company_name || 'Company'}
                             className="h-10 w-10 rounded-full object-cover"
                           />
                           <div>
-                              <p className="font-medium text-gray-900">{company.companyName}</p>
-                              <p className="text-sm text-gray-500">{company.websiteLink}</p>
+                              <p className="font-medium text-gray-900">{company.company_name || 'Unknown Company'}</p>
+                              <p className="text-sm text-gray-500">{company.website_link}</p>
                           </div>
                         </div>
                       </td>
@@ -277,18 +276,18 @@ const PendingCompanies = () => {
                           <span className="text-sm text-gray-700">{company.organisation}</span>
                       </td>
                       <td className="p-4">
-                          <span className="text-sm text-gray-700">{company.employeeCount}+</span>
+                          <span className="text-sm text-gray-700">{company.employee_count}+</span>
                       </td>
                       <td className="p-4">
                         <span className={`text-xs px-2 py-1 rounded-full ${
-                            company.isVerified === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                            company.is_verified === 'pending' ? 'bg-yellow-100 text-yellow-700' :
                           'bg-red-100 text-red-700'
                         }`}>
-                            {company.isVerified === 'pending' ? 'Pending' : 'Rejected'}
+                            {company.is_verified === 'pending' ? 'Pending' : 'Rejected'}
                           </span>
                         </td>
                         <td className="p-4 text-sm text-gray-700">
-                          {new Date(company.createdAt).toLocaleDateString()}
+                          {new Date(company.created_at).toLocaleDateString()}
                       </td>
                       <td className="p-4">
                     <div className="flex items-center space-x-2">
@@ -334,7 +333,7 @@ const PendingCompanies = () => {
             <DialogHeader className="px-6 py-4 border-b border-border/50 flex-shrink-0">
               <DialogTitle className="text-xl font-semibold">Company Details</DialogTitle>
               <DialogDescription>
-                Review the complete information for {selectedCompany?.companyName}
+                Review the complete information for {selectedCompany?.company_name}
               </DialogDescription>
             </DialogHeader>
 
@@ -344,14 +343,14 @@ const PendingCompanies = () => {
                 <div className="space-y-6">
                   <div className="flex items-center space-x-4">
                     <img 
-                      src={selectedCompany.logo || 'https://api.dicebear.com/7.x/shapes/svg?seed=' + selectedCompany.companyName.charAt(0)} 
-                      alt={selectedCompany.companyName}
+                      src={selectedCompany.logo || 'https://api.dicebear.com/7.x/shapes/svg?seed=' + (selectedCompany.company_name?.charAt(0) || 'C')} 
+                      alt={selectedCompany.company_name || 'Company'}
                       className="h-16 w-16 rounded-full object-cover"
                     />
                     <div>
-                      <h3 className="text-xl font-semibold">{selectedCompany.companyName}</h3>
-                      <p className="text-gray-600">{selectedCompany.websiteLink}</p>
-                      <p className="text-sm text-gray-500">Created: {new Date(selectedCompany.createdAt).toLocaleDateString()}</p>
+                      <h3 className="text-xl font-semibold">{selectedCompany.company_name || 'Unknown Company'}</h3>
+                      <p className="text-gray-600">{selectedCompany.website_link}</p>
+                      <p className="text-sm text-gray-500">Created: {new Date(selectedCompany.created_at).toLocaleDateString()}</p>
                     </div>
                   </div>
                   
@@ -366,33 +365,33 @@ const PendingCompanies = () => {
                     </div>
                     <div>
                       <label className="text-sm font-medium text-gray-700">Employees</label>
-                      <p className="text-sm text-gray-900">{selectedCompany.employeeCount}+</p>
+                      <p className="text-sm text-gray-900">{selectedCompany.employee_count}+</p>
                     </div>
                     <div>
                       <label className="text-sm font-medium text-gray-700">Status</label>
                     <span className={`text-xs px-2 py-1 rounded-full ${
-                        selectedCompany.isVerified === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                        selectedCompany.is_verified === 'pending' ? 'bg-yellow-100 text-yellow-700' :
                       'bg-red-100 text-red-700'
                     }`}>
-                        {selectedCompany.isVerified === 'pending' ? 'Pending' : 'Rejected'}
+                        {selectedCompany.is_verified === 'pending' ? 'Pending' : 'Rejected'}
                       </span>
                     </div>
                   </div>
 
                   <div>
                     <label className="text-sm font-medium text-gray-700">About Us</label>
-                    <p className="text-sm text-gray-900 mt-1">{selectedCompany.aboutUs || 'No description provided'}</p>
+                    <p className="text-sm text-gray-900 mt-1">{selectedCompany.about_us || 'No description provided'}</p>
                   </div>
 
                   <div>
                     <label className="text-sm font-medium text-gray-700">Verification Status</label>
                     <div className="mt-2">
                       <span className={`text-sm px-3 py-1 rounded-full ${
-                        selectedCompany.isVerified === 'verified' ? 'bg-green-100 text-green-700' :
-                        selectedCompany.isVerified === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                        selectedCompany.is_verified === 'verified' ? 'bg-green-100 text-green-700' :
+                        selectedCompany.is_verified === 'pending' ? 'bg-yellow-100 text-yellow-700' :
                         'bg-red-100 text-red-700'
                       }`}>
-                        {selectedCompany.isVerified.charAt(0).toUpperCase() + selectedCompany.isVerified.slice(1)}
+                        {selectedCompany.is_verified.charAt(0).toUpperCase() + selectedCompany.is_verified.slice(1)}
                         </span>
                     </div>
                   </div>
@@ -536,7 +535,7 @@ const PendingCompanies = () => {
             <DialogHeader>
               <DialogTitle>Accept Company</DialogTitle>
               <DialogDescription>
-                Are you sure you want to accept {selectedCompany?.companyName}? This will approve their registration and grant them access to the platform.
+                Are you sure you want to accept {selectedCompany?.company_name}? This will approve their registration and grant them access to the platform.
               </DialogDescription>
             </DialogHeader>
             <DialogFooter>
@@ -559,7 +558,7 @@ const PendingCompanies = () => {
             <DialogHeader>
               <DialogTitle>Reject Company</DialogTitle>
               <DialogDescription>
-                Are you sure you want to reject {selectedCompany?.companyName}? This will deny their registration and they will need to reapply.
+                Are you sure you want to reject {selectedCompany?.company_name}? This will deny their registration and they will need to reapply.
               </DialogDescription>
             </DialogHeader>
             <DialogFooter>

@@ -26,8 +26,11 @@ export class CompanyTeamUseCase {
     if (!existingTeamMember) {
       throw new NotFoundError(`Company team member with ID ${teamMemberId} not found`);
     }
-    const updatedTeamMember = existingTeamMember.updateTeamMember(data);
-    return this.companyTeamRepository.update(updatedTeamMember);
+    const updatedTeamMember = await this.companyTeamRepository.update(teamMemberId, data);
+    if (!updatedTeamMember) {
+      throw new NotFoundError(`Failed to update company team member with ID ${teamMemberId}`);
+    }
+    return updatedTeamMember;
   }
 
   async deleteTeamMember(teamMemberId: string): Promise<void> {

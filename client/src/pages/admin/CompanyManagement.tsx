@@ -95,15 +95,15 @@ const CompanyManagement = () => {
       
       await adminApi.blockCompany({
         companyId: selectedCompany.id,
-        isBlocked: !selectedCompany.isBlocked
+        isBlocked: !selectedCompany.is_blocked
       })
       
-      toast.success(`Company ${selectedCompany.companyName} ${selectedCompany.isBlocked ? 'unblocked' : 'blocked'} successfully`)
+      toast.success(`Company ${selectedCompany.company_name} ${selectedCompany.is_blocked ? 'unblocked' : 'blocked'} successfully`)
       setBlockDialogOpen(false)
       setSelectedCompany(null)
       fetchCompanies()
     } catch {
-      const action = selectedCompany.isBlocked ? 'unblock' : 'block'
+      const action = selectedCompany.is_blocked ? 'unblock' : 'block'
       toast.error(`Failed to ${action} company`)
     }
   }
@@ -112,7 +112,7 @@ const CompanyManagement = () => {
     if (!selectedCompany) return
     
     try {
-      toast.success(`Email verification updated for ${selectedCompany.companyName}`)
+      toast.success(`Email verification updated for ${selectedCompany.company_name}`)
     setEmailDialogOpen(false)
     setSelectedCompany(null)
       fetchCompanies()
@@ -284,13 +284,13 @@ const CompanyManagement = () => {
                       <td className="p-4">
                         <div className="flex items-center space-x-3">
                             <img 
-                              src={company.logo || 'https://api.dicebear.com/7.x/shapes/svg?seed=' + company.companyName.charAt(0)} 
-                              alt={company.companyName}
+                              src={company.logo || 'https://api.dicebear.com/7.x/shapes/svg?seed=' + (company.company_name?.charAt(0) || 'C')} 
+                              alt={company.company_name || 'Company'}
                             className="h-10 w-10 rounded-full object-cover"
                           />
                           <div>
-                              <p className="font-medium text-gray-800">{company.companyName}</p>
-                              <p className="text-sm text-gray-500">{company.websiteLink}</p>
+                              <p className="font-medium text-gray-800">{company.company_name}</p>
+                              <p className="text-sm text-gray-500">{company.website_link}</p>
                           </div>
                         </div>
                       </td>
@@ -302,22 +302,22 @@ const CompanyManagement = () => {
                       </td>
                         <td className="p-4">
                           <span className={`text-sm px-2 py-1 rounded-full ${
-                            company.isBlocked ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'
+                            company.is_blocked ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'
                           }`}>
-                            {company.isBlocked ? 'Blocked' : 'Active'}
+                            {company.is_blocked ? 'Blocked' : 'Active'}
                           </span>
                         </td>
                       <td className="p-4">
                         <span className={`text-xs px-2 py-1 rounded-full ${
-                            company.isVerified === 'verified' ? 'bg-green-100 text-green-700' :
-                            company.isVerified === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                            company.is_verified === 'verified' ? 'bg-green-100 text-green-700' :
+                            company.is_verified === 'pending' ? 'bg-yellow-100 text-yellow-700' :
                           'bg-red-100 text-red-700'
                         }`}>
-                            {company.isVerified}
+                            {company.is_verified}
                         </span>
                       </td>
                         <td className="p-4 text-sm text-gray-700">
-                          {new Date(company.createdAt).toLocaleDateString()}
+                          {new Date(company.created_at).toLocaleDateString()}
                       </td>
                       <td className="p-4">
                         <div className="flex items-center space-x-2">
@@ -398,10 +398,10 @@ const CompanyManagement = () => {
         <Dialog open={blockDialogOpen} onOpenChange={setBlockDialogOpen}>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>{selectedCompany?.isBlocked ? 'Unblock' : 'Block'} Company</DialogTitle>
+              <DialogTitle>{selectedCompany?.is_blocked ? 'Unblock' : 'Block'} Company</DialogTitle>
               <DialogDescription>
-                Are you sure you want to {selectedCompany?.isBlocked ? 'unblock' : 'block'} {selectedCompany?.companyName}? 
-                {selectedCompany?.isBlocked 
+                Are you sure you want to {selectedCompany?.is_blocked ? 'unblock' : 'block'} {selectedCompany?.company_name}? 
+                {selectedCompany?.is_blocked 
                   ? ' This will restore their account access.' 
                   : ' This will prevent them from accessing their account.'
                 }
@@ -416,7 +416,7 @@ const CompanyManagement = () => {
                 onClick={handleBlockConfirm}
                 className="bg-orange-600 hover:bg-orange-700"
               >
-                {selectedCompany?.isBlocked ? 'Unblock' : 'Block'} Company
+                {selectedCompany?.is_blocked ? 'Unblock' : 'Block'} Company
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -427,7 +427,7 @@ const CompanyManagement = () => {
             <DialogHeader>
               <DialogTitle>Email Verification</DialogTitle>
               <DialogDescription>
-                Are you sure you want to verify the email for {selectedCompany?.companyName}? 
+                Are you sure you want to verify the email for {selectedCompany?.company_name}? 
                 This will mark their email as verified.
               </DialogDescription>
             </DialogHeader>

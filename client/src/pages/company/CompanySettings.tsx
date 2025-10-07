@@ -21,7 +21,6 @@ const CompanySettings = () => {
   const [saving, setSaving] = useState(false)
   const [uploadingLogo, setUploadingLogo] = useState(false)
   
-  // Company profile data
   const [, setCompanyProfile] = useState<CompanyProfileResponse | null>(null)
   const [companyName, setCompanyName] = useState('')
   const [website, setWebsite] = useState('')
@@ -31,7 +30,6 @@ const CompanySettings = () => {
   const [dateFounded, setDateFounded] = useState('')
   const [logo, setLogo] = useState('')
   
-  // Password update state
   const [currentPassword, setCurrentPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -41,7 +39,6 @@ const CompanySettings = () => {
     confirm: false
   })
 
-  // Settings state
   const [settings, setSettings] = useState({
     emailNotifications: true,
     jobAlerts: true,
@@ -63,7 +60,6 @@ const CompanySettings = () => {
     }))
   }
 
-  // Fetch company profile data
   const fetchCompanyProfile = async () => {
     try {
       setLoading(true)
@@ -71,7 +67,7 @@ const CompanySettings = () => {
       
       if (response.success && response.data) {
         const data = response.data
-        const profile = data.profile // Extract profile from nested structure
+        const profile = data.profile
         
         setCompanyProfile(profile)
         setCompanyName(profile.company_name || '')
@@ -90,17 +86,14 @@ const CompanySettings = () => {
     }
   }
 
-  // Handle logo upload
   const handleLogoUpload = async (file: File) => {
     if (!file) return
 
-    // Validate file type
     if (!file.type.startsWith('image/')) {
       toast.error('Please select a valid image file')
       return
     }
 
-    // Validate file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
       toast.error('Image size must be less than 5MB')
       return
@@ -109,15 +102,11 @@ const CompanySettings = () => {
     setUploadingLogo(true)
     try {
       const response = await companyApi.uploadLogo(file)
-      console.log('Logo upload response:', response)
       
       if (response.success && response.data) {
         setLogo(response.data.url)
-        console.log('Setting logo URL:', response.data.url)
         
-        // Update the profile with the new logo URL
         const updateResponse = await companyApi.updateProfile({ logo: response.data.url })
-        console.log('Profile update response:', updateResponse)
         
         if (updateResponse.success) {
           toast.success('Logo uploaded and saved successfully')
@@ -136,7 +125,6 @@ const CompanySettings = () => {
     }
   }
 
-  // Handle save changes
   const handleSaveChanges = async () => {
     try {
       setSaving(true)
@@ -150,14 +138,11 @@ const CompanySettings = () => {
         logo: logo
       }
 
-      console.log('Save changes - updateData:', updateData)
-      console.log('Save changes - logo value:', logo)
 
       const response = await companyApi.updateProfile(updateData)
       
       if (response.success) {
         toast.success('Company settings updated successfully')
-        // Refresh the profile data
         await fetchCompanyProfile()
       } else {
         toast.error('Failed to update company settings')
@@ -170,7 +155,6 @@ const CompanySettings = () => {
     }
   }
 
-  // Handle password update
   const handlePasswordUpdate = async () => {
     if (newPassword !== confirmPassword) {
       toast.error('New passwords do not match')
@@ -184,7 +168,6 @@ const CompanySettings = () => {
 
     try {
       setSaving(true)
-      // TODO: Implement password update API call
       toast.success('Password updated successfully')
       setCurrentPassword('')
       setNewPassword('')
@@ -203,7 +186,6 @@ const CompanySettings = () => {
 
   const renderOverviewTab = () => (
     <div className="space-y-7">
-      {/* Basic Information */}
       <div>
         <h2 className="text-base font-semibold text-gray-900 mb-1">Basic Information</h2>
         <p className="text-sm text-gray-600">This is company information that you can update anytime.</p>
@@ -211,14 +193,12 @@ const CompanySettings = () => {
 
       <div className="border-t border-gray-200"></div>
 
-      {/* Company Logo */}
       <div className="flex gap-7">
         <div className="flex-1 max-w-[650px]">
           <h3 className="text-base font-semibold text-gray-900 mb-1">Company Logo</h3>
           <p className="text-sm text-gray-600">This image will be shown publicly as company logo.</p>
         </div>
         <div className="flex gap-7">
-          {/* Current Logo */}
           <div className="w-28 h-28 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden">
             {logo ? (
               <img src={logo} alt="Company Logo" className="w-full h-full object-cover" />
@@ -227,7 +207,6 @@ const CompanySettings = () => {
             )}
           </div>
           
-          {/* Upload Area */}
           <div className="border-2 border-dashed border-purple-500 rounded-lg p-5 flex flex-col items-center gap-2 min-w-[280px]">
             <input
               type="file"
@@ -253,7 +232,6 @@ const CompanySettings = () => {
 
       <div className="border-t border-gray-200"></div>
 
-      {/* Company Details */}
       <div className="flex gap-7">
         <div className="flex-1">
           <h3 className="text-base font-semibold text-gray-900 mb-1">Company Details</h3>
@@ -261,7 +239,6 @@ const CompanySettings = () => {
         </div>
         
         <div className="w-[510px] space-y-5">
-          {/* Company Name */}
           <div className="space-y-1">
             <Label htmlFor="company-name" className="text-gray-800 font-semibold">Company Name</Label>
             <Input 
@@ -273,7 +250,6 @@ const CompanySettings = () => {
             />
           </div>
 
-          {/* Website */}
           <div className="space-y-1">
             <Label htmlFor="website" className="text-gray-800 font-semibold">Website</Label>
             <Input 
@@ -285,7 +261,6 @@ const CompanySettings = () => {
             />
           </div>
 
-          {/* Organization */}
           <div className="space-y-1">
             <Label htmlFor="organization" className="text-gray-800 font-semibold">Organization</Label>
             <Select value={organization} onValueChange={setOrganization}>
@@ -312,7 +287,6 @@ const CompanySettings = () => {
             </Select>
           </div>
 
-          {/* Employee and Industry */}
           <div className="grid grid-cols-2 gap-5">
             <div className="space-y-1">
               <Label htmlFor="employee" className="text-gray-800 font-semibold">Employee</Label>
@@ -336,7 +310,6 @@ const CompanySettings = () => {
             </div>
           </div>
 
-          {/* Date Founded */}
           <div className="space-y-1">
             <Label htmlFor="date-founded" className="text-gray-800 font-semibold">Date Founded</Label>
             <Input 
@@ -356,7 +329,6 @@ const CompanySettings = () => {
 
   const renderGeneralTab = () => (
     <div className="space-y-7">
-      {/* Password Update */}
       <div>
         <h2 className="text-base font-semibold text-gray-900 mb-1">Security</h2>
         <p className="text-sm text-gray-600">Update your password and manage security settings.</p>
@@ -364,7 +336,6 @@ const CompanySettings = () => {
 
       <div className="border-t border-gray-200"></div>
 
-      {/* Password Update Section */}
       <div className="flex gap-7">
         <div className="flex-1">
           <h3 className="text-base font-semibold text-gray-900 mb-1">Change Password</h3>
@@ -372,7 +343,6 @@ const CompanySettings = () => {
         </div>
         
         <div className="w-[510px] space-y-5">
-          {/* Current Password */}
           <div className="space-y-1">
             <Label htmlFor="current-password" className="text-gray-800 font-semibold">Current Password</Label>
             <div className="relative">
@@ -394,7 +364,6 @@ const CompanySettings = () => {
             </div>
           </div>
 
-          {/* New Password */}
           <div className="space-y-1">
             <Label htmlFor="new-password" className="text-gray-800 font-semibold">New Password</Label>
             <div className="relative">
@@ -416,7 +385,6 @@ const CompanySettings = () => {
             </div>
           </div>
 
-          {/* Confirm Password */}
           <div className="space-y-1">
             <Label htmlFor="confirm-password" className="text-gray-800 font-semibold">Confirm New Password</Label>
             <div className="relative">
@@ -452,7 +420,6 @@ const CompanySettings = () => {
 
       <div className="border-t border-gray-200"></div>
 
-      {/* Notification Settings */}
       <div className="flex gap-7">
         <div className="flex-1">
           <h3 className="text-base font-semibold text-gray-900 mb-1">Notifications</h3>
@@ -460,7 +427,6 @@ const CompanySettings = () => {
         </div>
         
         <div className="w-[510px] space-y-5">
-          {/* Email Notifications */}
           <div className="flex items-center justify-between">
             <div>
               <Label className="text-gray-800 font-semibold">Email Notifications</Label>
@@ -472,7 +438,6 @@ const CompanySettings = () => {
             />
           </div>
 
-          {/* Job Alerts */}
           <div className="flex items-center justify-between">
             <div>
               <Label className="text-gray-800 font-semibold">Job Alerts</Label>
@@ -488,7 +453,6 @@ const CompanySettings = () => {
 
       <div className="border-t border-gray-200"></div>
 
-      {/* Privacy Settings */}
       <div className="flex gap-7">
         <div className="flex-1">
           <h3 className="text-base font-semibold text-gray-900 mb-1">Privacy</h3>
@@ -496,7 +460,6 @@ const CompanySettings = () => {
         </div>
         
         <div className="w-[510px] space-y-5">
-          {/* Profile Visibility */}
           <div className="flex items-center justify-between">
             <div>
               <Label className="text-gray-800 font-semibold">Public Profile</Label>
@@ -508,7 +471,6 @@ const CompanySettings = () => {
             />
           </div>
 
-          {/* Two-Factor Authentication */}
           <div className="flex items-center justify-between">
             <div>
               <Label className="text-gray-800 font-semibold">Two-Factor Authentication</Label>
@@ -538,11 +500,9 @@ const CompanySettings = () => {
   return (
     <CompanyLayout>
       <div className="flex-1 overflow-auto bg-white">
-        {/* Header */}
         <div className="px-5 py-5">
           <h1 className="text-2xl font-semibold text-gray-900 mb-5">Settings</h1>
           
-          {/* Tabs */}
           <div className="flex gap-9 border-b border-gray-200">
             <button
               onClick={() => setActiveTab('overview')}
@@ -567,13 +527,11 @@ const CompanySettings = () => {
           </div>
         </div>
 
-        {/* Content */}
         <div className="px-7 pb-7">
           {activeTab === 'overview' && renderOverviewTab()}
           {activeTab === 'general' && renderGeneralTab()}
         </div>
 
-        {/* Save Button */}
         <div className="px-7 pb-7">
           <div className="border-t border-gray-200 pt-5">
             <Button 

@@ -2,8 +2,8 @@ import { injectable, inject } from 'inversify';
 import { SimpleCompanyProfileRequestDto } from '../../dto/company/create-company.dto';
 import { TYPES } from '../../../infrastructure/di/types';
 import { ICompanyRepository } from '../../../domain/repositories';
-import { CompanyProfile } from '../../../domain/entities';
 import { CompanyProfileMapper } from '../../mappers';
+import { CompanyProfileResponseDto } from '../../mappers/types';
 
 @injectable()
 export class CreateCompanyProfileUseCase {
@@ -17,7 +17,7 @@ export class CreateCompanyProfileUseCase {
   async execute(
     userId: string,
     data: SimpleCompanyProfileRequestDto,
-  ): Promise<CompanyProfile> {
+  ): Promise<CompanyProfileResponseDto> {
     const profileData = this.companyProfileMapper.toDomain(data, userId);
     const contactData = this.companyProfileMapper.toContactData(data, '');
     const locationData = this.companyProfileMapper.toLocationData(data, '');
@@ -34,6 +34,6 @@ export class CreateCompanyProfileUseCase {
     verificationData.companyId = profile.id;
     await this.companyRepository.createVerification(verificationData);
 
-    return profile;
+    return this.companyProfileMapper.toDto(profile);
   }
 }

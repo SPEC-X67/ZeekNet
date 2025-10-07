@@ -1,10 +1,8 @@
 import multer from 'multer';
 import { Request, Response, NextFunction } from 'express';
 
-// Configure multer for memory storage (we'll upload directly to S3)
 const storage = multer.memoryStorage();
 
-// File filter to only allow images
 const fileFilter = (req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
   if (file.mimetype.startsWith('image/')) {
     cb(null, true);
@@ -13,16 +11,14 @@ const fileFilter = (req: Request, file: Express.Multer.File, cb: multer.FileFilt
   }
 };
 
-// Configure multer
 const upload = multer({
   storage: storage,
   fileFilter: fileFilter,
   limits: {
-    fileSize: 10 * 1024 * 1024, // 10MB limit
+    fileSize: 10 * 1024 * 1024,
   },
 });
 
-// Middleware for single file upload
 export const uploadSingle = (fieldName: string) => {
   return (req: Request, res: Response, next: NextFunction) => {
     upload.single(fieldName)(req, res, (err) => {
@@ -48,7 +44,6 @@ export const uploadSingle = (fieldName: string) => {
   };
 };
 
-// Middleware for multiple file uploads
 export const uploadMultiple = (fieldName: string, maxCount: number = 5) => {
   return (req: Request, res: Response, next: NextFunction) => {
     upload.array(fieldName, maxCount)(req, res, (err) => {

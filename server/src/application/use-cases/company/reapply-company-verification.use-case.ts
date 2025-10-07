@@ -2,8 +2,8 @@ import { injectable, inject } from 'inversify';
 import { SimpleCompanyProfileRequestDto } from '../../dto/company/create-company.dto';
 import { TYPES } from '../../../infrastructure/di/types';
 import { ICompanyRepository } from '../../../domain/repositories';
-import { CompanyProfile } from '../../../domain/entities';
 import { CompanyProfileMapper } from '../../mappers';
+import { CompanyProfileResponseDto } from '../../mappers/types';
 
 @injectable()
 export class ReapplyCompanyVerificationUseCase {
@@ -17,7 +17,7 @@ export class ReapplyCompanyVerificationUseCase {
   async execute(
     userId: string,
     data: SimpleCompanyProfileRequestDto,
-  ): Promise<CompanyProfile> {
+  ): Promise<CompanyProfileResponseDto> {
 
     const existingProfile = await this.companyRepository.getProfileByUserId(userId);
     if (!existingProfile) {
@@ -69,6 +69,6 @@ export class ReapplyCompanyVerificationUseCase {
       throw new Error('Failed to retrieve updated profile');
     }
 
-    return updatedProfile;
+    return this.companyProfileMapper.toDto(updatedProfile);
   }
 }

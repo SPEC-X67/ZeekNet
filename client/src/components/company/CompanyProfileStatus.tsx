@@ -1,8 +1,7 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import { 
   Building2, 
   Clock, 
@@ -26,6 +25,7 @@ const CompanyProfileStatus = ({ onStatusChange }: CompanyProfileStatusProps) => 
   const [status, setStatus] = useState<ProfileStatus>('not_created')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const intervalRef = useRef<NodeJS.Timeout | null>(null)
 
   const checkProfileStatus = useCallback(async () => {
     try {
@@ -35,16 +35,30 @@ const CompanyProfileStatus = ({ onStatusChange }: CompanyProfileStatusProps) => 
       const res = await companyApi.getDashboard()
       
       if (res.success && res.data) {
-        const profileStatus = (res.data.profileStatus || 'not_created') as ProfileStatus
+        const profileStatus = (res.data.profileStatus || res.data.verificationStatus || 'not_created') as ProfileStatus
         setStatus(profileStatus)
         onStatusChange?.(profileStatus)
       } else {
-        setError('Failed to check profile status')
+        if (res.message && res.data?.verificationStatus) {
+          const profileStatus = res.data.verificationStatus as ProfileStatus
+          setStatus(profileStatus)
+          onStatusChange?.(profileStatus)
+        } else {
+          setError(res.message || 'Failed to check profile status')
+          setStatus('not_created')
+        }
+      }
+    } catch (err: any) {
+      console.error('Error checking profile status:', err)
+      
+      if (err.response?.data?.data?.verificationStatus) {
+        const profileStatus = err.response.data.data.verificationStatus as ProfileStatus
+        setStatus(profileStatus)
+        onStatusChange?.(profileStatus)
+      } else {
+        setError(err.response?.data?.message || 'Failed to check profile status')
         setStatus('not_created')
       }
-    } catch {
-      setError('Failed to check profile status')
-      setStatus('not_created')
     } finally {
       setLoading(false)
     }
@@ -53,6 +67,25 @@ const CompanyProfileStatus = ({ onStatusChange }: CompanyProfileStatusProps) => 
   useEffect(() => {
     checkProfileStatus()
   }, [checkProfileStatus])
+
+  useEffect(() => {
+    if (status === 'pending') {
+      intervalRef.current = setInterval(() => {
+        checkProfileStatus()
+      }, 30000)
+    } else {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current)
+        intervalRef.current = null
+      }
+    }
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current)
+      }
+    }
+  }, [status, checkProfileStatus])
 
   const handleRefresh = () => {
     checkProfileStatus()
@@ -133,104 +166,194 @@ const CompanyProfileStatus = ({ onStatusChange }: CompanyProfileStatusProps) => 
 
   if (status === 'pending') {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-yellow-50 to-orange-50">
-        <Card className="w-full max-w-lg shadow-xl">
-          <CardHeader className="text-center pb-4">
-            <div className="flex justify-center mb-4">
-              <div className="p-3 bg-yellow-100 rounded-full">
+      <div className="min-h-screen bg-gradient-to-br from-yellow-50 to-orange-50">
+        <div className="container mx-auto px-4 py-12">
+          {/* Header Section */}
+          <div className="text-center mb-12">
+            <div className="flex justify-center mb-6">
+              <div className="p-4 bg-yellow-100 rounded-full animate-pulse">
                 <Clock className="h-8 w-8 text-yellow-600" />
               </div>
             </div>
-            <CardTitle className="text-2xl font-bold text-yellow-800">Profile Under Review</CardTitle>
-            <p className="text-muted-foreground mt-2">
-              We are currently reviewing your company profile and documents
+            <h1 className="text-2xl font-bold text-yellow-800 mb-3">Profile Under Review</h1>
+            <p className="text-gray-600 max-w-xl mx-auto">
+              Your company profile is currently being reviewed by our admin team.
             </p>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-              <div className="flex items-start space-x-3">
-                <AlertCircle className="h-5 w-5 text-yellow-600 mt-0.5" />
-                <div>
-                  <h4 className="font-semibold text-yellow-800 mb-1">What happens next?</h4>
-                  <ul className="text-sm text-yellow-700 space-y-1">
-                    <li>• Our team will review your company information</li>
-                    <li>• We'll verify your business documents</li>
-                    <li>• You'll receive an email once approved</li>
-                    <li>• This process typically takes 1-3 business days</li>
-                  </ul>
+          </div>
+
+          {/* Status Badge */}
+          <div className="flex justify-center mb-8">
+            <div className="flex items-center space-x-2 bg-yellow-100 px-4 py-2 rounded-full">
+              <Clock className="h-4 w-4 text-yellow-600" />
+              <span className="text-yellow-800 font-medium text-sm">Under Review</span>
+            </div>
+          </div>
+
+          {/* Main Content */}
+          <div className="max-w-2xl mx-auto">
+            {/* Review Process */}
+            <div className="mb-8">
+              <h2 className="text-lg font-semibold text-gray-800 mb-6 text-center">Review Process</h2>
+              <div className="space-y-4">
+                <div className="flex items-start space-x-3">
+                  <div className="w-6 h-6 bg-yellow-600 rounded-full flex items-center justify-center text-white font-bold text-xs">1</div>
+                  <div>
+                    <h3 className="font-medium text-gray-800 mb-1">Document Verification</h3>
+                    <p className="text-gray-600 text-sm">Reviewing business license and tax ID documents.</p>
+                  </div>
+                </div>
+                <div className="flex items-start space-x-3">
+                  <div className="w-6 h-6 bg-yellow-600 rounded-full flex items-center justify-center text-white font-bold text-xs">2</div>
+                  <div>
+                    <h3 className="font-medium text-gray-800 mb-1">Company Information</h3>
+                    <p className="text-gray-600 text-sm">Verifying company details and business information.</p>
+                  </div>
+                </div>
+                <div className="flex items-start space-x-3">
+                  <div className="w-6 h-6 bg-yellow-600 rounded-full flex items-center justify-center text-white font-bold text-xs">3</div>
+                  <div>
+                    <h3 className="font-medium text-gray-800 mb-1">Final Approval</h3>
+                    <p className="text-gray-600 text-sm">Profile approval and job posting access.</p>
+                  </div>
+                </div>
+                <div className="flex items-start space-x-3">
+                  <div className="w-6 h-6 bg-yellow-600 rounded-full flex items-center justify-center text-white font-bold text-xs">4</div>
+                  <div>
+                    <h3 className="font-medium text-gray-800 mb-1">Notification</h3>
+                    <p className="text-gray-600 text-sm">Email notification once review is complete.</p>
+                  </div>
                 </div>
               </div>
             </div>
-            
-            <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
-              <div className="flex items-center space-x-2">
-                <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">
-                  <Clock className="h-3 w-3 mr-1" />
-                  Under Review
-                </Badge>
+
+            {/* Actions */}
+            <div className="text-center space-y-4">
+              <div className="flex items-center justify-center space-x-4">
+                <Button variant="outline" onClick={handleRefresh} size="sm">
+                  <RefreshCw className="h-4 w-4 mr-2" />
+                  Refresh Status
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={() => navigate('/')} 
+                  size="sm"
+                >
+                  Back to Home
+                </Button>
               </div>
-              <Button variant="outline" onClick={handleRefresh} size="sm">
-                <RefreshCw className="h-4 w-4 mr-2" />
-                Refresh Status
-              </Button>
+              <p className="text-xs text-gray-500">
+                Status automatically refreshes every 30 seconds
+              </p>
             </div>
-          </CardContent>
-        </Card>
+
+            {/* Support */}
+            <div className="mt-8 text-center">
+              <div className="border-t border-gray-200 pt-6">
+                <p className="text-gray-600 text-sm">
+                  Need help? Contact{' '}
+                  <a href="mailto:support@zeeknet.com" className="text-blue-600 hover:underline">
+                    support@zeeknet.com
+                  </a>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     )
   }
 
   if (status === 'rejected') {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-50 to-pink-50">
-        <Card className="w-full max-w-lg shadow-xl">
-          <CardHeader className="text-center pb-4">
-            <div className="flex justify-center mb-4">
-              <div className="p-3 bg-red-100 rounded-full">
+      <div className="min-h-screen bg-gradient-to-br from-red-50 to-pink-50">
+        <div className="container mx-auto px-4 py-12">
+          {/* Header Section */}
+          <div className="text-center mb-12">
+            <div className="flex justify-center mb-6">
+              <div className="p-4 bg-red-100 rounded-full">
                 <XCircle className="h-8 w-8 text-red-600" />
               </div>
             </div>
-            <CardTitle className="text-2xl font-bold text-red-800">Profile Rejected</CardTitle>
-            <p className="text-muted-foreground mt-2">
+            <h1 className="text-2xl font-bold text-red-800 mb-3">Profile Rejected</h1>
+            <p className="text-gray-600 max-w-xl mx-auto">
               Your company profile has been rejected. Please review and resubmit your documents.
             </p>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-              <div className="flex items-start space-x-3">
-                <AlertCircle className="h-5 w-5 text-red-600 mt-0.5" />
-                <div>
-                  <h4 className="font-semibold text-red-800 mb-2">Common rejection reasons:</h4>
-                  <ul className="text-sm text-red-700 space-y-1">
-                    <li>• Business license is unclear or expired</li>
-                    <li>• Tax ID format is incorrect</li>
-                    <li>• Company information doesn't match documents</li>
-                    <li>• Missing required information</li>
-                  </ul>
+          </div>
+
+          {/* Status Badge */}
+          <div className="flex justify-center mb-8">
+            <div className="flex items-center space-x-2 bg-red-100 px-4 py-2 rounded-full">
+              <XCircle className="h-4 w-4 text-red-600" />
+              <span className="text-red-800 font-medium text-sm">Rejected</span>
+            </div>
+          </div>
+
+          {/* Main Content */}
+          <div className="max-w-2xl mx-auto">
+            {/* Rejection Reasons */}
+            <div className="mb-8">
+              <h2 className="text-lg font-semibold text-gray-800 mb-6 text-center">Common Rejection Reasons</h2>
+              <div className="space-y-3">
+                <div className="flex items-start space-x-3">
+                  <div className="w-2 h-2 bg-red-600 rounded-full mt-2 flex-shrink-0"></div>
+                  <p className="text-gray-600 text-sm">Business license is unclear or expired</p>
+                </div>
+                <div className="flex items-start space-x-3">
+                  <div className="w-2 h-2 bg-red-600 rounded-full mt-2 flex-shrink-0"></div>
+                  <p className="text-gray-600 text-sm">Tax ID format is incorrect</p>
+                </div>
+                <div className="flex items-start space-x-3">
+                  <div className="w-2 h-2 bg-red-600 rounded-full mt-2 flex-shrink-0"></div>
+                  <p className="text-gray-600 text-sm">Company information doesn't match documents</p>
+                </div>
+                <div className="flex items-start space-x-3">
+                  <div className="w-2 h-2 bg-red-600 rounded-full mt-2 flex-shrink-0"></div>
+                  <p className="text-gray-600 text-sm">Missing required information</p>
                 </div>
               </div>
             </div>
-            
-            <div className="space-y-3">
-              <Button 
-                onClick={() => navigate('/company/profile-setup')} 
-                className="w-full"
-                size="lg"
-              >
-                <Upload className="h-4 w-4 mr-2" />
-                Re-upload Documents
-              </Button>
-              <Button 
-                variant="outline" 
-                onClick={handleRefresh} 
-                className="w-full"
-              >
-                <RefreshCw className="h-4 w-4 mr-2" />
-                Check Status Again
-              </Button>
+
+            {/* Actions */}
+            <div className="text-center space-y-4">
+              <div className="flex items-center justify-center space-x-4">
+                <Button 
+                  onClick={() => navigate('/company/profile-setup')} 
+                  size="sm"
+                >
+                  <Upload className="h-4 w-4 mr-2" />
+                  Re-upload Documents
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={handleRefresh} 
+                  size="sm"
+                >
+                  <RefreshCw className="h-4 w-4 mr-2" />
+                  Check Status
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={() => navigate('/')} 
+                  size="sm"
+                >
+                  Back to Home
+                </Button>
+              </div>
             </div>
-          </CardContent>
-        </Card>
+
+            {/* Support */}
+            <div className="mt-8 text-center">
+              <div className="border-t border-gray-200 pt-6">
+                <p className="text-gray-600 text-sm">
+                  Need help? Contact{' '}
+                  <a href="mailto:support@zeeknet.com" className="text-blue-600 hover:underline">
+                    support@zeeknet.com
+                  </a>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     )
   }

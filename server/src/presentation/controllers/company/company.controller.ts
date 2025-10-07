@@ -83,9 +83,7 @@ export class CompanyController extends BaseController {
         parsed.data,
       );
 
-      const responseData = this.companyProfileMapper.toDto(profile);
-
-      this.sendSuccessResponse(res, 'Company profile created successfully', responseData, undefined, 201);
+      this.sendSuccessResponse(res, 'Company profile created successfully', profile, undefined, 201);
     } catch (error) {
       this.handleAsyncError(error, next);
     }
@@ -96,7 +94,6 @@ export class CompanyController extends BaseController {
     res: Response,
     next: NextFunction,
   ): Promise<void> => {
-    console.log('Controller received request body:', req.body);
     const parsed = SimpleUpdateCompanyProfileDto.safeParse(req.body);
     if (!parsed.success) {
       console.error('Company profile update validation failed:', {
@@ -116,7 +113,6 @@ export class CompanyController extends BaseController {
       const updateData = {
         profile: parsed.data
       };
-      console.log('Controller sending to use case:', updateData);
       const companyProfile = await this.updateCompanyProfileUseCase.execute(
         userId,
         updateData,
@@ -215,7 +211,6 @@ export class CompanyController extends BaseController {
     try {
       const userId = this.validateUserId(req);
       
-      // Validate request body
       const parsed = SimpleCompanyProfileDto.safeParse(req.body);
       if (!parsed.success) {
         return this.handleValidationError('Invalid profile data', next);
@@ -226,12 +221,10 @@ export class CompanyController extends BaseController {
         parsed.data
       );
       
-      const responseData = this.companyProfileMapper.toDto(updatedProfile);
-      
       this.sendSuccessResponse(
         res, 
         'Verification reapplication submitted successfully. Your application is now under review.',
-        responseData
+        updatedProfile
       );
     } catch (error) {
       this.handleAsyncError(error, next);

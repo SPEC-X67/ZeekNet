@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -78,7 +78,28 @@ const CompanyProfileSetup = () => {
     logo: false,
     business_license: false
   })
+  const [isReapplication, setIsReapplication] = useState(false)
 
+  useEffect(() => {
+    const checkVerificationStatus = async () => {
+      try {
+        const response = await companyApi.getDashboard()
+        if (response.success && response.data) {
+          const data = response.data as any
+          const status = data.profileStatus || data.verificationStatus || 'not_created'
+          setIsReapplication(status === 'rejected')
+        } else if (response.message && (response.data as any)?.verificationStatus === 'rejected') {
+          setIsReapplication(true)
+        }
+      } catch (err: any) {
+        if (err.response?.data?.data?.verificationStatus === 'rejected') {
+          setIsReapplication(true)
+        }
+      }
+    }
+    
+    checkVerificationStatus()
+  }, [])
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
@@ -151,19 +172,28 @@ const CompanyProfileSetup = () => {
         tax_id: validatedData.tax_id,
       }
 
-      const res = await companyApi.createProfile(profileData)
+      const res = isReapplication 
+        ? await companyApi.reapplyVerification(profileData)
+        : await companyApi.createProfile(profileData)
       
       if (res.success) {
-        toast.success('Profile Created Successfully!', {
-          description: 'Your company profile has been created. Redirecting to dashboard...',
+        const successMessage = isReapplication 
+          ? 'Reapplication Submitted Successfully!'
+          : 'Profile Created Successfully!'
+        const description = isReapplication
+          ? 'Your reapplication has been submitted for review. Redirecting to status page...'
+          : 'Your company profile has been created. Redirecting to dashboard...'
+        
+        toast.success(successMessage, {
+          description,
           duration: 3000,
         })
         
         setTimeout(() => {
-          navigate('/company/dashboard')
+          navigate(isReapplication ? '/company/dashboard' : '/company/dashboard')
         }, 2000)
       } else {
-        throw new Error(res.message || 'Failed to create company profile')
+        throw new Error(res.message || `Failed to ${isReapplication ? 'submit reapplication' : 'create company profile'}`)
       }
     } catch (err) {
       if (err instanceof z.ZodError) {
@@ -176,9 +206,9 @@ const CompanyProfileSetup = () => {
         setValidationErrors(fieldErrors)
         toast.error('Validation Failed', { description: 'Please fix the errors below' })
       } else {
-        const errorMsg = typeof err === 'string' ? err : 'Failed to create company profile'
+        const errorMsg = typeof err === 'string' ? err : `Failed to ${isReapplication ? 'submit reapplication' : 'create company profile'}`
         setError(errorMsg)
-        toast.error('Profile Creation Failed', { description: errorMsg })
+        toast.error(isReapplication ? 'Reapplication Failed' : 'Profile Creation Failed', { description: errorMsg })
       }
     } finally {
       setLoading(false)
@@ -275,10 +305,13 @@ const CompanyProfileSetup = () => {
           {/* Hero Content */}
           <div className="max-w-md">
             <h2 className="text-4xl font-bold text-foreground mb-4">
-              Complete your company profile
+              {isReapplication ? 'Resubmit your company profile' : 'Complete your company profile'}
             </h2>
             <p className="text-lg text-muted-foreground mb-8">
-              Set up your company profile to start attracting top talent and posting jobs on our platform.
+              {isReapplication 
+                ? 'Update your company information and resubmit for verification.'
+                : 'Set up your company profile to start attracting top talent and posting jobs on our platform.'
+              }
             </p>
 
             {/* Features */}
@@ -836,12 +869,12 @@ const CompanyProfileSetup = () => {
                       {loading ? (
                         <>
                           <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                          <span>Creating Profile...</span>
+                          <span>{isReapplication ? 'Submitting Reapplication...' : 'Creating Profile...'}</span>
                         </>
                       ) : (
                         <>
                           <CheckCircle className="h-4 w-4 mr-2" />
-                          <span>Complete Setup</span>
+                          <span>{isReapplication ? 'Submit Reapplication' : 'Complete Setup'}</span>
                         </>
                       )}
                     </Button>

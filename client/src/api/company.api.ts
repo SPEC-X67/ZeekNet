@@ -57,6 +57,7 @@ interface CompanyDashboard {
   recentApplications: unknown[];
   profileCompletion: number;
   profileStatus: string;
+  verificationStatus?: string;
 }
 
 export const companyApi = {

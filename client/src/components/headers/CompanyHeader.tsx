@@ -28,7 +28,6 @@ const CompanyHeader = () => {
       }
     } catch (error) {
       console.error('Failed to fetch company profile:', error)
-      // Keep the fallback name from auth state
     } finally {
       setLoading(false)
     }

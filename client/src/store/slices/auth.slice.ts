@@ -293,7 +293,6 @@ const authSlice = createSlice({
         setLoading(state, false);
         const errorMessage = action.payload ?? "Token refresh failed";
         
-        // Handle invalid refresh token case
         if (errorMessage.includes("Invalid refresh token")) {
           state.error = "Your session has expired. Please log in again.";
         } else if (action.payload !== "No valid refresh token") {
@@ -316,7 +315,6 @@ const authSlice = createSlice({
         setLoading(state, false);
         const errorMessage = action.payload ?? "Failed to get current user";
         
-        // Handle blocked user and invalid token cases
         if (errorMessage.includes("blocked") || errorMessage.includes("Company account is blocked")) {
           state.error = "Your account has been blocked. Please contact support for assistance.";
         } else if (errorMessage.includes("Invalid refresh token")) {

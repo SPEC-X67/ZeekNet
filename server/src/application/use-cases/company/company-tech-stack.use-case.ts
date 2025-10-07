@@ -30,8 +30,11 @@ export class CompanyTechStackUseCase {
     if (!existingTechStack) {
       throw new NotFoundError(`Company tech stack with ID ${techStackId} not found`);
     }
-    const updatedTechStack = existingTechStack.updateTechStack(data);
-    return this.companyTechStackRepository.update(updatedTechStack);
+    const updatedTechStack = await this.companyTechStackRepository.update(techStackId, data);
+    if (!updatedTechStack) {
+      throw new NotFoundError(`Failed to update company tech stack with ID ${techStackId}`);
+    }
+    return updatedTechStack;
   }
 
   async deleteTechStack(techStackId: string): Promise<void> {

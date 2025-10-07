@@ -103,22 +103,11 @@ export class MongoCompanyRepository implements Partial<ICompanyRepository> {
     profileId: string,
     updates: Partial<CompanyProfile>,
   ): Promise<CompanyProfile> {
-    console.log('Repository updateProfile called with:', {
-      profileId,
-      updates
-    });
-    
     const updated = await CompanyProfileModel.findByIdAndUpdate(
       profileId,
       updates,
       { new: true },
     ).exec();
-    
-    console.log('MongoDB update result:', {
-      found: !!updated,
-      logo: updated?.logo,
-      aboutUs: updated?.aboutUs
-    });
     
     if (!updated) throw new Error('Profile not found');
     return this.mapToProfile(updated as CompanyProfileDocument);
@@ -243,6 +232,19 @@ export class MongoCompanyRepository implements Partial<ICompanyRepository> {
       companyId,
       { isVerified },
     ).exec();
+  }
+
+  async updateVerification(
+    companyId: string,
+    updates: Partial<CompanyVerification>,
+  ): Promise<CompanyVerification> {
+    const updated = await CompanyVerificationModel.findOneAndUpdate(
+      { companyId },
+      updates,
+      { new: true },
+    ).exec();
+    if (!updated) throw new Error('Verification not found');
+    return this.mapToVerification(updated as unknown as CompanyVerificationDocument);
   }
 
   private mapToProfile(doc: CompanyProfileDocument): CompanyProfile {

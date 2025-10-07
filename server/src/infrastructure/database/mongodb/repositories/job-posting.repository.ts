@@ -26,14 +26,21 @@ export class MongoJobPostingRepository extends MongoBaseRepository<JobPosting> i
   constructor() {
     super(JobPostingModel);
   }
-
-  /**
-   * Map MongoDB document to JobPosting entity
-   */
+  
   protected mapToEntity(doc: JobPostingDocument): JobPosting {
+    let companyId = '';
+    if (doc.company_id) {
+      const companyIdValue = doc.company_id as any;
+      if (typeof companyIdValue === 'object' && companyIdValue._id) {
+        companyId = companyIdValue._id.toString();
+      } else {
+        companyId = companyIdValue.toString();
+      }
+    }
+
     return {
       _id: doc._id ? doc._id.toString() : '',
-      company_id: doc.company_id ? doc.company_id.toString() : '',
+      company_id: companyId,
       title: doc.title || '',
       description: doc.description || '',
       responsibilities: doc.responsibilities || [],

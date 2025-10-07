@@ -29,7 +29,6 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   }, [dispatch, isInitialized]);
 
-  // Check if user is blocked and logout if so
   useEffect(() => {
     if (isInitialized && isBlocked) {
       dispatch(logoutBlockedUser());
