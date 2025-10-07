@@ -1,39 +1,35 @@
-import { injectable, inject } from 'inversify';
 import { SimpleCompanyProfileRequestDto } from '../../dto/company/create-company.dto';
-import { TYPES } from '../../../infrastructure/di/types';
-import { ICompanyRepository } from '../../../domain/repositories';
+import { ICompanyRepository } from '../../../domain/interfaces/repositories';
+import { ICreateCompanyProfileUseCase } from '../../../domain/interfaces/use-cases';
 import { CompanyProfileMapper } from '../../mappers';
 import { CompanyProfileResponseDto } from '../../mappers/types';
 
-@injectable()
-export class CreateCompanyProfileUseCase {
+export class CreateCompanyProfileUseCase implements ICreateCompanyProfileUseCase {
   constructor(
-    @inject(TYPES.CompanyRepository)
-    private readonly companyRepository: ICompanyRepository,
-    @inject(TYPES.CompanyProfileMapper)
-    private readonly companyProfileMapper: CompanyProfileMapper,
+    private readonly _companyRepository: ICompanyRepository,
+    private readonly _companyProfileMapper: CompanyProfileMapper,
   ) {}
 
   async execute(
     userId: string,
     data: SimpleCompanyProfileRequestDto,
   ): Promise<CompanyProfileResponseDto> {
-    const profileData = this.companyProfileMapper.toDomain(data, userId);
-    const contactData = this.companyProfileMapper.toContactData(data, '');
-    const locationData = this.companyProfileMapper.toLocationData(data, '');
-    const verificationData = this.companyProfileMapper.toVerificationData(data, '');
+    const profileData = this._companyProfileMapper.toDomain(data, userId);
+    const contactData = this._companyProfileMapper.toContactData(data, '');
+    const locationData = this._companyProfileMapper.toLocationData(data, '');
+    const verificationData = this._companyProfileMapper.toVerificationData(data, '');
 
-    const profile = await this.companyRepository.createProfile(profileData);
+    const profile = await this._companyRepository.createProfile(profileData);
 
     contactData.companyId = profile.id;
-    await this.companyRepository.createContact(contactData);
+    await this._companyRepository.createContact(contactData);
 
     locationData.companyId = profile.id;
-    await this.companyRepository.createLocation(locationData);
+    await this._companyRepository.createLocation(locationData);
 
     verificationData.companyId = profile.id;
-    await this.companyRepository.createVerification(verificationData);
+    await this._companyRepository.createVerification(verificationData);
 
-    return this.companyProfileMapper.toDto(profile);
+    return this._companyProfileMapper.toDto(profile);
   }
 }

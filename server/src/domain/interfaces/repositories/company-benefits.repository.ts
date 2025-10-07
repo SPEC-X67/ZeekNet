@@ -1,4 +1,4 @@
-import { CompanyBenefits } from '../entities/company-benefits.entity';
+import { CompanyBenefits } from '../../entities/company-benefits.entity';
 import { IBaseRepository } from './base.repository';
 
 export interface ICompanyBenefitsRepository extends IBaseRepository<CompanyBenefits> {

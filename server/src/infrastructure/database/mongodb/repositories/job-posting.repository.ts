@@ -1,4 +1,4 @@
-import { JobPostingRepository } from '../../../../domain/repositories/job-posting.repository.interface';
+import { IJobPostingRepository, IJobPostingSearchRepository, IJobPostingAnalyticsRepository, IJobPostingManagementRepository } from '../../../../domain/interfaces/repositories';
 import { JobPosting, CreateJobPostingRequest, UpdateJobPostingRequest, JobPostingFilters, PaginatedJobPostings } from '../../../../domain/entities/job-posting.entity';
 import { JobPostingModel, JobPostingDocument } from '../models/job-posting.model';
 import { Types } from 'mongoose';
@@ -22,7 +22,7 @@ interface MongoUpdateData {
   category_ids?: string[];
 }
 
-export class MongoJobPostingRepository extends MongoBaseRepository<JobPosting> implements JobPostingRepository {
+export class MongoJobPostingRepository extends MongoBaseRepository<JobPosting> implements IJobPostingRepository, IJobPostingSearchRepository, IJobPostingAnalyticsRepository, IJobPostingManagementRepository {
   constructor() {
     super(JobPostingModel);
   }

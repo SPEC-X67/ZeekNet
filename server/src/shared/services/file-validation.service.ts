@@ -1,6 +1,6 @@
 import { Request } from 'express';
 import { ValidationError } from '../../domain/errors/errors';
-import { IS3Service } from '../../application/interfaces';
+import { IS3Service } from '../../domain/interfaces';
 
 export class FileValidationService {
   static validateFileType(mimetype: string, filename: string): void {

@@ -1,8 +1,6 @@
-import { injectable, inject } from 'inversify';
 import { randomBytes } from 'crypto';
 import { redisClient } from '../database/redis/connection/redis';
-import { MailerService, PasswordResetService } from '../../application/interfaces';
-import { TYPES } from '../di/types';
+import { IMailerService, IPasswordResetService } from '../../domain/interfaces/services';
 import { env } from '../config/env';
 import { passwordResetTemplate } from '../messaging/templates/password-reset.template';
 
@@ -13,10 +11,9 @@ interface PasswordResetToken {
   expiresAt: string;
 }
 
-@injectable()
-export class PasswordResetServiceImpl implements PasswordResetService {
+export class PasswordResetServiceImpl implements IPasswordResetService {
   constructor(
-    @inject(TYPES.MailerService) private readonly mailerService: MailerService,
+    private readonly _mailerService: IMailerService,
   ) {}
 
   async generateResetToken(userId: string, email: string): Promise<string> {
@@ -72,7 +69,7 @@ export class PasswordResetServiceImpl implements PasswordResetService {
     const resetUrl = `${env.FRONTEND_URL}/reset-password?token=${token}`;
     const htmlContent = passwordResetTemplate.html(resetUrl);
 
-    await this.mailerService.sendMail(
+    await this._mailerService.sendMail(
       email,
       passwordResetTemplate.subject,
       htmlContent,

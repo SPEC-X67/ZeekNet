@@ -1,7 +1,6 @@
-import { injectable, inject } from 'inversify';
 import { GetAllUsersRequestDto } from '../../dto/admin/user-management.dto';
-import { TYPES } from '../../../infrastructure/di/types';
-import { IUserRepositoryFull } from '../../../domain/repositories';
+import { IUserManagementRepository } from '../../../domain/interfaces/repositories';
+import { IGetAllUsersUseCase } from '../../../domain/interfaces/use-cases';
 import { UserMapper } from '../../mappers/user.mapper';
 import { UserResponseDto } from '../../mappers/types';
 
@@ -17,13 +16,10 @@ interface GetAllUsersResult {
   };
 }
 
-@injectable()
-export class GetAllUsersUseCase {
+export class GetAllUsersUseCase implements IGetAllUsersUseCase {
   constructor(
-    @inject(TYPES.UserRepository)
-    private readonly userRepository: IUserRepositoryFull,
-    @inject(TYPES.UserMapper)
-    private readonly userMapper: UserMapper,
+      private readonly _userRepository: IUserManagementRepository,
+    private readonly _userMapper: UserMapper,
   ) {}
 
   async execute(options: GetAllUsersRequestDto): Promise<GetAllUsersResult> {
@@ -34,9 +30,9 @@ export class GetAllUsersUseCase {
       role: options.role,
       isBlocked: options.isBlocked ? options.isBlocked === 'true' : undefined,
     };
-    const result = await this.userRepository.findAllUsers(convertedOptions);
+    const result = await this._userRepository.findAllUsers(convertedOptions);
     return {
-      users: result.users.map(user => this.userMapper.toDto(user)),
+      users: result.users.map(user => this._userMapper.toDto(user)),
       pagination: {
         page: convertedOptions.page,
         limit: convertedOptions.limit,

@@ -1,7 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { injectable, inject } from 'inversify';
-import { TYPES } from '../../infrastructure/di/types';
-import { ICompanyRepository } from '../../domain/repositories';
+import { ICompanyRepository } from '../../domain/interfaces/repositories';
 import { UserRole } from '../../domain/enums/user-role.enum';
 
 export interface AuthenticatedRequest extends Request {
@@ -12,11 +10,9 @@ export interface AuthenticatedRequest extends Request {
   };
 }
 
-@injectable()
 export class CompanyVerificationMiddleware {
   constructor(
-    @inject(TYPES.CompanyRepository)
-    private readonly companyRepository: ICompanyRepository,
+    private readonly _companyRepository: ICompanyRepository,
   ) {}
 
   checkCompanyVerified = async (
@@ -41,7 +37,7 @@ export class CompanyVerificationMiddleware {
         return;
       }
 
-      const companyProfile = await this.companyRepository.getProfileByUserId(userId);
+      const companyProfile = await this._companyRepository.getProfileByUserId(userId);
       
       if (!companyProfile) {
         res.status(403).json({

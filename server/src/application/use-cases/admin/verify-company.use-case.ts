@@ -1,16 +1,13 @@
-import { injectable, inject } from 'inversify';
-import { TYPES } from '../../../infrastructure/di/types';
-import { ICompanyRepository } from '../../../domain/repositories';
+import { ICompanyRepository } from '../../../domain/interfaces/repositories';
+import { IVerifyCompanyUseCase } from '../../../domain/interfaces/use-cases';
 
-@injectable()
-export class VerifyCompanyUseCase {
+export class VerifyCompanyUseCase implements IVerifyCompanyUseCase {
   constructor(
-    @inject(TYPES.CompanyRepository)
-    private readonly companyRepository: ICompanyRepository,
+    private readonly _companyRepository: ICompanyRepository,
   ) {}
 
   async execute(companyId: string, isVerified: 'pending' | 'rejected' | 'verified'): Promise<void> {
-    await this.companyRepository.updateVerificationStatus(
+    await this._companyRepository.updateVerificationStatus(
       companyId,
       isVerified,
     );

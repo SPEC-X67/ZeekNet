@@ -1,4 +1,4 @@
-import { CompanyContact } from '../entities/company-contact.entity';
+import { CompanyContact } from '../../entities/company-contact.entity';
 import { IBaseRepository } from './base.repository';
 
 export interface ICompanyContactRepository extends IBaseRepository<CompanyContact> {

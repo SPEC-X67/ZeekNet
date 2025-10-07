@@ -1,36 +1,27 @@
-import { injectable, inject } from 'inversify';
 import { LoginResult } from '../../dto/auth/auth-response.dto';
-import { TYPES } from '../../../infrastructure/di/types';
-import { IUserRepositoryFull } from '../../../domain/repositories';
-import { PasswordHasher, TokenService, GoogleTokenVerifier, OtpService, MailerService } from '../../interfaces/infrastructure';
+import { IUserRepositoryFull } from '../../../domain/interfaces/repositories';
+import { IPasswordHasher, ITokenService, IGoogleTokenVerifier, IOtpService, IMailerService } from '../../../domain/interfaces/services';
 import { UserRole } from '../../../domain/enums/user-role.enum';
 import { otpVerificationTemplate } from '../../../infrastructure/messaging/templates/otp-verification.template';
 
-@injectable()
 export class GoogleLoginUseCase {
   constructor(
-    @inject(TYPES.UserRepository)
-    private readonly userRepository: IUserRepositoryFull,
-    @inject(TYPES.PasswordHasher)
-    private readonly passwordHasher: PasswordHasher,
-    @inject(TYPES.TokenService)
-    private readonly tokenService: TokenService,
-    @inject(TYPES.GoogleTokenVerifier)
-    private readonly googleVerifier: GoogleTokenVerifier,
-    @inject(TYPES.OtpService)
-    private readonly otpService: OtpService,
-    @inject(TYPES.MailerService)
-    private readonly mailerService: MailerService,
+    private readonly _userRepository: IUserRepositoryFull,
+    private readonly _passwordHasher: IPasswordHasher,
+    private readonly _tokenService: ITokenService,
+    private readonly _googleVerifier: IGoogleTokenVerifier,
+    private readonly _otpService: IOtpService,
+    private readonly _mailerService: IMailerService,
   ) {}
 
   async execute(idToken: string): Promise<LoginResult> {
-    const profile = await this.googleVerifier.verifyIdToken(idToken);
-    let user = await this.userRepository.findByEmail(profile.email);
+    const profile = await this._googleVerifier.verifyIdToken(idToken);
+    let user = await this._userRepository.findByEmail(profile.email);
     if (!user) {
-      user = await this.userRepository.save({
+      user = await this._userRepository.save({
         name: profile.name,
         email: profile.email,
-        password: await this.passwordHasher.hash('oauth-google'),
+        password: await this._passwordHasher.hash('oauth-google'),
         role: UserRole.SEEKER,
         isVerified: profile.emailVerified,
         isBlocked: false,
@@ -38,10 +29,10 @@ export class GoogleLoginUseCase {
       });
     }
 
-    const accessToken = this.tokenService.signAccess({ sub: user.id, role: user.role });
-    const refreshToken = this.tokenService.signRefresh({ sub: user.id });
-    const hashedRefresh = await this.passwordHasher.hash(refreshToken);
-    await this.userRepository.updateRefreshToken(user.id, hashedRefresh);
+    const accessToken = this._tokenService.signAccess({ sub: user.id, role: user.role });
+    const refreshToken = this._tokenService.signRefresh({ sub: user.id });
+    const hashedRefresh = await this._passwordHasher.hash(refreshToken);
+    await this._userRepository.updateRefreshToken(user.id, hashedRefresh);
     return { tokens: { accessToken, refreshToken }, user };
   }
 }

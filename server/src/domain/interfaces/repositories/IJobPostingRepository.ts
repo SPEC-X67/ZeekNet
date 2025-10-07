@@ -1,4 +1,4 @@
-import { JobPosting, CreateJobPostingRequest, UpdateJobPostingRequest, JobPostingFilters, PaginatedJobPostings } from '../entities/job-posting.entity';
+import { JobPosting, CreateJobPostingRequest, UpdateJobPostingRequest, JobPostingFilters, PaginatedJobPostings } from '../../entities/job-posting.entity';
 
 export interface IJobPostingRepository {
   create(data: CreateJobPostingRequest): Promise<JobPosting>;
@@ -22,8 +22,4 @@ export interface IJobPostingManagementRepository {
   updateJobStatus(id: string, status: string): Promise<JobPosting | null>;
 }
 
-export interface JobPostingRepository extends 
-  IJobPostingRepository, 
-  IJobPostingSearchRepository, 
-  IJobPostingAnalyticsRepository, 
-  IJobPostingManagementRepository {}
+// Removed IJobPostingRepositoryFull - use specific interfaces instead

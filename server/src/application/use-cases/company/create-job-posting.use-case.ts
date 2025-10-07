@@ -1,35 +1,29 @@
-import { injectable, inject } from 'inversify';
-import { JobPostingRepository } from '../../../domain/repositories/job-posting.repository.interface';
+import { IJobPostingRepositoryFull } from '../../../domain/interfaces/repositories';
 import { CreateJobPostingRequestDto } from '../../dto/job-posting/job-posting.dto';
 import { AppError } from '../../../domain/errors/errors';
-import { TYPES } from '../../../infrastructure/di/types';
 import { JobPostingMapper } from '../../mappers/job-posting.mapper';
 import { JobPostingResponseDto } from '../../mappers/types';
-import { ICompanyRepository } from '../../../domain/repositories';
+import { ICompanyRepository } from '../../../domain/interfaces/repositories';
 
-@injectable()
 export class CreateJobPostingUseCase {
   constructor(
-    @inject(TYPES.JobPostingRepository) 
-    private jobPostingRepository: JobPostingRepository,
-    @inject(TYPES.JobPostingMapper)
-    private jobPostingMapper: JobPostingMapper,
-    @inject(TYPES.CompanyRepository)
-    private companyRepository: ICompanyRepository,
+    private readonly _jobPostingRepository: IJobPostingRepositoryFull,
+    private readonly _jobPostingMapper: JobPostingMapper,
+    private readonly _companyRepository: ICompanyRepository,
   ) {}
 
   async execute(userId: string, data: CreateJobPostingRequestDto): Promise<JobPostingResponseDto> {
     try {
       // Get company profile by user ID
-      const companyProfile = await this.companyRepository.getProfileByUserId(userId);
+      const companyProfile = await this._companyRepository.getProfileByUserId(userId);
       
       if (!companyProfile) {
         throw new AppError('Company profile not found', 404);
       }
 
-      const jobPostingData = this.jobPostingMapper.toDomain(data, companyProfile.id);
-      const jobPosting = await this.jobPostingRepository.create(jobPostingData);
-      return this.jobPostingMapper.toDto(jobPosting);
+      const jobPostingData = this._jobPostingMapper.toDomain(data, companyProfile.id);
+      const jobPosting = await this._jobPostingRepository.create(jobPostingData);
+      return this._jobPostingMapper.toDto(jobPosting);
     } catch (error) {
       console.error('CreateJobPostingUseCase error:', error);
       if (error instanceof Error) {

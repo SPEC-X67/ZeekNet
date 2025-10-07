@@ -1,4 +1,3 @@
-import { injectable } from 'inversify';
 import { SimpleCompanyProfileRequestDto } from '../dto/company/create-company.dto';
 import { CompanyProfile, CompanyContact, CompanyLocation } from '../../domain/entities/company-profile.entity';
 import {
@@ -23,7 +22,6 @@ interface CompanyProfileWithDetails {
   jobPostings?: any[];
 }
 
-@injectable()
 export class CompanyProfileMapper {
   
   toDomain(dto: SimpleCompanyProfileRequestDto, userId: string): CompanyProfileData {

@@ -1,9 +1,7 @@
-import { injectable } from 'inversify';
 import { RegisterRequestDto } from '../dto/auth/register.dto';
 import { User } from '../../domain/entities/user.entity';
 import { UserData, UserResponseDto, AuthResponseDto } from './types';
 
-@injectable()
 export class UserMapper {
   
   toDomain(dto: RegisterRequestDto, id: string): UserData {

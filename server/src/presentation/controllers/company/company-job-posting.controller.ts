@@ -1,20 +1,17 @@
 import { Request, Response } from 'express';
-import { injectable, inject } from 'inversify';
 import { BaseController, AuthenticatedRequest } from '../../../shared/base/base-controller';
 import { CreateJobPostingUseCase, GetJobPostingUseCase, GetCompanyJobPostingsUseCase, UpdateJobPostingUseCase, DeleteJobPostingUseCase, IncrementJobViewCountUseCase, UpdateJobStatusUseCase } from '../../../application/use-cases/company';
 import { CreateJobPostingRequestDto, UpdateJobPostingRequestDto, JobPostingQueryRequestDto } from '../../../application/dto/job-posting/job-posting.dto';
-import { TYPES } from '../../../infrastructure/di/types';
 
-@injectable()
 export class CompanyJobPostingController extends BaseController {
   constructor(
-    @inject(TYPES.CreateJobPostingUseCase) private createJobPostingUseCase: CreateJobPostingUseCase,
-    @inject(TYPES.GetJobPostingUseCase) private getJobPostingUseCase: GetJobPostingUseCase,
-    @inject(TYPES.GetCompanyJobPostingsUseCase) private getCompanyJobPostingsUseCase: GetCompanyJobPostingsUseCase,
-    @inject(TYPES.UpdateJobPostingUseCase) private updateJobPostingUseCase: UpdateJobPostingUseCase,
-    @inject(TYPES.DeleteJobPostingUseCase) private deleteJobPostingUseCase: DeleteJobPostingUseCase,
-    @inject(TYPES.IncrementJobViewCountUseCase) private incrementJobViewCountUseCase: IncrementJobViewCountUseCase,
-    @inject(TYPES.UpdateJobStatusUseCase) private updateJobStatusUseCase: UpdateJobStatusUseCase,
+    private readonly _createJobPostingUseCase: CreateJobPostingUseCase,
+    private readonly _getJobPostingUseCase: GetJobPostingUseCase,
+    private readonly _getCompanyJobPostingsUseCase: GetCompanyJobPostingsUseCase,
+    private readonly _updateJobPostingUseCase: UpdateJobPostingUseCase,
+    private readonly _deleteJobPostingUseCase: DeleteJobPostingUseCase,
+    private readonly _incrementJobViewCountUseCase: IncrementJobViewCountUseCase,
+    private readonly _updateJobStatusUseCase: UpdateJobStatusUseCase,
   ) {
     super();
   }
@@ -28,7 +25,7 @@ export class CompanyJobPostingController extends BaseController {
       }
 
       const createJobPostingDto: CreateJobPostingRequestDto = req.body;
-      const jobPosting = await this.createJobPostingUseCase.execute(companyId, createJobPostingDto);
+      const jobPosting = await this._createJobPostingUseCase.execute(companyId, createJobPostingDto);
       this.created(res, jobPosting, 'Job posting created successfully');
     } catch (error) {
       this.handleError(res, error);
@@ -40,9 +37,9 @@ export class CompanyJobPostingController extends BaseController {
       const { id } = req.params;
       const userRole = req.user?.role;
       
-      const jobPosting = await this.getJobPostingUseCase.execute(id);
+      const jobPosting = await this._getJobPostingUseCase.execute(id);
       
-      this.incrementJobViewCountUseCase.execute(id, userRole).catch(console.error);
+      this._incrementJobViewCountUseCase.execute(id, userRole).catch(console.error);
 
       this.success(res, jobPosting, 'Job posting retrieved successfully');
     } catch (error) {
@@ -71,7 +68,7 @@ export class CompanyJobPostingController extends BaseController {
         search: req.query.search as string,
       };
 
-      const result = await this.getCompanyJobPostingsUseCase.execute(companyId, query);
+      const result = await this._getCompanyJobPostingsUseCase.execute(companyId, query);
       
       const responseData = {
         jobs: result.jobs,
@@ -98,7 +95,7 @@ export class CompanyJobPostingController extends BaseController {
 
       const updateJobPostingDto: UpdateJobPostingRequestDto = req.body;
       
-      const jobPosting = await this.updateJobPostingUseCase.execute(id, companyId, updateJobPostingDto);
+      const jobPosting = await this._updateJobPostingUseCase.execute(id, companyId, updateJobPostingDto);
       
       this.success(res, jobPosting, 'Job posting updated successfully');
     } catch (error) {
@@ -117,7 +114,7 @@ export class CompanyJobPostingController extends BaseController {
         return;
       }
 
-      await this.deleteJobPostingUseCase.execute(id, companyId);
+      await this._deleteJobPostingUseCase.execute(id, companyId);
       
       this.success(res, null, 'Job posting deleted successfully');
     } catch (error) {
@@ -141,7 +138,7 @@ export class CompanyJobPostingController extends BaseController {
         return;
       }
 
-      const jobPosting = await this.updateJobStatusUseCase.execute(id, companyId, is_active);
+      const jobPosting = await this._updateJobStatusUseCase.execute(id, companyId, is_active);
       
       this.success(res, jobPosting, 'Job status updated successfully');
     } catch (error) {

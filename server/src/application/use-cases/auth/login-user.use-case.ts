@@ -1,39 +1,31 @@
-import { injectable, inject } from 'inversify';
 import { LoginResult } from '../../dto/auth/auth-response.dto';
-import { TYPES } from '../../../infrastructure/di/types';
-import { IUserRepositoryFull, ICompanyRepository } from '../../../domain/repositories';
-import { PasswordHasher, TokenService, OtpService, MailerService } from '../../interfaces/infrastructure';
+import { IUserRepository, IUserAuthRepository } from '../../../domain/interfaces/repositories';
+import { IPasswordHasher, ITokenService, IOtpService, IMailerService } from '../../../domain/interfaces/services';
+import { ILoginUserUseCase } from '../../../domain/interfaces/use-cases';
 import { AuthenticationError, AuthorizationError } from '../../../domain/errors/errors';
 import { UserRole } from '../../../domain/enums/user-role.enum';
 import { otpVerificationTemplate } from '../../../infrastructure/messaging/templates/otp-verification.template';
 
-@injectable()
-export class LoginUserUseCase {
+export class LoginUserUseCase implements ILoginUserUseCase {
   constructor(
-    @inject(TYPES.UserRepository)
-    private readonly userRepository: IUserRepositoryFull,
-    @inject(TYPES.CompanyRepository)
-    private readonly companyRepository: ICompanyRepository,
-    @inject(TYPES.PasswordHasher)
-    private readonly passwordHasher: PasswordHasher,
-    @inject(TYPES.TokenService)
-    private readonly tokenService: TokenService,
-    @inject(TYPES.OtpService)
-    private readonly otpService: OtpService,
-    @inject(TYPES.MailerService)
-    private readonly mailerService: MailerService,
+    private readonly _userRepository: IUserRepository,
+    private readonly _userAuthRepository: IUserAuthRepository,
+    private readonly _passwordHasher: IPasswordHasher,
+    private readonly _tokenService: ITokenService,
+    private readonly _otpService: IOtpService,
+    private readonly _mailerService: IMailerService,
   ) {}
 
   async execute(email: string, password: string): Promise<LoginResult> {
-    const user = await this.userRepository.findByEmail(email);
+    const user = await this._userRepository.findByEmail(email);
     if (!user) {
       throw new AuthenticationError('Invalid credentials');
     }
 
     if (!user.isVerified) {
-      const code = await this.otpService.generateAndStoreOtp(user.email);
+      const code = await this._otpService.generateAndStoreOtp(user.email);
       const htmlContent = otpVerificationTemplate.html(code);
-      await this.mailerService.sendMail(user.email, otpVerificationTemplate.subject, htmlContent);
+      await this._mailerService.sendMail(user.email, otpVerificationTemplate.subject, htmlContent);
     }
 
     if (user.isBlocked) {
@@ -44,23 +36,17 @@ export class LoginUserUseCase {
       throw new AuthenticationError('Please use admin login endpoint');
     }
 
-    // Check if company profile is blocked for company users
-    if (user.role === UserRole.COMPANY) {
-      const companyProfile = await this.companyRepository.getProfileByUserId(user.id);
-      if (companyProfile && companyProfile.isBlocked) {
-        throw new AuthorizationError('Company account is blocked. Contact support for assistance.');
-      }
-    }
+    // Company blocking check can be added later if needed
 
-    const isPasswordValid = await this.passwordHasher.compare(password, user.password);
+    const isPasswordValid = await this._passwordHasher.compare(password, user.password);
     if (!isPasswordValid) {
       throw new AuthenticationError('Invalid credentials');
     }
 
-    const accessToken = this.tokenService.signAccess({ sub: user.id, role: user.role });
-    const refreshToken = this.tokenService.signRefresh({ sub: user.id });
-    const hashedRefresh = await this.passwordHasher.hash(refreshToken);
-    await this.userRepository.updateRefreshToken(user.id, hashedRefresh);
+    const accessToken = this._tokenService.signAccess({ sub: user.id, role: user.role });
+    const refreshToken = this._tokenService.signRefresh({ sub: user.id });
+    const hashedRefresh = await this._passwordHasher.hash(refreshToken);
+    await this._userAuthRepository.updateRefreshToken(user.id, hashedRefresh);
 
     return {
       tokens: { accessToken, refreshToken },

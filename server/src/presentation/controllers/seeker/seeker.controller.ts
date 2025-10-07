@@ -1,18 +1,15 @@
 import { Request, Response } from 'express';
-import { injectable, inject } from 'inversify';
 import { BaseController, AuthenticatedRequest } from '../../../shared/base/base-controller';
 import { GetJobPostingUseCase } from '../../../application/use-cases/company';
 import { GetAllJobPostingsUseCase } from '../../../application/use-cases/public/get-all-job-postings.use-case';
 import { JobPostingQueryRequestDto } from '../../../application/dto/job-posting/job-posting.dto';
 import { IncrementJobViewCountUseCase } from '../../../application/use-cases/company';
-import { TYPES } from '../../../infrastructure/di/types';
 
-@injectable()
 export class SeekerController extends BaseController {
   constructor(
-    @inject(TYPES.GetJobPostingUseCase) private getJobPostingUseCase: GetJobPostingUseCase,
-    @inject(TYPES.GetAllJobPostingsUseCase) private getAllJobPostingsUseCase: GetAllJobPostingsUseCase,
-    @inject(TYPES.IncrementJobViewCountUseCase) private incrementJobViewCountUseCase: IncrementJobViewCountUseCase,
+    private readonly _getJobPostingUseCase: GetJobPostingUseCase,
+    private readonly _getAllJobPostingsUseCase: GetAllJobPostingsUseCase,
+    private readonly _incrementJobViewCountUseCase: IncrementJobViewCountUseCase,
   ) {
     super();
   }
@@ -31,7 +28,7 @@ export class SeekerController extends BaseController {
         search: req.query.search as string,
       };
 
-      const result = await this.getAllJobPostingsUseCase.execute(query);
+      const result = await this._getAllJobPostingsUseCase.execute(query);
       
       this.success(res, result, 'Job postings retrieved successfully');
     } catch (error) {
@@ -44,10 +41,10 @@ export class SeekerController extends BaseController {
       const { id } = req.params;
       const userRole = (req as any).user?.role;
       
-      const jobPosting = await this.getJobPostingUseCase.execute(id);
+      const jobPosting = await this._getJobPostingUseCase.execute(id);
       
       // Only increment view count for seekers
-      this.incrementJobViewCountUseCase.execute(id, userRole).catch(console.error);
+      this._incrementJobViewCountUseCase.execute(id, userRole).catch(console.error);
       
       this.success(res, jobPosting, 'Job posting retrieved successfully');
     } catch (error) {

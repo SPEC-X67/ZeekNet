@@ -1,7 +1,5 @@
-import { injectable, inject } from 'inversify';
 import { GetAllCompaniesRequestDto } from '../../dto/admin/user-management.dto';
-import { TYPES } from '../../../infrastructure/di/types';
-import { ICompanyRepository } from '../../../domain/repositories';
+import { ICompanyRepository } from '../../../domain/interfaces/repositories';
 import { CompanyProfileMapper } from '../../mappers/company-profile.mapper';
 import { CompanyProfileResponseDto } from '../../mappers/types';
 
@@ -24,13 +22,10 @@ interface GetAllCompaniesWithVerificationResult {
   };
 }
 
-@injectable()
 export class GetCompaniesWithVerificationUseCase {
   constructor(
-    @inject(TYPES.CompanyRepository)
-    private readonly companyRepository: ICompanyRepository,
-    @inject(TYPES.CompanyProfileMapper)
-    private readonly companyProfileMapper: CompanyProfileMapper,
+    private readonly _companyRepository: ICompanyRepository,
+    private readonly _companyProfileMapper: CompanyProfileMapper,
   ) {}
 
   async execute(options: GetAllCompaniesRequestDto): Promise<GetAllCompaniesWithVerificationResult> {
@@ -43,12 +38,12 @@ export class GetCompaniesWithVerificationUseCase {
       isBlocked: options.isBlocked ? options.isBlocked === 'true' : undefined,
     };
 
-    const result = await this.companyRepository.getAllCompanies(convertedOptions);
+    const result = await this._companyRepository.getAllCompanies(convertedOptions);
 
     const companiesWithVerification = await Promise.all(
       result.companies.map(async (company) => {
-        const verification = await this.companyRepository.getVerificationByCompanyId(company.id);
-        const companyDto = this.companyProfileMapper.toDto(company);
+        const verification = await this._companyRepository.getVerificationByCompanyId(company.id);
+        const companyDto = this._companyProfileMapper.toDto(company);
         return {
           ...companyDto,
           verification: verification ? {
@@ -82,13 +77,13 @@ export class GetCompaniesWithVerificationUseCase {
   }
 
   async executeById(companyId: string): Promise<CompanyWithVerification | null> {
-    const company = await this.companyRepository.getProfileById(companyId);
+    const company = await this._companyRepository.getProfileById(companyId);
     if (!company) {
       return null;
     }
 
-    const verification = await this.companyRepository.getVerificationByCompanyId(companyId);
-    const companyDto = this.companyProfileMapper.toDto(company);
+    const verification = await this._companyRepository.getVerificationByCompanyId(companyId);
+    const companyDto = this._companyProfileMapper.toDto(company);
     return {
       ...companyDto,
       verification: verification ? {

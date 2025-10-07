@@ -1,24 +1,21 @@
-import { injectable, inject } from 'inversify';
-import { JobPostingRepository } from '../../../domain/repositories/job-posting.repository.interface';
-import { TYPES } from '../../../infrastructure/di/types';
+import { IJobPostingRepository } from '../../../domain/interfaces/repositories';
+import { IAdminDeleteJobUseCase } from '../../../domain/interfaces/use-cases';
 import { AppError } from '../../../domain/errors/errors';
 
-@injectable()
-export class AdminDeleteJobUseCase {
+export class AdminDeleteJobUseCase implements IAdminDeleteJobUseCase {
   constructor(
-    @inject(TYPES.JobPostingRepository) 
-    private jobPostingRepository: JobPostingRepository
+    private readonly _jobPostingRepository: IJobPostingRepository
   ) {}
 
   async execute(jobId: string) {
     try {
-      const job = await this.jobPostingRepository.findById(jobId);
+      const job = await this._jobPostingRepository.findById(jobId);
       
       if (!job) {
         throw new AppError('Job not found', 404);
       }
 
-      await this.jobPostingRepository.delete(jobId);
+      await this._jobPostingRepository.delete(jobId);
 
       return { success: true };
     } catch (error) {

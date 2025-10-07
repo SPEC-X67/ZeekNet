@@ -1,22 +1,17 @@
-import { injectable, inject } from 'inversify';
-import { JobPostingRepository } from '../../../domain/repositories/job-posting.repository.interface';
+import { IJobPostingRepositoryFull } from '../../../domain/interfaces/repositories';
 import { JobPostingQueryRequestDto } from '../../dto/job-posting/job-posting.dto';
 import { AppError } from '../../../domain/errors/errors';
-import { TYPES } from '../../../infrastructure/di/types';
-import { ICompanyRepository } from '../../../domain/repositories';
+import { ICompanyRepository } from '../../../domain/interfaces/repositories';
 
-@injectable()
 export class GetCompanyJobPostingsUseCase {
   constructor(
-    @inject(TYPES.JobPostingRepository) 
-    private jobPostingRepository: JobPostingRepository,
-    @inject(TYPES.CompanyRepository)
-    private companyRepository: ICompanyRepository,
+    private readonly _jobPostingRepository: IJobPostingRepositoryFull,
+    private readonly _companyRepository: ICompanyRepository,
   ) {}
 
   async execute(userId: string, query: JobPostingQueryRequestDto): Promise<any> {
     try {
-      const companyProfile = await this.companyRepository.getProfileByUserId(userId);
+      const companyProfile = await this._companyRepository.getProfileByUserId(userId);
       
       if (!companyProfile) {
         throw new AppError('Company profile not found', 404);
@@ -33,7 +28,7 @@ export class GetCompanyJobPostingsUseCase {
         limit: query.limit,
       };
 
-      const result = await this.jobPostingRepository.findByCompanyId(companyProfile.id, filters);
+      const result = await this._jobPostingRepository.findByCompanyId(companyProfile.id, filters);
       
       return result;
     } catch (error) {

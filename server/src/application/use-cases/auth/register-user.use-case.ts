@@ -1,24 +1,18 @@
-import { injectable, inject } from 'inversify';
 import { Result } from '../../../shared/base/result';
 import { RegisterResult } from '../../dto/auth/auth-response.dto';
-import { TYPES } from '../../../infrastructure/di/types';
 import { UserRole } from '../../../domain/enums/user-role.enum';
-import { IUserRepository } from '../../../domain/repositories';
-import { PasswordHasher, OtpService, MailerService } from '../../interfaces/infrastructure';
+import { IUserRepository } from '../../../domain/interfaces/repositories';
+import { IPasswordHasher, IOtpService, IMailerService } from '../../../domain/interfaces/services';
+import { IRegisterUserUseCase } from '../../../domain/interfaces/use-cases';
 import { ValidationError } from '../../../domain/errors/errors';
 import { otpVerificationTemplate } from '../../../infrastructure/messaging/templates/otp-verification.template';
 
-@injectable()
-export class RegisterUserUseCase {
+export class RegisterUserUseCase implements IRegisterUserUseCase {
   constructor(
-    @inject(TYPES.UserRepository)
-    private readonly userRepository: IUserRepository,
-    @inject(TYPES.PasswordHasher)
-    private readonly passwordHasher: PasswordHasher,
-    @inject(TYPES.OtpService)
-    private readonly otpService: OtpService,
-    @inject(TYPES.MailerService)
-    private readonly mailerService: MailerService,
+    private readonly _userRepository: IUserRepository,
+    private readonly _passwordHasher: IPasswordHasher,
+    private readonly _otpService: IOtpService,
+    private readonly _mailerService: IMailerService,
   ) {}
 
   async execute(
@@ -34,7 +28,7 @@ export class RegisterUserUseCase {
       }
 
       const existingUserResult = await Result.fromPromise(
-        this.userRepository.findByEmail(email),
+        this._userRepository.findByEmail(email),
       );
       
       if (existingUserResult.isSuccess && existingUserResult.value) {
@@ -42,14 +36,14 @@ export class RegisterUserUseCase {
       }
 
       const hashedPasswordResult = await Result.fromPromise(
-        this.passwordHasher.hash(password),
+        this._passwordHasher.hash(password),
       );
       
       if (hashedPasswordResult.isFailure()) {
         return Result.failure(new Error('Password hashing failed'));
       }
 
-      const user = await this.userRepository.save({
+      const user = await this._userRepository.save({
         name: name ?? '',
         email,
         password: hashedPasswordResult.value!,
@@ -103,9 +97,9 @@ export class RegisterUserUseCase {
 
   private async sendOtpEmail(email: string): Promise<void> {
     try {
-      const code = await this.otpService.generateAndStoreOtp(email);
+      const code = await this._otpService.generateAndStoreOtp(email);
       const htmlContent = otpVerificationTemplate.html(code);
-      await this.mailerService.sendMail(email, otpVerificationTemplate.subject, htmlContent);
+      await this._mailerService.sendMail(email, otpVerificationTemplate.subject, htmlContent);
     } catch (error) {
       throw error;
     }

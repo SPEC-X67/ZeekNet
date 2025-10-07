@@ -1,7 +1,5 @@
-import { injectable, inject } from 'inversify';
 import { Request, Response, NextFunction } from 'express';
-import { IS3Service } from '../../../application/interfaces';
-import { TYPES } from '../../../infrastructure/di/types';
+import { IS3Service } from '../../../domain/interfaces';
 import {
   CreateCompanyProfileDto,
   SimpleCompanyProfileDto,
@@ -25,35 +23,21 @@ import { BaseController, AuthenticatedRequest } from '../../../shared';
 import { UploadService } from '../../../shared/services/upload.service';
 import { CompanyProfileMapper } from '../../../application/mappers';
 
-@injectable()
 export class CompanyController extends BaseController {
   constructor(
-    @inject(TYPES.CreateCompanyProfileUseCase)
-    private readonly createCompanyProfileUseCase: CreateCompanyProfileUseCase,
-    @inject(TYPES.ReapplyCompanyVerificationUseCase)
-    private readonly reapplyCompanyVerificationUseCase: ReapplyCompanyVerificationUseCase,
-    @inject(TYPES.CompanyProfileMapper)
-    private readonly companyProfileMapper: CompanyProfileMapper,
-    @inject(TYPES.UpdateCompanyProfileUseCase)
-    private readonly updateCompanyProfileUseCase: UpdateCompanyProfileUseCase,
-    @inject(TYPES.GetCompanyProfileUseCase)
-    private readonly getCompanyProfileUseCase: GetCompanyProfileUseCase,
-    @inject(TYPES.S3Service)
-    private readonly s3Service: IS3Service,
-    @inject(TYPES.CompanyContactUseCase)
-    private readonly companyContactUseCase: CompanyContactUseCase,
-    @inject(TYPES.CompanyTechStackUseCase)
-    private readonly companyTechStackUseCase: CompanyTechStackUseCase,
-    @inject(TYPES.CompanyOfficeLocationUseCase)
-    private readonly companyOfficeLocationUseCase: CompanyOfficeLocationUseCase,
-    @inject(TYPES.CompanyBenefitsUseCase)
-    private readonly companyBenefitsUseCase: CompanyBenefitsUseCase,
-    @inject(TYPES.CompanyWorkplacePicturesUseCase)
-    private readonly companyWorkplacePicturesUseCase: CompanyWorkplacePicturesUseCase,
-    @inject(TYPES.CompanyTeamUseCase)
-    private readonly companyTeamUseCase: CompanyTeamUseCase,
-    @inject(TYPES.GetCompanyJobPostingsUseCase)
-    private readonly getCompanyJobPostingsUseCase: GetCompanyJobPostingsUseCase,
+    private readonly _createCompanyProfileUseCase: CreateCompanyProfileUseCase,
+    private readonly _reapplyCompanyVerificationUseCase: ReapplyCompanyVerificationUseCase,
+    private readonly _companyProfileMapper: CompanyProfileMapper,
+    private readonly _updateCompanyProfileUseCase: UpdateCompanyProfileUseCase,
+    private readonly _getCompanyProfileUseCase: GetCompanyProfileUseCase,
+    private readonly _s3Service: IS3Service,
+    private readonly _companyContactUseCase: CompanyContactUseCase,
+    private readonly _companyTechStackUseCase: CompanyTechStackUseCase,
+    private readonly _companyOfficeLocationUseCase: CompanyOfficeLocationUseCase,
+    private readonly _companyBenefitsUseCase: CompanyBenefitsUseCase,
+    private readonly _companyWorkplacePicturesUseCase: CompanyWorkplacePicturesUseCase,
+    private readonly _companyTeamUseCase: CompanyTeamUseCase,
+    private readonly _getCompanyJobPostingsUseCase: GetCompanyJobPostingsUseCase,
   ) {
     super();
   }
@@ -78,7 +62,7 @@ export class CompanyController extends BaseController {
 
     try {
       const userId = this.validateUserId(req);
-      const profile = await this.createCompanyProfileUseCase.execute(
+      const profile = await this._createCompanyProfileUseCase.execute(
         userId,
         parsed.data,
       );
@@ -113,7 +97,7 @@ export class CompanyController extends BaseController {
       const updateData = {
         profile: parsed.data
       };
-      const companyProfile = await this.updateCompanyProfileUseCase.execute(
+      const companyProfile = await this._updateCompanyProfileUseCase.execute(
         userId,
         updateData,
       );
@@ -134,7 +118,7 @@ export class CompanyController extends BaseController {
   ): Promise<void> => {
     try {
       const userId = this.validateUserId(req);
-      const companyProfile = await this.getCompanyProfileUseCase.execute(userId);
+      const companyProfile = await this._getCompanyProfileUseCase.execute(userId);
       
       if (!companyProfile) {
         return this.sendNotFoundResponse(res, 'Company profile not found');
@@ -154,9 +138,9 @@ export class CompanyController extends BaseController {
       };
       
       // Use userId to fetch job postings (since job postings are created with userId)
-      const jobPostings = await this.getCompanyJobPostingsUseCase.execute(userId, jobPostingsQuery);
+      const jobPostings = await this._getCompanyJobPostingsUseCase.execute(userId, jobPostingsQuery);
       
-      const responseData = this.companyProfileMapper.toDetailedDto({
+      const responseData = this._companyProfileMapper.toDetailedDto({
         ...companyProfile,
         jobPostings: jobPostings.jobs
       });
@@ -189,7 +173,7 @@ export class CompanyController extends BaseController {
   ): Promise<void> => {
     try {
       const userId = this.validateUserId(req);
-      const companyProfile = await this.getCompanyProfileUseCase.execute(userId);
+      const companyProfile = await this._getCompanyProfileUseCase.execute(userId);
 
       const dashboardData = {
         hasProfile: !!companyProfile,
@@ -216,7 +200,7 @@ export class CompanyController extends BaseController {
         return this.handleValidationError('Invalid profile data', next);
       }
   
-      const updatedProfile = await this.reapplyCompanyVerificationUseCase.execute(
+      const updatedProfile = await this._reapplyCompanyVerificationUseCase.execute(
         userId,
         parsed.data
       );
@@ -237,7 +221,7 @@ export class CompanyController extends BaseController {
     next: NextFunction,
   ): Promise<void> => {
     try {
-      const result = await UploadService.handleFileUpload(req, this.s3Service, 'logo');
+      const result = await UploadService.handleFileUpload(req, this._s3Service, 'logo');
       this.sendSuccessResponse(res, 'Logo uploaded successfully', result);
     } catch (error) {
       this.handleAsyncError(error, next);
@@ -250,7 +234,7 @@ export class CompanyController extends BaseController {
     next: NextFunction,
   ): Promise<void> => {
     try {
-      const result = await UploadService.handleFileUpload(req, this.s3Service, 'business_license');
+      const result = await UploadService.handleFileUpload(req, this._s3Service, 'business_license');
       this.sendSuccessResponse(res, 'Business license uploaded successfully', result);
     } catch (error) {
       this.handleAsyncError(error, next);
@@ -264,7 +248,7 @@ export class CompanyController extends BaseController {
   ): Promise<void> => {
     try {
       const { imageUrl } = req.body;
-      await UploadService.handleFileDeletion(imageUrl, this.s3Service);
+      await UploadService.handleFileDeletion(imageUrl, this._s3Service);
       this.sendSuccessResponse(res, 'Image deleted successfully', null);
     } catch (error) {
       this.handleAsyncError(error, next);
@@ -279,12 +263,12 @@ export class CompanyController extends BaseController {
   ): Promise<void> => {
     try {
       const userId = this.validateUserId(req);
-      const companyProfile = await this.getCompanyProfileUseCase.execute(userId);
+      const companyProfile = await this._getCompanyProfileUseCase.execute(userId);
       if (!companyProfile) {
         return this.sendNotFoundResponse(res, 'Company profile not found');
       }
       
-      const contact = await this.companyContactUseCase.getContactsByCompanyId(companyProfile.profile.id);
+      const contact = await this._companyContactUseCase.getContactsByCompanyId(companyProfile.profile.id);
       this.sendSuccessResponse(res, 'Company contact retrieved successfully', contact);
     } catch (error) {
       this.handleAsyncError(error, next);
@@ -298,7 +282,7 @@ export class CompanyController extends BaseController {
   ): Promise<void> => {
     try {
       const userId = this.validateUserId(req);
-      const companyProfile = await this.getCompanyProfileUseCase.execute(userId);
+      const companyProfile = await this._getCompanyProfileUseCase.execute(userId);
       if (!companyProfile) {
         return this.sendNotFoundResponse(res, 'Company profile not found');
       }
@@ -310,15 +294,15 @@ export class CompanyController extends BaseController {
       }
       
       // Check if contact exists
-      const existingContacts = await this.companyContactUseCase.getContactsByCompanyId(companyProfile.profile.id);
+      const existingContacts = await this._companyContactUseCase.getContactsByCompanyId(companyProfile.profile.id);
       
       if (existingContacts.length > 0) {
         // Update existing contact
-        const contact = await this.companyContactUseCase.updateContact(existingContacts[0].id, parsed.data);
+        const contact = await this._companyContactUseCase.updateContact(existingContacts[0].id, parsed.data);
         this.sendSuccessResponse(res, 'Company contact updated successfully', contact);
       } else {
         // Create new contact if none exists
-        const contact = await this.companyContactUseCase.createContact(companyProfile.profile.id, parsed.data);
+        const contact = await this._companyContactUseCase.createContact(companyProfile.profile.id, parsed.data);
         this.sendSuccessResponse(res, 'Company contact created successfully', contact);
       }
     } catch (error) {
@@ -334,12 +318,12 @@ export class CompanyController extends BaseController {
   ): Promise<void> => {
     try {
       const userId = this.validateUserId(req);
-      const companyProfile = await this.getCompanyProfileUseCase.execute(userId);
+      const companyProfile = await this._getCompanyProfileUseCase.execute(userId);
       if (!companyProfile) {
         return this.sendNotFoundResponse(res, 'Company profile not found');
       }
       
-      const techStacks = await this.companyTechStackUseCase.getTechStackByCompanyId(companyProfile.profile.id);
+      const techStacks = await this._companyTechStackUseCase.getTechStackByCompanyId(companyProfile.profile.id);
       this.sendSuccessResponse(res, 'Company tech stacks retrieved successfully', techStacks);
     } catch (error) {
       this.handleAsyncError(error, next);
@@ -353,12 +337,12 @@ export class CompanyController extends BaseController {
   ): Promise<void> => {
     try {
       const userId = this.validateUserId(req);
-      const companyProfile = await this.getCompanyProfileUseCase.execute(userId);
+      const companyProfile = await this._getCompanyProfileUseCase.execute(userId);
       if (!companyProfile) {
         return this.sendNotFoundResponse(res, 'Company profile not found');
       }
       
-      const techStack = await this.companyTechStackUseCase.createTechStack(companyProfile.profile.id, req.body);
+      const techStack = await this._companyTechStackUseCase.createTechStack(companyProfile.profile.id, req.body);
       this.sendSuccessResponse(res, 'Tech stack created successfully', techStack, undefined, 201);
     } catch (error) {
       this.handleAsyncError(error, next);
@@ -372,7 +356,7 @@ export class CompanyController extends BaseController {
   ): Promise<void> => {
     try {
       const userId = this.validateUserId(req);
-      const companyProfile = await this.getCompanyProfileUseCase.execute(userId);
+      const companyProfile = await this._getCompanyProfileUseCase.execute(userId);
       if (!companyProfile) {
         return this.sendNotFoundResponse(res, 'Company profile not found');
       }
@@ -380,12 +364,12 @@ export class CompanyController extends BaseController {
       const { id } = req.params;
       
       // First, verify the tech stack belongs to this company
-      const existingTechStack = await this.companyTechStackUseCase.getTechStackById(id);
+      const existingTechStack = await this._companyTechStackUseCase.getTechStackById(id);
       if (!existingTechStack || existingTechStack.companyId !== companyProfile.profile.id) {
         return this.sendNotFoundResponse(res, 'Tech stack not found');
       }
       
-      const techStack = await this.companyTechStackUseCase.updateTechStack(id, req.body);
+      const techStack = await this._companyTechStackUseCase.updateTechStack(id, req.body);
       this.sendSuccessResponse(res, 'Tech stack updated successfully', techStack);
     } catch (error) {
       this.handleAsyncError(error, next);
@@ -399,7 +383,7 @@ export class CompanyController extends BaseController {
   ): Promise<void> => {
     try {
       const userId = this.validateUserId(req);
-      const companyProfile = await this.getCompanyProfileUseCase.execute(userId);
+      const companyProfile = await this._getCompanyProfileUseCase.execute(userId);
       if (!companyProfile) {
         return this.sendNotFoundResponse(res, 'Company profile not found');
       }
@@ -407,12 +391,12 @@ export class CompanyController extends BaseController {
       const { id } = req.params;
       
       // First, verify the tech stack belongs to this company
-      const existingTechStack = await this.companyTechStackUseCase.getTechStackById(id);
+      const existingTechStack = await this._companyTechStackUseCase.getTechStackById(id);
       if (!existingTechStack || existingTechStack.companyId !== companyProfile.profile.id) {
         return this.sendNotFoundResponse(res, 'Tech stack not found');
       }
       
-      await this.companyTechStackUseCase.deleteTechStack(id);
+      await this._companyTechStackUseCase.deleteTechStack(id);
       this.sendSuccessResponse(res, 'Tech stack deleted successfully', null);
     } catch (error) {
       this.handleAsyncError(error, next);
@@ -427,12 +411,12 @@ export class CompanyController extends BaseController {
   ): Promise<void> => {
     try {
       const userId = this.validateUserId(req);
-      const companyProfile = await this.getCompanyProfileUseCase.execute(userId);
+      const companyProfile = await this._getCompanyProfileUseCase.execute(userId);
       if (!companyProfile) {
         return this.sendNotFoundResponse(res, 'Company profile not found');
       }
       
-      const locations = await this.companyOfficeLocationUseCase.getOfficeLocationsByCompanyId(companyProfile.profile.id);
+      const locations = await this._companyOfficeLocationUseCase.getOfficeLocationsByCompanyId(companyProfile.profile.id);
       this.sendSuccessResponse(res, 'Company office locations retrieved successfully', locations);
     } catch (error) {
       this.handleAsyncError(error, next);
@@ -446,12 +430,12 @@ export class CompanyController extends BaseController {
   ): Promise<void> => {
     try {
       const userId = this.validateUserId(req);
-      const companyProfile = await this.getCompanyProfileUseCase.execute(userId);
+      const companyProfile = await this._getCompanyProfileUseCase.execute(userId);
       if (!companyProfile) {
         return this.sendNotFoundResponse(res, 'Company profile not found');
       }
       
-      const location = await this.companyOfficeLocationUseCase.createOfficeLocation(companyProfile.profile.id, req.body);
+      const location = await this._companyOfficeLocationUseCase.createOfficeLocation(companyProfile.profile.id, req.body);
       this.sendSuccessResponse(res, 'Office location created successfully', location, undefined, 201);
     } catch (error) {
       this.handleAsyncError(error, next);
@@ -465,7 +449,7 @@ export class CompanyController extends BaseController {
   ): Promise<void> => {
     try {
       const userId = this.validateUserId(req);
-      const companyProfile = await this.getCompanyProfileUseCase.execute(userId);
+      const companyProfile = await this._getCompanyProfileUseCase.execute(userId);
       if (!companyProfile) {
         return this.sendNotFoundResponse(res, 'Company profile not found');
       }
@@ -473,12 +457,12 @@ export class CompanyController extends BaseController {
       const { id } = req.params;
       
       // First, verify the location belongs to this company
-      const existingLocation = await this.companyOfficeLocationUseCase.getOfficeLocationById(id);
+      const existingLocation = await this._companyOfficeLocationUseCase.getOfficeLocationById(id);
       if (!existingLocation || existingLocation.companyId !== companyProfile.profile.id) {
         return this.sendNotFoundResponse(res, 'Office location not found');
       }
       
-      const location = await this.companyOfficeLocationUseCase.updateOfficeLocation(id, req.body);
+      const location = await this._companyOfficeLocationUseCase.updateOfficeLocation(id, req.body);
       this.sendSuccessResponse(res, 'Office location updated successfully', location);
     } catch (error) {
       this.handleAsyncError(error, next);
@@ -492,7 +476,7 @@ export class CompanyController extends BaseController {
   ): Promise<void> => {
     try {
       const userId = this.validateUserId(req);
-      const companyProfile = await this.getCompanyProfileUseCase.execute(userId);
+      const companyProfile = await this._getCompanyProfileUseCase.execute(userId);
       if (!companyProfile) {
         return this.sendNotFoundResponse(res, 'Company profile not found');
       }
@@ -500,12 +484,12 @@ export class CompanyController extends BaseController {
       const { id } = req.params;
       
       // First, verify the location belongs to this company
-      const existingLocation = await this.companyOfficeLocationUseCase.getOfficeLocationById(id);
+      const existingLocation = await this._companyOfficeLocationUseCase.getOfficeLocationById(id);
       if (!existingLocation || existingLocation.companyId !== companyProfile.profile.id) {
         return this.sendNotFoundResponse(res, 'Office location not found');
       }
       
-      await this.companyOfficeLocationUseCase.deleteOfficeLocation(id);
+      await this._companyOfficeLocationUseCase.deleteOfficeLocation(id);
       this.sendSuccessResponse(res, 'Office location deleted successfully', null);
     } catch (error) {
       this.handleAsyncError(error, next);
@@ -520,12 +504,12 @@ export class CompanyController extends BaseController {
   ): Promise<void> => {
     try {
       const userId = this.validateUserId(req);
-      const companyProfile = await this.getCompanyProfileUseCase.execute(userId);
+      const companyProfile = await this._getCompanyProfileUseCase.execute(userId);
       if (!companyProfile) {
         return this.sendNotFoundResponse(res, 'Company profile not found');
       }
       
-      const benefits = await this.companyBenefitsUseCase.getBenefitsByCompanyId(companyProfile.profile.id);
+      const benefits = await this._companyBenefitsUseCase.getBenefitsByCompanyId(companyProfile.profile.id);
       this.sendSuccessResponse(res, 'Company benefits retrieved successfully', benefits);
     } catch (error) {
       this.handleAsyncError(error, next);
@@ -539,12 +523,12 @@ export class CompanyController extends BaseController {
   ): Promise<void> => {
     try {
       const userId = this.validateUserId(req);
-      const companyProfile = await this.getCompanyProfileUseCase.execute(userId);
+      const companyProfile = await this._getCompanyProfileUseCase.execute(userId);
       if (!companyProfile) {
         return this.sendNotFoundResponse(res, 'Company profile not found');
       }
       
-      const benefit = await this.companyBenefitsUseCase.createBenefit(companyProfile.profile.id, req.body);
+      const benefit = await this._companyBenefitsUseCase.createBenefit(companyProfile.profile.id, req.body);
       this.sendSuccessResponse(res, 'Benefit created successfully', benefit, undefined, 201);
     } catch (error) {
       this.handleAsyncError(error, next);
@@ -558,7 +542,7 @@ export class CompanyController extends BaseController {
   ): Promise<void> => {
     try {
       const userId = this.validateUserId(req);
-      const companyProfile = await this.getCompanyProfileUseCase.execute(userId);
+      const companyProfile = await this._getCompanyProfileUseCase.execute(userId);
       if (!companyProfile) {
         return this.sendNotFoundResponse(res, 'Company profile not found');
       }
@@ -566,12 +550,12 @@ export class CompanyController extends BaseController {
       const { id } = req.params;
       
       // First, verify the benefit belongs to this company
-      const existingBenefit = await this.companyBenefitsUseCase.getBenefitById(id);
+      const existingBenefit = await this._companyBenefitsUseCase.getBenefitById(id);
       if (!existingBenefit || existingBenefit.companyId !== companyProfile.profile.id) {
         return this.sendNotFoundResponse(res, 'Benefit not found');
       }
       
-      const benefit = await this.companyBenefitsUseCase.updateBenefit(id, req.body);
+      const benefit = await this._companyBenefitsUseCase.updateBenefit(id, req.body);
       this.sendSuccessResponse(res, 'Benefit updated successfully', benefit);
     } catch (error) {
       this.handleAsyncError(error, next);
@@ -585,7 +569,7 @@ export class CompanyController extends BaseController {
   ): Promise<void> => {
     try {
       const userId = this.validateUserId(req);
-      const companyProfile = await this.getCompanyProfileUseCase.execute(userId);
+      const companyProfile = await this._getCompanyProfileUseCase.execute(userId);
       if (!companyProfile) {
         return this.sendNotFoundResponse(res, 'Company profile not found');
       }
@@ -593,12 +577,12 @@ export class CompanyController extends BaseController {
       const { id } = req.params;
       
       // First, verify the benefit belongs to this company
-      const existingBenefit = await this.companyBenefitsUseCase.getBenefitById(id);
+      const existingBenefit = await this._companyBenefitsUseCase.getBenefitById(id);
       if (!existingBenefit || existingBenefit.companyId !== companyProfile.profile.id) {
         return this.sendNotFoundResponse(res, 'Benefit not found');
       }
       
-      await this.companyBenefitsUseCase.deleteBenefit(id);
+      await this._companyBenefitsUseCase.deleteBenefit(id);
       this.sendSuccessResponse(res, 'Benefit deleted successfully', null);
     } catch (error) {
       this.handleAsyncError(error, next);
@@ -613,12 +597,12 @@ export class CompanyController extends BaseController {
   ): Promise<void> => {
     try {
       const userId = this.validateUserId(req);
-      const companyProfile = await this.getCompanyProfileUseCase.execute(userId);
+      const companyProfile = await this._getCompanyProfileUseCase.execute(userId);
       if (!companyProfile) {
         return this.sendNotFoundResponse(res, 'Company profile not found');
       }
       
-      const pictures = await this.companyWorkplacePicturesUseCase.getPicturesByCompanyId(companyProfile.profile.id);
+      const pictures = await this._companyWorkplacePicturesUseCase.getPicturesByCompanyId(companyProfile.profile.id);
       this.sendSuccessResponse(res, 'Company workplace pictures retrieved successfully', pictures);
     } catch (error) {
       this.handleAsyncError(error, next);
@@ -632,12 +616,12 @@ export class CompanyController extends BaseController {
   ): Promise<void> => {
     try {
       const userId = this.validateUserId(req);
-      const companyProfile = await this.getCompanyProfileUseCase.execute(userId);
+      const companyProfile = await this._getCompanyProfileUseCase.execute(userId);
       if (!companyProfile) {
         return this.sendNotFoundResponse(res, 'Company profile not found');
       }
       
-      const picture = await this.companyWorkplacePicturesUseCase.createPicture(companyProfile.profile.id, req.body);
+      const picture = await this._companyWorkplacePicturesUseCase.createPicture(companyProfile.profile.id, req.body);
       this.sendSuccessResponse(res, 'Workplace picture created successfully', picture, undefined, 201);
     } catch (error) {
       this.handleAsyncError(error, next);
@@ -651,7 +635,7 @@ export class CompanyController extends BaseController {
   ): Promise<void> => {
     try {
       const userId = this.validateUserId(req);
-      const companyProfile = await this.getCompanyProfileUseCase.execute(userId);
+      const companyProfile = await this._getCompanyProfileUseCase.execute(userId);
       if (!companyProfile) {
         return this.sendNotFoundResponse(res, 'Company profile not found');
       }
@@ -659,12 +643,12 @@ export class CompanyController extends BaseController {
       const { id } = req.params;
       
       // First, verify the picture belongs to this company
-      const existingPicture = await this.companyWorkplacePicturesUseCase.getPictureById(id);
+      const existingPicture = await this._companyWorkplacePicturesUseCase.getPictureById(id);
       if (!existingPicture || existingPicture.companyId !== companyProfile.profile.id) {
         return this.sendNotFoundResponse(res, 'Workplace picture not found');
       }
       
-      const picture = await this.companyWorkplacePicturesUseCase.updatePicture(id, req.body);
+      const picture = await this._companyWorkplacePicturesUseCase.updatePicture(id, req.body);
       this.sendSuccessResponse(res, 'Workplace picture updated successfully', picture);
     } catch (error) {
       this.handleAsyncError(error, next);
@@ -678,7 +662,7 @@ export class CompanyController extends BaseController {
   ): Promise<void> => {
     try {
       const userId = this.validateUserId(req);
-      const companyProfile = await this.getCompanyProfileUseCase.execute(userId);
+      const companyProfile = await this._getCompanyProfileUseCase.execute(userId);
       if (!companyProfile) {
         return this.sendNotFoundResponse(res, 'Company profile not found');
       }
@@ -686,12 +670,12 @@ export class CompanyController extends BaseController {
       const { id } = req.params;
       
       // First, verify the picture belongs to this company
-      const picture = await this.companyWorkplacePicturesUseCase.getPictureById(id);
+      const picture = await this._companyWorkplacePicturesUseCase.getPictureById(id);
       if (!picture || picture.companyId !== companyProfile.profile.id) {
         return this.sendNotFoundResponse(res, 'Workplace picture not found');
       }
       
-      await this.companyWorkplacePicturesUseCase.deletePicture(id);
+      await this._companyWorkplacePicturesUseCase.deletePicture(id);
       this.sendSuccessResponse(res, 'Workplace picture deleted successfully', null);
     } catch (error) {
       this.handleAsyncError(error, next);
@@ -708,7 +692,7 @@ export class CompanyController extends BaseController {
         return this.badRequest(res, 'No image file provided');
       }
 
-      const imageUrl = await this.s3Service.uploadImage(
+      const imageUrl = await this._s3Service.uploadImage(
         req.file.buffer,
         req.file.originalname,
         req.file.mimetype,
@@ -728,12 +712,12 @@ export class CompanyController extends BaseController {
   ): Promise<void> => {
     try {
       const userId = this.validateUserId(req);
-      const companyProfile = await this.getCompanyProfileUseCase.execute(userId);
+      const companyProfile = await this._getCompanyProfileUseCase.execute(userId);
       if (!companyProfile) {
         return this.sendNotFoundResponse(res, 'Company profile not found');
       }
       
-      const team = await this.companyTeamUseCase.getTeamMembersByCompanyId(companyProfile.profile.id);
+      const team = await this._companyTeamUseCase.getTeamMembersByCompanyId(companyProfile.profile.id);
       this.sendSuccessResponse(res, 'Company team retrieved successfully', team);
     } catch (error) {
       this.handleAsyncError(error, next);
@@ -747,12 +731,12 @@ export class CompanyController extends BaseController {
   ): Promise<void> => {
     try {
       const userId = this.validateUserId(req);
-      const companyProfile = await this.getCompanyProfileUseCase.execute(userId);
+      const companyProfile = await this._getCompanyProfileUseCase.execute(userId);
       if (!companyProfile) {
         return this.sendNotFoundResponse(res, 'Company profile not found');
       }
       
-      const teamMember = await this.companyTeamUseCase.createTeamMember(companyProfile.profile.id, req.body);
+      const teamMember = await this._companyTeamUseCase.createTeamMember(companyProfile.profile.id, req.body);
       this.sendSuccessResponse(res, 'Team member created successfully', teamMember, undefined, 201);
     } catch (error) {
       this.handleAsyncError(error, next);
@@ -766,7 +750,7 @@ export class CompanyController extends BaseController {
   ): Promise<void> => {
     try {
       const { id } = req.params;
-      const teamMember = await this.companyTeamUseCase.updateTeamMember(id, req.body);
+      const teamMember = await this._companyTeamUseCase.updateTeamMember(id, req.body);
       this.sendSuccessResponse(res, 'Team member updated successfully', teamMember);
     } catch (error) {
       this.handleAsyncError(error, next);
@@ -780,7 +764,7 @@ export class CompanyController extends BaseController {
   ): Promise<void> => {
     try {
       const { id } = req.params;
-      await this.companyTeamUseCase.deleteTeamMember(id);
+      await this._companyTeamUseCase.deleteTeamMember(id);
       this.sendSuccessResponse(res, 'Team member deleted successfully', null);
     } catch (error) {
       this.handleAsyncError(error, next);

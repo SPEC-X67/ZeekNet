@@ -1,11 +1,9 @@
-import { injectable } from 'inversify';
-import { ICompanyTechStackRepository } from '../../../../domain/repositories/company-tech-stack.repository';
+import { ICompanyTechStackRepository } from '../../../../domain/interfaces/repositories/company-tech-stack.repository';
 import { CompanyTechStack } from '../../../../domain/entities/company-tech-stack.entity';
 import { CompanyTechStackModel } from '../models/company-tech-stack.model';
 import { Types } from 'mongoose';
 import { MongoBaseRepository } from '../../../../shared/base';
 
-@injectable()
 export class MongoCompanyTechStackRepository extends MongoBaseRepository<CompanyTechStack> implements ICompanyTechStackRepository {
   constructor() {
     super(CompanyTechStackModel);

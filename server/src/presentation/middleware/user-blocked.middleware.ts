@@ -1,7 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { injectable, inject } from 'inversify';
-import { TYPES } from '../../infrastructure/di/types';
-import { IUserRepositoryFull, ICompanyRepository } from '../../domain/repositories';
+import { IUserRepository, ICompanyRepository } from '../../domain/interfaces/repositories';
 import { AuthorizationError } from '../../domain/errors/errors';
 import { UserRole } from '../../domain/enums/user-role.enum';
 
@@ -13,13 +11,10 @@ export interface AuthenticatedRequest extends Request {
   };
 }
 
-@injectable()
 export class UserBlockedMiddleware {
   constructor(
-    @inject(TYPES.UserRepository)
-    private readonly userRepository: IUserRepositoryFull,
-    @inject(TYPES.CompanyRepository)
-    private readonly companyRepository: ICompanyRepository,
+    private readonly _userRepository: IUserRepository,
+    private readonly _companyRepository: ICompanyRepository,
   ) {}
 
   checkUserBlocked = async (
@@ -33,7 +28,7 @@ export class UserBlockedMiddleware {
         return next();
       }
 
-      const user = await this.userRepository.findById(userId);
+      const user = await this._userRepository.findById(userId);
       if (!user) {
         return next();
       }
@@ -48,7 +43,7 @@ export class UserBlockedMiddleware {
       }
 
       if (user.role === UserRole.COMPANY) {
-        const companyProfile = await this.companyRepository.getProfileByUserId(user.id);
+        const companyProfile = await this._companyRepository.getProfileByUserId(user.id);
         if (companyProfile && companyProfile.isBlocked) {
           res.status(403).json({
             success: false,

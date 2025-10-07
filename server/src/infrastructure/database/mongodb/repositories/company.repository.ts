@@ -1,5 +1,4 @@
-import { injectable } from 'inversify';
-import { ICompanyRepository } from '../../../../domain/repositories';
+import { ICompanyRepository } from '../../../../domain/interfaces/repositories';
 import {
   CompanyProfile,
   CompanyContact,
@@ -68,7 +67,6 @@ interface CompanyQuery {
   isBlocked?: boolean;
 }
 
-@injectable()
 export class MongoCompanyRepository implements Partial<ICompanyRepository> {
   async createProfile(
     profile: {

@@ -1,18 +1,16 @@
-import { injectable, inject } from 'inversify';
 import { Request, Response, NextFunction } from 'express';
 import {
-  MailerService,
-  OtpService,
-  PasswordHasher,
-} from '../../../application/interfaces';
-import { TYPES } from '../../../infrastructure/di/types';
+  IMailerService,
+  IOtpService,
+  IPasswordHasher,
+  ITokenService,
+} from '../../../domain/interfaces/services';
 import { GetUserByEmailUseCase } from '../../../application/use-cases/auth/get-user-by-email.use-case';
 import { UpdateUserVerificationStatusUseCase } from '../../../application/use-cases/auth/update-user-verification-status.use-case';
 import { UpdateUserRefreshTokenUseCase } from '../../../application/use-cases/auth/update-user-refresh-token.use-case';
 import { z } from 'zod';
 import { BaseController } from '../../../shared';
 import { env } from '../../../infrastructure/config/env';
-import { TokenService } from '../../../application/interfaces/infrastructure';
 import { createRefreshTokenCookieOptions } from '../../../shared/utils';
 import { welcomeTemplate } from '../../../infrastructure/messaging/templates/welcome.template';
 
@@ -22,16 +20,15 @@ const VerifyOtpDto = z.object({
   code: z.string().length(6),
 });
 
-@injectable()
 export class OtpController extends BaseController {
   constructor(
-    @inject(TYPES.OtpService) private readonly otpService: OtpService,
-    @inject(TYPES.MailerService) private readonly mailer: MailerService,
-    @inject(TYPES.GetUserByEmailUseCase) private readonly getUserByEmailUseCase: GetUserByEmailUseCase,
-    @inject(TYPES.UpdateUserVerificationStatusUseCase) private readonly updateUserVerificationStatusUseCase: UpdateUserVerificationStatusUseCase,
-    @inject(TYPES.UpdateUserRefreshTokenUseCase) private readonly updateUserRefreshTokenUseCase: UpdateUserRefreshTokenUseCase,
-    @inject(TYPES.TokenService) private readonly tokenService: TokenService,
-    @inject(TYPES.PasswordHasher) private readonly passwordHasher: PasswordHasher,
+    private readonly _otpService: IOtpService,
+    private readonly _mailer: IMailerService,
+    private readonly _getUserByEmailUseCase: GetUserByEmailUseCase,
+    private readonly _updateUserVerificationStatusUseCase: UpdateUserVerificationStatusUseCase,
+    private readonly _updateUserRefreshTokenUseCase: UpdateUserRefreshTokenUseCase,
+    private readonly _tokenService: ITokenService,
+    private readonly _passwordHasher: IPasswordHasher,
   ) {
     super();
   }
@@ -45,7 +42,7 @@ export class OtpController extends BaseController {
     if (!parsed.success) return this.handleValidationError('Invalid email', next);
     
     try {
-      const user = await this.getUserByEmailUseCase.execute(parsed.data.email);
+      const user = await this._getUserByEmailUseCase.execute(parsed.data.email);
       if (!user) {
         return this.handleValidationError('User not found', next);
       }
@@ -56,7 +53,7 @@ export class OtpController extends BaseController {
 
       let code: string;
       try {
-        code = await this.otpService.generateAndStoreOtp(parsed.data.email);
+        code = await this._otpService.generateAndStoreOtp(parsed.data.email);
       } catch (error: unknown) {
         if (error instanceof Error && error.message.includes('Please wait before requesting another OTP')) {
           this.sendErrorResponse(res, 'Please wait 30 seconds before requesting another OTP', null, 429);
@@ -90,7 +87,7 @@ export class OtpController extends BaseController {
         </table>
       `;
 
-      await this.mailer.sendMail(
+      await this._mailer.sendMail(
         parsed.data.email,
         'Verify Your Email - ZeekNet Job Portal',
         htmlContent,
@@ -110,32 +107,32 @@ export class OtpController extends BaseController {
     if (!parsed.success) return this.handleValidationError('Invalid OTP data', next);
     
     try {
-      const ok = await this.otpService.verifyOtp(
+      const ok = await this._otpService.verifyOtp(
         parsed.data.email,
         parsed.data.code,
       );
       if (!ok) return this.handleValidationError('Invalid or expired OTP', next);
   
-      await this.updateUserVerificationStatusUseCase.execute(
+      await this._updateUserVerificationStatusUseCase.execute(
         parsed.data.email,
         true,
       );
 
-      const user = await this.getUserByEmailUseCase.execute(parsed.data.email);
+      const user = await this._getUserByEmailUseCase.execute(parsed.data.email);
       if (!user) {
         return this.handleValidationError('User not found', next);
       }
 
-      const accessToken = this.tokenService.signAccess({ sub: user.id, role: user.role });
-      const refreshToken = this.tokenService.signRefresh({ sub: user.id });
-      const hashedRefresh = await this.passwordHasher.hash(refreshToken);
+      const accessToken = this._tokenService.signAccess({ sub: user.id, role: user.role });
+      const refreshToken = this._tokenService.signRefresh({ sub: user.id });
+      const hashedRefresh = await this._passwordHasher.hash(refreshToken);
 
-      await this.updateUserRefreshTokenUseCase.execute(user.id, hashedRefresh);
+      await this._updateUserRefreshTokenUseCase.execute(user.id, hashedRefresh);
       
       res.cookie(env.COOKIE_NAME_REFRESH!, refreshToken, createRefreshTokenCookieOptions());
   
       const dashboardLink = this.getDashboardLink(user.role);
-      await this.mailer.sendMail(
+      await this._mailer.sendMail(
         user.email,
         welcomeTemplate.subject,
         welcomeTemplate.html(user.name || 'User', dashboardLink),

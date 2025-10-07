@@ -1,5 +1,4 @@
-import { injectable } from 'inversify';
-import { IUserRepository } from '../../../../domain/repositories';
+import { IUserRepository } from '../../../../domain/interfaces/repositories';
 import { User } from '../../../../domain/entities';
 import { UserRole } from '../../../../domain/enums/user-role.enum';
 import { UserModel, UserDocument } from '../models/user.model';
@@ -10,7 +9,6 @@ interface UserQuery {
   isBlocked?: boolean;
 }
 
-@injectable()
 export class MongoUserRepository implements IUserRepository {
   async save(
     user: Omit<User, 'id' | 'createdAt' | 'updatedAt'>,

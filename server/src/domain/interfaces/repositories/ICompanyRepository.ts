@@ -3,7 +3,7 @@ import {
   CompanyContact,
   CompanyLocation,
   CompanyVerification,
-} from '../entities/company-profile.entity';
+} from '../../entities/company-profile.entity';
 
 export interface ICompanyProfileRepository {
   createProfile(

@@ -1,25 +1,22 @@
-import { injectable, inject } from 'inversify';
-import { JobPostingRepository } from '../../../domain/repositories/job-posting.repository.interface';
+import { IJobPostingRepositoryFull } from '../../../domain/interfaces/repositories';
 import { AppError } from '../../../domain/errors/errors';
-import { TYPES } from '../../../infrastructure/di/types';
-import { ICompanyRepository } from '../../../domain/repositories';
+import { ICompanyRepository } from '../../../domain/interfaces/repositories';
 
-@injectable()
 export class DeleteJobPostingUseCase {
   constructor(
-    @inject(TYPES.JobPostingRepository) private jobPostingRepository: JobPostingRepository,
-    @inject(TYPES.CompanyRepository) private companyRepository: ICompanyRepository,
+    private readonly _jobPostingRepository: IJobPostingRepositoryFull,
+    private readonly _companyRepository: ICompanyRepository,
   ) {}
 
   async execute(id: string, userId: string): Promise<void> {
     // Get company profile by user ID
-    const companyProfile = await this.companyRepository.getProfileByUserId(userId);
+    const companyProfile = await this._companyRepository.getProfileByUserId(userId);
     
     if (!companyProfile) {
       throw new AppError('Company profile not found', 404);
     }
 
-    const existingJob = await this.jobPostingRepository.findById(id);
+    const existingJob = await this._jobPostingRepository.findById(id);
     
     if (!existingJob) {
       throw new AppError('Job posting not found', 404);
@@ -33,7 +30,7 @@ export class DeleteJobPostingUseCase {
 
     // Use company profile ID for comparison
     if (!existingJob.company_id || existingJob.company_id === '') {
-      await this.jobPostingRepository.update(id, { company_id: companyProfile.id } as any);
+      await this._jobPostingRepository.update(id, { company_id: companyProfile.id } as any);
     } else if (existingJob.company_id !== companyProfile.id) {
       // Check if job was created with user ID instead of company profile ID
       if (existingJob.company_id === userId) {
@@ -45,7 +42,7 @@ export class DeleteJobPostingUseCase {
     }
 
     try {
-      const deleted = await this.jobPostingRepository.delete(id);
+      const deleted = await this._jobPostingRepository.delete(id);
       
       if (!deleted) {
         throw new AppError('Failed to delete job posting', 500);

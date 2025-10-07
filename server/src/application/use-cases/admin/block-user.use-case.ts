@@ -1,15 +1,11 @@
-import { injectable, inject } from 'inversify';
-import { TYPES } from '../../../infrastructure/di/types';
-import { IUserRepositoryFull } from '../../../domain/repositories';
+import { IUserManagementRepository } from '../../../domain/interfaces/repositories';
 
-@injectable()
 export class BlockUserUseCase {
   constructor(
-    @inject(TYPES.UserRepository)
-    private readonly userRepository: IUserRepositoryFull,
+    private readonly _userRepository: IUserManagementRepository,
   ) {}
 
   async execute(userId: string, isBlocked: boolean): Promise<void> {
-    await this.userRepository.updateUserBlockStatus(userId, isBlocked);
+    await this._userRepository.updateUserBlockStatus(userId, isBlocked);
   }
 }

@@ -1,36 +1,32 @@
-import { injectable, inject } from 'inversify';
-import { ICompanyTechStackRepository } from '../../../domain/repositories/company-tech-stack.repository';
+import { ICompanyTechStackRepository } from '../../../domain/interfaces/repositories/company-tech-stack.repository';
 import { CompanyTechStack } from '../../../domain/entities/company-tech-stack.entity';
-import { TYPES } from '../../../infrastructure/di/types';
 import { CreateCompanyTechStackDto, UpdateCompanyTechStackDto } from '../../dto/company/company-tech-stack.dto';
 import { NotFoundError } from '../../../domain/errors/errors';
 
-@injectable()
 export class CompanyTechStackUseCase {
   constructor(
-    @inject(TYPES.CompanyTechStackRepository)
-    private readonly companyTechStackRepository: ICompanyTechStackRepository,
+    private readonly _companyTechStackRepository: ICompanyTechStackRepository,
   ) {}
 
   async createTechStack(companyId: string, data: CreateCompanyTechStackDto): Promise<CompanyTechStack> {
     const techStack = CompanyTechStack.create({ ...data, companyId });
-    return this.companyTechStackRepository.create(techStack);
+    return this._companyTechStackRepository.create(techStack);
   }
 
   async getTechStackByCompanyId(companyId: string): Promise<CompanyTechStack[]> {
-    return this.companyTechStackRepository.findByCompanyId(companyId);
+    return this._companyTechStackRepository.findByCompanyId(companyId);
   }
 
   async getTechStackById(techStackId: string): Promise<CompanyTechStack | null> {
-    return this.companyTechStackRepository.findById(techStackId);
+    return this._companyTechStackRepository.findById(techStackId);
   }
 
   async updateTechStack(techStackId: string, data: UpdateCompanyTechStackDto): Promise<CompanyTechStack> {
-    const existingTechStack = await this.companyTechStackRepository.findById(techStackId);
+    const existingTechStack = await this._companyTechStackRepository.findById(techStackId);
     if (!existingTechStack) {
       throw new NotFoundError(`Company tech stack with ID ${techStackId} not found`);
     }
-    const updatedTechStack = await this.companyTechStackRepository.update(techStackId, data);
+    const updatedTechStack = await this._companyTechStackRepository.update(techStackId, data);
     if (!updatedTechStack) {
       throw new NotFoundError(`Failed to update company tech stack with ID ${techStackId}`);
     }
@@ -38,6 +34,6 @@ export class CompanyTechStackUseCase {
   }
 
   async deleteTechStack(techStackId: string): Promise<void> {
-    await this.companyTechStackRepository.delete(techStackId);
+    await this._companyTechStackRepository.delete(techStackId);
   }
 }

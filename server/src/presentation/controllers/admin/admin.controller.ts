@@ -1,6 +1,4 @@
-import { injectable, inject } from 'inversify';
 import { Request, Response, NextFunction } from 'express';
-import { TYPES } from '../../../infrastructure/di/types';
 import {
   GetAllUsersDto,
   BlockUserDto,
@@ -18,23 +16,15 @@ import {
 import { BlockCompanyUseCase } from '../../../application/use-cases/admin/block-company.use-case';
 import { BaseController } from '../../../shared';
 
-@injectable()
 export class AdminController extends BaseController {
   constructor(
-    @inject(TYPES.GetAllUsersUseCase)
-    private readonly getAllUsersUseCase: GetAllUsersUseCase,
-    @inject(TYPES.BlockUserUseCase)
-    private readonly blockUserUseCase: BlockUserUseCase,
-    @inject(TYPES.AdminGetUserByIdUseCase)
-    private readonly getUserByIdUseCase: AdminGetUserByIdUseCase,
-    @inject(TYPES.GetAllCompaniesUseCase)
-    private readonly getAllCompaniesUseCase: GetAllCompaniesUseCase,
-    @inject(TYPES.GetCompaniesWithVerificationUseCase)
-    private readonly getCompaniesWithVerificationUseCase: GetCompaniesWithVerificationUseCase,
-    @inject(TYPES.VerifyCompanyUseCase)
-    private readonly verifyCompanyUseCase: VerifyCompanyUseCase,
-    @inject(TYPES.BlockCompanyUseCase)
-    private readonly blockCompanyUseCase: BlockCompanyUseCase,
+    private readonly _getAllUsersUseCase: GetAllUsersUseCase,
+    private readonly _blockUserUseCase: BlockUserUseCase,
+    private readonly _getUserByIdUseCase: AdminGetUserByIdUseCase,
+    private readonly _getAllCompaniesUseCase: GetAllCompaniesUseCase,
+    private readonly _getCompaniesWithVerificationUseCase: GetCompaniesWithVerificationUseCase,
+    private readonly _verifyCompanyUseCase: VerifyCompanyUseCase,
+    private readonly _blockCompanyUseCase: BlockCompanyUseCase,
   ) {
     super();
   }
@@ -50,7 +40,7 @@ export class AdminController extends BaseController {
     }
 
     try {
-      const result = await this.getAllUsersUseCase.execute(parsed.data);
+      const result = await this._getAllUsersUseCase.execute(parsed.data);
       this.sendSuccessResponse(res, 'Users retrieved successfully', result);
     } catch (error) {
       this.handleAsyncError(error, next);
@@ -68,7 +58,7 @@ export class AdminController extends BaseController {
     }
 
     try {
-      await this.blockUserUseCase.execute(
+      await this._blockUserUseCase.execute(
         parsed.data.userId,
         parsed.data.isBlocked,
       );
@@ -90,7 +80,7 @@ export class AdminController extends BaseController {
     }
 
     try {
-      const user = await this.getUserByIdUseCase.execute(userId);
+      const user = await this._getUserByIdUseCase.execute(userId);
       this.sendSuccessResponse(res, 'User retrieved successfully', user);
     } catch (error) {
       this.handleAsyncError(error, next);
@@ -108,7 +98,7 @@ export class AdminController extends BaseController {
     }
 
     try {
-      const result = await this.getCompaniesWithVerificationUseCase.execute(parsed.data);
+      const result = await this._getCompaniesWithVerificationUseCase.execute(parsed.data);
       this.sendSuccessResponse(res, 'Companies retrieved successfully', result);
     } catch (error) {
       this.handleAsyncError(error, next);
@@ -121,7 +111,7 @@ export class AdminController extends BaseController {
     next: NextFunction,
   ): Promise<void> => {
     try {
-      const result = await this.getCompaniesWithVerificationUseCase.executeForPending();
+      const result = await this._getCompaniesWithVerificationUseCase.executeForPending();
       this.sendSuccessResponse(res, 'Pending companies retrieved successfully', result);
     } catch (error) {
       this.handleAsyncError(error, next);
@@ -139,7 +129,7 @@ export class AdminController extends BaseController {
     }
 
     try {
-      const company = await this.getCompaniesWithVerificationUseCase.executeById(companyId);
+      const company = await this._getCompaniesWithVerificationUseCase.executeById(companyId);
       if (!company) {
         return this.sendNotFoundResponse(res, 'Company not found');
       }
@@ -161,7 +151,7 @@ export class AdminController extends BaseController {
     }
 
     try {
-      await this.verifyCompanyUseCase.execute(
+      await this._verifyCompanyUseCase.execute(
         parsed.data.companyId,
         parsed.data.isVerified,
       );
@@ -185,7 +175,7 @@ export class AdminController extends BaseController {
     }
 
     try {
-      await this.blockCompanyUseCase.execute(companyId, isBlocked);
+      await this._blockCompanyUseCase.execute(companyId, isBlocked);
       const message = `Company ${isBlocked ? 'blocked' : 'unblocked'} successfully`;
       this.sendSuccessResponse(res, message, null);
     } catch (error) {

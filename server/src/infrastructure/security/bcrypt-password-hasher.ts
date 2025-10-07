@@ -1,10 +1,8 @@
-import { injectable } from 'inversify';
 import bcrypt from 'bcryptjs';
-import { PasswordHasher } from '../../application/interfaces';
+import { IPasswordHasher } from '../../domain/interfaces/services';
 import { env } from '../config/env';
 
-@injectable()
-export class BcryptPasswordHasher implements PasswordHasher {
+export class BcryptPasswordHasher implements IPasswordHasher {
   async hash(plain: string): Promise<string> {
     const rounds = Number(env.BCRYPT_SALT_ROUNDS ?? '10');
     return bcrypt.hash(plain, rounds);

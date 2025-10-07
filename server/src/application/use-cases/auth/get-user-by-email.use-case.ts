@@ -1,14 +1,10 @@
-import { injectable, inject } from 'inversify';
-import { TYPES } from '../../../infrastructure/di/types';
-import { IUserRepositoryFull } from '../../../domain/repositories';
+import { IUserRepositoryFull } from '../../../domain/interfaces/repositories';
 import { User } from '../../../domain/entities/user.entity';
 import { AppError } from '../../../domain/errors/errors';
 
-@injectable()
 export class GetUserByEmailUseCase {
   constructor(
-    @inject(TYPES.UserRepository)
-    private readonly userRepository: IUserRepositoryFull,
+    private readonly _userRepository: IUserRepositoryFull,
   ) {}
 
   async execute(email: string): Promise<User | null> {
@@ -17,7 +13,7 @@ export class GetUserByEmailUseCase {
         throw new AppError('Email is required', 400);
       }
 
-      const user = await this.userRepository.findByEmail(email);
+      const user = await this._userRepository.findByEmail(email);
       return user;
     } catch (error) {
       if (error instanceof AppError) {
