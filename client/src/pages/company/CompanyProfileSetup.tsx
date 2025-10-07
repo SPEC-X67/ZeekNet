@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { companyApi, type CompanyProfileData } from '@/api/company.api'
@@ -14,7 +13,6 @@ import {
   Mail, 
   Globe, 
   Users, 
-  MapPin, 
   ArrowLeft, 
   ArrowRight,
   CheckCircle, 
@@ -71,8 +69,6 @@ const CompanyProfileSetup = () => {
   const [currentStep, setCurrentStep] = useState(1)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [, setLogoFile] = useState<File | null>(null)
-  const [, setBusinessLicenseFile] = useState<File | null>(null)
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({})
   const [uploading, setUploading] = useState<{ logo: boolean; business_license: boolean }>({
     logo: false,
@@ -147,6 +143,15 @@ const CompanyProfileSetup = () => {
       }))
     } finally {
       setUploading(prev => ({ ...prev, [type]: false }))
+    }
+  }
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    const name = e.target.name as 'logo' | 'business_license'
+    
+    if (file) {
+      handleFileUpload(file, name)
     }
   }
 
@@ -269,7 +274,7 @@ const CompanyProfileSetup = () => {
 
   return (
     <div className="min-h-screen flex">
-      {/* Back to Home Button - Top Corner */}
+      {}
       <div className="fixed top-4 left-4 z-50">
         <Button 
           variant="outline" 
@@ -281,14 +286,14 @@ const CompanyProfileSetup = () => {
         </Button>
       </div>
 
-      {/* Left Side - Branding */}
+      {}
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary/10 via-primary/5 to-secondary/10 relative overflow-hidden">
-        {/* Background Pattern */}
+        {}
         <div className="absolute inset-0 bg-grid-slate-100 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))] dark:bg-grid-slate-700/25"></div>
         
-        {/* Content */}
+        {}
         <div className="relative z-10 flex flex-col justify-center px-12 py-12">
-          {/* Logo */}
+          {}
           <div className="flex items-center space-x-3 mb-8">
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary shadow-lg">
               <Building2 className="h-7 w-7 text-primary-foreground" />
@@ -302,7 +307,7 @@ const CompanyProfileSetup = () => {
             </div>
           </div>
 
-          {/* Hero Content */}
+          {}
           <div className="max-w-md">
             <h2 className="text-4xl font-bold text-foreground mb-4">
               {isReapplication ? 'Resubmit your company profile' : 'Complete your company profile'}
@@ -314,7 +319,7 @@ const CompanyProfileSetup = () => {
               }
             </p>
 
-            {/* Features */}
+            {}
             <div className="space-y-4">
               <div className="flex items-center space-x-3">
                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
@@ -347,7 +352,7 @@ const CompanyProfileSetup = () => {
               </div>
             </div>
 
-            {/* Stats */}
+            {}
             <div className="mt-12 pt-8 border-t border-border/50">
               <div className="flex items-center justify-between text-sm text-muted-foreground">
                 <div className="flex items-center space-x-1">
@@ -368,10 +373,10 @@ const CompanyProfileSetup = () => {
         </div>
       </div>
 
-      {/* Right Side - Form */}
+      {}
       <div className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8">
         <div className="w-full max-w-2xl space-y-8">
-          {/* Mobile Logo */}
+          {}
           <div className="lg:hidden text-center">
             <div className="flex items-center justify-center space-x-3 mb-6">
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
@@ -387,16 +392,11 @@ const CompanyProfileSetup = () => {
             </div>
           </div>
 
-          {/* Form Content */}
+          {}
           <div className="space-y-6">
-            {/* <div className="text-center">
-              <h2 className="text-3xl font-bold text-foreground">Complete Your Profile</h2>
-              <p className="text-muted-foreground mt-2">
-                Set up your company profile to start attracting top talent
-              </p>
-            </div> */}
+            {}
 
-            {/* Progress Indicator */}
+            {}
             <div className="flex items-center justify-center space-x-4 mt-4">
               <div className="flex items-center space-x-2">
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
@@ -427,7 +427,7 @@ const CompanyProfileSetup = () => {
               </div>
             </div>
 
-            {/* Error Display */}
+            {}
             {error && (
               <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-sm text-destructive flex items-start space-x-2">
                 <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
@@ -435,9 +435,9 @@ const CompanyProfileSetup = () => {
               </div>
             )}
 
-            {/* Form */}
+            {}
             <form onSubmit={handleSubmit} className="">
-              {/* Step 1: Company Information */}
+              {}
               {currentStep === 1 && (
                 <Card className="shadow-lg border-0 bg-card">
                   <CardContent className="p-6 space-y-2">
@@ -529,194 +529,19 @@ const CompanyProfileSetup = () => {
                             id="logo"
                             name="logo"
                             accept="image/*"
-                            onChange={(e) => {
-                              const file = e.target.files?.[0]
-                              if (file) {
-                                setLogoFile(file)
-                                handleFileUpload(file, 'logo')
-                                if (validationErrors.logo) {
-                                  setValidationErrors(prev => {
-                                    const newErrors = { ...prev }
-                                    delete newErrors.logo
-                                    return newErrors
-                                  })
-                                }
-                              }
-                            }}
+                            onChange={handleFileChange}
                             className="hidden"
                           />
-                          <Button 
-                            type="button" 
-                            variant="outline" 
-                            onClick={() => document.getElementById('logo')?.click()}
-                            disabled={uploading.logo}
-                            className="text-primary border-primary hover:bg-primary hover:text-primary-foreground disabled:opacity-50"
-                          >
-                            {uploading.logo ? (
-                              <>
-                                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                                Uploading...
-                              </>
-                            ) : (
-                              'Choose Logo'
-                            )}
-                          </Button>
                         </div>
                       </div>
-                      {formData.logo && (
-                        <div className="flex items-center justify-between p-3 bg-primary/10 rounded-lg">
-                          <div className="flex items-center space-x-2">
-                            <CheckCircle className="h-4 w-4 text-primary" />
-                            <span className="text-sm text-primary font-medium">
-                              {formData.logo.includes('http') ? 'Logo uploaded successfully' : formData.logo}
-                            </span>
-                          </div>
-                          {formData.logo.includes('http') && (
-                            <img 
-                              src={formData.logo} 
-                              alt="Company logo" 
-                              className="h-8 w-8 rounded object-cover"
-                            />
-                          )}
-                        </div>
-                      )}
                       {validationErrors.logo && (
                         <p className="text-sm text-destructive">{validationErrors.logo}</p>
                       )}
                     </div>
+                  </CardContent>
+                </Card>
+              )}
 
-                    <div className="space-y-2">
-                      <Label htmlFor="organisation" className="text-sm font-semibold">
-                        Organisation Type *
-                      </Label>
-                      <select
-                        id="organisation"
-                        name="organisation"
-                        value={formData.organisation}
-                        onChange={handleInputChange}
-                        className={`flex h-10 w-full rounded-md border bg-background px-3 py-2 text-sm focus:ring-primary ${
-                          validationErrors.organisation ? 'border-destructive focus:border-destructive' : 'border-input focus:border-primary'
-                        }`}
-                        required
-                      >
-                        <option value="">Select Organisation Type</option>
-                        <option value="Corporation">Corporation</option>
-                        <option value="LLC">Limited Liability Company (LLC)</option>
-                        <option value="Partnership">Partnership</option>
-                        <option value="Sole Proprietorship">Sole Proprietorship</option>
-                        <option value="Non-Profit">Non-Profit Organization</option>
-                        <option value="Government">Government Agency</option>
-                        <option value="Other">Other</option>
-                      </select>
-                      {validationErrors.organisation && (
-                        <p className="text-sm text-destructive">{validationErrors.organisation}</p>
-                      )}
-                    </div>
-
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="industry" className="text-sm font-semibold">
-                          Industry *
-                        </Label>
-                        <select
-                          id="industry"
-                          name="industry"
-                          value={formData.industry}
-                          onChange={handleInputChange}
-                          className={`flex h-10 w-full rounded-md border bg-background px-3 py-2 text-sm focus:ring-primary ${
-                            validationErrors.industry ? 'border-destructive focus:border-destructive' : 'border-input focus:border-primary'
-                          }`}
-                          required
-                        >
-                          <option value="">Select Industry</option>
-                          <option value="Technology">Technology</option>
-                          <option value="Healthcare">Healthcare</option>
-                          <option value="Finance">Finance</option>
-                          <option value="Education">Education</option>
-                          <option value="Manufacturing">Manufacturing</option>
-                          <option value="Retail">Retail</option>
-                          <option value="Other">Other</option>
-                        </select>
-                        {validationErrors.industry && (
-                          <p className="text-sm text-destructive">{validationErrors.industry}</p>
-                        )}
-                      </div>
-                      
-                      <div className="space-y-2">
-                        <Label htmlFor="location" className="text-sm font-semibold">
-                          Location *
-                        </Label>
-                        <div className="relative">
-                          <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                          <Input
-                            type="text"
-                            id="location"
-                            name="location"
-                            value={formData.location}
-                            onChange={handleInputChange}
-                            placeholder="New York, USA"
-                            className={`pl-10 ${validationErrors.location ? 'border-destructive focus:border-destructive' : ''}`}
-                            required
-                          />
-                        </div>
-                        {validationErrors.location && (
-                          <p className="text-sm text-destructive">{validationErrors.location}</p>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="employees" className="text-sm font-semibold">
-                        Number of Employees *
-                      </Label>
-                      <div className="relative">
-                        <Users className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                        <select
-                          id="employees"
-                          name="employees"
-                          value={formData.employees}
-                          onChange={handleInputChange}
-                          className={`flex h-10 w-full rounded-md border bg-background px-3 py-2 text-sm focus:ring-primary pl-10 ${
-                            validationErrors.employees ? 'border-destructive focus:border-destructive' : 'border-input focus:border-primary'
-                          }`}
-                          required
-                        >
-                          <option value="">Select Range</option>
-                          <option value="1-10">1-10</option>
-                          <option value="11-50">11-50</option>
-                          <option value="51-100">51-100</option>
-                          <option value="101-500">101-500</option>
-                          <option value="500+">500+</option>
-                        </select>
-                      </div>
-                      {validationErrors.employees && (
-                        <p className="text-sm text-destructive">{validationErrors.employees}</p>
-                      )}
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="description" className="text-sm font-semibold">
-                        Company Description *
-                      </Label>
-                      <Textarea
-                        id="description"
-                        name="description"
-                        value={formData.description}
-                        onChange={handleInputChange}
-                        placeholder="Leading technology solutions provider specializing in enterprise software development and cloud services."
-                        rows={4}
-                        className={`resize-none ${validationErrors.description ? 'border-destructive focus:border-destructive' : ''}`}
-                        required
-                      />
-                      {validationErrors.description && (
-                        <p className="text-sm text-destructive">{validationErrors.description}</p>
-                      )}
-                    </div>
-                </CardContent>
-              </Card>
-            )}
-
-              {/* Step 2: Verification Documents */}
               {currentStep === 2 && (
                 <Card className="shadow-lg border-0 bg-card">
                   <CardHeader className="bg-gradient-to-r from-primary/5 to-primary/10 rounded-t-lg">
@@ -753,87 +578,21 @@ const CompanyProfileSetup = () => {
                               type="file"
                               id="business_license"
                               name="business_license"
-                              accept="image/*"
-                              onChange={(e) => {
-                                const file = e.target.files?.[0]
-                                if (file) {
-                                  setBusinessLicenseFile(file)
-                                  handleFileUpload(file, 'business_license')
-                                  if (validationErrors.business_license) {
-                                    setValidationErrors(prev => {
-                                      const newErrors = { ...prev }
-                                      delete newErrors.business_license
-                                      return newErrors
-                                    })
-                                  }
-                                }
-                              }}
+                              accept="image/*,.pdf,.doc,.docx"
+                              onChange={handleFileChange}
                               className="hidden"
                             />
-                            <Button 
-                              type="button" 
-                              variant="outline" 
-                              onClick={() => document.getElementById('business_license')?.click()}
-                              disabled={uploading.business_license}
-                              className="text-primary border-primary hover:bg-primary hover:text-primary-foreground disabled:opacity-50"
-                            >
-                              {uploading.business_license ? (
-                                <>
-                                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                                  Uploading...
-                                </>
-                              ) : (
-                                'Choose File'
-                              )}
-                            </Button>
                           </div>
                         </div>
-                        {formData.business_license && (
-                          <div className="flex items-center justify-between p-3 bg-primary/10 rounded-lg">
-                            <div className="flex items-center space-x-2">
-                              <CheckCircle className="h-4 w-4 text-primary" />
-                              <span className="text-sm text-primary font-medium">
-                                {formData.business_license.includes('http') ? 'Business license uploaded successfully' : formData.business_license}
-                              </span>
-                            </div>
-                            {formData.business_license.includes('http') && (
-                              <img 
-                                src={formData.business_license} 
-                                alt="Business license" 
-                                className="h-8 w-8 rounded object-cover"
-                              />
-                            )}
-                          </div>
-                        )}
                         {validationErrors.business_license && (
                           <p className="text-sm text-destructive">{validationErrors.business_license}</p>
                         )}
                       </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="tax_id" className="text-sm font-semibold">
-                          Tax ID *
-                        </Label>
-                        <Input
-                          type="text"
-                          id="tax_id"
-                          name="tax_id"
-                          value={formData.tax_id}
-                          onChange={handleInputChange}
-                          placeholder="TAX-123456789"
-                          className={validationErrors.tax_id ? 'border-destructive focus:border-destructive' : ''}
-                          required
-                        />
-                        {validationErrors.tax_id && (
-                          <p className="text-sm text-destructive">{validationErrors.tax_id}</p>
-                        )}
-                      </div>
                     </div>
-                </CardContent>
-              </Card>
-            )}
+                  </CardContent>
+                </Card>
+              )}
 
-              {/* Navigation Buttons */}
               <div className="flex items-center justify-between pt-4">
                 <div>
                   {currentStep > 1 && (
@@ -883,7 +642,7 @@ const CompanyProfileSetup = () => {
               </div>
             </form>
 
-            {/* Help Section */}
+            {}
             <div className="text-center">
               <div className="inline-flex items-center space-x-2 text-sm text-muted-foreground">
                 <span>Need help?</span>

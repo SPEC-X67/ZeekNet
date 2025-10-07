@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const CreateCompanyTechStackDto = z.object({
-  companyId: z.string().optional(), // Will be set by the system
+  companyId: z.string().optional(),
   techStack: z.string().min(1, 'Tech stack name cannot be empty'),
 });
 

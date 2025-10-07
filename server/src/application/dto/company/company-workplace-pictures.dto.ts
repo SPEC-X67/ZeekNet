@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const CreateCompanyWorkplacePicturesDto = z.object({
-  companyId: z.string().optional(), // Will be set by the system
+  companyId: z.string().optional(),
   pictureUrl: z.string().url('Must be a valid URL'),
   caption: z.string().optional(),
 });

@@ -77,7 +77,7 @@ const UserDashboard = () => {
   return (
     <UserLayout>
       <div className="min-h-screen bg-gray-50">
-        {/* Header Section */}
+        {}
         <div className="px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
@@ -99,7 +99,7 @@ const UserDashboard = () => {
         </div>
 
         <div className="p-6">
-          {/* Welcome Message */}
+          {}
           <div className="mb-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-2">
               Good morning, Jake
@@ -110,9 +110,9 @@ const UserDashboard = () => {
             </p>
           </div>
 
-          {/* Stats Cards */}
+          {}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            {/* Total Jobs Applied */}
+            {}
             <Card className="bg-white border border-gray-200">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
@@ -129,7 +129,7 @@ const UserDashboard = () => {
               </CardContent>
             </Card>
 
-            {/* Interviewed */}
+            {}
             <Card className="bg-white border border-gray-200">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
@@ -146,7 +146,7 @@ const UserDashboard = () => {
               </CardContent>
             </Card>
 
-            {/* Jobs Applied Status Chart */}
+            {}
             <Card className="bg-white border border-gray-200">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-4">
@@ -163,7 +163,7 @@ const UserDashboard = () => {
                 </div>
                 <div className="flex items-center justify-center">
                   <div className="relative w-24 h-24">
-                    {/* Donut Chart */}
+                    {}
                     <div className="absolute inset-0 rounded-full border-8 border-purple-200"></div>
                     <div
                       className="absolute inset-0 rounded-full border-8 border-blue-400"
@@ -197,7 +197,7 @@ const UserDashboard = () => {
             </Card>
           </div>
 
-          {/* Upcoming Interviews */}
+          {}
           <Card className="bg-white border border-gray-200 mb-8">
             <CardHeader className="pb-4">
               <CardTitle className="text-lg font-semibold text-gray-900">
@@ -254,7 +254,7 @@ const UserDashboard = () => {
             </CardContent>
           </Card>
 
-          {/* Recent Applications History */}
+          {}
           <Card className="bg-white border border-gray-200">
             <CardHeader className="pb-4">
               <CardTitle className="text-lg font-semibold text-gray-900">

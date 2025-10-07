@@ -21,13 +21,13 @@ export const baseApi = {
 
 export const buildQueryParams = (params: Record<string, unknown>): string => {
   const queryParams = new URLSearchParams();
-  
+
   Object.entries(params).forEach(([key, value]) => {
     if (value !== undefined && value !== null && value !== '') {
       queryParams.append(key, value.toString());
     }
   });
-  
+
   return queryParams.toString();
 };
 
@@ -42,13 +42,13 @@ export const buildSearchQuery = (searchTerm: string) => ({
 
 export const buildFilterQuery = (filters: Record<string, unknown>) => {
   const queryParams: Record<string, string> = {};
-  
+
   Object.entries(filters).forEach(([key, value]) => {
     if (value !== undefined && value !== null && value !== '') {
       queryParams[key] = value.toString();
     }
   });
-  
+
   return queryParams;
 };
 
@@ -59,13 +59,13 @@ export const buildSortQuery = (field: string, order: 'asc' | 'desc' = 'asc') => 
 
 export const buildFormData = (data: Record<string, unknown>, fileFields: string[] = []): FormData => {
   const formData = new FormData();
-  
+
   Object.entries(data).forEach(([key, value]) => {
     if (value && !fileFields.includes(key)) {
       formData.append(key, value as string);
     }
   });
-  
+
   return formData;
 };
 
@@ -77,19 +77,19 @@ export const uploadFile = async <T>(
 ): Promise<ApiEnvelope<T>> => {
   const formData = new FormData();
   formData.append(fieldName, file);
-  
+
   Object.entries(additionalData).forEach(([key, value]) => {
     if (value) {
       formData.append(key, value as string);
     }
   });
-  
+
   const res = await api.post<ApiEnvelope<T>>(endpoint, formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
   });
-  
+
   return res.data;
 };
 
@@ -100,23 +100,23 @@ export const uploadMultipleFiles = async <T>(
   additionalData: Record<string, unknown> = {}
 ): Promise<ApiEnvelope<T>> => {
   const formData = new FormData();
-  
+
   files.forEach((file) => {
     formData.append(fieldName, file);
   });
-  
+
   Object.entries(additionalData).forEach(([key, value]) => {
     if (value) {
       formData.append(key, value as string);
     }
   });
-  
+
   const res = await api.post<ApiEnvelope<T>>(endpoint, formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
   });
-  
+
   return res.data;
 };
 

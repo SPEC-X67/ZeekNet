@@ -14,9 +14,9 @@ import {
   VerifyCompanyUseCase,
 } from '../../../application/use-cases';
 import { BlockCompanyUseCase } from '../../../application/use-cases/admin/block-company.use-case';
-import { BaseController } from '../../../shared';
+import { handleValidationError, handleAsyncError, sendSuccessResponse, sendNotFoundResponse } from '../../../shared/utils';
 
-export class AdminController extends BaseController {
+export class AdminController {
   constructor(
     private readonly _getAllUsersUseCase: GetAllUsersUseCase,
     private readonly _blockUserUseCase: BlockUserUseCase,
@@ -25,9 +25,7 @@ export class AdminController extends BaseController {
     private readonly _getCompaniesWithVerificationUseCase: GetCompaniesWithVerificationUseCase,
     private readonly _verifyCompanyUseCase: VerifyCompanyUseCase,
     private readonly _blockCompanyUseCase: BlockCompanyUseCase,
-  ) {
-    super();
-  }
+  ) {  }
 
   getAllUsers = async (
     req: Request,
@@ -36,14 +34,21 @@ export class AdminController extends BaseController {
   ): Promise<void> => {
     const parsed = GetAllUsersDto.safeParse(req.query);
     if (!parsed.success) {
-      return this.handleValidationError('Invalid query parameters', next);
+      return handleValidationError('Invalid query parameters', next);
     }
 
     try {
-      const result = await this._getAllUsersUseCase.execute(parsed.data);
-      this.sendSuccessResponse(res, 'Users retrieved successfully', result);
+      const options = {
+        page: parseInt(parsed.data.page) || 1,
+        limit: parseInt(parsed.data.limit) || 10,
+        search: parsed.data.search,
+        role: parsed.data.role,
+        isBlocked: parsed.data.isBlocked ? parsed.data.isBlocked === 'true' : undefined,
+      };
+      const result = await this._getAllUsersUseCase.execute(options);
+      sendSuccessResponse(res, 'Users retrieved successfully', result);
     } catch (error) {
-      this.handleAsyncError(error, next);
+      handleAsyncError(error, next);
     }
   };
 
@@ -54,7 +59,7 @@ export class AdminController extends BaseController {
   ): Promise<void> => {
     const parsed = BlockUserDto.safeParse(req.body);
     if (!parsed.success) {
-      return this.handleValidationError('Invalid block user data', next);
+      return handleValidationError('Invalid block user data', next);
     }
 
     try {
@@ -63,9 +68,9 @@ export class AdminController extends BaseController {
         parsed.data.isBlocked,
       );
       const message = `User ${parsed.data.isBlocked ? 'blocked' : 'unblocked'} successfully`;
-      this.sendSuccessResponse(res, message, null);
+      sendSuccessResponse(res, message, null);
     } catch (error) {
-      this.handleAsyncError(error, next);
+      handleAsyncError(error, next);
     }
   };
 
@@ -76,14 +81,14 @@ export class AdminController extends BaseController {
   ): Promise<void> => {
     const { userId } = req.params;
     if (!userId) {
-      return this.handleValidationError('User ID is required', next);
+      return handleValidationError('User ID is required', next);
     }
 
     try {
       const user = await this._getUserByIdUseCase.execute(userId);
-      this.sendSuccessResponse(res, 'User retrieved successfully', user);
+      sendSuccessResponse(res, 'User retrieved successfully', user);
     } catch (error) {
-      this.handleAsyncError(error, next);
+      handleAsyncError(error, next);
     }
   };
 
@@ -94,14 +99,21 @@ export class AdminController extends BaseController {
   ): Promise<void> => {
     const parsed = GetAllCompaniesDto.safeParse(req.query);
     if (!parsed.success) {
-      return this.handleValidationError('Invalid query parameters', next);
+      return handleValidationError('Invalid query parameters', next);
     }
 
     try {
-      const result = await this._getCompaniesWithVerificationUseCase.execute(parsed.data);
-      this.sendSuccessResponse(res, 'Companies retrieved successfully', result);
+      const options = {
+        page: parseInt(parsed.data.page) || 1,
+        limit: parseInt(parsed.data.limit) || 10,
+        search: parsed.data.search,
+        isVerified: parsed.data.isVerified,
+        isBlocked: parsed.data.isBlocked ? parsed.data.isBlocked === 'true' : undefined,
+      };
+      const result = await this._getCompaniesWithVerificationUseCase.execute(options);
+      sendSuccessResponse(res, 'Companies retrieved successfully', result);
     } catch (error) {
-      this.handleAsyncError(error, next);
+      handleAsyncError(error, next);
     }
   };
 
@@ -111,10 +123,14 @@ export class AdminController extends BaseController {
     next: NextFunction,
   ): Promise<void> => {
     try {
-      const result = await this._getCompaniesWithVerificationUseCase.executeForPending();
-      this.sendSuccessResponse(res, 'Pending companies retrieved successfully', result);
+      const result = await this._getCompaniesWithVerificationUseCase.execute({
+        page: 1,
+        limit: 100,
+        isVerified: 'pending',
+      });
+      sendSuccessResponse(res, 'Pending companies retrieved successfully', result);
     } catch (error) {
-      this.handleAsyncError(error, next);
+      handleAsyncError(error, next);
     }
   };
 
@@ -125,18 +141,22 @@ export class AdminController extends BaseController {
   ): Promise<void> => {
     const { companyId } = req.params;
     if (!companyId) {
-      return this.handleValidationError('Company ID is required', next);
+      return handleValidationError('Company ID is required', next);
     }
 
     try {
-      const company = await this._getCompaniesWithVerificationUseCase.executeById(companyId);
+      const result = await this._getCompaniesWithVerificationUseCase.execute({
+        page: 1,
+        limit: 1,
+      });
+      const company = result.companies[0] || null;
       if (!company) {
-        return this.sendNotFoundResponse(res, 'Company not found');
+        return sendNotFoundResponse(res, 'Company not found');
       }
       
-      this.sendSuccessResponse(res, 'Company retrieved successfully', company);
+      sendSuccessResponse(res, 'Company retrieved successfully', company);
     } catch (error) {
-      this.handleAsyncError(error, next);
+      handleAsyncError(error, next);
     }
   };
 
@@ -147,7 +167,7 @@ export class AdminController extends BaseController {
   ): Promise<void> => {
     const parsed = CompanyVerificationDto.safeParse(req.body);
     if (!parsed.success) {
-      return this.handleValidationError('Invalid verification data', next);
+      return handleValidationError('Invalid verification data', next);
     }
 
     try {
@@ -157,9 +177,9 @@ export class AdminController extends BaseController {
       );
 
       const message = `Company ${parsed.data.isVerified} successfully`;
-      this.sendSuccessResponse(res, message, null);
+      sendSuccessResponse(res, message, null);
     } catch (error) {
-      this.handleAsyncError(error, next);
+      handleAsyncError(error, next);
     }
   };
 
@@ -171,15 +191,15 @@ export class AdminController extends BaseController {
     const { companyId, isBlocked } = req.body;
     
     if (!companyId || typeof isBlocked !== 'boolean') {
-      return this.handleValidationError('Company ID and isBlocked status are required', next);
+      return handleValidationError('Company ID and isBlocked status are required', next);
     }
 
     try {
       await this._blockCompanyUseCase.execute(companyId, isBlocked);
       const message = `Company ${isBlocked ? 'blocked' : 'unblocked'} successfully`;
-      this.sendSuccessResponse(res, message, null);
+      sendSuccessResponse(res, message, null);
     } catch (error) {
-      this.handleAsyncError(error, next);
+      handleAsyncError(error, next);
     }
   };
 }

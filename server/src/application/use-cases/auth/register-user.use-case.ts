@@ -1,4 +1,3 @@
-import { Result } from '../../../shared/base/result';
 import { RegisterResult } from '../../dto/auth/auth-response.dto';
 import { UserRole } from '../../../domain/enums/user-role.enum';
 import { IUserRepository } from '../../../domain/interfaces/repositories';
@@ -20,50 +19,32 @@ export class RegisterUserUseCase implements IRegisterUserUseCase {
     password: string,
     role?: UserRole,
     name?: string,
-  ): Promise<Result<RegisterResult, Error>> {
-    try {
-      const validationResult = this.validateInput(email, password, name);
-      if (!validationResult.isValid) {
-        return Result.failure(new ValidationError(validationResult.errors.join(', ')));
-      }
-
-      const existingUserResult = await Result.fromPromise(
-        this._userRepository.findByEmail(email),
-      );
-      
-      if (existingUserResult.isSuccess && existingUserResult.value) {
-        return Result.failure(new ValidationError('Email already registered'));
-      }
-
-      const hashedPasswordResult = await Result.fromPromise(
-        this._passwordHasher.hash(password),
-      );
-      
-      if (hashedPasswordResult.isFailure()) {
-        return Result.failure(new Error('Password hashing failed'));
-      }
-
-      const user = await this._userRepository.save({
-        name: name ?? '',
-        email,
-        password: hashedPasswordResult.value!,
-        role: role ?? UserRole.SEEKER,
-        isVerified: false,
-        isBlocked: false,
-        refreshToken: null,
-      });
-
-      this.sendOtpEmail(user.email).catch(error => {
-        // Silent fail for OTP email
-      });
-
-      return Result.success({ user });
-
-    } catch (error) {
-      return Result.failure(
-        error instanceof Error ? error : new Error('Unexpected error occurred'),
-      );
+  ): Promise<RegisterResult> {
+    const validationResult = this.validateInput(email, password, name);
+    if (!validationResult.isValid) {
+      throw new ValidationError(validationResult.errors.join(', '));
     }
+
+    const existingUser = await this._userRepository.findByEmail(email);
+    if (existingUser) {
+      throw new ValidationError('Email already registered');
+    }
+
+    const hashedPassword = await this._passwordHasher.hash(password);
+
+    const user = await this._userRepository.save({
+      name: name ?? '',
+      email,
+      password: hashedPassword,
+      role: role ?? UserRole.SEEKER,
+      isVerified: false,
+      isBlocked: false,
+      refreshToken: null,
+    });
+
+    this.sendOtpEmail(user.email).catch(error => {});
+
+    return { user };
   }
 
   private validateInput(email: string, password: string, name?: string): {

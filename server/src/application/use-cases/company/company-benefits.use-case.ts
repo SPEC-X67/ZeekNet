@@ -1,4 +1,4 @@
-import { ICompanyBenefitsRepository } from '../../../domain/interfaces/repositories/company-benefits.repository';
+import { ICompanyBenefitsRepository } from '../../../domain/interfaces/repositories';
 import { CompanyBenefits } from '../../../domain/entities/company-benefits.entity';
 import { CreateCompanyBenefitsDto, UpdateCompanyBenefitsDto } from '../../dto/company/company-benefits.dto';
 import { NotFoundError } from '../../../domain/errors/errors';

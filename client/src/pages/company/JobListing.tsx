@@ -94,8 +94,7 @@ const CompanyJobListing = () => {
       } else {
         setError(response.message || 'Failed to fetch jobs')
       }
-    } catch (err) {
-      console.error('Error fetching jobs:', err)
+    } catch {
       setError('Failed to fetch jobs')
     } finally {
       setLoading(false)
@@ -156,8 +155,7 @@ const CompanyJobListing = () => {
           description: response.message || 'Please try again later.'
         })
       }
-    } catch (error) {
-      console.error('Error deleting job:', error)
+    } catch {
       toast.error('Failed to delete job', {
         description: 'An unexpected error occurred. Please try again.'
       })
@@ -185,8 +183,7 @@ const CompanyJobListing = () => {
       } else {
         setError(response.message || 'Failed to update job status')
       }
-    } catch (error) {
-      console.error('Error updating job status:', error)
+    } catch {
       setError('Failed to update job status')
     } finally {
       setLoading(false)
@@ -196,7 +193,7 @@ const CompanyJobListing = () => {
   return (
     <CompanyLayout>
       <div className="min-h-screen bg-white">
-        {/* Header Section - matches Figma greeting section */}
+        {}
         <div className="flex items-center justify-between px-7 py-7">
           <div className="flex flex-col gap-1">
             <h1 className="text-xl font-bold text-[#25324B]">Job Listing</h1>
@@ -205,14 +202,14 @@ const CompanyJobListing = () => {
             </p>
           </div>
 
-          {/* Date Filter - matches Figma dropdown */}
+          {}
           <div className="flex items-center gap-3 px-3 py-2 border border-[#D6DDEB] rounded-lg bg-white">
             <Calendar className="w-4 h-4 text-[#4640DE]" />
             <span className="text-sm text-[#25324B]">Jul 19 - Jul 25</span>
           </div>
         </div>
 
-        {/* Job Listing Table */}
+        {}
         <div className="px-5 pb-5">
           <Card className="border border-[#D6DDEB] rounded-lg">
             <CardHeader className="border-b border-[#D6DDEB]">
@@ -227,7 +224,7 @@ const CompanyJobListing = () => {
               </div>
             </CardHeader>
 
-            {/* Table Header */}
+            {}
             <div className="px-5 py-2 border-b border-[#D6DDEB]">
               <div className="grid grid-cols-6 gap-10 text-md font-medium text-[#202430] opacity-60">
                 <div className="w-[248px]">Roles</div>
@@ -239,7 +236,7 @@ const CompanyJobListing = () => {
               </div>
             </div>
 
-            {/* Table Rows */}
+            {}
             <div className="divide-y divide-[#D6DDEB]">
               {loading ? (
                 <div className="px-5 py-10 flex justify-center">
@@ -268,7 +265,7 @@ const CompanyJobListing = () => {
                       index % 2 === 0 ? 'bg-white' : 'bg-[#F8F8FD]'
                     }`}
                   >
-                    {/* Role */}
+                    {}
                     <div className="w-[248px]">
                       <button 
                         onClick={() => handleJobClick(job.id)}
@@ -278,7 +275,7 @@ const CompanyJobListing = () => {
                       </button>
                     </div>
 
-                    {/* Status */}
+                    {}
                     <div className="w-[111px]">
                       <Badge
                         variant="outline"
@@ -292,12 +289,12 @@ const CompanyJobListing = () => {
                       </Badge>
                     </div>
 
-                    {/* Date Posted */}
+                    {}
                     <div className="w-[149px]">
                       <span className="text-xs text-[#25324B]">{formatDate(job.createdAt)}</span>
                     </div>
 
-                    {/* Job Type */}
+                    {}
                     <div className="w-[128px]">
                       <Badge
                         variant="outline"
@@ -307,16 +304,16 @@ const CompanyJobListing = () => {
                       </Badge>
                     </div>
 
-                    {/* Applicants */}
+                    {}
                     <div className="w-[114px]">
                       <span className="text-xs text-[#25324B]">{(job.application_count || 0).toLocaleString()}</span>
                     </div>
 
-                    {/* Views */}
+                    {}
                     <div className="w-[98px] flex items-center justify-between">
                       <span className="text-xs text-[#25324B]">{(job.view_count || 0).toLocaleString()}</span>
                       
-                      {/* Action Dropdown */}
+                      {}
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
@@ -363,10 +360,10 @@ const CompanyJobListing = () => {
               )}
             </div>
 
-            {/* Footer with View Controls and Pagination */}
+            {}
             <div className="px-3 py-3 border-t border-[#D6DDEB]">
               <div className="flex items-center justify-between">
-                {/* View Controls */}
+                {}
                 <div className="flex items-center gap-3">
                   <span className="text-xs font-medium text-[#7C8493]">View</span>
                   <div className="flex items-center gap-1 px-3 py-2 border border-[#D6DDEB] rounded-lg bg-white">
@@ -376,7 +373,7 @@ const CompanyJobListing = () => {
                   <span className="text-xs font-medium text-[#7C8493]">Applicants per page</span>
                 </div>
 
-                {/* Pagination */}
+                {}
                 <div className="flex items-center gap-1">
                   <Button 
                     variant="outline" 
@@ -426,7 +423,7 @@ const CompanyJobListing = () => {
           </Card>
         </div>
 
-        {/* Delete Confirmation Dialog */}
+        {}
         <ConfirmationDialog
           isOpen={deleteDialog.isOpen}
           onClose={cancelDeleteJob}

@@ -1,7 +1,7 @@
-import { IJobPostingRepositoryFull } from '../../../domain/interfaces/repositories';
+import { IJobPostingAnalyticsRepository } from '../../../domain/interfaces/repositories';
 
 export class IncrementJobViewCountUseCase {
-  constructor(private readonly _jobPostingRepository: IJobPostingRepositoryFull) {}
+  constructor(private readonly _jobPostingRepository: IJobPostingAnalyticsRepository) {}
 
   async execute(id: string, userRole?: string): Promise<void> {
     try {

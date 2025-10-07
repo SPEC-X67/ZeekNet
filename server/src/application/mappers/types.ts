@@ -1,4 +1,3 @@
-// Company Profile Types
 export interface CompanyProfileData {
   userId: string;
   companyName: string;
@@ -25,8 +24,8 @@ export interface CompanyContactData {
 export interface CompanyLocationData {
   companyId: string;
   location: string;
-  officeName: string;
-  address: string;
+  officeName?: string;
+  address?: string;
   isHeadquarters: boolean;
 }
 
@@ -82,14 +81,6 @@ export interface CompanyProfileWithDetailsResponseDto {
     perk: string;
     description: string;
   }[];
-  team: {
-    id: string;
-    name: string;
-    role: string;
-    avatar?: string;
-    instagram?: string;
-    linkedin?: string;
-  }[];
   workplacePictures: {
     id: string;
     pictureUrl: string;
@@ -109,7 +100,6 @@ export interface CompanyProfileWithDetailsResponseDto {
   }[];
 }
 
-// Job Posting Types
 export interface JobPostingData {
   company_id: string;
   title: string;
@@ -146,7 +136,34 @@ export interface JobPostingResponseDto {
   updatedAt: Date;
 }
 
-// User Types
+export interface JobPostingDetailResponseDto {
+  id: string;
+  title: string;
+  description: string;
+  responsibilities: string[];
+  qualifications: string[];
+  nice_to_haves: string[];
+  benefits: string[];
+  salary: { min: number; max: number };
+  employment_types: string[];
+  location: string;
+  skills_required: string[];
+  category_ids: string[];
+  is_active: boolean;
+  view_count: number;
+  application_count: number;
+  createdAt: string;
+  updatedAt: string;
+  company: {
+    companyName: string;
+    logo: string;
+    workplacePictures: Array<{
+      pictureUrl: string;
+      caption?: string;
+    }>;
+  };
+}
+
 export interface UserData {
   id: string;
   name: string;

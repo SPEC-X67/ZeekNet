@@ -25,7 +25,7 @@ export class RedisOtpService implements IOtpService {
       
       if (lastSent) {
         const timeDiff = Date.now() - parseInt(lastSent);
-        if (timeDiff < 30000) { // 30 seconds cooldown
+        if (timeDiff < 30000) {
           throw new Error('Please wait before requesting another OTP');
         }
       }

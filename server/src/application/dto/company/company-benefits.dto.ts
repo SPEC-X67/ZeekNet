@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const CreateCompanyBenefitsDto = z.object({
-  companyId: z.string().optional(), // Will be set by the system
+  companyId: z.string().optional(),
   perk: z.string().min(1, 'Perk name cannot be empty'),
   description: z.string().optional(),
 });

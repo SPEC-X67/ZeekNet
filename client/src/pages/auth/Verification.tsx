@@ -330,7 +330,7 @@ const Verification = () => {
 
   return (
     <div className="min-h-screen flex">
-      {/* Back Button */}
+      {}
       <div className="fixed top-4 left-4 z-50">
         <Button 
           variant="outline" 
@@ -342,7 +342,7 @@ const Verification = () => {
         </Button>
       </div>
 
-      {/* Left Side - Branding */}
+      {}
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary/10 via-primary/5 to-secondary/10 relative overflow-hidden">
         <div className="absolute inset-0 bg-grid-slate-100 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))] dark:bg-grid-slate-700/25"></div>
         
@@ -382,15 +382,15 @@ const Verification = () => {
         </div>
       </div>
 
-      {/* Right Side - Form */}
+      {}
       <div className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8">
         <div className="w-full max-w-md space-y-8">
-          {/* Mobile Logo */}
+          {}
           <div className="lg:hidden text-center">
             <LogoSection />
           </div>
 
-          {/* Form */}
+          {}
             <Card className="shadow-lg">
               <CardHeader className="text-center">
                 <div className="flex items-center justify-center mb-4">
@@ -406,7 +406,7 @@ const Verification = () => {
               </CardHeader>
             
             <CardContent className="space-y-6">
-              {/* Status Messages */}
+              {}
               {otpSent && !error && (
                 <StatusMessage type="success" message="OTP sent" />
               )}
@@ -415,12 +415,12 @@ const Verification = () => {
                 <StatusMessage type="error" message={error} />
               )}
 
-               {/* Success Message */}
+               {}
                {verificationSuccess && (
                 <StatusMessage type="success" message="Email verified successfully! Redirecting..." />
               )}
 
-              {/* OTP Form */}
+              {}
               <form onSubmit={handleVerifyOTP} className="space-y-4">
                 <OtpInputs />
                 
@@ -440,7 +440,7 @@ const Verification = () => {
                 </Button>
               </form>
 
-              {/* Resend Section */}
+              {}
               <div className="text-center space-y-2">
                 <p className="text-sm text-muted-foreground">Didn't receive the code?</p>
                 <ResendButton />

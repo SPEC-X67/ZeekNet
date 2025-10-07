@@ -1,10 +1,10 @@
-import { ICompanyRepository } from '../../../domain/interfaces/repositories';
+import { ICompanyProfileRepository } from '../../../domain/interfaces/repositories';
 import { CompanyProfile } from '../../../domain/entities/company-profile.entity';
 import { AppError } from '../../../domain/errors/errors';
 
 export class GetCompanyProfileByUserIdUseCase {
   constructor(
-    private readonly _companyRepository: ICompanyRepository,
+    private readonly _companyProfileRepository: ICompanyProfileRepository,
   ) {}
 
   async execute(userId: string): Promise<CompanyProfile | null> {
@@ -13,7 +13,7 @@ export class GetCompanyProfileByUserIdUseCase {
         throw new AppError('User ID is required', 400);
       }
 
-      const companyProfile = await this._companyRepository.getProfileByUserId(userId);
+      const companyProfile = await this._companyProfileRepository.getProfileByUserId(userId);
       return companyProfile;
     } catch (error) {
       if (error instanceof AppError) {

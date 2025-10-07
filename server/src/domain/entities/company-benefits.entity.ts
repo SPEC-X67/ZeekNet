@@ -51,7 +51,14 @@ export class CompanyBenefits extends BaseEntity {
     };
   }
 
-  static fromJSON(data: any): CompanyBenefits {
+  static fromJSON(data: {
+    id: string;
+    companyId: string;
+    perk: string;
+    description?: string;
+    createdAt: string | Date;
+    updatedAt: string | Date;
+  }): CompanyBenefits {
     return new CompanyBenefits(
       data.id,
       data.companyId,

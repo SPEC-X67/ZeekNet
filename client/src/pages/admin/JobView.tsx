@@ -16,14 +16,12 @@ import {
   CheckCircle,
   XCircle,
   Trash2,
-  Edit,
   Clock,
   Briefcase,
   Target,
   Award,
   Heart,
-  Code,
-  Globe
+  Code
 } from 'lucide-react'
 import { ConfirmationDialog } from '@/components/ui/confirmation-dialog'
 import { toast } from 'sonner'
@@ -37,74 +35,6 @@ const JobView = () => {
   const [loading, setLoading] = useState(true)
   const [deleteDialog, setDeleteDialog] = useState(false)
 
-  const mockJob: JobPostingResponse = {
-    id: jobId || '1',
-    company_id: 'comp1',
-    title: 'Senior React Developer',
-    description: `We are looking for a passionate Senior React Developer to join our dynamic team. 
-    You will be responsible for developing user interface components and implementing them following 
-    well-known React.js workflows. You will ensure that these components and the overall application 
-    are robust and easy to maintain. You will coordinate with the rest of the team working on different 
-    layers of the infrastructure. Therefore, a commitment to collaborative problem solving, sophisticated 
-    design, and quality products is important.`,
-    responsibilities: [
-      'Develop new user-facing features using React.js',
-      'Build reusable components and front-end libraries for future use',
-      'Translate designs and wireframes into high quality code',
-      'Optimize components for maximum performance across a vast array of web-capable devices and browsers',
-      'Coordinate with various teams working on different layers of the infrastructure',
-      'Participate in code reviews and maintain high code quality standards'
-    ],
-    qualifications: [
-      '5+ years of experience in React.js development',
-      'Strong proficiency in JavaScript, including DOM manipulation and the JavaScript object model',
-      'Thorough understanding of React.js and its core principles',
-      'Experience with popular React.js workflows (such as Flux or Redux)',
-      'Familiarity with newer specifications of EcmaScript',
-      'Experience with data structure libraries (e.g., Immutable.js)',
-      'Knowledge of isomorphic React is a plus',
-      'Familiarity with RESTful APIs',
-      'Knowledge of modern authorization mechanisms, such as JSON Web Token',
-      'Familiarity with modern front-end build pipelines and tools'
-    ],
-    nice_to_haves: [
-      'Experience with TypeScript',
-      'Knowledge of Next.js framework',
-      'Experience with testing frameworks (Jest, React Testing Library)',
-      'Familiarity with GraphQL',
-      'Experience with CI/CD pipelines',
-      'Knowledge of accessibility standards (WCAG)'
-    ],
-    benefits: [
-      'Competitive salary and equity package',
-      'Comprehensive health, dental, and vision insurance',
-      'Flexible work hours and remote work options',
-      'Professional development budget',
-      '401(k) with company matching',
-      'Unlimited paid time off',
-      'Top-tier equipment and home office setup',
-      'Team building events and company retreats'
-    ],
-    salary: { min: 80000, max: 120000 },
-    employment_types: ['Full-time', 'Remote'],
-    location: 'New York, NY',
-    skills_required: ['React', 'JavaScript', 'CSS', 'HTML', 'Redux', 'TypeScript'],
-    category_ids: ['tech', 'frontend'],
-    is_active: true,
-    view_count: 150,
-    application_count: 25,
-    createdAt: '2024-01-15T10:00:00Z',
-    updatedAt: '2024-01-15T10:00:00Z',
-    company: {
-      companyName: 'TechCorp Inc',
-      logo: '/logo.png',
-      workplacePictures: [
-        { pictureUrl: '/office1.jpg', caption: 'Modern office space' },
-        { pictureUrl: '/office2.jpg', caption: 'Collaboration area' }
-      ]
-    }
-  }
-
   useEffect(() => {
     fetchJob()
   }, [jobId])
@@ -114,16 +44,15 @@ const JobView = () => {
     
     setLoading(true)
     try {
-      const response = await adminApi.jobs.getJobById(jobId)
+      const response = await adminApi.getJobById(jobId)
       
       if (response.success && response.data) {
         setJob(response.data)
       } else {
         toast.error(response.message || 'Failed to fetch job details')
       }
-    } catch (error) {
+    } catch {
       toast.error('Failed to fetch job details')
-      console.error('Error fetching job:', error)
     } finally {
       setLoading(false)
     }
@@ -133,7 +62,7 @@ const JobView = () => {
     if (!job) return
 
     try {
-      const response = await adminApi.jobs.updateJobStatus(job.id, !job.is_active)
+      const response = await adminApi.updateJobStatus(job.id, !job.is_active)
       
       if (response.success) {
         setJob({ ...job, is_active: !job.is_active })
@@ -141,9 +70,8 @@ const JobView = () => {
       } else {
         toast.error(response.message || 'Failed to update job status')
       }
-    } catch (error) {
+    } catch {
       toast.error('Failed to update job status')
-      console.error('Error updating job status:', error)
     }
   }
 
@@ -151,7 +79,7 @@ const JobView = () => {
     if (!job) return
 
     try {
-      const response = await adminApi.jobs.deleteJob(job.id)
+      const response = await adminApi.deleteJob(job.id)
       
       if (response.success) {
         toast.success('Job deleted successfully')
@@ -159,9 +87,8 @@ const JobView = () => {
       } else {
         toast.error(response.message || 'Failed to delete job')
       }
-    } catch (error) {
+    } catch {
       toast.error('Failed to delete job')
-      console.error('Error deleting job:', error)
     }
   }
 
@@ -205,7 +132,6 @@ const JobView = () => {
   return (
     <AdminLayout>
       <div className="space-y-6">
-        {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <Button
@@ -263,9 +189,7 @@ const JobView = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Job Overview */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
@@ -304,7 +228,6 @@ const JobView = () => {
               </CardContent>
             </Card>
 
-            {/* Responsibilities */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
@@ -324,7 +247,6 @@ const JobView = () => {
               </CardContent>
             </Card>
 
-            {/* Qualifications */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
@@ -344,7 +266,6 @@ const JobView = () => {
               </CardContent>
             </Card>
 
-            {/* Nice to Haves */}
             {job.nice_to_haves.length > 0 && (
               <Card>
                 <CardHeader>
@@ -366,7 +287,6 @@ const JobView = () => {
               </Card>
             )}
 
-            {/* Benefits */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
@@ -387,9 +307,7 @@ const JobView = () => {
             </Card>
           </div>
 
-          {/* Sidebar */}
           <div className="space-y-6">
-            {/* Job Stats */}
             <Card>
               <CardHeader>
                 <CardTitle>Job Statistics</CardTitle>
@@ -426,7 +344,6 @@ const JobView = () => {
               </CardContent>
             </Card>
 
-            {/* Skills Required */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
@@ -445,7 +362,6 @@ const JobView = () => {
               </CardContent>
             </Card>
 
-            {/* Company Info */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
@@ -473,7 +389,6 @@ const JobView = () => {
         </div>
       </div>
 
-      {/* Delete Confirmation Dialog */}
       <ConfirmationDialog
         isOpen={deleteDialog}
         onClose={() => setDeleteDialog(false)}
@@ -482,7 +397,7 @@ const JobView = () => {
         description={`Are you sure you want to delete "${job.title}"? This action cannot be undone.`}
         confirmText="Delete"
         cancelText="Cancel"
-        variant="destructive"
+        variant="danger"
       />
     </AdminLayout>
   )

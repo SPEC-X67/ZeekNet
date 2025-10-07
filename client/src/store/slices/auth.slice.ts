@@ -215,8 +215,7 @@ export const logoutThunk = createAsyncThunk<void, void, { rejectValue: string }>
   async () => {
     try {
       await authApi.logout();
-    } catch (error) {
-      console.error('Logout API call failed:', error);
+    } catch {
     }
   }
 );

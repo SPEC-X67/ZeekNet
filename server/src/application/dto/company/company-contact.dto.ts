@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const CreateCompanyContactDto = z.object({
-  companyId: z.string().optional(), // Will be set by the system
+  companyId: z.string().optional(),
   twitterLink: z.string().url().optional(),
   facebookLink: z.string().url().optional(),
   linkedin: z.string().url().optional(),

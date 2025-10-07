@@ -64,7 +64,16 @@ export class CompanyOfficeLocation extends BaseEntity {
     };
   }
 
-  static fromJSON(data: any): CompanyOfficeLocation {
+  static fromJSON(data: {
+    id: string;
+    companyId: string;
+    location: string;
+    isHeadquarters: boolean;
+    officeName?: string;
+    address?: string;
+    createdAt: string | Date;
+    updatedAt: string | Date;
+  }): CompanyOfficeLocation {
     return new CompanyOfficeLocation(
       data.id,
       data.companyId,

@@ -1,9 +1,10 @@
-import { IUserRepositoryFull } from '../../../domain/interfaces/repositories';
+import { IUserAuthRepository } from '../../../domain/interfaces/repositories';
+import { IUpdateUserVerificationStatusUseCase } from '../../../domain/interfaces/use-cases';
 import { AppError } from '../../../domain/errors/errors';
 
-export class UpdateUserVerificationStatusUseCase {
+export class UpdateUserVerificationStatusUseCase implements IUpdateUserVerificationStatusUseCase {
   constructor(
-    private readonly _userRepository: IUserRepositoryFull,
+    private readonly _userAuthRepository: IUserAuthRepository,
   ) {}
 
   async execute(email: string, isVerified: boolean): Promise<void> {
@@ -16,7 +17,7 @@ export class UpdateUserVerificationStatusUseCase {
         throw new AppError('isVerified must be a boolean value', 400);
       }
 
-      await this._userRepository.updateVerificationStatus(email, isVerified);
+      await this._userAuthRepository.updateVerificationStatus(email, isVerified);
     } catch (error) {
       if (error instanceof AppError) {
         throw error;

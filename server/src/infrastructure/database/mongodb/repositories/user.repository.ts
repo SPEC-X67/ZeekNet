@@ -1,7 +1,8 @@
-import { IUserRepository } from '../../../../domain/interfaces/repositories';
+import { IUserRepository, IUserData } from '../../../../domain/interfaces/repositories';
 import { User } from '../../../../domain/entities';
 import { UserRole } from '../../../../domain/enums/user-role.enum';
 import { UserModel, UserDocument } from '../models/user.model';
+import { UserMapper } from '../mappers';
 
 interface UserQuery {
   $or?: Array<{ [key: string]: { $regex: string; $options: string } }>;
@@ -9,22 +10,28 @@ interface UserQuery {
   isBlocked?: boolean;
 }
 
-export class MongoUserRepository implements IUserRepository {
+export class UserRepository implements IUserRepository {
+  async create(userData: IUserData): Promise<User> {
+    const { id, ...data } = userData;
+    const created = await UserModel.create(data);
+    return UserMapper.toDomain(created);
+  }
+
   async save(
     user: Omit<User, 'id' | 'createdAt' | 'updatedAt'>,
   ): Promise<User> {
     const created = await UserModel.create(user);
-    return this.mapToDomain(created);
+    return UserMapper.toDomain(created);
   }
 
   async findById(id: string): Promise<User | null> {
     const doc = await UserModel.findById(id).exec();
-    return doc ? this.mapToDomain(doc) : null;
+    return doc ? UserMapper.toDomain(doc) : null;
   }
 
   async findByEmail(email: string): Promise<User | null> {
     const doc = await UserModel.findOne({ email }).exec();
-    return doc ? this.mapToDomain(doc) : null;
+    return doc ? UserMapper.toDomain(doc) : null;
   }
 
   async updateRefreshToken(
@@ -80,27 +87,12 @@ export class MongoUserRepository implements IUserRepository {
     ]);
 
     return {
-      users: users.map((user) => this.mapToDomain(user)),
+      users: users.map((user) => UserMapper.toDomain(user)),
       total,
     };
   }
 
   async updateUserBlockStatus(id: string, isBlocked: boolean): Promise<void> {
     await UserModel.findByIdAndUpdate(id, { isBlocked }).exec();
-  }
-
-  private mapToDomain(doc: UserDocument): User {
-    return new User(
-      String(doc._id),
-      doc.name ?? '',
-      doc.email,
-      doc.password,
-      doc.role,
-      doc.isVerified,
-      doc.isBlocked,
-      doc.refreshToken ?? null,
-      doc.createdAt,
-      doc.updatedAt,
-    );
   }
 }

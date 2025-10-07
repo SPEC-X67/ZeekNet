@@ -5,14 +5,21 @@ import type { JobPostingResponse, JobPostingQuery } from '@/types/job';
 export interface CompanyProfileData {
   company_name?: string
   website_link?: string
+  website?: string
   industry?: string
   organisation?: string
   employee_count?: number
+  employees?: string
   about_us?: string
+  description?: string
+  location?: string
+  phone?: string
+  foundedDate?: string
   logo?: string
   banner?: string
   business_license?: string
   tax_id?: string
+  email?: string
 }
 
 export interface CompanyProfileResponse {
@@ -21,11 +28,21 @@ export interface CompanyProfileResponse {
   logo: string
   banner: string
   website_link: string
+  website?: string
   employee_count: number
+  employees?: string
   industry: string
   organisation: string
   about_us: string
+  description?: string
+  location?: string
+  phone?: string
+  foundedDate?: string
+  business_license?: string
+  tax_id?: string
+  email?: string
   is_verified: 'pending' | 'rejected' | 'verified'
+  isVerified?: 'pending' | 'rejected' | 'verified'
   is_blocked: boolean
   created_at: string
   updated_at: string
@@ -66,8 +83,23 @@ export const companyApi = {
   },
 
   async updateProfile(data: Partial<CompanyProfileData>): Promise<ApiEnvelope<CompanyProfileResponse>> {
-    // Always send as JSON for profile updates (logo is a URL string, not a file)
-    return baseApi.put<CompanyProfileResponse>('/api/company/profile')(data);
+    if (!data.logo && !data.business_license) {
+      return baseApi.put<CompanyProfileResponse>('/api/company/profile')(data);
+    }
+
+    const formData = new FormData();
+
+    Object.entries(data).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && key !== 'logo' && key !== 'business_license') {
+        formData.append(key, String(value));
+      }
+    });
+
+    return baseApi.put<CompanyProfileResponse>('/api/company/profile')(formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
   },
 
   async reapplyVerification(data: CompanyProfileData): Promise<ApiEnvelope<CompanyProfileResponse>> {
@@ -96,7 +128,6 @@ export const companyApi = {
     locations: any[];
     techStack: any[];
     benefits: any[];
-    team: any[];
     workplacePictures: any[];
     jobPostings: any[];
   }>> {
@@ -106,7 +137,6 @@ export const companyApi = {
       locations: any[];
       techStack: any[];
       benefits: any[];
-      team: any[];
       workplacePictures: any[];
       jobPostings: any[];
     }>('/api/company/profile')();
@@ -159,7 +189,6 @@ export const companyApi = {
     return baseApi.patch<JobPostingResponse>(`/api/company/jobs/${id}/status`)({ is_active });
   },
 
-  // Company Contact API
   async getContact(): Promise<ApiEnvelope<any>> {
     return baseApi.get<any>('/api/company/contact')();
   },
@@ -168,7 +197,6 @@ export const companyApi = {
     return baseApi.put<any>('/api/company/contact')(data);
   },
 
-  // Company Tech Stack API
   async getTechStacks(): Promise<ApiEnvelope<any[]>> {
     return baseApi.get<any[]>('/api/company/tech-stacks')();
   },
@@ -185,7 +213,6 @@ export const companyApi = {
     return baseApi.delete<any>(`/api/company/tech-stacks/${id}`)();
   },
 
-  // Company Office Location API
   async getOfficeLocations(): Promise<ApiEnvelope<any[]>> {
     return baseApi.get<any[]>('/api/company/office-locations')();
   },
@@ -202,7 +229,6 @@ export const companyApi = {
     return baseApi.delete<any>(`/api/company/office-locations/${id}`)();
   },
 
-  // Company Benefits API
   async getBenefits(): Promise<ApiEnvelope<any[]>> {
     return baseApi.get<any[]>('/api/company/benefits')();
   },
@@ -219,7 +245,6 @@ export const companyApi = {
     return baseApi.delete<any>(`/api/company/benefits/${id}`)();
   },
 
-  // Company Workplace Pictures API
   async getWorkplacePictures(): Promise<ApiEnvelope<any[]>> {
     return baseApi.get<any[]>('/api/company/workplace-pictures')();
   },
@@ -238,22 +263,5 @@ export const companyApi = {
 
   async uploadWorkplacePicture(file: File): Promise<ApiEnvelope<{ url: string; filename: string }>> {
     return uploadFile<{ url: string; filename: string }>('/api/company/workplace-pictures/upload', file, 'image');
-  },
-
-  // Company Team API
-  async getTeam(): Promise<ApiEnvelope<any[]>> {
-    return baseApi.get<any[]>('/api/company/team')();
-  },
-
-  async createTeamMember(data: any): Promise<ApiEnvelope<any>> {
-    return baseApi.post<any>('/api/company/team')(data);
-  },
-
-  async updateTeamMember(id: string, data: any): Promise<ApiEnvelope<any>> {
-    return baseApi.put<any>(`/api/company/team/${id}`)(data);
-  },
-
-  async deleteTeamMember(id: string): Promise<ApiEnvelope<any>> {
-    return baseApi.delete<any>(`/api/company/team/${id}`)();
   }
 }

@@ -4,10 +4,10 @@ import { AppError } from '../../../domain/errors/errors';
 
 export class AdminDeleteJobUseCase implements IAdminDeleteJobUseCase {
   constructor(
-    private readonly _jobPostingRepository: IJobPostingRepository
+    private readonly _jobPostingRepository: IJobPostingRepository,
   ) {}
 
-  async execute(jobId: string) {
+  async execute(jobId: string): Promise<boolean> {
     try {
       const job = await this._jobPostingRepository.findById(jobId);
       
@@ -17,7 +17,7 @@ export class AdminDeleteJobUseCase implements IAdminDeleteJobUseCase {
 
       await this._jobPostingRepository.delete(jobId);
 
-      return { success: true };
+      return true;
     } catch (error) {
       if (error instanceof AppError) {
         throw error;

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import CompanyLayout from '../../components/layouts/CompanyLayout'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -8,16 +8,11 @@ import {
   FileText,
   TrendingUp,
   Calendar,
-  Eye,
-  RotateCcw
+  Eye
 } from 'lucide-react'
-import { companyApi } from '@/api/company.api'
 
 const CompanyDashboard = () => {
-  const [loading, setLoading] = useState(true)
-
   useEffect(() => {
-    setLoading(false)
   }, [])
 
   const jobStats = [
@@ -33,9 +28,9 @@ const CompanyDashboard = () => {
   return (
     <CompanyLayout>
       <div className="min-h-screen">
-        {/* Main Content */}
+        {}
         <div className="px-6 py-6">
-          {/* Greeting Section */}
+          {}
           <div className="flex items-center justify-between mb-6">
             <div>
               <h1 className="text-xl font-bold text-gray-900 mb-1">Good morning, Maria</h1>
@@ -51,9 +46,9 @@ const CompanyDashboard = () => {
             </div>
           </div>
 
-          {/* Action Cards */}
+          {}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            {/* New Candidates */}
+            {}
             <div className="bg-[#FF2D55] rounded-lg p-4 text-white">
               <div className="flex items-center justify-between">
                 <div>
@@ -64,7 +59,7 @@ const CompanyDashboard = () => {
               </div>
             </div>
 
-            {/* Schedule */}
+            {}
             <div className="bg-[#A2845E] rounded-lg p-4 text-white">
               <div className="flex items-center justify-between">
                 <div>
@@ -75,7 +70,7 @@ const CompanyDashboard = () => {
               </div>
             </div>
 
-            {/* Messages */}
+            {}
             <div className="bg-[#34C759] rounded-lg p-4 text-white">
               <div className="flex items-center justify-between">
                 <div>
@@ -87,9 +82,9 @@ const CompanyDashboard = () => {
             </div>
           </div>
 
-          {/* Main Dashboard Content */}
+          {}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-            {/* Job Statistics Chart */}
+            {}
             <div className="lg:col-span-2">
               <Card className="bg-white border border-gray-200 rounded-lg">
                 <CardHeader className="pb-3">
@@ -107,16 +102,16 @@ const CompanyDashboard = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {/* Chart Tabs */}
+                    {}
                     <div className="flex space-x-6 border-b border-gray-200">
                       <button className="pb-1 border-b-2 border-[#4640DE] text-[#4640DE] font-semibold text-sm">Overview</button>
                       <button className="pb-1 text-gray-600 font-semibold text-sm">Jobs View</button>
                       <button className="pb-1 text-gray-600 font-semibold text-sm">Jobs Applied</button>
                     </div>
 
-                    {/* Chart Area */}
+                    {}
                     <div className="space-y-3">
-                      {/* Chart */}
+                      {}
                       <div className="h-48 flex items-end space-x-3">
                         {jobStats.map((stat, index) => (
                           <div key={index} className="flex-1 flex flex-col items-center space-y-1">
@@ -135,7 +130,7 @@ const CompanyDashboard = () => {
                         ))}
                       </div>
 
-                      {/* Legend */}
+                      {}
                       <div className="flex items-center space-x-4">
                         <div className="flex items-center space-x-1">
                           <div className="w-3 h-3 bg-[#FFCC00] rounded"></div>
@@ -148,7 +143,7 @@ const CompanyDashboard = () => {
                       </div>
                     </div>
 
-                    {/* Stats Cards */}
+                    {}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       <Card className="bg-white border border-gray-200 rounded-lg">
                         <CardContent className="p-3">
@@ -197,9 +192,9 @@ const CompanyDashboard = () => {
               </Card>
             </div>
 
-            {/* Right Sidebar */}
+            {}
             <div className="space-y-4">
-              {/* Job Open */}
+              {}
               <Card className="bg-white border border-gray-200 rounded-lg">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-lg font-bold text-gray-900">Job Open</CardTitle>
@@ -212,7 +207,7 @@ const CompanyDashboard = () => {
                 </CardContent>
               </Card>
 
-              {/* Applicants Summary */}
+              {}
               <Card className="bg-white border border-gray-200 rounded-lg">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-lg font-bold text-gray-900">Applicants Summary</CardTitle>
@@ -223,7 +218,7 @@ const CompanyDashboard = () => {
                     <p className="text-sm text-gray-600">Applicants</p>
                   </div>
 
-                  {/* Chart */}
+                  {}
                   <div className="flex items-center justify-center space-x-1 mb-4">
                     <div className="w-8 h-3 bg-[#7B61FF] rounded"></div>
                     <div className="w-4 h-3 bg-[#56CDAD] rounded"></div>
@@ -232,7 +227,7 @@ const CompanyDashboard = () => {
                     <div className="w-1 h-3 bg-[#FF6550] rounded"></div>
                   </div>
 
-                  {/* Legend */}
+                  {}
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-1">
@@ -270,7 +265,7 @@ const CompanyDashboard = () => {
             </div>
           </div>
 
-          {/* Job Updates Section */}
+          {}
           <div className="mt-6">
             <Card className="bg-white border border-gray-200 rounded-lg">
               <CardHeader className="pb-3">
@@ -284,7 +279,7 @@ const CompanyDashboard = () => {
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {/* Job Cards */}
+                  {}
                   {[
                     { company: 'Nomad', title: 'Social Media Assistant', location: 'Paris, France', type: 'Full-Time', categories: ['Marketing', 'Design'], progress: 50 },
                     { company: 'Dropbox', title: 'Brand Designer', location: 'Paris, France', type: 'Full-Time', categories: ['Business', 'Design'], progress: 50 },
@@ -294,7 +289,7 @@ const CompanyDashboard = () => {
                     <Card key={index} className="bg-white border border-gray-200 rounded-lg">
                       <CardContent className="p-4">
                         <div className="space-y-3">
-                          {/* Header */}
+                          {}
                           <div className="flex items-center justify-between">
                             <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
                               <span className="text-white font-bold text-sm">{job.company[0]}</span>
@@ -302,7 +297,7 @@ const CompanyDashboard = () => {
                             <Badge className="bg-green-100 text-green-600 border-green-200 text-xs">Full-Time</Badge>
                           </div>
 
-                          {/* Job Info */}
+                          {}
                           <div>
                             <h3 className="text-sm font-semibold text-gray-900 mb-1">{job.title}</h3>
                             <div className="flex items-center space-x-1 text-gray-600">
@@ -312,7 +307,7 @@ const CompanyDashboard = () => {
                             </div>
                           </div>
 
-                          {/* Categories */}
+                          {}
                           <div className="flex flex-wrap gap-1">
                             {job.categories.map((category, catIndex) => (
                               <Badge key={catIndex} variant="outline" className="text-xs px-2 py-0.5">
@@ -321,7 +316,7 @@ const CompanyDashboard = () => {
                             ))}
                           </div>
 
-                          {/* Progress */}
+                          {}
                           <div className="space-y-1">
                             <div className="flex space-x-0.5">
                               {[...Array(5)].map((_, i) => (

@@ -78,8 +78,7 @@ const CompanySettings = () => {
         setDateFounded(profile.created_at ? new Date(profile.created_at).getFullYear().toString() : '')
         setLogo(profile.logo || '')
       }
-    } catch (error) {
-      console.error('Error fetching company profile:', error)
+    } catch {
       toast.error('Failed to load company profile')
     } finally {
       setLoading(false)
@@ -111,15 +110,13 @@ const CompanySettings = () => {
         if (updateResponse.success) {
           toast.success('Logo uploaded and saved successfully')
         } else {
-          console.error('Profile update failed:', updateResponse)
           toast.error('Logo uploaded but failed to save to profile')
         }
       } else {
         throw new Error(response.message || 'Upload failed')
       }
-    } catch (error) {
-      console.error('Logo upload error:', error)
-      toast.error('Failed to upload logo')
+      } catch {
+        toast.error('Failed to upload logo')
     } finally {
       setUploadingLogo(false)
     }
@@ -147,8 +144,7 @@ const CompanySettings = () => {
       } else {
         toast.error('Failed to update company settings')
       }
-    } catch (error) {
-      console.error('Error updating company settings:', error)
+    } catch {
       toast.error('Failed to update company settings')
     } finally {
       setSaving(false)
@@ -172,8 +168,7 @@ const CompanySettings = () => {
       setCurrentPassword('')
       setNewPassword('')
       setConfirmPassword('')
-    } catch (error) {
-      console.error('Error updating password:', error)
+    } catch {
       toast.error('Failed to update password')
     } finally {
       setSaving(false)

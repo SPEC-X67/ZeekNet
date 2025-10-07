@@ -5,11 +5,9 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import {
-  User,
   MapPin,
   Mail,
   Phone,
-  Calendar,
   Edit,
   Download,
   Share,
@@ -159,7 +157,7 @@ const UserProfile = () => {
   return (
     <UserLayout>
       <div className="min-h-screen bg-gray-50">
-        {/* Header Section */}
+        {}
         <div className="px-6 py-4 bg-white border-b border-gray-200">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
@@ -187,7 +185,7 @@ const UserProfile = () => {
         </div>
 
         <div className="p-6 max-w-4xl mx-auto">
-          {/* Profile Header Card */}
+          {}
           <Card className="bg-white border border-gray-200 mb-6">
             <CardContent className="p-6">
               <div className="flex items-start space-x-6">
@@ -236,7 +234,7 @@ const UserProfile = () => {
                     </div>
                   </div>
                   
-                  {/* Social Links */}
+                  {}
                   <div className="flex items-center space-x-4">
                     <a href={userProfile.socialLinks.linkedin} className="text-blue-600 hover:text-blue-700">
                       <Linkedin className="h-5 w-5" />
@@ -256,7 +254,7 @@ const UserProfile = () => {
             </CardContent>
           </Card>
 
-          {/* Availability Status */}
+          {}
           <Card className="bg-white border border-gray-200 mb-6">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
@@ -281,9 +279,9 @@ const UserProfile = () => {
           </Card>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Left Column */}
+            {}
             <div className="lg:col-span-2 space-y-6">
-              {/* Skills Section */}
+              {}
               <Card className="bg-white border border-gray-200">
                 <CardHeader>
                   <CardTitle className="flex items-center space-x-2">
@@ -310,7 +308,7 @@ const UserProfile = () => {
                 </CardContent>
               </Card>
 
-              {/* Experience Section */}
+              {}
               <Card className="bg-white border border-gray-200">
                 <CardHeader>
                   <CardTitle className="flex items-center space-x-2">
@@ -360,7 +358,7 @@ const UserProfile = () => {
                 </CardContent>
               </Card>
 
-              {/* Education Section */}
+              {}
               <Card className="bg-white border border-gray-200">
                 <CardHeader>
                   <CardTitle className="flex items-center space-x-2">
@@ -398,9 +396,9 @@ const UserProfile = () => {
               </Card>
             </div>
 
-            {/* Right Column */}
+            {}
             <div className="space-y-6">
-              {/* Certifications */}
+              {}
               <Card className="bg-white border border-gray-200">
                 <CardHeader>
                   <CardTitle className="flex items-center space-x-2">
@@ -431,7 +429,7 @@ const UserProfile = () => {
                 </CardContent>
               </Card>
 
-              {/* Profile Stats */}
+              {}
               <Card className="bg-white border border-gray-200">
                 <CardHeader>
                   <CardTitle>Profile Statistics</CardTitle>

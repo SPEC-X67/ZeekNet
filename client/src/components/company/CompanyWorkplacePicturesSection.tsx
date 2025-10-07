@@ -50,7 +50,7 @@ const CompanyWorkplacePicturesSection: React.FC<CompanyWorkplacePicturesSectionP
         </div>
       ) : (
         <div className="flex gap-2.5">
-          {/* Main Picture */}
+          {}
           <div className="w-64 h-72 bg-gray-200 rounded-lg overflow-hidden">
             <img 
               src={pictures[0].pictureUrl} 
@@ -59,7 +59,7 @@ const CompanyWorkplacePicturesSection: React.FC<CompanyWorkplacePicturesSectionP
             />
           </div>
           
-          {/* Side Pictures */}
+          {}
           <div className="flex flex-col gap-2.5">
             {pictures.slice(1, 4).map((picture, index) => (
               <div key={picture.id || index} className="w-48 h-44 bg-gray-200 rounded-lg overflow-hidden">

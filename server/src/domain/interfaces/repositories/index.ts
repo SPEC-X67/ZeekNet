@@ -1,10 +1,6 @@
-export { IUserRepository, IUserAuthRepository, IUserManagementRepository, IUserData } from './IUserRepository';
-export { ICompanyRepository, ICompanyProfileRepository, ICompanyLocationRepository, ICompanyListingRepository, ICompanyVerificationRepository } from './ICompanyRepository';
-export { IJobPostingRepository, IJobPostingSearchRepository, IJobPostingAnalyticsRepository, IJobPostingManagementRepository } from './IJobPostingRepository';
 export { IBaseRepository } from './base.repository';
-export { ICompanyBenefitsRepository } from './company-benefits.repository';
-export { ICompanyContactRepository } from './company-contact.repository';
-export { ICompanyOfficeLocationRepository } from './company-office-location.repository';
-export { ICompanyTeamRepository } from './company-team.repository';
-export { ICompanyTechStackRepository } from './company-tech-stack.repository';
-export { ICompanyWorkplacePicturesRepository } from './company-workplace-pictures.repository';
+export * from './user';
+export * from './company';
+export * from './job';
+export * from './admin';
+export * from './seeker';

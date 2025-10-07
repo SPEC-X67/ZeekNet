@@ -4,7 +4,7 @@ import { UserData, UserResponseDto, AuthResponseDto } from './types';
 
 export class UserMapper {
   
-  toDomain(dto: RegisterRequestDto, id: string): UserData {
+  static toDomain(dto: RegisterRequestDto, id: string): UserData {
     return {
       id,
       name: dto.name,
@@ -17,7 +17,7 @@ export class UserMapper {
     };
   }
 
-  toDto(domain: User): UserResponseDto {
+  static toDto(domain: User): UserResponseDto {
     return {
       id: domain.id,
       name: domain.name,
@@ -30,9 +30,9 @@ export class UserMapper {
     };
   }
 
-  toAuthResponse(user: User, tokens: { accessToken: string; refreshToken: string }): AuthResponseDto {
+  static toAuthResponse(user: User, tokens: { accessToken: string; refreshToken: string }): AuthResponseDto {
     return {
-      user: this.toDto(user),
+      user: UserMapper.toDto(user),
       tokens,
     };
   }

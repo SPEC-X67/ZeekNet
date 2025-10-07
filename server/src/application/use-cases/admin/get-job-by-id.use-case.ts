@@ -1,15 +1,14 @@
-import { IJobPostingRepositoryFull } from '../../../domain/interfaces/repositories';
+import { IJobPostingRepository } from '../../../domain/interfaces/repositories';
+import { IAdminGetJobByIdUseCase } from '../../../domain/interfaces/use-cases';
 import { AppError } from '../../../domain/errors/errors';
-import { JobPostingMapper } from '../../mappers/job-posting.mapper';
-import { JobPostingResponseDto } from '../../mappers/types';
+import { JobPosting } from '../../../domain/entities/job-posting.entity';
 
-export class AdminGetJobByIdUseCase {
+export class AdminGetJobByIdUseCase implements IAdminGetJobByIdUseCase {
   constructor(
-    private readonly _jobPostingRepository: IJobPostingRepositoryFull,
-    private readonly _jobPostingMapper: JobPostingMapper,
+    private readonly _jobPostingRepository: IJobPostingRepository,
   ) {}
 
-  async execute(jobId: string): Promise<JobPostingResponseDto> {
+  async execute(jobId: string): Promise<JobPosting> {
     try {
       const job = await this._jobPostingRepository.findById(jobId);
       
@@ -17,7 +16,7 @@ export class AdminGetJobByIdUseCase {
         throw new AppError('Job not found', 404);
       }
 
-      return this._jobPostingMapper.toDto(job);
+      return job;
     } catch (error) {
       if (error instanceof AppError) {
         throw error;

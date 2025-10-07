@@ -1,33 +1,19 @@
-import { ICompanyOfficeLocationRepository } from '../../../../domain/interfaces/repositories/company-office-location.repository';
+import { ICompanyOfficeLocationRepository } from '../../../../domain/interfaces/repositories/company/ICompanyOfficeLocationRepository';
 import { CompanyOfficeLocation } from '../../../../domain/entities/company-office-location.entity';
-import { CompanyOfficeLocationModel } from '../models/company-office-location.model';
+import { CompanyOfficeLocationModel, CompanyOfficeLocationDocument } from '../models/company-office-location.model';
 import { Types } from 'mongoose';
-import { MongoBaseRepository } from '../../../../shared/base';
+import { RepositoryBase } from '../../../../shared/base';
+import { CompanyOfficeLocationMapper } from '../mappers';
 
-export class MongoCompanyOfficeLocationRepository extends MongoBaseRepository<CompanyOfficeLocation> implements ICompanyOfficeLocationRepository {
+export class CompanyOfficeLocationRepository extends RepositoryBase<CompanyOfficeLocation, CompanyOfficeLocationDocument> implements ICompanyOfficeLocationRepository {
   constructor() {
     super(CompanyOfficeLocationModel);
   }
 
-  /**
-   * Map MongoDB document to CompanyOfficeLocation entity
-   */
-  protected mapToEntity(doc: any): CompanyOfficeLocation {
-    return CompanyOfficeLocation.fromJSON({
-      id: doc._id.toString(),
-      companyId: doc.companyId.toString(),
-      location: doc.location,
-      isHeadquarters: doc.isHeadquarters,
-      officeName: doc.officeName,
-      address: doc.address,
-      createdAt: doc.createdAt,
-      updatedAt: doc.updatedAt,
-    });
+  protected mapToEntity(doc: CompanyOfficeLocationDocument): CompanyOfficeLocation {
+    return CompanyOfficeLocationMapper.toEntity(doc);
   }
 
-  /**
-   * Override create to handle ObjectId conversion
-   */
   async create(location: Omit<CompanyOfficeLocation, 'id' | 'createdAt' | 'updatedAt'>): Promise<CompanyOfficeLocation> {
     const locationDoc = new CompanyOfficeLocationModel({
       companyId: new Types.ObjectId(location.companyId),
@@ -48,9 +34,6 @@ export class MongoCompanyOfficeLocationRepository extends MongoBaseRepository<Co
     return locations.map(location => this.mapToEntity(location));
   }
 
-  /**
-   * Override update to handle ObjectId conversion
-   */
   async update(id: string, data: Partial<CompanyOfficeLocation>): Promise<CompanyOfficeLocation | null> {
     if (!Types.ObjectId.isValid(id)) {
       return null;
@@ -62,7 +45,7 @@ export class MongoCompanyOfficeLocationRepository extends MongoBaseRepository<Co
         ...data,
         updatedAt: new Date(),
       },
-      { new: true }
+      { new: true },
     );
 
     return updatedLocation ? this.mapToEntity(updatedLocation) : null;

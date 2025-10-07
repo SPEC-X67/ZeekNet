@@ -56,8 +56,7 @@ const JobListing = () => {
       } else {
         setError(response.message || 'Failed to fetch jobs');
       }
-    } catch (err) {
-      console.error('Error fetching jobs:', err);
+    } catch {
       setError('An unexpected error occurred');
     } finally {
       setLoading(false);
@@ -246,7 +245,6 @@ const JobListing = () => {
                 <JobCard
                   key={job.id}
                   job={job}
-                  onApply={handleApplyJob}
                   onViewDetails={handleViewDetails}
                 />
               ))}

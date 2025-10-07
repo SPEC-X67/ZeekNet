@@ -26,8 +26,7 @@ const UserProfileDropdown: React.FC = () => {
     
     try {
       await dispatch(logoutThunk()).unwrap();
-    } catch (error) {
-      console.error('Logout API call failed:', error);
+    } catch {
     }
   };
 

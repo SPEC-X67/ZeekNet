@@ -1,35 +1,38 @@
-import { SimpleCompanyProfileRequestDto } from '../../dto/company/create-company.dto';
-import { ICompanyRepository } from '../../../domain/interfaces/repositories';
-import { ICreateCompanyProfileUseCase } from '../../../domain/interfaces/use-cases';
-import { CompanyProfileMapper } from '../../mappers';
-import { CompanyProfileResponseDto } from '../../mappers/types';
+import { 
+  ICompanyProfileRepository,
+  ICompanyContactRepository,
+  ICompanyVerificationRepository,
+  ICompanyOfficeLocationRepository,
+} from '../../../domain/interfaces/repositories';
+import { ICreateCompanyProfileUseCase, CreateCompanyProfileData } from '../../../domain/interfaces/use-cases';
+import { CompanyProfile } from '../../../domain/entities/company-profile.entity';
 
 export class CreateCompanyProfileUseCase implements ICreateCompanyProfileUseCase {
   constructor(
-    private readonly _companyRepository: ICompanyRepository,
-    private readonly _companyProfileMapper: CompanyProfileMapper,
+    private readonly _companyProfileRepository: ICompanyProfileRepository,
+    private readonly _companyContactRepository: ICompanyContactRepository,
+    private readonly _companyOfficeLocationRepository: ICompanyOfficeLocationRepository,
+    private readonly _companyVerificationRepository: ICompanyVerificationRepository,
   ) {}
 
   async execute(
     userId: string,
-    data: SimpleCompanyProfileRequestDto,
-  ): Promise<CompanyProfileResponseDto> {
-    const profileData = this._companyProfileMapper.toDomain(data, userId);
-    const contactData = this._companyProfileMapper.toContactData(data, '');
-    const locationData = this._companyProfileMapper.toLocationData(data, '');
-    const verificationData = this._companyProfileMapper.toVerificationData(data, '');
+    profileData: CreateCompanyProfileData,
+  ): Promise<CompanyProfile> {
+    const profile = await this._companyProfileRepository.createProfile({
+      userId,
+      companyName: profileData.companyName,
+      logo: profileData.logo,
+      banner: profileData.banner,
+      websiteLink: profileData.websiteLink,
+      employeeCount: profileData.employeeCount,
+      industry: profileData.industry,
+      organisation: profileData.organisation,
+      aboutUs: profileData.aboutUs,
+      isVerified: 'pending',
+      isBlocked: false,
+    });
 
-    const profile = await this._companyRepository.createProfile(profileData);
-
-    contactData.companyId = profile.id;
-    await this._companyRepository.createContact(contactData);
-
-    locationData.companyId = profile.id;
-    await this._companyRepository.createLocation(locationData);
-
-    verificationData.companyId = profile.id;
-    await this._companyRepository.createVerification(verificationData);
-
-    return this._companyProfileMapper.toDto(profile);
+    return profile;
   }
 }

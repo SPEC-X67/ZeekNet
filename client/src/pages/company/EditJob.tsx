@@ -83,14 +83,18 @@ const EditJob = () => {
             responsibilities: job.responsibilities || [],
             qualifications: job.qualifications || [],
             niceToHaves: job.nice_to_haves || [],
-            benefits: job.benefits ? job.benefits.map(benefit => ({ title: benefit })) : [],
+            benefits: job.benefits ? job.benefits.map((benefit: string, index: number) => ({ 
+              id: index.toString(), 
+              title: benefit, 
+              description: benefit, 
+              icon: 'heart' 
+            })) : [],
           });
         } else {
           toast.error("Failed to load job data");
           navigate("/company/job-listing");
         }
-      } catch (error) {
-        console.error("Error fetching job data:", error);
+      } catch {
         toast.error("Failed to load job data");
         navigate("/company/job-listing");
       } finally {
@@ -194,7 +198,6 @@ const EditJob = () => {
         });
       }
     } catch (error: unknown) {
-      console.error("Error updating job posting:", error);
       const errorMessage = error && typeof error === 'object' && 'message' in error 
         ? (error as { message: string }).message 
         : "Please try again later.";
@@ -219,7 +222,7 @@ const EditJob = () => {
   return (
     <CompanyLayout>
       <div className="flex flex-col items-center px-5">
-        {/* Top Navigation */}
+        {}
         <div className="flex items-center py-6 w-full">
           <Button variant="ghost" size="sm" onClick={() => navigate("/company/job-listing")}>
             <ArrowLeft className="h-4 w-4" />
@@ -227,7 +230,7 @@ const EditJob = () => {
           <h1 className="text-xl font-semibold text-[#25324B]">Edit Job</h1>
         </div>
 
-        {/* Steppers */}
+        {}
         <div className="flex items-center justify-center gap-20 px-5 py-3 w-full">
           {steps.map((step, index) => {
             const Icon = step.icon;
@@ -281,7 +284,7 @@ const EditJob = () => {
           })}
         </div>
 
-        {/* Step Content */}
+        {}
         <div className="w-full">
           <CurrentStepComponent
             data={jobData}

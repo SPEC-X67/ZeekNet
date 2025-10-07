@@ -9,7 +9,6 @@ export interface AuthenticatedRequest extends Request {
   user?: { id: string; email: string; role: string };
 }
 
-// Create token service instance for manual dependency injection
 const tokenService = new JwtTokenService();
 
 export function authenticateToken(
