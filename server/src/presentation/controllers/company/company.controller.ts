@@ -102,7 +102,9 @@ export class CompanyController extends BaseController {
         updateData,
       );
       
-      this.sendSuccessResponse(res, 'Company profile updated successfully', companyProfile, undefined, 200);
+      const responseData = this.companyProfileMapper.toDto(companyProfile);
+      
+      this.sendSuccessResponse(res, 'Company profile updated successfully', responseData, undefined, 200);
     } catch (error) {
       this.handleAsyncError(error, next);
     }
