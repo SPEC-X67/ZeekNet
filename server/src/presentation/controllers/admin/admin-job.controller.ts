@@ -3,20 +3,22 @@ import {
   AdminGetAllJobsDto,
   AdminUpdateJobStatusDto,
 } from '../../../application/dto/admin/admin-job.dto';
-import { AdminGetAllJobsUseCase } from '../../../application/use-cases/admin/get-all-jobs.use-case';
-import { AdminGetJobByIdUseCase } from '../../../application/use-cases/admin/get-job-by-id.use-case';
-import { AdminUpdateJobStatusUseCase } from '../../../application/use-cases/admin/update-job-status.use-case';
-import { AdminDeleteJobUseCase } from '../../../application/use-cases/admin/delete-job.use-case';
-import { AdminGetJobStatsUseCase } from '../../../application/use-cases/admin/get-job-stats.use-case';
+import {
+  IAdminGetAllJobsUseCase,
+  IAdminGetJobByIdUseCase,
+  IAdminUpdateJobStatusUseCase,
+  IAdminDeleteJobUseCase,
+  IAdminGetJobStatsUseCase,
+} from '../../../domain/interfaces/use-cases';
 import { handleValidationError, handleAsyncError, sendSuccessResponse } from '../../../shared/utils';
 
 export class AdminJobController {
   constructor(
-    private readonly _getAllJobsUseCase: AdminGetAllJobsUseCase,
-    private readonly _getJobByIdUseCase: AdminGetJobByIdUseCase,
-    private readonly _updateJobStatusUseCase: AdminUpdateJobStatusUseCase,
-    private readonly _deleteJobUseCase: AdminDeleteJobUseCase,
-    private readonly _getJobStatsUseCase: AdminGetJobStatsUseCase,
+    private readonly _getAllJobsUseCase: IAdminGetAllJobsUseCase,
+    private readonly _getJobByIdUseCase: IAdminGetJobByIdUseCase,
+    private readonly _updateJobStatusUseCase: IAdminUpdateJobStatusUseCase,
+    private readonly _deleteJobUseCase: IAdminDeleteJobUseCase,
+    private readonly _getJobStatsUseCase: IAdminGetJobStatsUseCase,
   ) {  }
 
   getAllJobs = async (

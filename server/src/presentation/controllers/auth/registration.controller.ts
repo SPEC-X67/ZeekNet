@@ -1,12 +1,12 @@
 import { Request, Response, NextFunction } from 'express';
 import { RegisterDto } from '../../../application/dto/auth';
-import { RegisterUserUseCase } from '../../../application/use-cases/auth/register-user.use-case';
+import { IRegisterUserUseCase } from '../../../domain/interfaces/use-cases';
 import { validateBody } from '../../middleware/validation.middleware';
 import { handleAsyncError, sanitizeUserForResponse, sendSuccessResponse } from '../../../shared/utils';
 
 export class RegistrationController {
   constructor(
-    private readonly _registerUserUseCase: RegisterUserUseCase,
+    private readonly _registerUserUseCase: IRegisterUserUseCase,
   ) {}
 
   register = [

@@ -7,6 +7,7 @@ import {
   CompanyWorkplacePictures,
 } from '../../entities';
 import { JobPosting, PaginatedJobPostings, JobPostingFilters } from '../../entities/job-posting.entity';
+import { CompanyProfileResponseDto } from '../../../application/mappers/types';
 
 export interface CreateCompanyProfileData {
   companyName: string;
@@ -112,7 +113,7 @@ export interface ICreateCompanyProfileUseCase {
 }
 
 export interface IUpdateCompanyProfileUseCase {
-  execute(profileId: string, updates: UpdateCompanyProfileData): Promise<CompanyProfile>;
+  execute(userId: string, updates: { profile?: UpdateCompanyProfileData }): Promise<CompanyProfileResponseDto>;
 }
 
 export interface IGetCompanyProfileUseCase {
@@ -131,23 +132,42 @@ export interface IReapplyCompanyVerificationUseCase {
 }
 
 export interface ICompanyContactUseCase {
-  execute(companyId: string, contactData: CompanyContactData): Promise<CompanyContact>;
+  createContact(companyId: string, data: CompanyContactData): Promise<CompanyContact>;
+  getContactsByCompanyId(companyId: string): Promise<CompanyContact[]>;
+  updateContact(contactId: string, data: CompanyContactData): Promise<CompanyContact>;
+  deleteContact(contactId: string): Promise<void>;
 }
 
 export interface ICompanyTechStackUseCase {
-  execute(companyId: string, techStackData: CompanyTechStackData): Promise<CompanyTechStack>;
+  createTechStack(companyId: string, data: CompanyTechStackData): Promise<CompanyTechStack>;
+  getTechStackByCompanyId(companyId: string): Promise<CompanyTechStack[]>;
+  getTechStackById(techStackId: string): Promise<CompanyTechStack | null>;
+  updateTechStack(techStackId: string, data: CompanyTechStackData): Promise<CompanyTechStack>;
+  deleteTechStack(techStackId: string): Promise<void>;
 }
 
 export interface ICompanyOfficeLocationUseCase {
-  execute(companyId: string, locationData: CompanyOfficeLocationData): Promise<CompanyOfficeLocation>;
+  createOfficeLocation(companyId: string, data: CompanyOfficeLocationData): Promise<CompanyOfficeLocation>;
+  getOfficeLocationsByCompanyId(companyId: string): Promise<CompanyOfficeLocation[]>;
+  getOfficeLocationById(locationId: string): Promise<CompanyOfficeLocation | null>;
+  updateOfficeLocation(locationId: string, data: CompanyOfficeLocationData): Promise<CompanyOfficeLocation>;
+  deleteOfficeLocation(locationId: string): Promise<void>;
 }
 
 export interface ICompanyBenefitsUseCase {
-  execute(companyId: string, benefitsData: CompanyBenefitsData): Promise<CompanyBenefits>;
+  createBenefit(companyId: string, data: CompanyBenefitsData): Promise<CompanyBenefits>;
+  getBenefitsByCompanyId(companyId: string): Promise<CompanyBenefits[]>;
+  getBenefitById(benefitId: string): Promise<CompanyBenefits | null>;
+  updateBenefit(benefitId: string, data: CompanyBenefitsData): Promise<CompanyBenefits>;
+  deleteBenefit(benefitId: string): Promise<void>;
 }
 
 export interface ICompanyWorkplacePicturesUseCase {
-  execute(companyId: string, picturesData: CompanyWorkplacePicturesData): Promise<CompanyWorkplacePictures>;
+  createPicture(companyId: string, data: CompanyWorkplacePicturesData): Promise<CompanyWorkplacePictures>;
+  getPicturesByCompanyId(companyId: string): Promise<CompanyWorkplacePictures[]>;
+  getPictureById(pictureId: string): Promise<CompanyWorkplacePictures | null>;
+  updatePicture(pictureId: string, data: CompanyWorkplacePicturesData): Promise<CompanyWorkplacePictures>;
+  deletePicture(pictureId: string): Promise<void>;
 }
 
 export interface ICreateJobPostingUseCase {
@@ -167,7 +187,7 @@ export interface IUpdateJobPostingUseCase {
 }
 
 export interface IDeleteJobPostingUseCase {
-  execute(jobId: string): Promise<boolean>;
+  execute(jobId: string, companyId: string): Promise<void>;
 }
 
 export interface IIncrementJobViewCountUseCase {

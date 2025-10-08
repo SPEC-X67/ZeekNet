@@ -5,9 +5,11 @@ import {
   IPasswordHasher,
   ITokenService,
 } from '../../../domain/interfaces/services';
-import { GetUserByEmailUseCase } from '../../../application/use-cases/auth/get-user-by-email.use-case';
-import { UpdateUserVerificationStatusUseCase } from '../../../application/use-cases/auth/update-user-verification-status.use-case';
-import { UpdateUserRefreshTokenUseCase } from '../../../application/use-cases/auth/update-user-refresh-token.use-case';
+import {
+  IGetUserByEmailUseCase,
+  IUpdateUserVerificationStatusUseCase,
+  IUpdateUserRefreshTokenUseCase,
+} from '../../../domain/interfaces/use-cases';
 import { z } from 'zod';
 import { env } from '../../../infrastructure/config/env';
 import {
@@ -30,9 +32,9 @@ export class OtpController {
   constructor(
     private readonly _otpService: IOtpService,
     private readonly _mailer: IMailerService,
-    private readonly _getUserByEmailUseCase: GetUserByEmailUseCase,
-    private readonly _updateUserVerificationStatusUseCase: UpdateUserVerificationStatusUseCase,
-    private readonly _updateUserRefreshTokenUseCase: UpdateUserRefreshTokenUseCase,
+    private readonly _getUserByEmailUseCase: IGetUserByEmailUseCase,
+    private readonly _updateUserVerificationStatusUseCase: IUpdateUserVerificationStatusUseCase,
+    private readonly _updateUserRefreshTokenUseCase: IUpdateUserRefreshTokenUseCase,
     private readonly _tokenService: ITokenService,
     private readonly _passwordHasher: IPasswordHasher,
   ) {}

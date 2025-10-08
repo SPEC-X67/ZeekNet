@@ -1,7 +1,6 @@
 import { User } from '../../entities/user.entity';
 import { CompanyProfile } from '../../entities/company-profile.entity';
 import { JobPosting, PaginatedJobPostings, JobPostingFilters } from '../../entities/job-posting.entity';
-import { JobStats } from '../repositories/job/IJobPostingRepository';
 
 export interface AuthResponse {
   accessToken: string;
@@ -90,7 +89,7 @@ export interface IBlockUserUseCase {
   execute(userId: string, isBlocked: boolean): Promise<void>;
 }
 
-export interface IGetUserByIdUseCase {
+export interface IAdminGetUserByIdUseCase {
   execute(userId: string): Promise<User>;
 }
 
@@ -126,6 +125,14 @@ export interface IAdminDeleteJobUseCase {
   execute(jobId: string): Promise<boolean>;
 }
 
+export interface AdminJobStats {
+  total: number;
+  active: number;
+  inactive: number;
+  totalApplications: number;
+  totalViews: number;
+}
+
 export interface IAdminGetJobStatsUseCase {
-  execute(): Promise<JobStats>;
+  execute(): Promise<AdminJobStats>;
 }

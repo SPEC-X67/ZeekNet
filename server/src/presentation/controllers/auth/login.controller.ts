@@ -1,8 +1,12 @@
 import { Request, Response, NextFunction } from 'express';
 import { LoginDto, GoogleLoginDto } from '../../../application/dto/auth';
-import { LoginUserUseCase, AdminLoginUseCase, GoogleLoginUseCase } from '../../../application/use-cases';
+import {
+  ILoginUserUseCase,
+  IAdminLoginUseCase,
+  IGoogleLoginUseCase,
+  IUpdateUserRefreshTokenUseCase,
+} from '../../../domain/interfaces/use-cases';
 import { ITokenService, IPasswordHasher } from '../../../domain/interfaces/services';
-import { UpdateUserRefreshTokenUseCase } from '../../../application/use-cases/auth/update-user-refresh-token.use-case';
 import { AuthenticatedRequest } from '../../../shared/types';
 import { 
   createRefreshTokenCookieOptions,
@@ -15,12 +19,12 @@ import { env } from '../../../infrastructure/config/env';
 
 export class LoginController {
   constructor(
-    private readonly _loginUserUseCase: LoginUserUseCase,
-    private readonly _adminLoginUseCase: AdminLoginUseCase,
-    private readonly _googleLoginUseCase: GoogleLoginUseCase,
+    private readonly _loginUserUseCase: ILoginUserUseCase,
+    private readonly _adminLoginUseCase: IAdminLoginUseCase,
+    private readonly _googleLoginUseCase: IGoogleLoginUseCase,
     private readonly _tokenService: ITokenService,
     private readonly _passwordHasher: IPasswordHasher,
-    private readonly _updateUserRefreshTokenUseCase: UpdateUserRefreshTokenUseCase,
+    private readonly _updateUserRefreshTokenUseCase: IUpdateUserRefreshTokenUseCase,
   ) {}
 
   login = async (

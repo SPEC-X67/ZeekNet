@@ -1,16 +1,18 @@
 import { Request, Response } from 'express';
 import { AuthenticatedRequest } from '../../../shared/types';
 import { handleValidationError, handleAsyncError, sendSuccessResponse, sendNotFoundResponse, badRequest, validateUserId, success, created, unauthorized, handleError } from '../../../shared/utils';
-import { GetJobPostingUseCase } from '../../../application/use-cases/company';
-import { GetAllJobPostingsUseCase } from '../../../application/use-cases/public/get-all-job-postings.use-case';
+import {
+  IGetJobPostingUseCase,
+  IGetAllJobPostingsUseCase,
+  IIncrementJobViewCountUseCase,
+} from '../../../domain/interfaces/use-cases';
 import { JobPostingQueryRequestDto } from '../../../application/dto/job-posting/job-posting.dto';
-import { IncrementJobViewCountUseCase } from '../../../application/use-cases/company';
 
 export class SeekerController {
   constructor(
-    private readonly _getJobPostingUseCase: GetJobPostingUseCase,
-    private readonly _getAllJobPostingsUseCase: GetAllJobPostingsUseCase,
-    private readonly _incrementJobViewCountUseCase: IncrementJobViewCountUseCase,
+    private readonly _getJobPostingUseCase: IGetJobPostingUseCase,
+    private readonly _getAllJobPostingsUseCase: IGetAllJobPostingsUseCase,
+    private readonly _incrementJobViewCountUseCase: IIncrementJobViewCountUseCase,
   ) {  }
 
   getAllJobPostings = async (req: Request, res: Response): Promise<void> => {

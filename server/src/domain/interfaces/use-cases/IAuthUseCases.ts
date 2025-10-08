@@ -43,7 +43,7 @@ export interface ILogoutUseCase {
   execute(userId: string): Promise<void>;
 }
 
-export interface IGetUserByIdUseCase {
+export interface IAuthGetUserByIdUseCase {
   execute(userId: string): Promise<User | null>;
 }
 
@@ -61,4 +61,8 @@ export interface IUpdateUserRefreshTokenUseCase {
 
 export interface IGetCompanyProfileByUserIdUseCase {
   execute(userId: string): Promise<CompanyProfile | null>;
+}
+
+export interface IRefreshTokenUseCase {
+  execute(refreshToken: string): Promise<LoginResult>;
 }

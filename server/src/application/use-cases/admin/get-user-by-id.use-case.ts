@@ -1,9 +1,9 @@
 import { IUserRepository } from '../../../domain/interfaces/repositories';
-import { IGetUserByIdUseCase } from '../../../domain/interfaces/use-cases';
+import { IAdminGetUserByIdUseCase } from '../../../domain/interfaces/use-cases';
 import { NotFoundError } from '../../../domain/errors/errors';
 import { User } from '../../../domain/entities/user.entity';
 
-export class GetUserByIdUseCase implements IGetUserByIdUseCase {
+export class GetUserByIdUseCase implements IAdminGetUserByIdUseCase {
   constructor(
     private readonly _userRepository: IUserRepository,
   ) {}

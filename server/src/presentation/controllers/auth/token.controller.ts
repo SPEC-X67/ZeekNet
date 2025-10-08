@@ -1,8 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
 import { RefreshTokenDto } from '../../../application/dto/auth';
-import { RefreshTokenUseCase, AuthGetUserByIdUseCase } from '../../../application/use-cases';
+import {
+  IRefreshTokenUseCase,
+  IAuthGetUserByIdUseCase,
+  IGetCompanyProfileByUserIdUseCase,
+} from '../../../domain/interfaces/use-cases';
 import { ITokenService } from '../../../domain/interfaces/services';
-import { GetCompanyProfileByUserIdUseCase } from '../../../application/use-cases/auth/get-company-profile-by-user-id.use-case';
 import { AuthenticatedRequest } from '../../../shared/types';
 import { 
   createRefreshTokenCookieOptions,
@@ -18,10 +21,10 @@ import { UserRole } from '../../../domain/enums/user-role.enum';
 
 export class TokenController {
   constructor(
-    private readonly _refreshTokenUseCase: RefreshTokenUseCase,
-    private readonly _getUserByIdUseCase: AuthGetUserByIdUseCase,
+    private readonly _refreshTokenUseCase: IRefreshTokenUseCase,
+    private readonly _getUserByIdUseCase: IAuthGetUserByIdUseCase,
     private readonly _tokenService: ITokenService,
-    private readonly _getCompanyProfileByUserIdUseCase: GetCompanyProfileByUserIdUseCase,
+    private readonly _getCompanyProfileByUserIdUseCase: IGetCompanyProfileByUserIdUseCase,
   ) {}
 
   refresh = async (

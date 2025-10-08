@@ -1,19 +1,27 @@
 import { Request, Response } from 'express';
 import { AuthenticatedRequest } from '../../../shared/types';
 import { handleValidationError, handleAsyncError, sendSuccessResponse, sendNotFoundResponse, badRequest, validateUserId, success, created, unauthorized, handleError } from '../../../shared/utils';
-import { CreateJobPostingUseCase, GetJobPostingUseCase, GetCompanyJobPostingsUseCase, UpdateJobPostingUseCase, DeleteJobPostingUseCase, IncrementJobViewCountUseCase, UpdateJobStatusUseCase } from '../../../application/use-cases/company';
+import {
+  ICreateJobPostingUseCase,
+  IGetJobPostingUseCase,
+  IGetCompanyJobPostingsUseCase,
+  IUpdateJobPostingUseCase,
+  IDeleteJobPostingUseCase,
+  IIncrementJobViewCountUseCase,
+  IUpdateJobStatusUseCase,
+} from '../../../domain/interfaces/use-cases';
 import { CreateJobPostingRequestDto, UpdateJobPostingRequestDto, JobPostingQueryRequestDto } from '../../../application/dto/job-posting/job-posting.dto';
 import { ICompanyProfileRepository } from 'src/domain/interfaces';
 
 export class CompanyJobPostingController {
   constructor(
-    private readonly _createJobPostingUseCase: CreateJobPostingUseCase,
-    private readonly _getJobPostingUseCase: GetJobPostingUseCase,
-    private readonly _getCompanyJobPostingsUseCase: GetCompanyJobPostingsUseCase,
-    private readonly _updateJobPostingUseCase: UpdateJobPostingUseCase,
-    private readonly _deleteJobPostingUseCase: DeleteJobPostingUseCase,
-    private readonly _incrementJobViewCountUseCase: IncrementJobViewCountUseCase,
-    private readonly _updateJobStatusUseCase: UpdateJobStatusUseCase,
+    private readonly _createJobPostingUseCase: ICreateJobPostingUseCase,
+    private readonly _getJobPostingUseCase: IGetJobPostingUseCase,
+    private readonly _getCompanyJobPostingsUseCase: IGetCompanyJobPostingsUseCase,
+    private readonly _updateJobPostingUseCase: IUpdateJobPostingUseCase,
+    private readonly _deleteJobPostingUseCase: IDeleteJobPostingUseCase,
+    private readonly _incrementJobViewCountUseCase: IIncrementJobViewCountUseCase,
+    private readonly _updateJobStatusUseCase: IUpdateJobStatusUseCase,
     private readonly _companyProfileRepository: ICompanyProfileRepository, 
   ) {  }
 
@@ -42,7 +50,7 @@ export class CompanyJobPostingController {
   getJobPosting = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
       const { id } = req.params;
-      const userRole = req.user?.role;
+      const userRole = req.user?.role || '';
       
       const jobPosting = await this._getJobPostingUseCase.execute(id);
       
@@ -75,7 +83,7 @@ export class CompanyJobPostingController {
         search: req.query.search as string,
       };
 
-      const result = await this._getCompanyJobPostingsUseCase.execute(companyId, query);
+      const result = await this._getCompanyJobPostingsUseCase.execute(companyId!, query);
       
       const responseData = {
         jobs: result.jobs,

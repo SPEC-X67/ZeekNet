@@ -7,17 +7,17 @@ import {
   UpdateCompanyContactDto,
 } from '../../../application/dto/company';
 import {
-  CreateCompanyProfileUseCase,
-  UpdateCompanyProfileUseCase,
-  GetCompanyProfileUseCase,
-  ReapplyCompanyVerificationUseCase,
-  CompanyContactUseCase,
-  CompanyTechStackUseCase,
-  CompanyOfficeLocationUseCase,
-  CompanyBenefitsUseCase,
-  CompanyWorkplacePicturesUseCase,
-  GetCompanyJobPostingsUseCase,
-} from '../../../application/use-cases';
+  ICreateCompanyProfileUseCase,
+  IUpdateCompanyProfileUseCase,
+  IGetCompanyProfileUseCase,
+  IReapplyCompanyVerificationUseCase,
+  ICompanyContactUseCase,
+  ICompanyTechStackUseCase,
+  ICompanyOfficeLocationUseCase,
+  ICompanyBenefitsUseCase,
+  ICompanyWorkplacePicturesUseCase,
+  IGetCompanyJobPostingsUseCase,
+} from '../../../domain/interfaces/use-cases';
 import { AuthenticatedRequest } from '../../../shared/types';
 import {
   handleValidationError,
@@ -33,17 +33,17 @@ import { CompanyProfileMapper } from '../../../application/mappers';
 
 export class CompanyController {
   constructor(
-    private readonly _createCompanyProfileUseCase: CreateCompanyProfileUseCase,
-    private readonly _reapplyCompanyVerificationUseCase: ReapplyCompanyVerificationUseCase,
-    private readonly _updateCompanyProfileUseCase: UpdateCompanyProfileUseCase,
-    private readonly _getCompanyProfileUseCase: GetCompanyProfileUseCase,
+    private readonly _createCompanyProfileUseCase: ICreateCompanyProfileUseCase,
+    private readonly _reapplyCompanyVerificationUseCase: IReapplyCompanyVerificationUseCase,
+    private readonly _updateCompanyProfileUseCase: IUpdateCompanyProfileUseCase,
+    private readonly _getCompanyProfileUseCase: IGetCompanyProfileUseCase,
     private readonly _s3Service: IS3Service,
-    private readonly _companyContactUseCase: CompanyContactUseCase,
-    private readonly _companyTechStackUseCase: CompanyTechStackUseCase,
-    private readonly _companyOfficeLocationUseCase: CompanyOfficeLocationUseCase,
-    private readonly _companyBenefitsUseCase: CompanyBenefitsUseCase,
-    private readonly _companyWorkplacePicturesUseCase: CompanyWorkplacePicturesUseCase,
-    private readonly _getCompanyJobPostingsUseCase: GetCompanyJobPostingsUseCase,
+    private readonly _companyContactUseCase: ICompanyContactUseCase,
+    private readonly _companyTechStackUseCase: ICompanyTechStackUseCase,
+    private readonly _companyOfficeLocationUseCase: ICompanyOfficeLocationUseCase,
+    private readonly _companyBenefitsUseCase: ICompanyBenefitsUseCase,
+    private readonly _companyWorkplacePicturesUseCase: ICompanyWorkplacePicturesUseCase,
+    private readonly _getCompanyJobPostingsUseCase: IGetCompanyJobPostingsUseCase,
   ) {  }
 
   createCompanyProfile = async (

@@ -1,7 +1,8 @@
 import { IUserRepository } from '../../../domain/interfaces/repositories';
+import { IAuthGetUserByIdUseCase } from '../../../domain/interfaces/use-cases';
 import { User } from '../../../domain/entities';
 
-export class GetUserByIdUseCase {
+export class GetUserByIdUseCase implements IAuthGetUserByIdUseCase {
   constructor(
     private readonly _userRepository: IUserRepository,
   ) {}

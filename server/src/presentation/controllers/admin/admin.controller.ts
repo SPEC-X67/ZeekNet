@@ -6,25 +6,25 @@ import {
   CompanyVerificationDto,
 } from '../../../application/dto/admin';
 import {
-  GetAllUsersUseCase,
-  BlockUserUseCase,
-  AdminGetUserByIdUseCase,
-  GetAllCompaniesUseCase,
-  GetCompaniesWithVerificationUseCase,
-  VerifyCompanyUseCase,
-} from '../../../application/use-cases';
-import { BlockCompanyUseCase } from '../../../application/use-cases/admin/block-company.use-case';
+  IGetAllUsersUseCase,
+  IBlockUserUseCase,
+  IAdminGetUserByIdUseCase,
+  IGetAllCompaniesUseCase,
+  IGetCompaniesWithVerificationUseCase,
+  IVerifyCompanyUseCase,
+  IBlockCompanyUseCase,
+} from '../../../domain/interfaces/use-cases';
 import { handleValidationError, handleAsyncError, sendSuccessResponse, sendNotFoundResponse } from '../../../shared/utils';
 
 export class AdminController {
   constructor(
-    private readonly _getAllUsersUseCase: GetAllUsersUseCase,
-    private readonly _blockUserUseCase: BlockUserUseCase,
-    private readonly _getUserByIdUseCase: AdminGetUserByIdUseCase,
-    private readonly _getAllCompaniesUseCase: GetAllCompaniesUseCase,
-    private readonly _getCompaniesWithVerificationUseCase: GetCompaniesWithVerificationUseCase,
-    private readonly _verifyCompanyUseCase: VerifyCompanyUseCase,
-    private readonly _blockCompanyUseCase: BlockCompanyUseCase,
+    private readonly _getAllUsersUseCase: IGetAllUsersUseCase,
+    private readonly _blockUserUseCase: IBlockUserUseCase,
+    private readonly _getUserByIdUseCase: IAdminGetUserByIdUseCase,
+    private readonly _getAllCompaniesUseCase: IGetAllCompaniesUseCase,
+    private readonly _getCompaniesWithVerificationUseCase: IGetCompaniesWithVerificationUseCase,
+    private readonly _verifyCompanyUseCase: IVerifyCompanyUseCase,
+    private readonly _blockCompanyUseCase: IBlockCompanyUseCase,
   ) {  }
 
   getAllUsers = async (

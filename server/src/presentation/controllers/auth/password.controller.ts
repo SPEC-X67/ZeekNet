@@ -1,6 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
 import { ForgotPasswordDto, ResetPasswordDto, LogoutDto } from '../../../application/dto/auth';
-import { ForgotPasswordUseCase, ResetPasswordUseCase, LogoutUseCase } from '../../../application/use-cases';
+import {
+  IForgotPasswordUseCase,
+  IResetPasswordUseCase,
+  ILogoutUseCase,
+} from '../../../domain/interfaces/use-cases';
 import { AuthenticatedRequest } from '../../../shared/types';
 import { 
   createLogoutCookieOptions,
@@ -13,9 +17,9 @@ import { env } from '../../../infrastructure/config/env';
 
 export class PasswordController {
   constructor(
-    private readonly _forgotPasswordUseCase: ForgotPasswordUseCase,
-    private readonly _resetPasswordUseCase: ResetPasswordUseCase,
-    private readonly _logoutUseCase: LogoutUseCase,
+    private readonly _forgotPasswordUseCase: IForgotPasswordUseCase,
+    private readonly _resetPasswordUseCase: IResetPasswordUseCase,
+    private readonly _logoutUseCase: ILogoutUseCase,
   ) {}
 
   forgotPassword = async (

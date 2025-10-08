@@ -2,7 +2,7 @@ export * from './IAuthUseCases';
 export { 
   IGetAllUsersUseCase,
   IBlockUserUseCase,
-  IGetUserByIdUseCase,
+  IAdminGetUserByIdUseCase,
   IGetAllCompaniesUseCase,
   IGetCompaniesWithVerificationUseCase,
   IVerifyCompanyUseCase,
