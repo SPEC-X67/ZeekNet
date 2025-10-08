@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { companyApi, type CompanyProfileData } from '@/api/company.api'
@@ -13,6 +14,7 @@ import {
   Mail, 
   Globe, 
   Users, 
+  MapPin, 
   ArrowLeft, 
   ArrowRight,
   CheckCircle, 
@@ -146,15 +148,6 @@ const CompanyProfileSetup = () => {
     }
   }
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    const name = e.target.name as 'logo' | 'business_license'
-    
-    if (file) {
-      handleFileUpload(file, name)
-    }
-  }
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
@@ -221,43 +214,55 @@ const CompanyProfileSetup = () => {
   }
 
   const nextStep = () => {
-    if (currentStep < 2) {
-      const step1Data = {
-        company_name: formData.company_name,
-        email: formData.email,
-        website: formData.website,
-        industry: formData.industry,
-        organisation: formData.organisation,
-        location: formData.location,
-        employees: formData.employees,
-        description: formData.description,
-        logo: formData.logo
-      }
+    if (currentStep < 3) {
+      let stepData: any = {}
+      let stepSchema: any = null
 
-      try {
-        const step1Schema = companyProfileSchema.pick({
+      // Step 1: Basic Information
+      if (currentStep === 1) {
+        stepData = {
+          company_name: formData.company_name,
+          email: formData.email,
+          website: formData.website,
+          industry: formData.industry,
+          organisation: formData.organisation,
+        }
+        stepSchema = companyProfileSchema.pick({
           company_name: true,
           email: true,
           website: true,
           industry: true,
           organisation: true,
+        })
+      }
+      // Step 2: Company Details
+      else if (currentStep === 2) {
+        stepData = {
+          location: formData.location,
+          employees: formData.employees,
+          description: formData.description,
+          logo: formData.logo || undefined,
+        }
+        stepSchema = companyProfileSchema.pick({
           location: true,
           employees: true,
           description: true,
-          logo: true
+          logo: true,
         })
-        
-        step1Schema.parse(step1Data)
+      }
+
+      try {
+        stepSchema.parse(stepData)
         setCurrentStep(currentStep + 1)
         setValidationErrors({})
       } catch (err) {
         if (err instanceof z.ZodError) {
           const fieldErrors: Record<string, string> = {}
-        err.issues.forEach((error) => {
-          if (error.path[0]) {
-            fieldErrors[error.path[0] as string] = error.message
-          }
-        })
+          err.issues.forEach((error) => {
+            if (error.path[0]) {
+              fieldErrors[error.path[0] as string] = error.message
+            }
+          })
           setValidationErrors(fieldErrors)
           toast.error('Please complete all required fields before proceeding')
         }
@@ -271,10 +276,9 @@ const CompanyProfileSetup = () => {
     }
   }
 
-
   return (
     <div className="min-h-screen flex">
-      {}
+      {/* Back to Home Button - Top Corner */}
       <div className="fixed top-4 left-4 z-50">
         <Button 
           variant="outline" 
@@ -286,14 +290,14 @@ const CompanyProfileSetup = () => {
         </Button>
       </div>
 
-      {}
+      {/* Left Side - Branding */}
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary/10 via-primary/5 to-secondary/10 relative overflow-hidden">
-        {}
+        {/* Background Pattern */}
         <div className="absolute inset-0 bg-grid-slate-100 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))] dark:bg-grid-slate-700/25"></div>
         
-        {}
+        {/* Content */}
         <div className="relative z-10 flex flex-col justify-center px-12 py-12">
-          {}
+          {/* Logo */}
           <div className="flex items-center space-x-3 mb-8">
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary shadow-lg">
               <Building2 className="h-7 w-7 text-primary-foreground" />
@@ -307,7 +311,6 @@ const CompanyProfileSetup = () => {
             </div>
           </div>
 
-          {}
           <div className="max-w-md">
             <h2 className="text-4xl font-bold text-foreground mb-4">
               {isReapplication ? 'Resubmit your company profile' : 'Complete your company profile'}
@@ -319,7 +322,6 @@ const CompanyProfileSetup = () => {
               }
             </p>
 
-            {}
             <div className="space-y-4">
               <div className="flex items-center space-x-3">
                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
@@ -352,7 +354,6 @@ const CompanyProfileSetup = () => {
               </div>
             </div>
 
-            {}
             <div className="mt-12 pt-8 border-t border-border/50">
               <div className="flex items-center justify-between text-sm text-muted-foreground">
                 <div className="flex items-center space-x-1">
@@ -373,10 +374,8 @@ const CompanyProfileSetup = () => {
         </div>
       </div>
 
-      {}
       <div className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8">
         <div className="w-full max-w-2xl space-y-8">
-          {}
           <div className="lg:hidden text-center">
             <div className="flex items-center justify-center space-x-3 mb-6">
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
@@ -392,12 +391,16 @@ const CompanyProfileSetup = () => {
             </div>
           </div>
 
-          {}
           <div className="space-y-6">
-            {}
+            <div className="text-center">
+              {/* <h2 className="text-2xl font-bold text-foreground">Complete Your Profile</h2> */}
+              <p className="text-muted-foreground mt-2">
+                Set up your company profile to start attracting top talent
+              </p>
+            </div>
 
-            {}
             <div className="flex items-center justify-center space-x-4 mt-4">
+              {/* Step 1 */}
               <div className="flex items-center space-x-2">
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
                   currentStep >= 1 
@@ -408,11 +411,14 @@ const CompanyProfileSetup = () => {
                 </div>
                 <span className={`text-sm font-medium ${
                   currentStep >= 1 ? 'text-foreground' : 'text-muted-foreground'
-                }`}>Company Info</span>
+                }`}>Basic Info</span>
               </div>
+              
               <div className={`w-12 h-0.5 ${
                 currentStep >= 2 ? 'bg-primary' : 'bg-muted'
               }`}></div>
+              
+              {/* Step 2 */}
               <div className="flex items-center space-x-2">
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
                   currentStep >= 2 
@@ -423,11 +429,28 @@ const CompanyProfileSetup = () => {
                 </div>
                 <span className={`text-sm font-medium ${
                   currentStep >= 2 ? 'text-foreground' : 'text-muted-foreground'
+                }`}>Details</span>
+              </div>
+              
+              <div className={`w-12 h-0.5 ${
+                currentStep >= 3 ? 'bg-primary' : 'bg-muted'
+              }`}></div>
+              
+              {/* Step 3 */}
+              <div className="flex items-center space-x-2">
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                  currentStep >= 3 
+                    ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/25' 
+                    : 'bg-muted text-muted-foreground'
+                }`}>
+                  <span className="text-sm font-semibold">3</span>
+                </div>
+                <span className={`text-sm font-medium ${
+                  currentStep >= 3 ? 'text-foreground' : 'text-muted-foreground'
                 }`}>Documents</span>
               </div>
             </div>
 
-            {}
             {error && (
               <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-sm text-destructive flex items-start space-x-2">
                 <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
@@ -435,12 +458,24 @@ const CompanyProfileSetup = () => {
               </div>
             )}
 
-            {}
-            <form onSubmit={handleSubmit} className="">
-              {}
+            <form onSubmit={handleSubmit}>
+
               {currentStep === 1 && (
                 <Card className="shadow-lg border-0 bg-card">
-                  <CardContent className="p-6 space-y-2">
+                  <CardHeader className="bg-gradient-to-r from-primary/5 to-primary/10 rounded-t-lg">
+                    <CardTitle className="flex items-center space-x-3 text-xl py-2">
+                      <div className="p-2 bg-background rounded-lg shadow-sm">
+                        <Building2 className="h-6 w-6 text-primary" />
+                      </div>
+                      <div>
+                        <span>Basic Information</span>
+                        <p className="text-sm font-normal text-muted-foreground mt-1">
+                          Enter your company's basic details
+                        </p>
+                      </div>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-6 space-y-4">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="company_name" className="text-sm font-semibold">
@@ -455,7 +490,7 @@ const CompanyProfileSetup = () => {
                             value={formData.company_name}
                             onChange={handleInputChange}
                             placeholder="e.g., TechCorp Solutions"
-                            className={`pl-10 ${validationErrors.company_name ? 'border-destructive focus:border-destructive' : ''}`}
+                            className={`pl-10 ${validationErrors.company_name ? 'border-destructive' : ''}`}
                             required
                           />
                         </div>
@@ -463,7 +498,7 @@ const CompanyProfileSetup = () => {
                           <p className="text-sm text-destructive">{validationErrors.company_name}</p>
                         )}
                       </div>
-                      
+
                       <div className="space-y-2">
                         <Label htmlFor="email" className="text-sm font-semibold">
                           Email Address *
@@ -477,7 +512,7 @@ const CompanyProfileSetup = () => {
                             value={formData.email}
                             onChange={handleInputChange}
                             placeholder="admin@techcorp.com"
-                            className={`pl-10 ${validationErrors.email ? 'border-destructive focus:border-destructive' : ''}`}
+                            className={`pl-10 ${validationErrors.email ? 'border-destructive' : ''}`}
                             required
                           />
                         </div>
@@ -500,7 +535,7 @@ const CompanyProfileSetup = () => {
                           value={formData.website}
                           onChange={handleInputChange}
                           placeholder="www.techcorp.com or https://www.techcorp.com"
-                          className={`pl-10 ${validationErrors.website ? 'border-destructive focus:border-destructive' : ''}`}
+                          className={`pl-10 ${validationErrors.website ? 'border-destructive' : ''}`}
                           required
                         />
                       </div>
@@ -509,27 +544,208 @@ const CompanyProfileSetup = () => {
                       )}
                     </div>
 
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="industry" className="text-sm font-semibold">
+                          Industry *
+                        </Label>
+                        <select
+                          id="industry"
+                          name="industry"
+                          value={formData.industry}
+                          onChange={handleInputChange}
+                          className={`w-full px-3 py-2 border rounded-md ${validationErrors.industry ? 'border-destructive' : 'border-input'}`}
+                          required
+                        >
+                          <option value="">Select industry</option>
+                          <option value="Technology">Technology</option>
+                          <option value="Finance">Finance</option>
+                          <option value="Healthcare">Healthcare</option>
+                          <option value="Education">Education</option>
+                          <option value="Retail">Retail</option>
+                          <option value="Manufacturing">Manufacturing</option>
+                          <option value="Other">Other</option>
+                        </select>
+                        {validationErrors.industry && (
+                          <p className="text-sm text-destructive">{validationErrors.industry}</p>
+                        )}
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="organisation" className="text-sm font-semibold">
+                          Organisation Type *
+                        </Label>
+                        <select
+                          id="organisation"
+                          name="organisation"
+                          value={formData.organisation}
+                          onChange={handleInputChange}
+                          className={`w-full px-3 py-2 border rounded-md ${validationErrors.organisation ? 'border-destructive' : 'border-input'}`}
+                          required
+                        >
+                          <option value="">Select type</option>
+                          <option value="Private">Private</option>
+                          <option value="Public">Public</option>
+                          <option value="Non-Profit">Non-Profit</option>
+                          <option value="Government">Government</option>
+                        </select>
+                        {validationErrors.organisation && (
+                          <p className="text-sm text-destructive">{validationErrors.organisation}</p>
+                        )}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {currentStep === 2 && (
+                <Card className="shadow-lg border-0 bg-card">
+                  <CardHeader className="bg-gradient-to-r from-primary/5 to-primary/10 rounded-t-lg">
+                    <CardTitle className="py-3 flex items-center space-x-3 text-l">
+                      <div className="p-2 bg-background rounded-lg shadow-sm">
+                        <Users className="h-6 w-6 text-primary" />
+                      </div>
+                      <div>
+                        <span>Company Details</span>
+                        <p className="text-sm font-normal text-muted-foreground mt-1">
+                          Tell us more about your company
+                        </p>
+                      </div>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-1 space-y-4">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="location" className="text-sm font-semibold">
+                          Location *
+                        </Label>
+                        <Input
+                          type="text"
+                          id="location"
+                          name="location"
+                          value={formData.location}
+                          onChange={handleInputChange}
+                          placeholder="e.g., San Francisco, CA"
+                          className={validationErrors.location ? 'border-destructive' : ''}
+                          required
+                        />
+                        {validationErrors.location && (
+                          <p className="text-sm text-destructive">{validationErrors.location}</p>
+                        )}
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="employees" className="text-sm font-semibold">
+                          Number of Employees *
+                        </Label>
+                        <select
+                          id="employees"
+                          name="employees"
+                          value={formData.employees}
+                          onChange={handleInputChange}
+                          className={`w-full px-3 py-2 border rounded-md ${validationErrors.employees ? 'border-destructive' : 'border-input'}`}
+                          required
+                        >
+                          <option value="">Select range</option>
+                          <option value="1-10">1-10</option>
+                          <option value="11-50">11-50</option>
+                          <option value="51-200">51-200</option>
+                          <option value="201-500">201-500</option>
+                          <option value="501-1000">501-1000</option>
+                          <option value="1000+">1000+</option>
+                        </select>
+                        {validationErrors.employees && (
+                          <p className="text-sm text-destructive">{validationErrors.employees}</p>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="description" className="text-sm font-semibold">
+                        Company Description *
+                      </Label>
+                      <textarea
+                        id="description"
+                        name="description"
+                        value={formData.description}
+                        onChange={handleInputChange}
+                        placeholder="Tell us about your company..."
+                        rows={4}
+                        className={`w-full px-3 py-2 h-20 border text-sm rounded-md ${validationErrors.description ? 'border-destructive' : 'border-input'}`}
+                        required
+                      />
+                      {validationErrors.description && (
+                        <p className="text-sm text-destructive">{validationErrors.description}</p>
+                      )}
+                    </div>
+
                     <div className="space-y-2">
                       <Label htmlFor="logo" className="text-sm font-semibold">
-                        Company Logo
+                        Company Logo (Optional)
                       </Label>
-                      <div className={`border-2 border-dashed rounded-lg p-6 text-center hover:border-primary transition-colors ${
-                        validationErrors.logo ? 'border-destructive' : 'border-border'
-                      }`}>
+                      <div 
+                        onClick={() => document.getElementById('logo')?.click()}
+                        className={`border-2 border-dashed rounded-lg p-2 text-center hover:border-primary transition-colors cursor-pointer ${
+                          validationErrors.logo ? 'border-destructive' : 'border-border'
+                        }`}
+                      >
                         <div className="flex flex-col items-center space-y-3">
-                          <div className="p-3 bg-primary/10 rounded-full">
-                            <Upload className="h-6 w-6 text-primary" />
-                          </div>
-                          <div>
-                            <p className="text-sm font-medium text-foreground">Upload Company Logo</p>
-                            <p className="text-xs text-muted-foreground">PNG, JPG up to 5MB</p>
-                          </div>
+                          {uploading.logo ? (
+                            <>
+                              <Loader2 className="h-6 w-6 text-primary animate-spin" />
+                              <p className="text-sm font-medium text-foreground">Uploading...</p>
+                            </>
+                          ) : formData.logo ? (
+                            <>
+                              <div className="relative">
+                                <img 
+                                  src={formData.logo} 
+                                  alt="Company logo preview" 
+                                  className="h-20 w-20 object-contain rounded"
+                                />
+                              </div>
+                              <p className="text-sm font-medium text-green-600">✓ Logo uploaded</p>
+                              <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  document.getElementById('logo')?.click();
+                                }}
+                              >
+                                Change Logo
+                              </Button>
+                            </>
+                          ) : (
+                            <>
+                              <div className="p-2 bg-primary/10 rounded-full">
+                                <Upload className="h-4 w-4 text-primary" />
+                              </div>
+                              <div>
+                                <p className="text-sm font-medium text-foreground">Upload Company Logo</p>
+                                <p className="text-xs text-muted-foreground">PNG, JPG up to 5MB</p>
+                              </div>
+                            </>
+                          )}
                           <Input
                             type="file"
                             id="logo"
                             name="logo"
                             accept="image/*"
-                            onChange={handleFileChange}
+                            onChange={(e) => {
+                              const file = e.target.files?.[0]
+                              if (file) {
+                                handleFileUpload(file, 'logo')
+                                if (validationErrors.logo) {
+                                  setValidationErrors(prev => {
+                                    const newErrors = { ...prev }
+                                    delete newErrors.logo
+                                    return newErrors
+                                  })
+                                }
+                              }
+                            }}
                             className="hidden"
                           />
                         </div>
@@ -542,7 +758,7 @@ const CompanyProfileSetup = () => {
                 </Card>
               )}
 
-              {currentStep === 2 && (
+              {currentStep === 3 && (
                 <Card className="shadow-lg border-0 bg-card">
                   <CardHeader className="bg-gradient-to-r from-primary/5 to-primary/10 rounded-t-lg">
                     <CardTitle className="flex items-center space-x-3 text-xl">
@@ -558,41 +774,101 @@ const CompanyProfileSetup = () => {
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="p-6 space-y-4">
-                    <div className="space-y-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="business_license" className="text-sm font-semibold">
-                          Business License
-                        </Label>
-                        <div className={`border-2 border-dashed rounded-lg p-6 text-center hover:border-primary transition-colors ${
+                    <div className="space-y-2">
+                      <Label htmlFor="tax_id" className="text-sm font-semibold">
+                        Tax ID / Registration Number *
+                      </Label>
+                      <Input
+                        type="text"
+                        id="tax_id"
+                        name="tax_id"
+                        value={formData.tax_id}
+                        onChange={handleInputChange}
+                        placeholder="e.g., 12-3456789"
+                        className={validationErrors.tax_id ? 'border-destructive' : ''}
+                        required
+                      />
+                      {validationErrors.tax_id && (
+                        <p className="text-sm text-destructive">{validationErrors.tax_id}</p>
+                      )}
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="business_license" className="text-sm font-semibold">
+                        Business License (Optional)
+                      </Label>
+                      <div 
+                        onClick={() => document.getElementById('business_license')?.click()}
+                        className={`border-2 border-dashed rounded-lg p-6 text-center hover:border-primary transition-colors cursor-pointer ${
                           validationErrors.business_license ? 'border-destructive' : 'border-border'
-                        }`}>
-                          <div className="flex flex-col items-center space-y-3">
-                            <div className="p-3 bg-primary/10 rounded-full">
-                              <Upload className="h-6 w-6 text-primary" />
-                            </div>
-                            <div>
-                              <p className="text-sm font-medium text-foreground">Upload Business License</p>
-                              <p className="text-xs text-muted-foreground">PNG, JPG up to 10MB</p>
-                            </div>
-                            <Input
-                              type="file"
-                              id="business_license"
-                              name="business_license"
-                              accept="image/*,.pdf,.doc,.docx"
-                              onChange={handleFileChange}
-                              className="hidden"
-                            />
-                          </div>
+                        }`}
+                      >
+                        <div className="flex flex-col items-center space-y-3">
+                          {uploading.business_license ? (
+                            <>
+                              <Loader2 className="h-6 w-6 text-primary animate-spin" />
+                              <p className="text-sm font-medium text-foreground">Uploading...</p>
+                            </>
+                          ) : formData.business_license ? (
+                            <>
+                              <div className="p-3 bg-green-100 rounded-full">
+                                <CheckCircle className="h-6 w-6 text-green-600" />
+                              </div>
+                              <p className="text-sm font-medium text-green-600">✓ Business license uploaded</p>
+                              <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  document.getElementById('business_license')?.click();
+                                }}
+                              >
+                                Change Document
+                              </Button>
+                            </>
+                          ) : (
+                            <>
+                              <div className="p-3 bg-primary/10 rounded-full">
+                                <Upload className="h-6 w-6 text-primary" />
+                              </div>
+                              <div>
+                                <p className="text-sm font-medium text-foreground">Upload Business License</p>
+                                <p className="text-xs text-muted-foreground">PNG, JPG, PDF up to 10MB</p>
+                              </div>
+                            </>
+                          )}
+                          <Input
+                            type="file"
+                            id="business_license"
+                            name="business_license"
+                            accept="image/*,.pdf,.doc,.docx"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0]
+                              if (file) {
+                                handleFileUpload(file, 'business_license')
+                                if (validationErrors.business_license) {
+                                  setValidationErrors(prev => {
+                                    const newErrors = { ...prev }
+                                    delete newErrors.business_license
+                                    return newErrors
+                                  })
+                                }
+                              }
+                            }}
+                            className="hidden"
+                          />
                         </div>
-                        {validationErrors.business_license && (
-                          <p className="text-sm text-destructive">{validationErrors.business_license}</p>
-                        )}
                       </div>
+                      {validationErrors.business_license && (
+                        <p className="text-sm text-destructive">{validationErrors.business_license}</p>
+                      )}
                     </div>
                   </CardContent>
                 </Card>
               )}
 
+              {/* Navigation Buttons */}
               <div className="flex items-center justify-between pt-4">
                 <div>
                   {currentStep > 1 && (
@@ -609,7 +885,7 @@ const CompanyProfileSetup = () => {
                 </div>
                 
                 <div className="flex items-center space-x-2">
-                  {currentStep < 2 ? (
+                  {currentStep < 3 ? (
                     <Button
                       type="button"
                       onClick={nextStep}
@@ -642,7 +918,7 @@ const CompanyProfileSetup = () => {
               </div>
             </form>
 
-            {}
+            {/* Help Section */}
             <div className="text-center">
               <div className="inline-flex items-center space-x-2 text-sm text-muted-foreground">
                 <span>Need help?</span>

@@ -75,6 +75,10 @@ export class CompanyController {
         industry: parsed.data.industry,
         organisation: parsed.data.organisation,
         aboutUs: parsed.data.description,
+        taxId: parsed.data.tax_id,
+        businessLicenseUrl: parsed.data.business_license,
+        email: parsed.data.email,
+        location: parsed.data.location,
       };
       const profile = await this._createCompanyProfileUseCase.execute(
         userId,

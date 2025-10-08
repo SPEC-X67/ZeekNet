@@ -19,6 +19,10 @@ export interface CreateCompanyProfileData {
   aboutUs: string;
   foundedDate?: Date;
   phone?: string;
+  taxId?: string;
+  businessLicenseUrl?: string;
+  email?: string;
+  location?: string;
 }
 
 export interface UpdateCompanyProfileData {

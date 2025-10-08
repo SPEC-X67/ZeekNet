@@ -194,11 +194,12 @@ const Register = () => {
           {}
           <div className="flex items-center space-x-3 mb-8">
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary shadow-lg">
-              <Briefcase className="h-7 w-7 text-primary-foreground" />
+              {/* <Briefcase className="h-7 w-7 text-primary-foreground" /> */}
+              <img src="/white.png" alt="ZeekNet Logo" className="h-8 w-8" />
             </div>
             <div>
               <h1 className="text-2xl font-bold text-foreground">ZeekNet</h1>
-              <Badge variant="secondary" className="bg-primary/20 text-primary">
+              <Badge variant="secondary" className="bg-primary/20 text-foreground">
                 <Sparkles className="mr-1 h-3 w-3" />
                 Job Portal
               </Badge>

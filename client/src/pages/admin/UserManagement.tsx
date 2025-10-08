@@ -67,9 +67,9 @@ const UserManagement = () => {
           ...user,
           name: user.name || user.email.split('@')[0], 
           appliedJobs: Math.floor(Math.random() * 15), 
-          accountStatus: user.is_blocked ? 'Blocked' : 'Active',
-          emailVerification: user.is_verified ? 'Verified' : 'Unverified',
-          joinedDate: new Date(user.created_at).toLocaleDateString('en-GB', {
+          accountStatus: user.isBlocked ? 'Blocked' : 'Active',
+          emailVerification: user.isVerified ? 'Verified' : 'Unverified',
+          joinedDate: new Date(user.createdAt).toLocaleDateString('en-GB', {
             day: '2-digit',
             month: 'short',
             year: 'numeric'
@@ -79,12 +79,16 @@ const UserManagement = () => {
         
         setUsers(transformedUsers)
         setPagination({
-          ...response.data.pagination,
-          hasNext: response.data.pagination.page < response.data.pagination.totalPages,
-          hasPrev: response.data.pagination.page > 1
+          page: response.data.page || 1,
+          limit: response.data.limit || 10,
+          total: response.data.total || 0,
+          totalPages: response.data.totalPages || 0,
+          hasNext: (response.data.page || 1) < (response.data.totalPages || 0),
+          hasPrev: (response.data.page || 1) > 1
         })
       }
-    } catch {
+    } catch (error) {
+      console.error('Error fetching users:', error); 
       toast.error('Failed to fetch users')
     } finally {
       setLoading(false)
@@ -112,7 +116,7 @@ const UserManagement = () => {
     if (!selectedUser) return
     
     try {
-      const response = await adminApi.blockUser(selectedUser.id, !selectedUser.is_blocked)
+      const response = await adminApi.blockUser(selectedUser.id, !selectedUser.isBlocked)  // Changed from is_blocked
       
       if (response && response.message) {
         toast.success(response.message)
@@ -122,8 +126,8 @@ const UserManagement = () => {
             user.id === selectedUser.id 
               ? { 
                   ...user, 
-                  is_blocked: !selectedUser.is_blocked,
-                  accountStatus: !selectedUser.is_blocked ? 'Blocked' : 'Active'
+                  isBlocked: !selectedUser.isBlocked,  
+                  accountStatus: !selectedUser.isBlocked ? 'Blocked' : 'Active'
                 }
               : user
           )
@@ -348,8 +352,8 @@ const UserManagement = () => {
             <DialogHeader>
               <DialogTitle>Block User</DialogTitle>
               <DialogDescription>
-                Are you sure you want to {selectedUser?.is_blocked ? 'unblock' : 'block'} {selectedUser?.email}? 
-                {selectedUser?.is_blocked 
+                Are you sure you want to {selectedUser?.isBlocked ? 'unblock' : 'block'} {selectedUser?.email}? 
+                {selectedUser?.isBlocked 
                   ? ' This will restore their account access.' 
                   : ' This will prevent them from accessing their account.'
                 }
@@ -364,7 +368,7 @@ const UserManagement = () => {
                 onClick={handleBlockConfirm}
                 className="bg-orange-600 hover:bg-orange-700"
               >
-                {selectedUser?.is_blocked ? 'Unblock' : 'Block'} User
+                {selectedUser?.isBlocked ? 'Unblock' : 'Block'} User
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -376,8 +380,8 @@ const UserManagement = () => {
             <DialogHeader>
               <DialogTitle>Email Verification</DialogTitle>
               <DialogDescription>
-                Are you sure you want to {selectedUser?.is_verified ? 'unverify' : 'verify'} the email for {selectedUser?.email}? 
-                {selectedUser?.is_verified 
+                Are you sure you want to {selectedUser?.isVerified ? 'unverify' : 'verify'} the email for {selectedUser?.email}? 
+                {selectedUser?.isVerified 
                   ? ' This will mark their email as unverified.' 
                   : ' This will mark their email as verified.'
                 }
@@ -391,7 +395,7 @@ const UserManagement = () => {
                 onClick={handleEmailConfirm}
                 className="bg-cyan-600 hover:bg-cyan-700"
               >
-                {selectedUser?.is_verified ? 'Unverify' : 'Verify'} Email
+                {selectedUser?.isVerified ? 'Unverify' : 'Verify'} Email
               </Button>
             </DialogFooter>
           </DialogContent>

@@ -22,8 +22,36 @@ export interface PaginatedUsers {
   totalPages: number;
 }
 
+export interface CompanyWithVerification {
+  id: string;
+  userId: string;
+  companyName: string;
+  logo: string;
+  websiteLink: string;
+  employeeCount: number;
+  industry: string;
+  organisation: string;
+  aboutUs: string;
+  isVerified: 'pending' | 'rejected' | 'verified';
+  isBlocked: boolean;
+  createdAt: string;
+  updatedAt: string;
+  verification?: {
+    taxId: string;
+    businessLicenseUrl: string;
+  };
+}
+
 export interface PaginatedCompanies {
   companies: CompanyProfile[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
+export interface PaginatedCompaniesWithVerification {
+  companies: CompanyWithVerification[];
   total: number;
   page: number;
   limit: number;
@@ -71,7 +99,7 @@ export interface IGetAllCompaniesUseCase {
 }
 
 export interface IGetCompaniesWithVerificationUseCase {
-  execute(options: CompanyQueryOptions): Promise<PaginatedCompanies>;
+  execute(options: CompanyQueryOptions): Promise<PaginatedCompaniesWithVerification>;
 }
 
 export interface IVerifyCompanyUseCase {

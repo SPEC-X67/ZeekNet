@@ -5,7 +5,7 @@ import {
   ICompanyOfficeLocationRepository,
 } from '../../../domain/interfaces/repositories';
 import { ICreateCompanyProfileUseCase, CreateCompanyProfileData } from '../../../domain/interfaces/use-cases';
-import { CompanyProfile } from '../../../domain/entities/company-profile.entity';
+import { CompanyProfile, CompanyContact, CompanyOfficeLocation } from '../../../domain/entities';
 
 export class CreateCompanyProfileUseCase implements ICreateCompanyProfileUseCase {
   constructor(
@@ -32,6 +32,31 @@ export class CreateCompanyProfileUseCase implements ICreateCompanyProfileUseCase
       isVerified: 'pending',
       isBlocked: false,
     });
+
+    if (profileData.taxId || profileData.businessLicenseUrl) {
+      await this._companyVerificationRepository.createVerification({
+        companyId: profile.id,
+        taxId: profileData.taxId || '',
+        businessLicenseUrl: profileData.businessLicenseUrl || '',
+      });
+    }
+
+    if (profileData.email) {
+      const contact = CompanyContact.create({
+        companyId: profile.id,
+        email: profileData.email,
+      });
+      await this._companyContactRepository.create(contact);
+    }
+
+    if (profileData.location) {
+      const location = CompanyOfficeLocation.create({
+        companyId: profile.id,
+        location: profileData.location,
+        isHeadquarters: true,
+      });
+      await this._companyOfficeLocationRepository.create(location);
+    }
 
     return profile;
   }

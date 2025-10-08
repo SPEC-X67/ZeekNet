@@ -62,7 +62,7 @@ const JobView = () => {
     if (!job) return
 
     try {
-      const response = await adminApi.updateJobStatus(job.id, !job.is_active)
+      const response = await adminApi.updateJobStatus(job.id || job._id, !job.is_active)
       
       if (response.success) {
         setJob({ ...job, is_active: !job.is_active })
@@ -79,7 +79,7 @@ const JobView = () => {
     if (!job) return
 
     try {
-      const response = await adminApi.deleteJob(job.id)
+      const response = await adminApi.deleteJob(job.id || job._id)
       
       if (response.success) {
         toast.success('Job deleted successfully')
@@ -131,7 +131,7 @@ const JobView = () => {
 
   return (
     <AdminLayout>
-      <div className="space-y-6">
+      <div className="space-y-6 p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <Button
@@ -169,12 +169,12 @@ const JobView = () => {
               {job.is_active ? (
                 <>
                   <XCircle className="h-4 w-4 mr-2" />
-                  Deactivate
+                  Unpublish
                 </>
               ) : (
                 <>
                   <CheckCircle className="h-4 w-4 mr-2" />
-                  Activate
+                  Publish
                 </>
               )}
             </Button>
@@ -202,7 +202,7 @@ const JobView = () => {
                   <div className="flex items-center space-x-2">
                     <Building2 className="h-4 w-4 text-gray-400" />
                     <span className="text-sm font-medium">Company:</span>
-                    <span className="text-sm">{job.company?.companyName || 'Unknown'}</span>
+                    <span className="text-sm">{job.company_name || job.company?.companyName || 'Unknown'}</span>
                   </div>
                   <div className="flex items-center space-x-2">
                     <MapPin className="h-4 w-4 text-gray-400" />
@@ -379,8 +379,8 @@ const JobView = () => {
                     />
                   )}
                   <div>
-                    <h3 className="font-medium">{job.company?.companyName || 'Unknown Company'}</h3>
-                    <p className="text-sm text-gray-500">Company ID: {job.company_id}</p>
+                    <h3 className="font-medium">{job.company_name || job.company?.companyName || 'Unknown Company'}</h3>
+                    {/* <p className="text-sm text-gray-500">Company ID: {job.company_id}</p> */}
                   </div>
                 </div>
               </CardContent>

@@ -15,6 +15,8 @@ export {
   CompanyQueryOptions,
   UserQueryOptions,
   PaginatedCompanies,
+  PaginatedCompaniesWithVerification,
+  CompanyWithVerification,
   PaginatedUsers,
 } from './IAdminUseCases';
 export * from './ICompanyUseCases';

@@ -203,7 +203,7 @@ const JobListing = () => {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-6">
+      <div className="container max-w-[1352px] mx-auto px-4 py-6">
         <div className="mb-6">
           <JobSearchFilters onSearch={handleSearch} loading={searchLoading} />
         </div>
@@ -243,7 +243,7 @@ const JobListing = () => {
             }>
               {jobs.map((job) => (
                 <JobCard
-                  key={job.id}
+                  key={job.id || job._id}
                   job={job}
                   onViewDetails={handleViewDetails}
                 />

@@ -7,7 +7,8 @@ import type { JobPostingStepProps } from "../../types/job-posting";
 import { 
   Plus, 
   Heart, 
-  Sparkles
+  Sparkles,
+  X
 } from "lucide-react";
 
 const PerksBenefitsStep: React.FC<JobPostingStepProps> = ({
@@ -43,6 +44,13 @@ const PerksBenefitsStep: React.FC<JobPostingStepProps> = ({
   const handleCancelAdd = () => {
     setNewBenefit({ title: "", description: "" });
     setShowAddForm(false);
+  };
+
+
+  const handleRemoveBenefit = (id: string) => {
+    onDataChange({
+      benefits: data.benefits.filter((benefit) => benefit.id !== id)
+    });
   };
 
   return (
@@ -128,6 +136,33 @@ const PerksBenefitsStep: React.FC<JobPostingStepProps> = ({
             <Heart className="h-4 w-4 text-[#4640DE]" />
             <span className="text-base font-semibold text-[#25324B]">Current Benefits</span>
           </div>
+          {data.benefits.length > 0 ? (
+            <div className="flex flex-col gap-3">
+              {data.benefits.map((benefit) => (
+                <div key={benefit.id} className="flex items-start gap-3 p-3 border border-[#D6DDEB] rounded-[10px] hover:shadow-md transition-shadow">
+                  <div className="p-2 bg-[#4640DE] bg-opacity-10 rounded-lg">
+                    <Heart className="h-4 w-4 text-[#ffff]" />
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="text-base font-semibold text-[#25324B] mb-1">
+                      {benefit.title}
+                    </h4>
+                    <p className="text-sm text-[#7C8493]">
+                      {benefit.description}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => handleRemoveBenefit(benefit.id)}
+                    className="p-1 hover:bg-[#CCCCF5] rounded-full transition-colors"
+                  >
+                    <X className="h-4 w-4 text-[#7C8493]" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-sm text-[#7C8493]">No benefits added yet</div>
+          )}
         </div>
       </div>
 

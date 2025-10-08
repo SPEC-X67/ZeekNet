@@ -5,10 +5,19 @@ import { JobPostingResponseDto } from '../../../../application/mappers/types';
 export class JobPostingMapper {
   static toEntity(doc: JobPostingDocument): JobPosting {
     let companyId = '';
+    let companyName: string | undefined;
+    let companyLogo: string | undefined;
+    
     if (doc.company_id) {
       const companyIdValue = doc.company_id as unknown;
       if (typeof companyIdValue === 'object' && companyIdValue && '_id' in companyIdValue) {
         companyId = String((companyIdValue as { _id: unknown })._id);
+        if ('companyName' in companyIdValue) {
+          companyName = String((companyIdValue as { companyName: unknown }).companyName);
+        }
+        if ('logo' in companyIdValue) {
+          companyLogo = String((companyIdValue as { logo: unknown }).logo);
+        }
       } else {
         companyId = String(companyIdValue);
       }
@@ -17,6 +26,8 @@ export class JobPostingMapper {
     return {
       _id: String(doc._id),
       company_id: companyId,
+      company_name: companyName,
+      company_logo: companyLogo,
       title: doc.title || '',
       description: doc.description || '',
       responsibilities: doc.responsibilities || [],
@@ -38,10 +49,19 @@ export class JobPostingMapper {
 
   static toClientResponse(doc: JobPostingDocument): JobPostingResponseDto {
     let companyId = '';
+    let companyName: string | undefined;
+    let companyLogo: string | undefined;
+    
     if (doc.company_id) {
       const companyIdValue = doc.company_id as unknown;
       if (typeof companyIdValue === 'object' && companyIdValue && '_id' in companyIdValue) {
         companyId = String((companyIdValue as { _id: unknown })._id);
+        if ('companyName' in companyIdValue) {
+          companyName = String((companyIdValue as { companyName: unknown }).companyName);
+        }
+        if ('logo' in companyIdValue) {
+          companyLogo = String((companyIdValue as { logo: unknown }).logo);
+        }
       } else {
         companyId = String(companyIdValue);
       }
@@ -50,6 +70,8 @@ export class JobPostingMapper {
     return {
       id: String(doc._id),
       company_id: companyId,
+      company_name: companyName,
+      company_logo: companyLogo,
       title: doc.title,
       description: doc.description || '',
       responsibilities: doc.responsibilities || [],

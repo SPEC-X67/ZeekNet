@@ -41,7 +41,7 @@ const JobCard = ({ job, onViewDetails }: JobCardProps) => {
 
   const handleCardClick = () => {
     if (onViewDetails) {
-      onViewDetails(job.id);
+      onViewDetails(job.id || job._id);
     }
   };
 
@@ -50,7 +50,7 @@ const JobCard = ({ job, onViewDetails }: JobCardProps) => {
       className="hover:shadow-md transition-all duration-300 group border border-gray-100 bg-white cursor-pointer h-full"
       onClick={handleCardClick}
     >
-      <CardContent className="p-4 h-full flex flex-col">
+      <CardContent className="px-3 h-full flex flex-col">
         <div className="mb-3 flex-1">
           <div className="flex items-start justify-between mb-2">
             <h3 className="text-sm font-medium text-gray-900 group-hover:text-primary transition-colors line-clamp-2 leading-tight">
@@ -84,22 +84,22 @@ const JobCard = ({ job, onViewDetails }: JobCardProps) => {
 
         <div className="flex items-center gap-2 mt-auto">
           <div className="w-8 h-8 bg-gray-50 rounded flex items-center justify-center flex-shrink-0">
-            {job.company?.logo ? (
+            {(job.company_logo || job.company?.logo) ? (
               <img 
-                src={job.company.logo} 
-                alt={job.company.companyName}
+                src={job.company_logo || job.company?.logo} 
+                alt={job.company_name || job.company?.companyName || 'Company'}
                 className="w-6 h-6 rounded object-cover"
               />
             ) : (
               <span className="text-gray-600 font-semibold text-sm">
-                {job.company?.companyName?.charAt(0) || job.title.charAt(0)}
+                {(job.company_name || job.company?.companyName)?.charAt(0) || job.title.charAt(0)}
               </span>
             )}
           </div>
           
           <div className="flex-1 min-w-0">
             <h4 className="text-sm font-medium text-gray-900 truncate">
-              {job.company?.companyName || 'Company'}
+              {job.company_name || job.company?.companyName || 'Company'}
             </h4>
             <div className="flex items-center text-gray-500 text-xs">
               <MapPin className="w-3 h-3 mr-1 flex-shrink-0" />

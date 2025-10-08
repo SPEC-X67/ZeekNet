@@ -2,6 +2,7 @@ export {
   IJobPostingRepository, 
   IJobPostingSearchRepository, 
   IJobPostingAnalyticsRepository, 
-  IJobPostingManagementRepository, 
+  IJobPostingManagementRepository,
+  JobPostingDetailResponseDto,
 } from './IJobPostingRepository';
 

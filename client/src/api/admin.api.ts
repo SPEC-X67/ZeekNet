@@ -109,21 +109,14 @@ export const adminApi = {
       }
     },
 
-  getAllUsers: async (query: {
-      page?: number;
-      limit?: number;
-      search?: string;
-      isBlocked?: boolean;
-    } = {}): Promise<{
+  getAllUsers: async (query: GetAllUsersParams = {} as GetAllUsersParams): Promise<{
       success: boolean;
       data?: {
         users: any[];
-        pagination: {
-          page: number;
-          limit: number;
-          total: number;
-          totalPages: number;
-        };
+        total: number;      
+        page: number;       
+        limit: number;
+        totalPages: number;
       };
       message?: string;
     }> => {
@@ -133,11 +126,16 @@ export const adminApi = {
         if (query.page) params.append('page', query.page.toString());
         if (query.limit) params.append('limit', query.limit.toString());
         if (query.search) params.append('search', query.search);
-        if (query.isBlocked !== undefined) params.append('isBlocked', query.isBlocked.toString());
+        if (query.role) params.append('role', query.role);
+        if (query.isBlocked !== undefined) {
+          const blocked = typeof query.isBlocked === 'string' ? query.isBlocked : query.isBlocked.toString();
+          params.append('isBlocked', blocked);
+        }
 
         const response = await api.get(`/api/admin/users?${params.toString()}`);
         return response.data;
       } catch (error: any) {
+        console.error('API Error:', error.response || error); // Better error logging
         return {
           success: false,
           message: error.response?.data?.message || 'Failed to fetch users',
@@ -183,14 +181,10 @@ export const adminApi = {
       success: boolean;
       data?: {
         companies: Company[];
-        pagination: {
-          page: number;
-          limit: number;
-          total: number;
-          totalPages: number;
-          hasNext: boolean;
-          hasPrev: boolean;
-        };
+        page: number;
+        limit: number;
+        total: number;
+        totalPages: number;
       };
       message?: string;
     }> => {
@@ -218,19 +212,15 @@ export const adminApi = {
       success: boolean;
       data?: {
         companies: Company[];
-        pagination: {
-          page: number;
-          limit: number;
-          total: number;
-          totalPages: number;
-          hasNext: boolean;
-          hasPrev: boolean;
-        };
+        total: number;
+        page: number;
+        limit: number;
+        totalPages: number;
       };
       message?: string;
     }> => {
       try {
-        const response = await api.get('/api/admin/companies/pending');
+        const response = await api.get('/api/admin/companies/verification');
         return response.data;
       } catch (error: any) {
         return {
@@ -292,27 +282,27 @@ export interface User {
   name?: string;
   email: string;
   role: string;
-  is_verified: boolean;
-  is_blocked: boolean;
-  created_at: string;
-  updated_at: string;
+  isVerified: boolean;
+  isBlocked: boolean;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface Company {
   id: string;
   userId?: string;
-  company_name: string;
+  companyName: string;
   logo: string;
   banner: string;
-  website_link: string;
-  employee_count: number;
+  websiteLink: string;
+  employeeCount: number;
   industry: string;
   organisation: string;
-  about_us: string;
-  is_verified: 'pending' | 'rejected' | 'verified';
-  is_blocked: boolean;
-  created_at: string;
-  updated_at: string;
+  aboutUs: string;
+  isVerified: 'pending' | 'rejected' | 'verified';
+  isBlocked: boolean;
+  createdAt: string;
+  updatedAt: string;
   verification?: {
     taxId: string;
     businessLicenseUrl: string;

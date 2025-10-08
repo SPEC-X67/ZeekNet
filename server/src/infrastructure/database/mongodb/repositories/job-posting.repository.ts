@@ -207,6 +207,7 @@ export class JobPostingRepository extends RepositoryBase<JobPosting, JobPostingD
 
     const [jobs, total] = await Promise.all([
       JobPostingModel.find(query)
+        .select('_id title company_id salary employment_types location category_ids createdAt')
         .populate('company_id', 'companyName logo')
         .skip(skip)
         .limit(limit)

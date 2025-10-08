@@ -39,7 +39,7 @@ const AdminSidebar = () => {
       icon: Building2,
     },
     {
-      path: '/admin/users',
+      path: '/admin/seekers',
       label: 'Candidate',
       icon: Users,
     }

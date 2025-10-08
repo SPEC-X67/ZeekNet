@@ -3,6 +3,7 @@ import { AuthenticatedRequest } from '../../../shared/types';
 import { handleValidationError, handleAsyncError, sendSuccessResponse, sendNotFoundResponse, badRequest, validateUserId, success, created, unauthorized, handleError } from '../../../shared/utils';
 import { CreateJobPostingUseCase, GetJobPostingUseCase, GetCompanyJobPostingsUseCase, UpdateJobPostingUseCase, DeleteJobPostingUseCase, IncrementJobViewCountUseCase, UpdateJobStatusUseCase } from '../../../application/use-cases/company';
 import { CreateJobPostingRequestDto, UpdateJobPostingRequestDto, JobPostingQueryRequestDto } from '../../../application/dto/job-posting/job-posting.dto';
+import { ICompanyProfileRepository } from 'src/domain/interfaces';
 
 export class CompanyJobPostingController {
   constructor(
@@ -13,18 +14,25 @@ export class CompanyJobPostingController {
     private readonly _deleteJobPostingUseCase: DeleteJobPostingUseCase,
     private readonly _incrementJobViewCountUseCase: IncrementJobViewCountUseCase,
     private readonly _updateJobStatusUseCase: UpdateJobStatusUseCase,
+    private readonly _companyProfileRepository: ICompanyProfileRepository, 
   ) {  }
 
   createJobPosting = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
-      const companyId = req.user?.id;
-      if (!companyId) {
-        unauthorized(res, 'Company ID not found');
+      const userId = req.user?.id;
+      if (!userId) {
+        unauthorized(res, 'User ID not found');
+        return;
+      }
+
+      const companyProfile = await this._companyProfileRepository.getProfileByUserId(userId);
+      if (!companyProfile) {
+        badRequest(res, 'Company profile not found');
         return;
       }
 
       const createJobPostingDto: CreateJobPostingRequestDto = req.body;
-      const jobPosting = await this._createJobPostingUseCase.execute(companyId, createJobPostingDto);
+      const jobPosting = await this._createJobPostingUseCase.execute(companyProfile.id, createJobPostingDto);
       created(res, jobPosting, 'Job posting created successfully');
     } catch (error) {
       handleError(res, error);

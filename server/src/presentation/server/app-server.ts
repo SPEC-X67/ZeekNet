@@ -74,17 +74,17 @@ export class AppServer {
   public async connectDatabase(): Promise<void> {
     try {
       await connectToDatabase(env.MONGO_URI as string);
-      console.log('✅ Connected to MongoDB');
+      console.log('Connected to MongoDB');
     } catch (error) {
-      console.error('❌ MongoDB connection failed:', error);
+      console.error('MongoDB connection failed:', error);
       throw error;
     }
 
     try {
       await connectRedis();
-      console.log('✅ Connected to Redis');
+      console.log('Connected to Redis');
     } catch (error) {
-      console.error('❌ Redis connection failed:', error);
+      console.error('Redis connection failed:', error);
       throw error;
     }
   }
@@ -95,12 +95,12 @@ export class AppServer {
       this.init();
       
       this._app.listen(this._port, () => {
-        console.log(`✅ Server running on http://localhost:${this._port}`);
-        console.log(`🏥 Health check: http://localhost:${this._port}/health`);
+        console.log(`Server running on http://localhost:${this._port}`);
+        console.log(`Health check: http://localhost:${this._port}/health`);
       });
 
     } catch (error) {
-      console.error('❌ Server startup failed:', error);
+      console.error('Server startup failed:', error);
       throw error;
     }
   }

@@ -118,6 +118,8 @@ export interface JobPostingData {
 export interface JobPostingResponseDto {
   id: string;
   company_id: string;
+  company_name?: string;
+  company_logo?: string;
   title: string;
   description: string;
   responsibilities: string[];

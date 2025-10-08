@@ -106,7 +106,7 @@ const JobManagement = () => {
       
       if (response.success) {
         setJobs(jobs.map(job => 
-          job.id === jobId 
+          (job.id || job._id) === jobId 
             ? { ...job, is_active: !currentStatus }
             : job
         ))
@@ -126,7 +126,12 @@ const JobManagement = () => {
       const response = await adminApi.deleteJob(deleteDialog.jobId)
       
       if (response.success) {
-        setJobs(jobs.filter(job => job.id !== deleteDialog.jobId))
+        setJobs(jobs.filter(job => (job.id || job._id) !== deleteDialog.jobId))
+        setPagination(prev => ({
+          ...prev,
+          total: prev.total - 1,
+          totalPages: Math.ceil((prev.total - 1) / prev.limit)
+        }))
         setDeleteDialog({ isOpen: false, jobId: null, jobTitle: '' })
         toast.success('Job deleted successfully')
       } else {
@@ -250,7 +255,7 @@ const JobManagement = () => {
                         <TableCell>
                           <div className="flex items-center space-x-2">
                             <Building2 className="h-4 w-4 text-gray-400" />
-                            <span className="text-sm">{job.company?.companyName || 'Unknown'}</span>
+                            <span className="text-sm">{job.company_name || 'Unknown'}</span>
                           </div>
                         </TableCell>
                         <TableCell>
@@ -296,29 +301,29 @@ const JobManagement = () => {
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                              <DropdownMenuItem onClick={() => handleViewJob(job.id)}>
+                              <DropdownMenuItem onClick={() => handleViewJob(job.id || job._id)}>
                                 <Eye className="h-4 w-4 mr-2" />
                                 View Details
                               </DropdownMenuItem>
                               <DropdownMenuItem 
-                                onClick={() => handleToggleStatus(job.id, job.is_active)}
+                                onClick={() => handleToggleStatus(job.id || job._id, job.is_active)}
                               >
                                 {job.is_active ? (
                                   <>
                                     <XCircle className="h-4 w-4 mr-2" />
-                                    Deactivate
+                                    Unpublish
                                   </>
                                 ) : (
                                   <>
                                     <CheckCircle className="h-4 w-4 mr-2" />
-                                    Activate
+                                    Publish
                                   </>
                                 )}
                               </DropdownMenuItem>
                               <DropdownMenuItem 
                                 onClick={() => setDeleteDialog({
                                   isOpen: true,
-                                  jobId: job.id,
+                                  jobId: job.id || job._id,
                                   jobTitle: job.title
                                 })}
                                 className="text-red-600"

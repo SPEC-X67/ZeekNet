@@ -26,7 +26,6 @@ import { IncrementJobViewCountUseCase } from '../../application/use-cases/compan
 import { UpdateJobStatusUseCase } from '../../application/use-cases/company/update-job-status.use-case';
 import { CompanyController } from '../../presentation/controllers/company/company.controller';
 import { CompanyJobPostingController } from '../../presentation/controllers/company/company-job-posting.controller';
-import { ICompanyProfileRepository } from '../../domain/interfaces/repositories';
 
 const companyProfileRepository = new CompanyProfileRepository();
 const companyContactRepository = new CompanyContactRepository();
@@ -132,6 +131,7 @@ const companyJobPostingController = new CompanyJobPostingController(
   deleteJobPostingUseCase,
   incrementJobViewCountUseCase,
   updateJobStatusUseCase,
+  companyProfileRepository,
 );
 
 export {

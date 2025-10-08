@@ -25,6 +25,7 @@ export class ReapplyCompanyVerificationUseCase implements IReapplyCompanyVerific
       throw new Error('Only rejected companies can reapply for verification');
     }
 
+    
     if (verificationData.taxId || verificationData.businessLicenseUrl) {
       await this._companyVerificationRepository.updateVerification(existingProfile.id, {
         taxId: verificationData.taxId,

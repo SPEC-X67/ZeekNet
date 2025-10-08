@@ -41,6 +41,8 @@ export class CompanyVerificationRepository implements ICompanyVerificationReposi
       updates,
       { new: true },
     ).exec();
+
+    console.log('updated', updated, 'companyId', companyId, 'updates', updates);
     if (!updated) throw new Error('Verification not found');
     return CompanyVerificationMapper.toEntity(updated as unknown as CompanyVerificationDocument);
   }

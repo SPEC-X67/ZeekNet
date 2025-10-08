@@ -25,9 +25,9 @@ export class CompanyRouter {
 
   private initializeRoute(): void {
     const { companyRepository } = require('../../infrastructure/di/companyDi');
-    const { userRepositoryFull } = require('../../infrastructure/di/authDi');
+    const { userRepository } = require('../../infrastructure/di/authDi');
     
-    const userBlockedMiddleware = new UserBlockedMiddleware(userRepositoryFull, companyRepository);
+    const userBlockedMiddleware = new UserBlockedMiddleware(userRepository, companyRepository); 
     const companyVerificationMiddleware = new CompanyVerificationMiddleware(companyRepository);
 
     this.router.use(authenticateToken);

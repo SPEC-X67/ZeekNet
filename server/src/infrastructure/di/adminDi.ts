@@ -61,6 +61,7 @@ const getAllCompaniesUseCase = new GetAllCompaniesUseCase(
 
 const getCompaniesWithVerificationUseCase = new GetCompaniesWithVerificationUseCase(
   companyListingRepository,
+  companyVerificationRepository,
 );
 
 const verifyCompanyUseCase = new VerifyCompanyUseCase(

@@ -42,13 +42,13 @@ export class AdminJobController {
     res: Response,
     next: NextFunction,
   ): Promise<void> => {
-    const { jobId } = req.params;
-    if (!jobId) {
+    const { id } = req.params;
+    if (!id) {
       return handleValidationError('Job ID is required', next);
     }
 
     try {
-      const job = await this._getJobByIdUseCase.execute(jobId);
+      const job = await this._getJobByIdUseCase.execute(id);
       sendSuccessResponse(res, 'Job retrieved successfully', job);
     } catch (error) {
       handleAsyncError(error, next);
@@ -60,8 +60,8 @@ export class AdminJobController {
     res: Response,
     next: NextFunction,
   ): Promise<void> => {
-    const { jobId } = req.params;
-    if (!jobId) {
+    const { id } = req.params;
+    if (!id) {
       return handleValidationError('Job ID is required', next);
     }
 
@@ -71,7 +71,7 @@ export class AdminJobController {
     }
 
     try {
-      await this._updateJobStatusUseCase.execute(jobId, parsed.data.is_active);
+      await this._updateJobStatusUseCase.execute(id, parsed.data.is_active);
       const message = `Job ${parsed.data.is_active ? 'activated' : 'deactivated'} successfully`;
       sendSuccessResponse(res, message, null);
     } catch (error) {
@@ -84,13 +84,13 @@ export class AdminJobController {
     res: Response,
     next: NextFunction,
   ): Promise<void> => {
-    const { jobId } = req.params;
-    if (!jobId) {
+    const { id } = req.params;
+    if (!id) {
       return handleValidationError('Job ID is required', next);
     }
 
     try {
-      await this._deleteJobUseCase.execute(jobId);
+      await this._deleteJobUseCase.execute(id);
       sendSuccessResponse(res, 'Job deleted successfully', null);
     } catch (error) {
       handleAsyncError(error, next);

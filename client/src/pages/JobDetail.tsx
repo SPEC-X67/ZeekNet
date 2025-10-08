@@ -44,7 +44,7 @@ const JobDetail = () => {
           
           if (similarResponse.success && similarResponse.data) {
             const filtered = similarResponse.data.jobs
-              .filter((j: any) => j.id !== id)
+              .filter((j: any) => (j.id || j._id) !== id)
               .slice(0, 4);
             setSimilarJobs(filtered);
           }
@@ -114,15 +114,15 @@ const JobDetail = () => {
           <div className="flex items-start justify-between mb-8">
             <div className="flex items-start gap-6">
               <div className="w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0 overflow-hidden">
-                {job.company?.logo ? (
+                {(job.company_logo || job.company?.logo) ? (
                   <img 
-                    src={job.company.logo} 
-                    alt={job.company.companyName}
+                    src={job.company_logo || job.company.logo} 
+                    alt={job.company_name || job.company?.companyName}
                     className="w-full h-full object-cover"
                   />
                 ) : (
                   <span className="text-3xl font-bold text-blue-600">
-                    {job.company?.companyName?.charAt(0) || job.title.charAt(0)}
+                    {(job.company_name || job.company?.companyName)?.charAt(0) || job.title.charAt(0)}
                   </span>
                 )}
               </div>
@@ -134,7 +134,7 @@ const JobDetail = () => {
                   </h1>
                 </div>
                 <div className="flex items-center gap-3 mb-3">
-                  <span className="text-lg text-[#474C54]">at {job.company?.companyName}</span>
+                  <span className="text-lg text-[#474C54]">at {job.company_name || job.company?.companyName}</span>
                   <span className="px-3 py-1 bg-[#0BA02C] text-white text-sm font-semibold rounded">
                     {job.employment_types?.[0]?.toUpperCase() || 'FULL-TIME'}
                   </span>
@@ -302,21 +302,21 @@ const JobDetail = () => {
             <div className="flex-1">
               <div className="flex items-center gap-6 mb-6">
                 <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
-                  {job.company?.logo ? (
+                  {(job.company_logo || job.company?.logo) ? (
                     <img 
-                      src={job.company.logo} 
-                      alt={job.company.companyName}
+                      src={job.company_logo || job.company.logo} 
+                      alt={job.company_name || job.company?.companyName}
                       className="w-full h-full object-cover"
                     />
                   ) : (
                     <span className="text-2xl font-bold text-blue-600">
-                      {job.company?.companyName?.charAt(0) || 'C'}
+                      {(job.company_name || job.company?.companyName)?.charAt(0) || 'C'}
                     </span>
                   )}
                 </div>
                 <div>
                   <h2 className="text-[30px] font-bold text-[#25324B] mb-1">
-                    {job.company?.companyName}
+                    {job.company_name || job.company?.companyName}
                   </h2>
                   <div className="flex items-center gap-4 text-sm text-[#515B6F]">
                     <div className="flex items-center gap-1">
@@ -335,7 +335,7 @@ const JobDetail = () => {
                 </div>
               </div>
               <p className="text-base text-[#515B6F] leading-relaxed">
-                {job.company?.companyName} is a leading technology company that builds innovative solutions for the modern world. 
+                {job.company_name || job.company?.companyName} is a leading technology company that builds innovative solutions for the modern world. 
                 We are committed to creating a diverse and inclusive workplace where talented individuals can thrive and make a meaningful impact.
               </p>
             </div>
@@ -398,21 +398,21 @@ const JobDetail = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {similarJobs.map((similarJob) => (
                 <div 
-                  key={similarJob.id} 
+                  key={similarJob.id || similarJob._id} 
                   className="bg-white rounded p-8 space-y-5 cursor-pointer hover:shadow-lg transition-shadow"
-                  onClick={() => navigate(`/jobs/${similarJob.id}`)}
+                  onClick={() => navigate(`/jobs/${similarJob.id || similarJob._id}`)}
                 >
                   <div className="flex gap-6">
                     <div className="w-16 h-16 rounded bg-gray-100 flex items-center justify-center flex-shrink-0 overflow-hidden">
-                      {similarJob.company?.logo ? (
+                      {(similarJob.company_logo || similarJob.company?.logo) ? (
                         <img 
-                          src={similarJob.company.logo} 
-                          alt={similarJob.company.companyName}
+                          src={similarJob.company_logo || similarJob.company?.logo} 
+                          alt={similarJob.company_name || similarJob.company?.companyName}
                           className="w-full h-full object-cover"
                         />
                       ) : (
                         <span className="text-2xl font-bold text-blue-600">
-                          {similarJob.company?.companyName?.charAt(0) || similarJob.title.charAt(0)}
+                          {(similarJob.company_name || similarJob.company?.companyName)?.charAt(0) || similarJob.title.charAt(0)}
                         </span>
                       )}
                     </div>
@@ -421,7 +421,7 @@ const JobDetail = () => {
                         {similarJob.title}
                       </h3>
                       <div className="flex items-center gap-2 text-sm text-[#515B6F] mb-3">
-                        <span>{similarJob.company?.companyName}</span>
+                        <span>{similarJob.company_name || similarJob.company?.companyName}</span>
                         <span className="w-1 h-1 bg-[#515B6F] rounded-full" />
                         <span>{similarJob.location}</span>
                       </div>
