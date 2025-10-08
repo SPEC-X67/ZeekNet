@@ -1,4 +1,4 @@
-import { BaseUserRepository } from '../database/mongodb/repositories/base-user.repository';
+import { UserRepository } from '../database/mongodb/repositories/user.repository';
 import { CompanyProfileRepository } from '../database/mongodb/repositories/company-profile.repository';
 import { CompanyListingRepository } from '../database/mongodb/repositories/company-listing.repository';
 import { CompanyVerificationRepository } from '../database/mongodb/repositories/company-verification.repository';
@@ -23,7 +23,7 @@ import { AdminGetJobStatsUseCase } from '../../application/use-cases/admin/get-j
 import { AdminController } from '../../presentation/controllers/admin/admin.controller';
 import { AdminJobController } from '../../presentation/controllers/admin/admin-job.controller';
 
-const userRepository = new BaseUserRepository();
+const userRepository = new UserRepository();
 const companyProfileRepository = new CompanyProfileRepository();
 const companyListingRepository = new CompanyListingRepository();
 const companyVerificationRepository = new CompanyVerificationRepository();

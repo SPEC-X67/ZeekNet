@@ -3,7 +3,8 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
-import mongoose from 'mongoose';
+import path from 'path';
+import { createStream } from 'rotating-file-stream';
 
 import { connectToDatabase } from '../../infrastructure/database/mongodb/connection/mongoose';
 import { connectRedis } from '../../infrastructure/database/redis/connection/redis';
@@ -19,6 +20,7 @@ import { errorHandler } from '../middleware/error-handler';
 import { UserBlockedMiddleware } from '../middleware/user-blocked.middleware';
 import { userRepository } from '../../infrastructure/di/authDi';
 import { companyRepository } from '../../infrastructure/di/companyDi';
+import { DateTimeUtil } from '../../shared/utils';
 
 export class AppServer {
   private _app: express.Application;
@@ -46,7 +48,54 @@ export class AppServer {
     this._app.use(express.urlencoded({ extended: true }));
     this._app.use(cookieParser());
     
-    this._app.use(morgan('combined'));
+    this._setLoggingMiddleware();
+  }
+
+  private _setLoggingMiddleware(): void {
+    if (env.NODE_ENV === 'development') {
+      this._app.use(morgan('dev'));
+    } else if (env.NODE_ENV === 'production') {
+      const accessLogs = createStream(
+        (time, index) => {
+          if (!time) return path.join(__dirname, 'logs', 'accessLogs', 'buffer.txt');
+          return path.join(
+            __dirname,
+            'logs',
+            'accessLogs',
+            DateTimeUtil.getFormatedDateTime(new Date(time)) + '-' + index + '.txt',
+          );
+        },
+        {
+          interval: '1d',
+          size: '100M',
+        },
+      );
+
+      const errorLogs = createStream(
+        (time, index) => {
+          if (!time) return path.join(__dirname, 'logs', 'errorLogs', 'buffer.txt');
+          return path.join(
+            __dirname,
+            'logs',
+            'errorLogs',
+            DateTimeUtil.getFormatedDateTime(new Date(time)) + '-' + index + '.txt',
+          );
+        },
+        {
+          interval: '1d',
+          size: '100M',
+        },
+      );
+
+      this._app.use(morgan('combined', { stream: accessLogs }));
+
+      this._app.use(
+        morgan('combined', {
+          stream: errorLogs,
+          skip: (req, res) => res.statusCode < 400,
+        }),
+      );
+    }
   }
 
   private configureRoutes(): void {

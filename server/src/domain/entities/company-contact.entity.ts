@@ -1,20 +1,17 @@
-import { BaseEntity } from './base.entity';
+import { v4 as uuidv4 } from 'uuid';
 
-export class CompanyContact extends BaseEntity {
+export class CompanyContact {
   private constructor(
-    id: string,
+    public readonly id: string,
     public readonly companyId: string,
+    public readonly createdAt: Date,
+    public readonly updatedAt: Date,
     public twitterLink?: string,
     public facebookLink?: string,
     public linkedin?: string,
     public email?: string,
     public phone?: string,
-    createdAt?: Date,
-    updatedAt?: Date,
-  ) {
-    const now = new Date();
-    super(id, createdAt || now, updatedAt || now);
-  }
+  ) {}
 
   static create(data: {
     id?: string;
@@ -29,15 +26,15 @@ export class CompanyContact extends BaseEntity {
   }): CompanyContact {
     const now = new Date();
     return new CompanyContact(
-      data.id || BaseEntity.generateId(),
+      data.id || uuidv4(),
       data.companyId,
+      data.createdAt ?? now,
+      data.updatedAt ?? now,
       data.twitterLink,
       data.facebookLink,
       data.linkedin,
       data.email,
       data.phone,
-      data.createdAt ?? now,
-      data.updatedAt ?? now,
     );
   }
 
@@ -83,13 +80,13 @@ export class CompanyContact extends BaseEntity {
     return new CompanyContact(
       data.id,
       data.companyId,
+      new Date(data.createdAt),
+      new Date(data.updatedAt),
       data.twitterLink,
       data.facebookLink,
       data.linkedin,
       data.email,
       data.phone,
-      new Date(data.createdAt),
-      new Date(data.updatedAt),
     );
   }
 }

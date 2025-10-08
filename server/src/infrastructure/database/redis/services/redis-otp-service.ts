@@ -1,5 +1,6 @@
 import { IOtpService } from '../../../../domain/interfaces/services';
 import { redisClient } from '../connection/redis';
+import { env } from '../../../config/env';
 
 function generateCode(): string {
   return String(Math.floor(100000 + Math.random() * 900000));
@@ -12,7 +13,7 @@ export class RedisOtpService implements IOtpService {
 
   async generateAndStoreOtp(
     identifier: string,
-    ttlSeconds = 300,
+    ttlSeconds = Number(env.OTP_TTL_SECONDS) || 300,
   ): Promise<string> {
 
     const existingKey = `otp:${identifier}`;

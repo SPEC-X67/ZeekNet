@@ -1,7 +1,7 @@
 import { SimpleUpdateCompanyProfileRequestDto } from '../../dto/company/company-profile.dto';
 import { ICompanyProfileRepository } from '../../../domain/interfaces/repositories';
 import { CompanyProfileMapper } from '../../mappers/company-profile.mapper';
-import { CompanyProfileResponseDto } from '../../mappers/types';
+import { CompanyProfileResponseDto } from '../../dto/company/company-response.dto';
 
 export class UpdateCompanyProfileUseCase {
   constructor(

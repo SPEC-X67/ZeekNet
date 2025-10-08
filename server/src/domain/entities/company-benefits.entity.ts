@@ -1,17 +1,14 @@
-import { BaseEntity } from './base.entity';
+import { v4 as uuidv4 } from 'uuid';
 
-export class CompanyBenefits extends BaseEntity {
+export class CompanyBenefits {
   private constructor(
-    id: string,
+    public readonly id: string,
     public readonly companyId: string,
     public perk: string,
+    public readonly createdAt: Date,
+    public readonly updatedAt: Date,
     public description?: string,
-    createdAt?: Date,
-    updatedAt?: Date,
-  ) {
-    const now = new Date();
-    super(id, createdAt || now, updatedAt || now);
-  }
+  ) {}
 
   static create(data: {
     id?: string;
@@ -23,12 +20,12 @@ export class CompanyBenefits extends BaseEntity {
   }): CompanyBenefits {
     const now = new Date();
     return new CompanyBenefits(
-      data.id || BaseEntity.generateId(),
+      data.id || uuidv4(),
       data.companyId,
       data.perk,
-      data.description,
       data.createdAt ?? now,
       data.updatedAt ?? now,
+      data.description,
     );
   }
 
@@ -63,9 +60,9 @@ export class CompanyBenefits extends BaseEntity {
       data.id,
       data.companyId,
       data.perk,
-      data.description,
       new Date(data.createdAt),
       new Date(data.updatedAt),
+      data.description,
     );
   }
 }

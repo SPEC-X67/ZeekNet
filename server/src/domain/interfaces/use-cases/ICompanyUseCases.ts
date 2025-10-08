@@ -7,7 +7,7 @@ import {
   CompanyWorkplacePictures,
 } from '../../entities';
 import { JobPosting, PaginatedJobPostings, JobPostingFilters } from '../../entities/job-posting.entity';
-import { CompanyProfileResponseDto } from '../../../application/mappers/types';
+import { CompanyProfileResponseDto } from '../../../application/dto/company/company-response.dto';
 
 export interface CreateCompanyProfileData {
   companyName: string;

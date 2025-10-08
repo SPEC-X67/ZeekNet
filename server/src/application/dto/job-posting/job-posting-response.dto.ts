@@ -1,32 +1,24 @@
 export interface JobPostingResponseDto {
   id: string;
+  company_id: string;
+  company_name?: string;
+  company_logo?: string;
   title: string;
-  salary: {
-    min: number;
-    max: number;
-  };
+  description: string;
+  responsibilities: string[];
+  qualifications: string[];
+  nice_to_haves: string[];
+  benefits: string[];
+  salary: { min: number; max: number };
   employment_types: string[];
   location: string;
   skills_required: string[];
   category_ids: string[];
-  createdAt: string;
   is_active: boolean;
-  application_count: number;
   view_count: number;
-  company: {
-    companyName: string;
-    logo: string;
-  };
-}
-
-export interface PaginatedJobPostingsResponse {
-  jobs: JobPostingResponseDto[];
-  pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-  };
+  application_count: number;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface JobPostingDetailResponseDto {
@@ -37,10 +29,7 @@ export interface JobPostingDetailResponseDto {
   qualifications: string[];
   nice_to_haves: string[];
   benefits: string[];
-  salary: {
-    min: number;
-    max: number;
-  };
+  salary: { min: number; max: number };
   employment_types: string[];
   location: string;
   skills_required: string[];
@@ -57,6 +46,16 @@ export interface JobPostingDetailResponseDto {
       pictureUrl: string;
       caption?: string;
     }>;
+  };
+}
+
+export interface PaginatedJobPostingsResponse {
+  jobs: JobPostingResponseDto[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
   };
 }
 

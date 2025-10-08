@@ -2,7 +2,7 @@ import { IJobPostingSearchRepository } from '../../../domain/interfaces/reposito
 import { IAdminGetAllJobsUseCase } from '../../../domain/interfaces/use-cases';
 import { AppError } from '../../../domain/errors/errors';
 import { JobPostingMapper } from '../../mappers/job-posting.mapper';
-import { JobPostingResponseDto } from '../../mappers/types';
+import { JobPostingResponseDto } from '../../dto/job-posting/job-posting-response.dto';
 
 export interface GetAllJobsQuery {
   page?: number;

@@ -1,6 +1,6 @@
 import { JobPosting } from '../../../../domain/entities/job-posting.entity';
 import { JobPostingDocument } from '../models/job-posting.model';
-import { JobPostingResponseDto } from '../../../../application/mappers/types';
+import { JobPostingResponseDto } from '../../../../application/dto/job-posting/job-posting-response.dto';
 
 export class JobPostingMapper {
   static toEntity(doc: JobPostingDocument): JobPosting {

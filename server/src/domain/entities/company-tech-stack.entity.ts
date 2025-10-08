@@ -1,16 +1,13 @@
-import { BaseEntity } from './base.entity';
+import { v4 as uuidv4 } from 'uuid';
 
-export class CompanyTechStack extends BaseEntity {
+export class CompanyTechStack {
   private constructor(
-    id: string,
+    public readonly id: string,
     public readonly companyId: string,
     public techStack: string,
-    createdAt?: Date,
-    updatedAt?: Date,
-  ) {
-    const now = new Date();
-    super(id, createdAt || now, updatedAt || now);
-  }
+    public readonly createdAt: Date,
+    public readonly updatedAt: Date,
+  ) {}
 
   static create(data: {
     id?: string;
@@ -21,7 +18,7 @@ export class CompanyTechStack extends BaseEntity {
   }): CompanyTechStack {
     const now = new Date();
     return new CompanyTechStack(
-      data.id || BaseEntity.generateId(),
+      data.id || uuidv4(),
       data.companyId,
       data.techStack,
       data.createdAt ?? now,

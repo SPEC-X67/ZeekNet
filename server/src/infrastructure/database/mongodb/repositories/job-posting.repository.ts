@@ -4,7 +4,7 @@ import { JobPostingModel, JobPostingDocument } from '../models/job-posting.model
 import { Types } from 'mongoose';
 import { RepositoryBase } from '../../../../shared/base';
 import { JobPostingMapper } from '../mappers';
-import { JobPostingResponseDto } from '../../../../application/mappers/types';
+import { JobPostingResponseDto } from '../../../../application/dto/job-posting/job-posting-response.dto';
 
 export interface JobPostingDetailResponseDto {
   id: string;

@@ -1,17 +1,14 @@
-import { BaseEntity } from './base.entity';
+import { v4 as uuidv4 } from 'uuid';
 
-export class CompanyWorkplacePictures extends BaseEntity {
+export class CompanyWorkplacePictures {
   private constructor(
-    id: string,
+    public readonly id: string,
     public readonly companyId: string,
     public pictureUrl: string,
+    public readonly createdAt: Date,
+    public readonly updatedAt: Date,
     public caption?: string,
-    createdAt?: Date,
-    updatedAt?: Date,
-  ) {
-    const now = new Date();
-    super(id, createdAt || now, updatedAt || now);
-  }
+  ) {}
 
   static create(data: {
     id?: string;
@@ -23,12 +20,12 @@ export class CompanyWorkplacePictures extends BaseEntity {
   }): CompanyWorkplacePictures {
     const now = new Date();
     return new CompanyWorkplacePictures(
-      data.id || BaseEntity.generateId(),
+      data.id || uuidv4(),
       data.companyId,
       data.pictureUrl,
-      data.caption,
       data.createdAt ?? now,
       data.updatedAt ?? now,
+      data.caption,
     );
   }
 
@@ -63,9 +60,9 @@ export class CompanyWorkplacePictures extends BaseEntity {
       data.id,
       data.companyId,
       data.pictureUrl,
-      data.caption,
       new Date(data.createdAt),
       new Date(data.updatedAt),
+      data.caption,
     );
   }
 }

@@ -1,4 +1,4 @@
-import { BaseUserRepository } from '../database/mongodb/repositories/base-user.repository';
+import { UserRepository } from '../database/mongodb/repositories/user.repository';
 import { CompanyProfileRepository } from '../database/mongodb/repositories/company-profile.repository';
 import { BcryptPasswordHasher } from '../security/bcrypt-password-hasher';
 import { JwtTokenService } from '../security/jwt-token-service';
@@ -26,7 +26,7 @@ import { TokenController } from '../../presentation/controllers/auth/token.contr
 import { PasswordController } from '../../presentation/controllers/auth/password.controller';
 import { OtpController } from '../../presentation/controllers/auth/otp.controller';
 
-const userRepository = new BaseUserRepository();
+const userRepository = new UserRepository();
 const companyProfileRepository = new CompanyProfileRepository();
 const passwordHasher = new BcryptPasswordHasher();
 const tokenService = new JwtTokenService();

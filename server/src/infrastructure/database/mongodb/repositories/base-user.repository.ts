@@ -6,7 +6,9 @@ import { RepositoryBase } from '../../../../shared/base';
 import { Types } from 'mongoose';
 import { IUserData } from '../../../../domain/interfaces/repositories/user/IUserRepository';
 
-export class BaseUserRepository implements IUserRepository, IUserAuthRepository, IUserManagementRepository {
+export class UserRepository 
+implements IUserRepository, IUserAuthRepository, IUserManagementRepository {
+  
   protected model = UserModel;
 
   protected mapToEntity(document: UserDocument): User {
@@ -134,7 +136,7 @@ export class BaseUserRepository implements IUserRepository, IUserAuthRepository,
   }
 
   async deleteUser(id: string): Promise<void> {
-    await this.delete(id);
+    await this.model.findByIdAndDelete(id);
   }
 
   async getUserStats(): Promise<{
