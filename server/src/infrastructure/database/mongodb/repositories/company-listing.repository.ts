@@ -22,9 +22,9 @@ export class CompanyListingRepository implements ICompanyListingRepository {
     sortOrder?: 'asc' | 'desc';
   }): Promise<{ companies: CompanyProfile[]; total: number }> {
     const { page, limit, search, industry, isVerified, isBlocked, sortBy = 'createdAt', sortOrder = 'desc' } = options;
-    
+
     const query: CompanyQuery = {};
-    
+
     if (search) {
       query.$or = [
         { companyName: { $regex: search, $options: 'i' } },
@@ -32,22 +32,22 @@ export class CompanyListingRepository implements ICompanyListingRepository {
         { organisation: { $regex: search, $options: 'i' } },
       ];
     }
-    
+
     if (industry) {
       query.industry = industry;
     }
-    
+
     if (isVerified !== undefined) {
       query.isVerified = isVerified;
     }
-    
+
     if (isBlocked !== undefined) {
       query.isBlocked = isBlocked;
     }
 
     const skip = (page - 1) * limit;
     const sortDirection = sortOrder === 'asc' ? 1 : -1;
-    
+
     const [companies, total] = await Promise.all([
       CompanyProfileModel.find(query)
         .skip(skip)
@@ -64,18 +64,12 @@ export class CompanyListingRepository implements ICompanyListingRepository {
   }
 
   async getCompaniesByIndustry(industry: string, limit: number = 10): Promise<CompanyProfile[]> {
-    const docs = await CompanyProfileModel.find({ industry })
-      .limit(limit)
-      .sort({ createdAt: -1 })
-      .exec();
+    const docs = await CompanyProfileModel.find({ industry }).limit(limit).sort({ createdAt: -1 }).exec();
     return docs.map((doc) => CompanyProfileMapper.toEntity(doc as CompanyProfileDocument));
   }
 
   async getVerifiedCompanies(limit: number = 10): Promise<CompanyProfile[]> {
-    const docs = await CompanyProfileModel.find({ isVerified: 'verified' })
-      .limit(limit)
-      .sort({ createdAt: -1 })
-      .exec();
+    const docs = await CompanyProfileModel.find({ isVerified: 'verified' }).limit(limit).sort({ createdAt: -1 }).exec();
     return docs.map((doc) => CompanyProfileMapper.toEntity(doc as CompanyProfileDocument));
   }
 
@@ -94,4 +88,3 @@ export class CompanyListingRepository implements ICompanyListingRepository {
     return docs.map((doc) => CompanyProfileMapper.toEntity(doc as CompanyProfileDocument));
   }
 }
-

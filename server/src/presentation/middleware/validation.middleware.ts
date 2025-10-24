@@ -9,11 +9,11 @@ export const validateBody = (schema: ZodSchema) => {
       next();
     } catch (error) {
       if (error instanceof z.ZodError) {
-        const errorMessages = error.errors.map(err => ({
+        const errorMessages = error.errors.map((err) => ({
           field: err.path.join('.'),
           message: err.message,
         }));
-        
+
         res.status(400).json({
           success: false,
           message: 'Validation failed',
@@ -22,7 +22,7 @@ export const validateBody = (schema: ZodSchema) => {
         });
         return;
       }
-      
+
       res.status(500).json({
         success: false,
         message: 'Internal server error',
@@ -40,11 +40,11 @@ export const validateQuery = (schema: ZodSchema) => {
       next();
     } catch (error) {
       if (error instanceof z.ZodError) {
-        const errorMessages = error.errors.map(err => ({
+        const errorMessages = error.errors.map((err) => ({
           field: err.path.join('.'),
           message: err.message,
         }));
-        
+
         res.status(400).json({
           success: false,
           message: 'Query validation failed',
@@ -53,7 +53,7 @@ export const validateQuery = (schema: ZodSchema) => {
         });
         return;
       }
-      
+
       res.status(500).json({
         success: false,
         message: 'Internal server error',
@@ -71,11 +71,11 @@ export const validateParams = (schema: ZodSchema) => {
       next();
     } catch (error) {
       if (error instanceof z.ZodError) {
-        const errorMessages = error.errors.map(err => ({
+        const errorMessages = error.errors.map((err) => ({
           field: err.path.join('.'),
           message: err.message,
         }));
-        
+
         res.status(400).json({
           success: false,
           message: 'Parameter validation failed',
@@ -84,7 +84,7 @@ export const validateParams = (schema: ZodSchema) => {
         });
         return;
       }
-      
+
       res.status(500).json({
         success: false,
         message: 'Internal server error',

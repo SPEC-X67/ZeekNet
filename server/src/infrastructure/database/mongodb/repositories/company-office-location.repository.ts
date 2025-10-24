@@ -5,7 +5,10 @@ import { Types } from 'mongoose';
 import { RepositoryBase } from '../../../../shared/base';
 import { CompanyOfficeLocationMapper } from '../mappers';
 
-export class CompanyOfficeLocationRepository extends RepositoryBase<CompanyOfficeLocation, CompanyOfficeLocationDocument> implements ICompanyOfficeLocationRepository {
+export class CompanyOfficeLocationRepository
+  extends RepositoryBase<CompanyOfficeLocation, CompanyOfficeLocationDocument>
+  implements ICompanyOfficeLocationRepository
+{
   constructor() {
     super(CompanyOfficeLocationModel);
   }
@@ -31,7 +34,7 @@ export class CompanyOfficeLocationRepository extends RepositoryBase<CompanyOffic
 
   async findByCompanyId(companyId: string): Promise<CompanyOfficeLocation[]> {
     const locations = await CompanyOfficeLocationModel.find({ companyId: new Types.ObjectId(companyId) });
-    return locations.map(location => this.mapToEntity(location));
+    return locations.map((location) => this.mapToEntity(location));
   }
 
   async update(id: string, data: Partial<CompanyOfficeLocation>): Promise<CompanyOfficeLocation | null> {
@@ -45,10 +48,9 @@ export class CompanyOfficeLocationRepository extends RepositoryBase<CompanyOffic
         ...data,
         updatedAt: new Date(),
       },
-      { new: true },
+      { new: true }
     );
 
     return updatedLocation ? this.mapToEntity(updatedLocation) : null;
   }
 }
-

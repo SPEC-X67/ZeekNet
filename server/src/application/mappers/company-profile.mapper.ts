@@ -1,12 +1,6 @@
 import { SimpleCompanyProfileRequestDto } from '../dto/company/create-company.dto';
 import { CompanyProfile } from '../../domain/entities/company-profile.entity';
-import {
-  CompanyContact,
-  CompanyTechStack,
-  CompanyOfficeLocation,
-  CompanyBenefits,
-  CompanyWorkplacePictures,
-} from '../../domain/entities';
+import { CompanyContact, CompanyTechStack, CompanyOfficeLocation, CompanyBenefits, CompanyWorkplacePictures } from '../../domain/entities';
 import { JobPosting } from '../../domain/entities/job-posting.entity';
 import {
   CompanyProfileData,
@@ -30,7 +24,6 @@ interface CompanyProfileWithDetails {
 }
 
 export class CompanyProfileMapper {
-  
   static toDomain(dto: SimpleCompanyProfileRequestDto, userId: string): CompanyProfileData {
     return {
       userId,
@@ -104,33 +97,35 @@ export class CompanyProfileMapper {
     return {
       profile: CompanyProfileMapper.toDto(domain.profile),
       contact: domain.contact ? CompanyProfileMapper.mapContactToDto(domain.contact) : null,
-      locations: domain.locations.map(location => CompanyProfileMapper.mapLocationToDto(location)),
-      techStack: domain.techStack.map(tech => ({
+      locations: domain.locations.map((location) => CompanyProfileMapper.mapLocationToDto(location)),
+      techStack: domain.techStack.map((tech) => ({
         id: tech.id,
         techStack: tech.techStack,
       })),
-      benefits: domain.benefits.map(benefit => ({
+      benefits: domain.benefits.map((benefit) => ({
         id: benefit.id,
         perk: benefit.perk,
         description: benefit.description || '',
       })),
-      workplacePictures: domain.workplacePictures.map(picture => ({
+      workplacePictures: domain.workplacePictures.map((picture) => ({
         id: picture.id,
         pictureUrl: picture.pictureUrl,
         caption: picture.caption,
       })),
-      jobPostings: domain.jobPostings ? domain.jobPostings.map(job => ({
-        id: job._id,
-        title: job.title,
-        description: job.description,
-        location: job.location,
-        employmentType: job.employment_types?.[0] || '',
-        salaryMin: job.salary?.min,
-        salaryMax: job.salary?.max,
-        isActive: job.is_active,
-        createdAt: job.createdAt.toISOString(),
-        updatedAt: job.updatedAt.toISOString(),
-      })) : [],
+      jobPostings: domain.jobPostings
+        ? domain.jobPostings.map((job) => ({
+            id: job._id,
+            title: job.title,
+            description: job.description,
+            location: job.location,
+            employmentType: job.employment_types?.[0] || '',
+            salaryMin: job.salary?.min,
+            salaryMax: job.salary?.max,
+            isActive: job.is_active,
+            createdAt: job.createdAt.toISOString(),
+            updatedAt: job.updatedAt.toISOString(),
+          }))
+        : [],
     };
   }
 

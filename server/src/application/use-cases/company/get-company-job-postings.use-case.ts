@@ -6,13 +6,13 @@ import { PaginatedJobPostings } from '../../../domain/entities/job-posting.entit
 export class GetCompanyJobPostingsUseCase {
   constructor(
     private readonly _jobPostingRepository: IJobPostingSearchRepository,
-    private readonly _companyProfileRepository: ICompanyProfileRepository,
+    private readonly _companyProfileRepository: ICompanyProfileRepository
   ) {}
 
   async execute(userId: string, query: JobPostingQueryRequestDto): Promise<PaginatedJobPostings> {
     try {
       const companyProfile = await this._companyProfileRepository.getProfileByUserId(userId);
-      
+
       if (!companyProfile) {
         throw new AppError('Company profile not found', 404);
       }
@@ -29,7 +29,7 @@ export class GetCompanyJobPostingsUseCase {
       };
 
       const result = await this._jobPostingRepository.findByCompanyId(companyProfile.id, filters);
-      
+
       return result;
     } catch (error) {
       if (error instanceof AppError) {

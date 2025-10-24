@@ -3,9 +3,7 @@ import { User } from '../../../domain/entities/user.entity';
 import { AppError } from '../../../domain/errors/errors';
 
 export class GetUserByEmailUseCase {
-  constructor(
-    private readonly _userRepository: IUserRepository,
-  ) {}
+  constructor(private readonly _userRepository: IUserRepository) {}
 
   async execute(email: string): Promise<User | null> {
     try {

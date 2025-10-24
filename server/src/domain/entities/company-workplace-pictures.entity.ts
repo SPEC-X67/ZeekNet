@@ -7,7 +7,7 @@ export class CompanyWorkplacePictures {
     public pictureUrl: string,
     public readonly createdAt: Date,
     public readonly updatedAt: Date,
-    public caption?: string,
+    public caption?: string
   ) {}
 
   static create(data: {
@@ -25,7 +25,7 @@ export class CompanyWorkplacePictures {
       data.pictureUrl,
       data.createdAt ?? now,
       data.updatedAt ?? now,
-      data.caption,
+      data.caption
     );
   }
 
@@ -56,13 +56,6 @@ export class CompanyWorkplacePictures {
     createdAt: string | Date;
     updatedAt: string | Date;
   }): CompanyWorkplacePictures {
-    return new CompanyWorkplacePictures(
-      data.id,
-      data.companyId,
-      data.pictureUrl,
-      new Date(data.createdAt),
-      new Date(data.updatedAt),
-      data.caption,
-    );
+    return new CompanyWorkplacePictures(data.id, data.companyId, data.pictureUrl, new Date(data.createdAt), new Date(data.updatedAt), data.caption);
   }
 }

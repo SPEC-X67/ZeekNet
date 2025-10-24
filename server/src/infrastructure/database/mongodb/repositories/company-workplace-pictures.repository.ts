@@ -5,7 +5,10 @@ import { Types } from 'mongoose';
 import { RepositoryBase } from '../../../../shared/base';
 import { CompanyWorkplacePicturesMapper } from '../mappers';
 
-export class CompanyWorkplacePicturesRepository extends RepositoryBase<CompanyWorkplacePictures, CompanyWorkplacePicturesDocument> implements ICompanyWorkplacePicturesRepository {
+export class CompanyWorkplacePicturesRepository
+  extends RepositoryBase<CompanyWorkplacePictures, CompanyWorkplacePicturesDocument>
+  implements ICompanyWorkplacePicturesRepository
+{
   constructor() {
     super(CompanyWorkplacePicturesModel);
   }
@@ -29,7 +32,7 @@ export class CompanyWorkplacePicturesRepository extends RepositoryBase<CompanyWo
 
   async findByCompanyId(companyId: string): Promise<CompanyWorkplacePictures[]> {
     const pictures = await CompanyWorkplacePicturesModel.find({ companyId: new Types.ObjectId(companyId) });
-    return pictures.map(picture => this.mapToEntity(picture));
+    return pictures.map((picture) => this.mapToEntity(picture));
   }
 
   async update(id: string, data: Partial<CompanyWorkplacePictures>): Promise<CompanyWorkplacePictures | null> {
@@ -43,10 +46,9 @@ export class CompanyWorkplacePicturesRepository extends RepositoryBase<CompanyWo
         ...data,
         updatedAt: new Date(),
       },
-      { new: true },
+      { new: true }
     );
 
     return updatedPicture ? this.mapToEntity(updatedPicture) : null;
   }
 }
-

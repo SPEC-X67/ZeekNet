@@ -6,7 +6,7 @@ export class FileValidationService {
   static validateFileType(mimetype: string, filename: string): void {
     const allowedTypes = [
       'image/jpeg',
-      'image/jpg', 
+      'image/jpg',
       'image/png',
       'image/gif',
       'image/webp',
@@ -15,12 +15,10 @@ export class FileValidationService {
       'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
     ];
 
-    const allowedExtensions = [
-      '.jpg', '.jpeg', '.png', '.gif', '.webp', '.pdf', '.doc', '.docx',
-    ];
+    const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.pdf', '.doc', '.docx'];
 
     const fileExtension = filename.toLowerCase().substring(filename.lastIndexOf('.'));
-    
+
     if (!allowedTypes.includes(mimetype) && !allowedExtensions.includes(fileExtension)) {
       throw new ValidationError(`File type ${mimetype} is not allowed`);
     }
@@ -28,7 +26,7 @@ export class FileValidationService {
 
   static validateFileSize(fileSize: number, maxSizeInMB: number = 5): void {
     const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
-    
+
     if (fileSize > maxSizeInBytes) {
       throw new ValidationError(`File size must be less than ${maxSizeInMB}MB`);
     }

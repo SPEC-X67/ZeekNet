@@ -11,7 +11,7 @@ export class User {
     public readonly isBlocked: boolean,
     public readonly refreshToken: string | null,
     public readonly createdAt: Date,
-    public readonly updatedAt: Date,
+    public readonly updatedAt: Date
   ) {}
 
   static create(data: {
@@ -37,7 +37,7 @@ export class User {
       data.isBlocked ?? false,
       data.refreshToken ?? null,
       data.createdAt ?? now,
-      data.updatedAt ?? now,
+      data.updatedAt ?? now
     );
   }
 
@@ -65,7 +65,7 @@ export class User {
       data.isBlocked as boolean,
       (data.refreshToken as string) ?? null,
       new Date(data.createdAt as string),
-      new Date(data.updatedAt as string),
+      new Date(data.updatedAt as string)
     );
   }
 }

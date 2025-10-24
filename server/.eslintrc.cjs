@@ -12,18 +12,15 @@ module.exports = {
     es2020: true,
   },
   plugins: ['@typescript-eslint'],
-  extends: [
-    'eslint:recommended',
-    'plugin:@typescript-eslint/recommended',
-  ],
+  extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended'],
   rules: {
-      "no-console": "error",
+    'no-console': 'error',
 
-    'semi': ['error', 'always'],                
-    'quotes': ['error', 'single'],              
+    semi: ['error', 'always'],
+    quotes: ['error', 'single'],
     'comma-dangle': ['error', 'always-multiline'],
-    'object-curly-spacing': ['error', 'always'],   
-    'indent': ['error', 2],                       
+    'object-curly-spacing': ['error', 'always'],
+    indent: ['error', 2],
   },
   ignorePatterns: ['dist/**'],
 };

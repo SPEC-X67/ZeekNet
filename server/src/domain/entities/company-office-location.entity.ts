@@ -9,7 +9,7 @@ export class CompanyOfficeLocation {
     public readonly createdAt: Date,
     public readonly updatedAt: Date,
     public officeName?: string,
-    public address?: string,
+    public address?: string
   ) {}
 
   static create(data: {
@@ -31,16 +31,11 @@ export class CompanyOfficeLocation {
       data.createdAt ?? now,
       data.updatedAt ?? now,
       data.officeName,
-      data.address,
+      data.address
     );
   }
 
-  updateOfficeLocation(data: {
-    location?: string;
-    officeName?: string;
-    address?: string;
-    isHeadquarters?: boolean;
-  }): CompanyOfficeLocation {
+  updateOfficeLocation(data: { location?: string; officeName?: string; address?: string; isHeadquarters?: boolean }): CompanyOfficeLocation {
     return CompanyOfficeLocation.create({
       ...this.toJSON(),
       ...data,
@@ -79,7 +74,7 @@ export class CompanyOfficeLocation {
       new Date(data.createdAt),
       new Date(data.updatedAt),
       data.officeName,
-      data.address,
+      data.address
     );
   }
 }

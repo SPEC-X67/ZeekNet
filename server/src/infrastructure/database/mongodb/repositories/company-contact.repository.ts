@@ -5,9 +5,7 @@ import { Types } from 'mongoose';
 import { CompanyContactMapper } from '../mappers';
 
 export class CompanyContactRepository implements ICompanyContactRepository {
-  async createContact(
-    contact: Omit<CompanyContact, 'id' | 'createdAt' | 'updatedAt'>,
-  ): Promise<CompanyContact> {
+  async createContact(contact: Omit<CompanyContact, 'id' | 'createdAt' | 'updatedAt'>): Promise<CompanyContact> {
     const contactDoc = new CompanyContactModel({
       companyId: new Types.ObjectId(contact.companyId),
       twitterLink: contact.twitterLink,
@@ -23,24 +21,19 @@ export class CompanyContactRepository implements ICompanyContactRepository {
     return CompanyContactMapper.toEntity(savedContact);
   }
 
-  async getContactByCompanyId(
-    companyId: string,
-  ): Promise<CompanyContact | null> {
+  async getContactByCompanyId(companyId: string): Promise<CompanyContact | null> {
     const doc = await CompanyContactModel.findOne({ companyId: new Types.ObjectId(companyId) });
     return doc ? CompanyContactMapper.toEntity(doc) : null;
   }
 
-  async updateContact(
-    companyId: string,
-    updates: Partial<CompanyContact>,
-  ): Promise<CompanyContact> {
+  async updateContact(companyId: string, updates: Partial<CompanyContact>): Promise<CompanyContact> {
     const updated = await CompanyContactModel.findOneAndUpdate(
       { companyId: new Types.ObjectId(companyId) },
       {
         ...updates,
         updatedAt: new Date(),
       },
-      { new: true },
+      { new: true }
     );
     if (!updated) throw new Error('Contact not found');
     return CompanyContactMapper.toEntity(updated);
@@ -70,7 +63,7 @@ export class CompanyContactRepository implements ICompanyContactRepository {
 
   async findAll(): Promise<CompanyContact[]> {
     const docs = await CompanyContactModel.find();
-    return docs.map(doc => CompanyContactMapper.toEntity(doc));
+    return docs.map((doc) => CompanyContactMapper.toEntity(doc));
   }
 
   async update(id: string, updates: Partial<CompanyContact>): Promise<CompanyContact | null> {
@@ -80,7 +73,7 @@ export class CompanyContactRepository implements ICompanyContactRepository {
         ...updates,
         updatedAt: new Date(),
       },
-      { new: true },
+      { new: true }
     );
     return updated ? CompanyContactMapper.toEntity(updated) : null;
   }
@@ -94,4 +87,3 @@ export class CompanyContactRepository implements ICompanyContactRepository {
     return CompanyContactModel.countDocuments();
   }
 }
-

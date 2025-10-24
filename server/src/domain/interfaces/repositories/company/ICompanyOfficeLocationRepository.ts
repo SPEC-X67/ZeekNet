@@ -4,4 +4,3 @@ import { IBaseRepository } from '../base.repository';
 export interface ICompanyOfficeLocationRepository extends IBaseRepository<CompanyOfficeLocation> {
   findByCompanyId(companyId: string): Promise<CompanyOfficeLocation[]>;
 }
-

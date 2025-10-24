@@ -1,18 +1,11 @@
 import { Router } from 'express';
 import { companyController, companyJobPostingController } from '../../infrastructure/di/companyDi';
-import {
-  authenticateToken,
-  authorizeRoles,
-} from '../middleware/auth.middleware';
+import { authenticateToken, authorizeRoles } from '../middleware/auth.middleware';
 import { uploadSingle } from '../middleware/upload.middleware';
 import { validateBody, validateQuery } from '../middleware/validation.middleware';
 import { UserBlockedMiddleware } from '../middleware/user-blocked.middleware';
 import { CompanyVerificationMiddleware } from '../middleware/company-verification.middleware';
-import { 
-  CreateJobPostingRequestDto, 
-  UpdateJobPostingDto, 
-  JobPostingQueryDto, 
-} from '../../application/dto/job-posting/job-posting.dto';
+import { CreateJobPostingRequestDto, UpdateJobPostingDto, JobPostingQueryDto } from '../../application/dto/job-posting/job-posting.dto';
 import { SimpleCompanyProfileDto } from '../../application/dto/company';
 
 export class CompanyRouter {
@@ -26,8 +19,8 @@ export class CompanyRouter {
   private initializeRoute(): void {
     const { companyRepository } = require('../../infrastructure/di/companyDi');
     const { userRepository } = require('../../infrastructure/di/authDi');
-    
-    const userBlockedMiddleware = new UserBlockedMiddleware(userRepository, companyRepository); 
+
+    const userBlockedMiddleware = new UserBlockedMiddleware(userRepository, companyRepository);
     const companyVerificationMiddleware = new CompanyVerificationMiddleware(companyRepository);
 
     this.router.use(authenticateToken);

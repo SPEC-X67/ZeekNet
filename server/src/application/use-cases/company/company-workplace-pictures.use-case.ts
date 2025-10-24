@@ -4,9 +4,7 @@ import { CreateCompanyWorkplacePicturesDto, UpdateCompanyWorkplacePicturesDto } 
 import { NotFoundError } from '../../../domain/errors/errors';
 
 export class CompanyWorkplacePicturesUseCase {
-  constructor(
-    private readonly _companyWorkplacePicturesRepository: ICompanyWorkplacePicturesRepository,
-  ) {}
+  constructor(private readonly _companyWorkplacePicturesRepository: ICompanyWorkplacePicturesRepository) {}
 
   async createPicture(companyId: string, data: CreateCompanyWorkplacePicturesDto): Promise<CompanyWorkplacePictures> {
     const picture = CompanyWorkplacePictures.create({ ...data, companyId });

@@ -62,4 +62,3 @@ export interface CompanyProfileWithDetailsResponseDto {
     updatedAt: string;
   }[];
 }
-

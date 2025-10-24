@@ -1,11 +1,6 @@
 import { Response, NextFunction } from 'express';
 import { User } from '../../domain/entities/user.entity';
-import { 
-  createSuccessResponse, 
-  createErrorResponse, 
-  sanitizeUserForResponse,
-  ErrorHandler, 
-} from './';
+import { createSuccessResponse, createErrorResponse, sanitizeUserForResponse, ErrorHandler } from './';
 import { AuthenticatedRequest } from '../types';
 
 export function extractUserId(req: AuthenticatedRequest): string | null {
@@ -28,22 +23,11 @@ export function handleAsyncError(error: unknown, next: NextFunction): void {
   next(ErrorHandler.handleAsyncError(error));
 }
 
-export function sendSuccessResponse<T>(
-  res: Response, 
-  message: string, 
-  data: T, 
-  token?: string,
-  statusCode: number = 200,
-): void {
+export function sendSuccessResponse<T>(res: Response, message: string, data: T, token?: string, statusCode: number = 200): void {
   res.status(statusCode).json(createSuccessResponse(message, data, token));
 }
 
-export function sendErrorResponse<T>(
-  res: Response, 
-  message: string, 
-  data: T = null as T,
-  statusCode: number = 400,
-): void {
+export function sendErrorResponse<T>(res: Response, message: string, data: T = null as T, statusCode: number = 400): void {
   res.status(statusCode).json(createErrorResponse(message, data));
 }
 
@@ -69,7 +53,7 @@ export function badRequest(res: Response, message: string): void {
 
 export function handleError(res: Response, error: unknown): void {
   console.error('Controller error:', error);
-  
+
   if (error && typeof error === 'object' && 'statusCode' in error && 'message' in error) {
     sendErrorResponse(res, (error as { message: string }).message, null, (error as { statusCode: number }).statusCode);
   } else if (error instanceof Error) {
@@ -78,4 +62,3 @@ export function handleError(res: Response, error: unknown): void {
     sendErrorResponse(res, 'Internal server error', null, 500);
   }
 }
-

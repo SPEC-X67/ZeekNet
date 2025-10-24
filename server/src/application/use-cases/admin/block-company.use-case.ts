@@ -2,9 +2,7 @@ import { ICompanyProfileRepository } from '../../../domain/interfaces/repositori
 import { AppError } from '../../../domain/errors/errors';
 
 export class BlockCompanyUseCase {
-  constructor(
-    private readonly _companyProfileRepository: ICompanyProfileRepository,
-  ) {}
+  constructor(private readonly _companyProfileRepository: ICompanyProfileRepository) {}
 
   async execute(companyId: string, isBlocked: boolean): Promise<void> {
     try {

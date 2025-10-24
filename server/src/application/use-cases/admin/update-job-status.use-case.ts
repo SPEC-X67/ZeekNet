@@ -4,14 +4,12 @@ import { AppError } from '../../../domain/errors/errors';
 import { JobPosting } from '../../../domain/entities/job-posting.entity';
 
 export class AdminUpdateJobStatusUseCase implements IAdminUpdateJobStatusUseCase {
-  constructor(
-    private readonly _jobPostingRepository: IJobPostingManagementRepository,
-  ) {}
+  constructor(private readonly _jobPostingRepository: IJobPostingManagementRepository) {}
 
   async execute(jobId: string, isActive: boolean): Promise<JobPosting> {
     try {
       const job = await this._jobPostingRepository.findById(jobId);
-      
+
       if (!job) {
         throw new AppError('Job not found', 404);
       }

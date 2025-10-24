@@ -11,9 +11,8 @@ export interface ICompanyListingRepository {
     sortBy?: 'createdAt' | 'companyName' | 'employeeCount';
     sortOrder?: 'asc' | 'desc';
   }): Promise<{ companies: CompanyProfile[]; total: number }>;
-  
+
   getCompaniesByIndustry(industry: string, limit?: number): Promise<CompanyProfile[]>;
   getVerifiedCompanies(limit?: number): Promise<CompanyProfile[]>;
   searchCompanies(query: string, limit?: number): Promise<CompanyProfile[]>;
 }
-

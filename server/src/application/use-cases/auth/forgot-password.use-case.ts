@@ -5,7 +5,7 @@ import { NotFoundError } from '../../../domain/errors/errors';
 export class ForgotPasswordUseCase {
   constructor(
     private readonly _userRepository: IUserRepository,
-    private readonly _passwordResetService: IPasswordResetService,
+    private readonly _passwordResetService: IPasswordResetService
   ) {}
 
   async execute(email: string): Promise<void> {

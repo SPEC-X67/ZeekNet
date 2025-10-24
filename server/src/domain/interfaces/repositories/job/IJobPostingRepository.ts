@@ -60,4 +60,3 @@ export interface IJobPostingManagementRepository extends IJobPostingRepository {
   incrementViewCount(jobId: string): Promise<void>;
   incrementApplicationCount(jobId: string): Promise<void>;
 }
-

@@ -11,7 +11,7 @@ export class RefreshTokenUseCase implements IRefreshTokenUseCase {
     private readonly _userAuthRepository: IUserAuthRepository,
     private readonly _companyProfileRepository: ICompanyProfileRepository,
     private readonly _tokenService: ITokenService,
-    private readonly _passwordHasher: IPasswordHasher,
+    private readonly _passwordHasher: IPasswordHasher
   ) {}
 
   async execute(refreshToken: string): Promise<LoginResult> {
@@ -23,7 +23,7 @@ export class RefreshTokenUseCase implements IRefreshTokenUseCase {
     if (!user.refreshToken) {
       throw new AuthenticationError('Invalid refresh token');
     }
-    
+
     const isTokenValid = await this._passwordHasher.compare(refreshToken, user.refreshToken);
     if (!isTokenValid) {
       throw new AuthenticationError('Invalid refresh token');

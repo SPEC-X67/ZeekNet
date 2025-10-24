@@ -10,7 +10,7 @@ export class CompanyContact {
     public facebookLink?: string,
     public linkedin?: string,
     public email?: string,
-    public phone?: string,
+    public phone?: string
   ) {}
 
   static create(data: {
@@ -34,17 +34,11 @@ export class CompanyContact {
       data.facebookLink,
       data.linkedin,
       data.email,
-      data.phone,
+      data.phone
     );
   }
 
-  updateContact(data: {
-    twitterLink?: string;
-    facebookLink?: string;
-    linkedin?: string;
-    email?: string;
-    phone?: string;
-  }): CompanyContact {
+  updateContact(data: { twitterLink?: string; facebookLink?: string; linkedin?: string; email?: string; phone?: string }): CompanyContact {
     return CompanyContact.create({
       ...this.toJSON(),
       ...data,
@@ -86,7 +80,7 @@ export class CompanyContact {
       data.facebookLink,
       data.linkedin,
       data.email,
-      data.phone,
+      data.phone
     );
   }
 }

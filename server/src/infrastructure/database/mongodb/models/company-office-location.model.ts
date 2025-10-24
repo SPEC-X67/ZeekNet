@@ -12,29 +12,32 @@ export interface CompanyOfficeLocationDocument extends Document {
   updatedAt: Date;
 }
 
-const CompanyOfficeLocationSchema = new Schema<CompanyOfficeLocationDocument>({
-  companyId: {
-    type: Schema.Types.ObjectId,
-    ref: 'CompanyProfile',
-    required: true,
+const CompanyOfficeLocationSchema = new Schema<CompanyOfficeLocationDocument>(
+  {
+    companyId: {
+      type: Schema.Types.ObjectId,
+      ref: 'CompanyProfile',
+      required: true,
+    },
+    location: {
+      type: String,
+      required: true,
+    },
+    isHeadquarters: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+    officeName: {
+      type: String,
+    },
+    address: {
+      type: String,
+    },
   },
-  location: {
-    type: String,
-    required: true,
-  },
-  isHeadquarters: {
-    type: Boolean,
-    required: true,
-    default: false,
-  },
-  officeName: {
-    type: String,
-  },
-  address: {
-    type: String,
-  },
-}, {
-  timestamps: true,
-});
+  {
+    timestamps: true,
+  }
+);
 
 export const CompanyOfficeLocationModel = model<CompanyOfficeLocationDocument>('CompanyOfficeLocation', CompanyOfficeLocationSchema);

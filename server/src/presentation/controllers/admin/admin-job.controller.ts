@@ -1,8 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import {
-  AdminGetAllJobsDto,
-  AdminUpdateJobStatusDto,
-} from '../../../application/dto/admin/admin-job.dto';
+import { AdminGetAllJobsDto, AdminUpdateJobStatusDto } from '../../../application/dto/admin/admin-job.dto';
 import {
   IAdminGetAllJobsUseCase,
   IAdminGetJobByIdUseCase,
@@ -18,14 +15,10 @@ export class AdminJobController {
     private readonly _getJobByIdUseCase: IAdminGetJobByIdUseCase,
     private readonly _updateJobStatusUseCase: IAdminUpdateJobStatusUseCase,
     private readonly _deleteJobUseCase: IAdminDeleteJobUseCase,
-    private readonly _getJobStatsUseCase: IAdminGetJobStatsUseCase,
-  ) {  }
+    private readonly _getJobStatsUseCase: IAdminGetJobStatsUseCase
+  ) {}
 
-  getAllJobs = async (
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> => {
+  getAllJobs = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const parsed = AdminGetAllJobsDto.safeParse(req.query);
     if (!parsed.success) {
       return handleValidationError('Invalid query parameters', next);
@@ -39,11 +32,7 @@ export class AdminJobController {
     }
   };
 
-  getJobById = async (
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> => {
+  getJobById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { id } = req.params;
     if (!id) {
       return handleValidationError('Job ID is required', next);
@@ -57,11 +46,7 @@ export class AdminJobController {
     }
   };
 
-  updateJobStatus = async (
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> => {
+  updateJobStatus = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { id } = req.params;
     if (!id) {
       return handleValidationError('Job ID is required', next);
@@ -81,11 +66,7 @@ export class AdminJobController {
     }
   };
 
-  deleteJob = async (
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> => {
+  deleteJob = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { id } = req.params;
     if (!id) {
       return handleValidationError('Job ID is required', next);
@@ -99,11 +80,7 @@ export class AdminJobController {
     }
   };
 
-  getJobStats = async (
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> => {
+  getJobStats = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const stats = await this._getJobStatsUseCase.execute();
       sendSuccessResponse(res, 'Job statistics retrieved successfully', stats);

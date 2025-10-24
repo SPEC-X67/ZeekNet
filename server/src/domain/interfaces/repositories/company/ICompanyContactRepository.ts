@@ -5,4 +5,3 @@ export interface ICompanyContactRepository extends IBaseRepository<CompanyContac
   findByCompanyId(companyId: string): Promise<CompanyContact | null>;
   existsByCompanyId(companyId: string): Promise<boolean>;
 }
-

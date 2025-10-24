@@ -16,7 +16,7 @@ export class NodemailerService implements IMailerService {
       from: env.EMAIL_USER,
       to,
       subject,
-      html, 
+      html,
     });
   }
 }

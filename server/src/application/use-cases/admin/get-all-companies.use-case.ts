@@ -2,14 +2,12 @@ import { ICompanyListingRepository } from '../../../domain/interfaces/repositori
 import { IGetAllCompaniesUseCase, CompanyQueryOptions, PaginatedCompanies } from '../../../domain/interfaces/use-cases';
 
 export class GetAllCompaniesUseCase implements IGetAllCompaniesUseCase {
-  constructor(
-    private readonly _companyListingRepository: ICompanyListingRepository,
-  ) {}
+  constructor(private readonly _companyListingRepository: ICompanyListingRepository) {}
 
   async execute(options: CompanyQueryOptions): Promise<PaginatedCompanies> {
     const page = options.page || 1;
     const limit = options.limit || 10;
-    
+
     const convertedOptions = {
       page,
       limit,
@@ -19,9 +17,9 @@ export class GetAllCompaniesUseCase implements IGetAllCompaniesUseCase {
       sortBy: options.sortBy as 'createdAt' | 'companyName' | 'employeeCount' | undefined,
       sortOrder: options.sortOrder,
     };
-    
+
     const result = await this._companyListingRepository.getAllCompanies(convertedOptions);
-    
+
     return {
       companies: result.companies,
       total: result.total,

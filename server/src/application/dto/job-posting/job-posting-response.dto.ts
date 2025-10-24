@@ -58,4 +58,3 @@ export interface PaginatedJobPostingsResponse {
     totalPages: number;
   };
 }
-

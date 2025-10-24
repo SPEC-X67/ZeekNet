@@ -4,9 +4,7 @@ import { AppError } from '../../../domain/errors/errors';
 import { JobPosting } from '../../../domain/entities/job-posting.entity';
 
 export class CreateJobPostingUseCase implements ICreateJobPostingUseCase {
-  constructor(
-    private readonly _jobPostingRepository: IJobPostingRepository,
-  ) {}
+  constructor(private readonly _jobPostingRepository: IJobPostingRepository) {}
 
   async execute(companyId: string, jobData: CreateJobPostingData): Promise<JobPosting> {
     try {
@@ -25,7 +23,7 @@ export class CreateJobPostingUseCase implements ICreateJobPostingUseCase {
         category_ids: jobData.category_ids,
         is_active: true,
       };
-      
+
       return await this._jobPostingRepository.create(jobPosting);
     } catch (error) {
       console.error('CreateJobPostingUseCase error:', error);

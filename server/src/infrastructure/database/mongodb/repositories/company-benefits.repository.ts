@@ -29,7 +29,7 @@ export class CompanyBenefitsRepository extends RepositoryBase<CompanyBenefits, C
 
   async findByCompanyId(companyId: string): Promise<CompanyBenefits[]> {
     const benefits = await CompanyBenefitsModel.find({ companyId: new Types.ObjectId(companyId) });
-    return benefits.map(benefit => this.mapToEntity(benefit));
+    return benefits.map((benefit) => this.mapToEntity(benefit));
   }
 
   async update(id: string, data: Partial<CompanyBenefits>): Promise<CompanyBenefits | null> {
@@ -43,10 +43,9 @@ export class CompanyBenefitsRepository extends RepositoryBase<CompanyBenefits, C
         ...data,
         updatedAt: new Date(),
       },
-      { new: true },
+      { new: true }
     );
 
     return updatedBenefit ? this.mapToEntity(updatedBenefit) : null;
   }
 }
-

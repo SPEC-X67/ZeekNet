@@ -4,22 +4,15 @@ import { CompanyProfileMapper } from '../../mappers/company-profile.mapper';
 import { CompanyProfileResponseDto } from '../../dto/company/company-response.dto';
 
 export class UpdateCompanyProfileUseCase {
-  constructor(
-    private readonly _companyProfileRepository: ICompanyProfileRepository,
-  ) {}
+  constructor(private readonly _companyProfileRepository: ICompanyProfileRepository) {}
 
-  async execute(
-    userId: string,
-    data: { profile: SimpleUpdateCompanyProfileRequestDto },
-  ): Promise<CompanyProfileResponseDto> {
+  async execute(userId: string, data: { profile: SimpleUpdateCompanyProfileRequestDto }): Promise<CompanyProfileResponseDto> {
     const existingProfile = await this._companyProfileRepository.getProfileByUserId(userId);
     if (!existingProfile) {
       throw new Error('Company profile not found');
     }
 
     if (data.profile) {
-      
-      
       const updatedProfile = await this._companyProfileRepository.updateProfile(existingProfile.id, {
         companyName: data.profile.company_name,
         logo: data.profile.logo,
@@ -30,9 +23,7 @@ export class UpdateCompanyProfileUseCase {
         organisation: data.profile.organisation || existingProfile.organisation,
         aboutUs: data.profile.about_us,
       });
-      
     }
-
 
     const updatedProfile = await this._companyProfileRepository.getProfileByUserId(userId);
     if (!updatedProfile) {

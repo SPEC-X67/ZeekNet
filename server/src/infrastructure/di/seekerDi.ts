@@ -6,24 +6,12 @@ import { SeekerController } from '../../presentation/controllers/seeker/seeker.c
 
 const jobPostingRepository = new JobPostingRepository();
 
-const getJobPostingUseCase = new GetJobPostingUseCase(
-  jobPostingRepository,
-);
+const getJobPostingUseCase = new GetJobPostingUseCase(jobPostingRepository);
 
-const getAllJobPostingsUseCase = new GetAllJobPostingsUseCase(
-  jobPostingRepository,
-);
+const getAllJobPostingsUseCase = new GetAllJobPostingsUseCase(jobPostingRepository);
 
-const incrementJobViewCountUseCase = new IncrementJobViewCountUseCase(
-  jobPostingRepository,
-);
+const incrementJobViewCountUseCase = new IncrementJobViewCountUseCase(jobPostingRepository);
 
-const seekerController = new SeekerController(
-  getJobPostingUseCase,
-  getAllJobPostingsUseCase,
-  incrementJobViewCountUseCase,
-);
+const seekerController = new SeekerController(getJobPostingUseCase, getAllJobPostingsUseCase, incrementJobViewCountUseCase);
 
-export {
-  seekerController,
-};
+export { seekerController };

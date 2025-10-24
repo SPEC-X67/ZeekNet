@@ -3,12 +3,7 @@ import { User } from '../../entities/user.entity';
 import { CompanyProfile } from '../../entities/company-profile.entity';
 
 export interface IRegisterUserUseCase {
-  execute(
-    email: string,
-    password: string,
-    role?: unknown,
-    name?: string,
-  ): Promise<RegisterResult>;
+  execute(email: string, password: string, role?: unknown, name?: string): Promise<RegisterResult>;
 }
 
 export interface ILoginUserUseCase {

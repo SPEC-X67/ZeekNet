@@ -3,9 +3,7 @@ import { IUpdateUserRefreshTokenUseCase } from '../../../domain/interfaces/use-c
 import { AppError } from '../../../domain/errors/errors';
 
 export class UpdateUserRefreshTokenUseCase implements IUpdateUserRefreshTokenUseCase {
-  constructor(
-    private readonly _userAuthRepository: IUserAuthRepository,
-  ) {}
+  constructor(private readonly _userAuthRepository: IUserAuthRepository) {}
 
   async execute(userId: string, hashedRefreshToken: string): Promise<void> {
     try {

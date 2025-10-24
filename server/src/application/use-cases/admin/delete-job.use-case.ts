@@ -3,14 +3,12 @@ import { IAdminDeleteJobUseCase } from '../../../domain/interfaces/use-cases';
 import { AppError } from '../../../domain/errors/errors';
 
 export class AdminDeleteJobUseCase implements IAdminDeleteJobUseCase {
-  constructor(
-    private readonly _jobPostingRepository: IJobPostingRepository,
-  ) {}
+  constructor(private readonly _jobPostingRepository: IJobPostingRepository) {}
 
   async execute(jobId: string): Promise<boolean> {
     try {
       const job = await this._jobPostingRepository.findById(jobId);
-      
+
       if (!job) {
         throw new AppError('Job not found', 404);
       }

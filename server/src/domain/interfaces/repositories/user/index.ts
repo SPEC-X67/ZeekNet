@@ -1,7 +1,1 @@
-export { 
-  IUserRepository, 
-  IUserAuthRepository, 
-  IUserManagementRepository, 
-  IUserData, 
-} from './IUserRepository';
-
+export { IUserRepository, IUserAuthRepository, IUserManagementRepository, IUserData } from './IUserRepository';

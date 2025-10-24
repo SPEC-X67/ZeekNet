@@ -7,7 +7,7 @@ export class VerifyOtpUseCase implements IVerifyOtpUseCase {
   constructor(
     private readonly _otpService: IOtpService,
     private readonly _userRepository: IUserRepository,
-    private readonly _userAuthRepository: IUserAuthRepository,
+    private readonly _userAuthRepository: IUserAuthRepository
   ) {}
 
   async execute(email: string, code: string): Promise<void> {

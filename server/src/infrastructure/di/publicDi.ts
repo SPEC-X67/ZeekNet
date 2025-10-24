@@ -5,19 +5,10 @@ import { PublicJobController } from '../../presentation/controllers/public/publi
 
 const jobPostingRepository = new JobPostingRepository();
 
-const getAllJobPostingsUseCase = new GetAllJobPostingsUseCase(
-  jobPostingRepository,
-);
+const getAllJobPostingsUseCase = new GetAllJobPostingsUseCase(jobPostingRepository);
 
-const getJobPostingForPublicUseCase = new GetJobPostingForPublicUseCase(
-  jobPostingRepository,
-);
+const getJobPostingForPublicUseCase = new GetJobPostingForPublicUseCase(jobPostingRepository);
 
-const publicJobController = new PublicJobController(
-  getAllJobPostingsUseCase,
-  getJobPostingForPublicUseCase,
-);
+const publicJobController = new PublicJobController(getAllJobPostingsUseCase, getJobPostingForPublicUseCase);
 
-export {
-  publicJobController,
-};
+export { publicJobController };

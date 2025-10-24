@@ -4,9 +4,7 @@ import { CreateCompanyContactDto, UpdateCompanyContactDto } from '../../dto/comp
 import { NotFoundError } from '../../../domain/errors/errors';
 
 export class CompanyContactUseCase {
-  constructor(
-    private readonly _companyContactRepository: ICompanyContactRepository,
-  ) {}
+  constructor(private readonly _companyContactRepository: ICompanyContactRepository) {}
 
   async createContact(companyId: string, data: CreateCompanyContactDto): Promise<CompanyContact> {
     const contact = CompanyContact.create({ ...data, companyId });

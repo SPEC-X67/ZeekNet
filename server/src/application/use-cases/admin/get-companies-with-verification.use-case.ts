@@ -4,13 +4,13 @@ import { IGetCompaniesWithVerificationUseCase, CompanyQueryOptions, PaginatedCom
 export class GetCompaniesWithVerificationUseCase implements IGetCompaniesWithVerificationUseCase {
   constructor(
     private readonly _companyListingRepository: ICompanyListingRepository,
-    private readonly _companyVerificationRepository: ICompanyVerificationRepository,
+    private readonly _companyVerificationRepository: ICompanyVerificationRepository
   ) {}
 
   async execute(options: CompanyQueryOptions): Promise<PaginatedCompaniesWithVerification> {
     const page = options.page || 1;
     const limit = options.limit || 10;
-    
+
     const convertedOptions = {
       page,
       limit,
@@ -26,7 +26,7 @@ export class GetCompaniesWithVerificationUseCase implements IGetCompaniesWithVer
     const companiesWithVerification = await Promise.all(
       result.companies.map(async (company) => {
         const verification = await this._companyVerificationRepository.getVerificationByCompanyId(company.id);
-        
+
         const companyData = company.toJSON();
         return {
           id: companyData.id as string,
@@ -49,7 +49,7 @@ export class GetCompaniesWithVerificationUseCase implements IGetCompaniesWithVer
             },
           }),
         };
-      }),
+      })
     );
 
     return {

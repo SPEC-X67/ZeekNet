@@ -43,12 +43,10 @@ const createCompanyProfileUseCase = new CreateCompanyProfileUseCase(
   companyProfileRepository,
   companyContactRepository,
   companyOfficeLocationRepository,
-  companyVerificationRepository,
+  companyVerificationRepository
 );
 
-const updateCompanyProfileUseCase = new UpdateCompanyProfileUseCase(
-  companyProfileRepository,
-);
+const updateCompanyProfileUseCase = new UpdateCompanyProfileUseCase(companyProfileRepository);
 
 const getCompanyProfileUseCase = new GetCompanyProfileUseCase(
   companyProfileRepository,
@@ -56,58 +54,34 @@ const getCompanyProfileUseCase = new GetCompanyProfileUseCase(
   companyTechStackRepository,
   companyOfficeLocationRepository,
   companyBenefitsRepository,
-  companyWorkplacePicturesRepository,
+  companyWorkplacePicturesRepository
 );
 
-const reapplyCompanyVerificationUseCase = new ReapplyCompanyVerificationUseCase(
-  companyProfileRepository,
-  companyVerificationRepository,
-);
+const reapplyCompanyVerificationUseCase = new ReapplyCompanyVerificationUseCase(companyProfileRepository, companyVerificationRepository);
 
-const companyContactUseCase = new CompanyContactUseCase(
-  companyContactRepository );
+const companyContactUseCase = new CompanyContactUseCase(companyContactRepository);
 
-const companyTechStackUseCase = new CompanyTechStackUseCase(
-  companyTechStackRepository );
+const companyTechStackUseCase = new CompanyTechStackUseCase(companyTechStackRepository);
 
-const companyOfficeLocationUseCase = new CompanyOfficeLocationUseCase(
-  companyOfficeLocationRepository );
+const companyOfficeLocationUseCase = new CompanyOfficeLocationUseCase(companyOfficeLocationRepository);
 
-const companyBenefitsUseCase = new CompanyBenefitsUseCase(
-  companyBenefitsRepository );
+const companyBenefitsUseCase = new CompanyBenefitsUseCase(companyBenefitsRepository);
 
-const companyWorkplacePicturesUseCase = new CompanyWorkplacePicturesUseCase(
-  companyWorkplacePicturesRepository );
+const companyWorkplacePicturesUseCase = new CompanyWorkplacePicturesUseCase(companyWorkplacePicturesRepository);
 
-const createJobPostingUseCase = new CreateJobPostingUseCase(
-  jobPostingRepository,
-);
+const createJobPostingUseCase = new CreateJobPostingUseCase(jobPostingRepository);
 
-const getJobPostingUseCase = new GetJobPostingUseCase(
-  jobPostingRepository,
-);
+const getJobPostingUseCase = new GetJobPostingUseCase(jobPostingRepository);
 
-const getCompanyJobPostingsUseCase = new GetCompanyJobPostingsUseCase(
-  jobPostingRepository,
-  companyProfileRepository,
-);
+const getCompanyJobPostingsUseCase = new GetCompanyJobPostingsUseCase(jobPostingRepository, companyProfileRepository);
 
-const updateJobPostingUseCase = new UpdateJobPostingUseCase(
-  jobPostingRepository,
-);
+const updateJobPostingUseCase = new UpdateJobPostingUseCase(jobPostingRepository);
 
-const deleteJobPostingUseCase = new DeleteJobPostingUseCase(
-  jobPostingRepository,
-  companyProfileRepository,
-);
+const deleteJobPostingUseCase = new DeleteJobPostingUseCase(jobPostingRepository, companyProfileRepository);
 
-const incrementJobViewCountUseCase = new IncrementJobViewCountUseCase(
-  jobPostingRepository,
-);
+const incrementJobViewCountUseCase = new IncrementJobViewCountUseCase(jobPostingRepository);
 
-const updateJobStatusUseCase = new UpdateJobStatusUseCase(
-  jobPostingRepository,
-);
+const updateJobStatusUseCase = new UpdateJobStatusUseCase(jobPostingRepository);
 
 const companyController = new CompanyController(
   createCompanyProfileUseCase,
@@ -120,7 +94,7 @@ const companyController = new CompanyController(
   companyOfficeLocationUseCase,
   companyBenefitsUseCase,
   companyWorkplacePicturesUseCase,
-  getCompanyJobPostingsUseCase,
+  getCompanyJobPostingsUseCase
 );
 
 const companyJobPostingController = new CompanyJobPostingController(
@@ -131,7 +105,7 @@ const companyJobPostingController = new CompanyJobPostingController(
   deleteJobPostingUseCase,
   incrementJobViewCountUseCase,
   updateJobStatusUseCase,
-  companyProfileRepository,
+  companyProfileRepository
 );
 
 export {

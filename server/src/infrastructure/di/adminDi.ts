@@ -34,63 +34,31 @@ const tokenService = new JwtTokenService();
 const otpService = new RedisOtpService();
 const mailerService = new NodemailerService();
 
-const adminLoginUseCase = new AdminLoginUseCase(
-  userRepository,
-  userRepository,
-  passwordHasher,
-  tokenService,
-  otpService,
-  mailerService,
-);
+const adminLoginUseCase = new AdminLoginUseCase(userRepository, userRepository, passwordHasher, tokenService, otpService, mailerService);
 
-const getAllUsersUseCase = new GetAllUsersUseCase(
-  userRepository,  
-);
+const getAllUsersUseCase = new GetAllUsersUseCase(userRepository);
 
-const blockUserUseCase = new BlockUserUseCase(
-  userRepository,
-);
+const blockUserUseCase = new BlockUserUseCase(userRepository);
 
-const adminGetUserByIdUseCase = new GetUserByIdUseCase(
-  userRepository,
-);
+const adminGetUserByIdUseCase = new GetUserByIdUseCase(userRepository);
 
-const getAllCompaniesUseCase = new GetAllCompaniesUseCase(
-  companyListingRepository,
-);
+const getAllCompaniesUseCase = new GetAllCompaniesUseCase(companyListingRepository);
 
-const getCompaniesWithVerificationUseCase = new GetCompaniesWithVerificationUseCase(
-  companyListingRepository,
-  companyVerificationRepository,
-);
+const getCompaniesWithVerificationUseCase = new GetCompaniesWithVerificationUseCase(companyListingRepository, companyVerificationRepository);
 
-const verifyCompanyUseCase = new VerifyCompanyUseCase(
-  companyVerificationRepository,
-);
+const verifyCompanyUseCase = new VerifyCompanyUseCase(companyVerificationRepository);
 
-const blockCompanyUseCase = new BlockCompanyUseCase(
-  companyProfileRepository,
-);
+const blockCompanyUseCase = new BlockCompanyUseCase(companyProfileRepository);
 
-const adminGetAllJobsUseCase = new AdminGetAllJobsUseCase(
-  jobPostingRepository,
-);
+const adminGetAllJobsUseCase = new AdminGetAllJobsUseCase(jobPostingRepository);
 
-const adminGetJobByIdUseCase = new AdminGetJobByIdUseCase(
-  jobPostingRepository,
-);
+const adminGetJobByIdUseCase = new AdminGetJobByIdUseCase(jobPostingRepository);
 
-const adminUpdateJobStatusUseCase = new AdminUpdateJobStatusUseCase(
-  jobPostingRepository,
-);
+const adminUpdateJobStatusUseCase = new AdminUpdateJobStatusUseCase(jobPostingRepository);
 
-const adminDeleteJobUseCase = new AdminDeleteJobUseCase(
-  jobPostingRepository,
-);
+const adminDeleteJobUseCase = new AdminDeleteJobUseCase(jobPostingRepository);
 
-const adminGetJobStatsUseCase = new AdminGetJobStatsUseCase(
-  jobPostingRepository,
-);
+const adminGetJobStatsUseCase = new AdminGetJobStatsUseCase(jobPostingRepository);
 
 const adminController = new AdminController(
   getAllUsersUseCase,
@@ -99,7 +67,7 @@ const adminController = new AdminController(
   getAllCompaniesUseCase,
   getCompaniesWithVerificationUseCase,
   verifyCompanyUseCase,
-  blockCompanyUseCase,
+  blockCompanyUseCase
 );
 
 const adminJobController = new AdminJobController(
@@ -107,10 +75,7 @@ const adminJobController = new AdminJobController(
   adminGetJobByIdUseCase,
   adminUpdateJobStatusUseCase,
   adminDeleteJobUseCase,
-  adminGetJobStatsUseCase,
+  adminGetJobStatsUseCase
 );
 
-export {
-  adminController,
-  adminJobController,
-};
+export { adminController, adminJobController };

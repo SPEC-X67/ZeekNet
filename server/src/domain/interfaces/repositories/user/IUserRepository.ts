@@ -36,7 +36,7 @@ export interface IUserManagementRepository {
     isVerified?: boolean;
     isBlocked?: boolean;
   }): Promise<{ users: User[]; total: number }>;
-  
+
   findAllUsers(options: {
     page: number;
     limit: number;
@@ -44,9 +44,8 @@ export interface IUserManagementRepository {
     role?: UserRole;
     isBlocked?: boolean;
   }): Promise<{ users: User[]; total: number }>;
-  
+
   blockUser(userId: string, isBlocked: boolean): Promise<void>;
   updateUserBlockStatus(userId: string, isBlocked: boolean): Promise<void>;
   deleteUser(userId: string): Promise<void>;
 }
-

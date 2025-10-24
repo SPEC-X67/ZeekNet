@@ -3,7 +3,6 @@ import { JobPosting } from '../../domain/entities/job-posting.entity';
 import { JobPostingData, JobPostingResponseDto } from './types';
 
 export class JobPostingMapper {
-  
   static toDomain(dto: CreateJobPostingRequestDto, companyId: string): JobPostingData {
     return {
       company_id: companyId,

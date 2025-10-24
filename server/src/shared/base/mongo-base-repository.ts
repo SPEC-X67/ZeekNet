@@ -11,7 +11,7 @@ export abstract class RepositoryBase<T, TDocument extends MongooseDocument = Mon
       createdAt: new Date(),
       updatedAt: new Date(),
     });
-    
+
     const savedDocument = await document.save();
     return this.mapToEntity(savedDocument);
   }
@@ -20,14 +20,14 @@ export abstract class RepositoryBase<T, TDocument extends MongooseDocument = Mon
     if (!Types.ObjectId.isValid(id)) {
       return null;
     }
-    
+
     const document = await this.model.findById(id);
     return document ? this.mapToEntity(document) : null;
   }
 
   async findAll(): Promise<T[]> {
     const documents = await this.model.find();
-    return documents.map(doc => this.mapToEntity(doc));
+    return documents.map((doc) => this.mapToEntity(doc));
   }
 
   async update(id: string, data: Partial<T>): Promise<T | null> {
@@ -35,11 +35,7 @@ export abstract class RepositoryBase<T, TDocument extends MongooseDocument = Mon
       return null;
     }
 
-    const document = await this.model.findByIdAndUpdate(
-      id,
-      { ...data, updatedAt: new Date() },
-      { new: true },
-    );
+    const document = await this.model.findByIdAndUpdate(id, { ...data, updatedAt: new Date() }, { new: true });
 
     return document ? this.mapToEntity(document) : null;
   }

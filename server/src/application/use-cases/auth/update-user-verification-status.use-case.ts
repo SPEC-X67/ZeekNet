@@ -3,9 +3,7 @@ import { IUpdateUserVerificationStatusUseCase } from '../../../domain/interfaces
 import { AppError } from '../../../domain/errors/errors';
 
 export class UpdateUserVerificationStatusUseCase implements IUpdateUserVerificationStatusUseCase {
-  constructor(
-    private readonly _userAuthRepository: IUserAuthRepository,
-  ) {}
+  constructor(private readonly _userAuthRepository: IUserAuthRepository) {}
 
   async execute(email: string, isVerified: boolean): Promise<void> {
     try {

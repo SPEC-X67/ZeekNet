@@ -19,9 +19,7 @@ export interface GetAllJobsQuery {
 }
 
 export class AdminGetAllJobsUseCase implements IAdminGetAllJobsUseCase {
-  constructor(
-    private readonly _jobPostingSearchRepository: IJobPostingSearchRepository,
-  ) {}
+  constructor(private readonly _jobPostingSearchRepository: IJobPostingSearchRepository) {}
 
   async execute(query: GetAllJobsQuery) {
     try {
@@ -39,7 +37,6 @@ export class AdminGetAllJobsUseCase implements IAdminGetAllJobsUseCase {
       };
 
       const result = await this._jobPostingSearchRepository.findAll(filters);
-      
 
       console.log('result', result);
 

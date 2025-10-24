@@ -1,8 +1,4 @@
-import {
-  S3Client,
-  PutObjectCommand,
-  DeleteObjectCommand,
-} from '@aws-sdk/client-s3';
+import { S3Client, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { IS3Service } from '../../../domain/interfaces';
 import { env } from '../../config/env';
 
@@ -22,11 +18,7 @@ export class S3Service implements IS3Service {
     this.bucketName = env.AWS_S3_BUCKET_NAME!;
   }
 
-  async uploadImage(
-    file: Buffer,
-    fileName: string,
-    contentType: string,
-  ): Promise<string> {
+  async uploadImage(file: Buffer, fileName: string, contentType: string): Promise<string> {
     const key = `company-images/${Date.now()}-${fileName}`;
 
     const command = new PutObjectCommand({
@@ -44,7 +36,7 @@ export class S3Service implements IS3Service {
 
   async deleteImage(imageUrl: string): Promise<void> {
     let key: string;
-    
+
     if (imageUrl.includes(`/${this.bucketName}/`)) {
       const urlParts = imageUrl.split(`/${this.bucketName}/`);
       key = urlParts[1];

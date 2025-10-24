@@ -4,21 +4,19 @@ import { CompanyProfileModel } from '../models/company-profile.model';
 import { CompanyProfileDocument, CompanyProfileMapper } from '../mappers';
 
 export class CompanyProfileRepository implements ICompanyProfileRepository {
-  async createProfile(
-    profile: {
-      userId: string;
-      companyName: string;
-      logo: string;
-      banner: string;
-      websiteLink: string;
-      employeeCount: number;
-      industry: string;
-      organisation: string;
-      aboutUs: string;
-      isVerified: 'pending' | 'rejected' | 'verified';
-      isBlocked: boolean;
-    },
-  ): Promise<CompanyProfile> {
+  async createProfile(profile: {
+    userId: string;
+    companyName: string;
+    logo: string;
+    banner: string;
+    websiteLink: string;
+    employeeCount: number;
+    industry: string;
+    organisation: string;
+    aboutUs: string;
+    isVerified: 'pending' | 'rejected' | 'verified';
+    isBlocked: boolean;
+  }): Promise<CompanyProfile> {
     const created = await CompanyProfileModel.create(profile);
     return CompanyProfileMapper.toEntity(created as CompanyProfileDocument);
   }
@@ -33,16 +31,9 @@ export class CompanyProfileRepository implements ICompanyProfileRepository {
     return doc ? CompanyProfileMapper.toEntity(doc as CompanyProfileDocument) : null;
   }
 
-  async updateProfile(
-    profileId: string,
-    updates: Partial<CompanyProfile>,
-  ): Promise<CompanyProfile> {
-    const updated = await CompanyProfileModel.findByIdAndUpdate(
-      profileId,
-      updates,
-      { new: true },
-    ).exec();
-    
+  async updateProfile(profileId: string, updates: Partial<CompanyProfile>): Promise<CompanyProfile> {
+    const updated = await CompanyProfileModel.findByIdAndUpdate(profileId, updates, { new: true }).exec();
+
     if (!updated) throw new Error('Profile not found');
     return CompanyProfileMapper.toEntity(updated as CompanyProfileDocument);
   }
@@ -56,4 +47,3 @@ export class CompanyProfileRepository implements ICompanyProfileRepository {
     return count > 0;
   }
 }
-

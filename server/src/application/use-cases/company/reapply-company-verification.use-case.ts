@@ -1,21 +1,14 @@
-import { 
-  ICompanyProfileRepository,
-  ICompanyVerificationRepository,
-} from '../../../domain/interfaces/repositories';
+import { ICompanyProfileRepository, ICompanyVerificationRepository } from '../../../domain/interfaces/repositories';
 import { IReapplyCompanyVerificationUseCase, CompanyVerificationData } from '../../../domain/interfaces/use-cases';
 import { CompanyProfile } from '../../../domain/entities/company-profile.entity';
 
 export class ReapplyCompanyVerificationUseCase implements IReapplyCompanyVerificationUseCase {
   constructor(
     private readonly _companyProfileRepository: ICompanyProfileRepository,
-    private readonly _companyVerificationRepository: ICompanyVerificationRepository,
+    private readonly _companyVerificationRepository: ICompanyVerificationRepository
   ) {}
 
-  async execute(
-    userId: string,
-    verificationData: CompanyVerificationData,
-  ): Promise<CompanyProfile> {
-
+  async execute(userId: string, verificationData: CompanyVerificationData): Promise<CompanyProfile> {
     const existingProfile = await this._companyProfileRepository.getProfileByUserId(userId);
     if (!existingProfile) {
       throw new Error('Company profile not found');
@@ -25,7 +18,6 @@ export class ReapplyCompanyVerificationUseCase implements IReapplyCompanyVerific
       throw new Error('Only rejected companies can reapply for verification');
     }
 
-    
     if (verificationData.taxId || verificationData.businessLicenseUrl) {
       await this._companyVerificationRepository.updateVerification(existingProfile.id, {
         taxId: verificationData.taxId,
@@ -33,10 +25,7 @@ export class ReapplyCompanyVerificationUseCase implements IReapplyCompanyVerific
       });
     }
 
-    await this._companyVerificationRepository.updateVerificationStatus(
-      existingProfile.id,
-      'pending',
-    );
+    await this._companyVerificationRepository.updateVerificationStatus(existingProfile.id, 'pending');
 
     const updatedProfile = await this._companyProfileRepository.getProfileByUserId(userId);
     if (!updatedProfile) {

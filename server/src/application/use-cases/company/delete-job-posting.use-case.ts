@@ -4,18 +4,18 @@ import { AppError } from '../../../domain/errors/errors';
 export class DeleteJobPostingUseCase {
   constructor(
     private readonly _jobPostingRepository: IJobPostingRepository,
-    private readonly _companyProfileRepository: ICompanyProfileRepository,
+    private readonly _companyProfileRepository: ICompanyProfileRepository
   ) {}
 
   async execute(id: string, userId: string): Promise<void> {
     const companyProfile = await this._companyProfileRepository.getProfileByUserId(userId);
-    
+
     if (!companyProfile) {
       throw new AppError('Company profile not found', 404);
     }
 
     const existingJob = await this._jobPostingRepository.findById(id);
-    
+
     if (!existingJob) {
       throw new AppError('Job posting not found', 404);
     }
@@ -30,7 +30,7 @@ export class DeleteJobPostingUseCase {
 
     try {
       const deleted = await this._jobPostingRepository.delete(id);
-      
+
       if (!deleted) {
         throw new AppError('Failed to delete job posting', 500);
       }

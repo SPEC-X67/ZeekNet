@@ -1,11 +1,4 @@
-import { 
-  CompanyProfile, 
-  CompanyContact, 
-  CompanyTechStack, 
-  CompanyOfficeLocation, 
-  CompanyBenefits, 
-  CompanyWorkplacePictures,
-} from '../../entities';
+import { CompanyProfile, CompanyContact, CompanyTechStack, CompanyOfficeLocation, CompanyBenefits, CompanyWorkplacePictures } from '../../entities';
 import { JobPosting, PaginatedJobPostings, JobPostingFilters } from '../../entities/job-posting.entity';
 import { CompanyProfileResponseDto } from '../../../application/dto/company/company-response.dto';
 

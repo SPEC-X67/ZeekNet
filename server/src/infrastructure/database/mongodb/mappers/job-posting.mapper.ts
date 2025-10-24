@@ -7,7 +7,7 @@ export class JobPostingMapper {
     let companyId = '';
     let companyName: string | undefined;
     let companyLogo: string | undefined;
-    
+
     if (doc.company_id) {
       const companyIdValue = doc.company_id as unknown;
       if (typeof companyIdValue === 'object' && companyIdValue && '_id' in companyIdValue) {
@@ -51,7 +51,7 @@ export class JobPostingMapper {
     let companyId = '';
     let companyName: string | undefined;
     let companyLogo: string | undefined;
-    
+
     if (doc.company_id) {
       const companyIdValue = doc.company_id as unknown;
       if (typeof companyIdValue === 'object' && companyIdValue && '_id' in companyIdValue) {
@@ -66,7 +66,7 @@ export class JobPostingMapper {
         companyId = String(companyIdValue);
       }
     }
-    
+
     return {
       id: String(doc._id),
       company_id: companyId,

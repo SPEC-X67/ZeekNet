@@ -1,15 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import {
-  IMailerService,
-  IOtpService,
-  IPasswordHasher,
-  ITokenService,
-} from '../../../domain/interfaces/services';
-import {
-  IGetUserByEmailUseCase,
-  IUpdateUserVerificationStatusUseCase,
-  IUpdateUserRefreshTokenUseCase,
-} from '../../../domain/interfaces/use-cases';
+import { IMailerService, IOtpService, IPasswordHasher, ITokenService } from '../../../domain/interfaces/services';
+import { IGetUserByEmailUseCase, IUpdateUserVerificationStatusUseCase, IUpdateUserRefreshTokenUseCase } from '../../../domain/interfaces/use-cases';
 import { z } from 'zod';
 import { env } from '../../../infrastructure/config/env';
 import {
@@ -36,17 +27,13 @@ export class OtpController {
     private readonly _updateUserVerificationStatusUseCase: IUpdateUserVerificationStatusUseCase,
     private readonly _updateUserRefreshTokenUseCase: IUpdateUserRefreshTokenUseCase,
     private readonly _tokenService: ITokenService,
-    private readonly _passwordHasher: IPasswordHasher,
+    private readonly _passwordHasher: IPasswordHasher
   ) {}
 
-  request = async (
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> => {
+  request = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const parsed = RequestOtpDto.safeParse(req.body);
     if (!parsed.success) return handleValidationError('Invalid email', next);
-    
+
     try {
       const user = await this._getUserByEmailUseCase.execute(parsed.data.email);
       if (!user) {
@@ -67,7 +54,7 @@ export class OtpController {
         }
         throw error;
       }
-      
+
       const htmlContent = `
         <table style="width: 100%; max-width: 600px; margin: 0 auto; font-family: Arial, sans-serif; border-collapse: collapse;">
           <tr>
@@ -93,36 +80,22 @@ export class OtpController {
         </table>
       `;
 
-      await this._mailer.sendMail(
-        parsed.data.email,
-        'Verify Your Email - ZeekNet Job Portal',
-        htmlContent,
-      );
+      await this._mailer.sendMail(parsed.data.email, 'Verify Your Email - ZeekNet Job Portal', htmlContent);
       sendSuccessResponse(res, 'OTP sent successfully', null);
     } catch (err) {
       handleAsyncError(err, next);
     }
   };
 
-  verify = async (
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> => {
+  verify = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const parsed = VerifyOtpDto.safeParse(req.body);
     if (!parsed.success) return handleValidationError('Invalid OTP data', next);
-    
+
     try {
-      const ok = await this._otpService.verifyOtp(
-        parsed.data.email,
-        parsed.data.code,
-      );
+      const ok = await this._otpService.verifyOtp(parsed.data.email, parsed.data.code);
       if (!ok) return handleValidationError('Invalid or expired OTP', next);
-  
-      await this._updateUserVerificationStatusUseCase.execute(
-        parsed.data.email,
-        true,
-      );
+
+      await this._updateUserVerificationStatusUseCase.execute(parsed.data.email, true);
 
       const user = await this._getUserByEmailUseCase.execute(parsed.data.email);
       if (!user) {
@@ -134,16 +107,12 @@ export class OtpController {
       const hashedRefresh = await this._passwordHasher.hash(refreshToken);
 
       await this._updateUserRefreshTokenUseCase.execute(user.id, hashedRefresh);
-      
+
       res.cookie(env.COOKIE_NAME_REFRESH!, refreshToken, createRefreshTokenCookieOptions());
-  
+
       const dashboardLink = this.getDashboardLink(user.role);
-      await this._mailer.sendMail(
-        user.email,
-        welcomeTemplate.subject,
-        welcomeTemplate.html(user.name || 'User', dashboardLink),
-      );
-  
+      await this._mailer.sendMail(user.email, welcomeTemplate.subject, welcomeTemplate.html(user.name || 'User', dashboardLink));
+
       const userDetails = sanitizeUserForResponse(user);
       sendSuccessResponse(res, 'OTP verified and user verified', userDetails, accessToken);
     } catch (err) {
@@ -154,14 +123,14 @@ export class OtpController {
   private getDashboardLink(role: string): string {
     const baseUrl = env.FRONTEND_URL || 'http://localhost:3000';
     switch (role) {
-    case 'admin':
-      return `${baseUrl}/admin/dashboard`;
-    case 'company':
-      return `${baseUrl}/company/dashboard`;
-    case 'seeker':
-      return `${baseUrl}/seeker/dashboard`;
-    default:
-      return `${baseUrl}/seeker/dashboard`;
+      case 'admin':
+        return `${baseUrl}/admin/dashboard`;
+      case 'company':
+        return `${baseUrl}/company/dashboard`;
+      case 'seeker':
+        return `${baseUrl}/seeker/dashboard`;
+      default:
+        return `${baseUrl}/seeker/dashboard`;
     }
   }
 }

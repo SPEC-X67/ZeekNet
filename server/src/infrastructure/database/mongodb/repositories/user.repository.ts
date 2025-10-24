@@ -2,13 +2,9 @@ import { IUserRepository, IUserAuthRepository, IUserManagementRepository } from 
 import { User } from '../../../../domain/entities';
 import { UserRole } from '../../../../domain/enums/user-role.enum';
 import { UserModel, UserDocument } from '../models/user.model';
-import { RepositoryBase } from '../../../../shared/base';
-import { Types } from 'mongoose';
 import { IUserData } from '../../../../domain/interfaces/repositories/user/IUserRepository';
 
-export class UserRepository 
-implements IUserRepository, IUserAuthRepository, IUserManagementRepository {
-  
+export class UserRepository implements IUserRepository, IUserAuthRepository, IUserManagementRepository {
   protected model = UserModel;
 
   protected mapToEntity(document: UserDocument): User {
@@ -78,18 +74,15 @@ implements IUserRepository, IUserAuthRepository, IUserManagementRepository {
     sortOrder?: 'asc' | 'desc';
   }): Promise<{ users: User[]; total: number }> {
     const query: Record<string, unknown> = {};
-    
+
     if (options.search) {
-      query.$or = [
-        { name: { $regex: options.search, $options: 'i' } },
-        { email: { $regex: options.search, $options: 'i' } },
-      ];
+      query.$or = [{ name: { $regex: options.search, $options: 'i' } }, { email: { $regex: options.search, $options: 'i' } }];
     }
-    
+
     if (options.role) {
       query.role = options.role;
     }
-    
+
     if (options.isBlocked !== undefined) {
       query.isBlocked = options.isBlocked;
     }
@@ -98,7 +91,7 @@ implements IUserRepository, IUserAuthRepository, IUserManagementRepository {
     const limit = options.limit || 10;
     const skip = (page - 1) * limit;
     const sort: Record<string, 1 | -1> = {};
-    
+
     if (options.sortBy) {
       sort[options.sortBy] = options.sortOrder === 'asc' ? 1 : -1;
     } else {
@@ -111,19 +104,19 @@ implements IUserRepository, IUserAuthRepository, IUserManagementRepository {
     ]);
 
     return {
-      users: documents.map(doc => this.mapToEntity(doc)),
+      users: documents.map((doc) => this.mapToEntity(doc)),
       total,
     };
   }
 
   async findUsersByRole(role: UserRole): Promise<User[]> {
     const documents = await this.model.find({ role });
-    return documents.map(doc => this.mapToEntity(doc));
+    return documents.map((doc) => this.mapToEntity(doc));
   }
 
   async findBlockedUsers(): Promise<User[]> {
     const documents = await this.model.find({ isBlocked: true });
-    return documents.map(doc => this.mapToEntity(doc));
+    return documents.map((doc) => this.mapToEntity(doc));
   }
 
   private async setBlockStatus(id: string, isBlocked: boolean): Promise<void> {
@@ -149,9 +142,7 @@ implements IUserRepository, IUserAuthRepository, IUserManagementRepository {
       this.model.countDocuments(),
       this.model.countDocuments({ isVerified: true }),
       this.model.countDocuments({ isBlocked: true }),
-      this.model.aggregate([
-        { $group: { _id: '$role', count: { $sum: 1 } } },
-      ]),
+      this.model.aggregate([{ $group: { _id: '$role', count: { $sum: 1 } } }]),
     ]);
 
     const roleStats: Record<string, number> = {};

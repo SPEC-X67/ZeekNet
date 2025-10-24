@@ -4,9 +4,7 @@ import { CreateCompanyOfficeLocationDto, UpdateCompanyOfficeLocationDto } from '
 import { NotFoundError } from '../../../domain/errors/errors';
 
 export class CompanyOfficeLocationUseCase {
-  constructor(
-    private readonly _companyOfficeLocationRepository: ICompanyOfficeLocationRepository,
-  ) {}
+  constructor(private readonly _companyOfficeLocationRepository: ICompanyOfficeLocationRepository) {}
 
   async createOfficeLocation(companyId: string, data: CreateCompanyOfficeLocationDto): Promise<CompanyOfficeLocation> {
     const officeLocation = CompanyOfficeLocation.create({ ...data, companyId });

@@ -1,13 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
 import { RefreshTokenDto } from '../../../application/dto/auth';
-import {
-  IRefreshTokenUseCase,
-  IAuthGetUserByIdUseCase,
-  IGetCompanyProfileByUserIdUseCase,
-} from '../../../domain/interfaces/use-cases';
+import { IRefreshTokenUseCase, IAuthGetUserByIdUseCase, IGetCompanyProfileByUserIdUseCase } from '../../../domain/interfaces/use-cases';
 import { ITokenService } from '../../../domain/interfaces/services';
 import { AuthenticatedRequest } from '../../../shared/types';
-import { 
+import {
   createRefreshTokenCookieOptions,
   handleValidationError,
   handleAsyncError,
@@ -24,33 +20,25 @@ export class TokenController {
     private readonly _refreshTokenUseCase: IRefreshTokenUseCase,
     private readonly _getUserByIdUseCase: IAuthGetUserByIdUseCase,
     private readonly _tokenService: ITokenService,
-    private readonly _getCompanyProfileByUserIdUseCase: IGetCompanyProfileByUserIdUseCase,
+    private readonly _getCompanyProfileByUserIdUseCase: IGetCompanyProfileByUserIdUseCase
   ) {}
 
-  refresh = async (
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> => {
+  refresh = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const cookieName = env.COOKIE_NAME_REFRESH || 'refresh_token';
     const fromCookie = (req as Request & { cookies?: Record<string, string> }).cookies?.[cookieName];
-    
-    const parsed = fromCookie
-      ? { success: true, data: { refreshToken: fromCookie } }
-      : RefreshTokenDto.safeParse(req.body);
-      
+
+    const parsed = fromCookie ? { success: true, data: { refreshToken: fromCookie } } : RefreshTokenDto.safeParse(req.body);
+
     if (!parsed.success) {
       return handleValidationError('Invalid refresh token', next);
     }
-    
+
     try {
-      const result = await this._refreshTokenUseCase.execute(
-        parsed.data.refreshToken,
-      );
+      const result = await this._refreshTokenUseCase.execute(parsed.data.refreshToken);
       const { tokens, user } = result;
-      
+
       res.cookie(env.COOKIE_NAME_REFRESH!, tokens.refreshToken, createRefreshTokenCookieOptions());
-      
+
       const userDetails = sanitizeUserForResponse(user);
       sendSuccessResponse(res, 'Token refreshed', userDetails, tokens.accessToken);
     } catch (error) {
@@ -58,15 +46,11 @@ export class TokenController {
     }
   };
 
-  checkAuth = async (
-    req: AuthenticatedRequest,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> => {
+  checkAuth = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = validateUserId(req);
       const user = await this._getUserByIdUseCase.execute(userId);
-      
+
       if (!user) {
         return handleValidationError('User not found', next);
       }
@@ -84,7 +68,7 @@ export class TokenController {
 
       const accessToken = this._tokenService.signAccess({ sub: user.id, role: user.role });
       const userDetails = sanitizeUserForResponse(user);
-      
+
       sendSuccessResponse(res, 'Authenticated', userDetails, accessToken);
     } catch (error) {
       handleAsyncError(error, next);

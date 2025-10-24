@@ -1,5 +1,16 @@
-import { IJobPostingRepository, IJobPostingSearchRepository, IJobPostingAnalyticsRepository, IJobPostingManagementRepository } from '../../../../domain/interfaces/repositories';
-import { JobPosting, CreateJobPostingRequest, UpdateJobPostingRequest, JobPostingFilters, PaginatedJobPostings } from '../../../../domain/entities/job-posting.entity';
+import {
+  IJobPostingRepository,
+  IJobPostingSearchRepository,
+  IJobPostingAnalyticsRepository,
+  IJobPostingManagementRepository,
+} from '../../../../domain/interfaces/repositories';
+import {
+  JobPosting,
+  CreateJobPostingRequest,
+  UpdateJobPostingRequest,
+  JobPostingFilters,
+  PaginatedJobPostings,
+} from '../../../../domain/entities/job-posting.entity';
 import { JobPostingModel, JobPostingDocument } from '../models/job-posting.model';
 import { Types } from 'mongoose';
 import { RepositoryBase } from '../../../../shared/base';
@@ -52,11 +63,14 @@ interface MongoUpdateData {
   category_ids?: string[];
 }
 
-export class JobPostingRepository extends RepositoryBase<JobPosting, JobPostingDocument> implements IJobPostingRepository, IJobPostingSearchRepository, IJobPostingAnalyticsRepository, IJobPostingManagementRepository {
+export class JobPostingRepository
+  extends RepositoryBase<JobPosting, JobPostingDocument>
+  implements IJobPostingRepository, IJobPostingSearchRepository, IJobPostingAnalyticsRepository, IJobPostingManagementRepository
+{
   constructor() {
     super(JobPostingModel);
   }
-  
+
   protected mapToEntity(doc: JobPostingDocument): JobPosting {
     return JobPostingMapper.toEntity(doc);
   }
@@ -78,8 +92,24 @@ export class JobPostingRepository extends RepositoryBase<JobPosting, JobPostingD
       };
 
       const jobPosting = new JobPostingModel(jobPostingData);
+
+      // const startOfDay = new Date();
+      // startOfDay.setHours(0, 0, 0, 0);
+
+      // const endOfDay = new Date();
+      // endOfDay.setHours(23, 59, 59, 999);
+
+      // const jobsToday = await JobPostingModel.countDocuments({
+      //   comapany_id: data.company_id,
+      //   createdAt: { $gte: startOfDay, $lte: endOfDay },
+      // });
+
+      // if (jobsToday >= 2) {
+      //   throw new Error('You can only create up to 2 jobs per day.');
+      // }
+
       const savedJobPosting = await jobPosting.save();
-      
+
       return this.mapToEntity(savedJobPosting);
     } catch (error) {
       console.error('JobPostingRepository.create error:', error);
@@ -91,34 +121,34 @@ export class JobPostingRepository extends RepositoryBase<JobPosting, JobPostingD
     if (!Types.ObjectId.isValid(id)) {
       return null;
     }
-    
-    const jobPosting = await JobPostingModel.findById(id)
-      .populate('company_id', 'companyName logo');
-    
+
+    const jobPosting = await JobPostingModel.findById(id).populate('company_id', 'companyName logo');
+
     return jobPosting ? this.mapToEntity(jobPosting) : null;
   }
 
   async findByIdForClient(id: string): Promise<JobPostingDetailResponseDto | null> {
-    const jobPosting = await JobPostingModel.findById(id)
-      .populate('company_id', 'companyName logo');
-    
+    const jobPosting = await JobPostingModel.findById(id).populate('company_id', 'companyName logo');
+
     if (!jobPosting) {
       return null;
     }
 
     const populatedDoc = jobPosting as unknown as { company_id?: { companyName?: string; logo?: string; _id?: unknown } };
-    
+
     let company = null;
     if (populatedDoc.company_id && typeof populatedDoc.company_id === 'object') {
       const { CompanyWorkplacePicturesModel } = await import('../models/company-workplace-pictures.model');
-      const workplacePictures = await CompanyWorkplacePicturesModel.find({ 
-        companyId: populatedDoc.company_id._id, 
-      }).select('pictureUrl caption').limit(4);
-      
+      const workplacePictures = await CompanyWorkplacePicturesModel.find({
+        companyId: populatedDoc.company_id._id,
+      })
+        .select('pictureUrl caption')
+        .limit(4);
+
       company = {
         companyName: populatedDoc.company_id.companyName || 'Unknown Company',
         logo: populatedDoc.company_id.logo || '/white.png',
-        workplacePictures: workplacePictures.map(pic => ({
+        workplacePictures: workplacePictures.map((pic) => ({
           pictureUrl: pic.pictureUrl,
           caption: pic.caption,
         })),
@@ -160,9 +190,9 @@ export class JobPostingRepository extends RepositoryBase<JobPosting, JobPostingD
     if (!companyId || companyId === 'undefined') {
       throw new Error('Company ID is required and cannot be undefined');
     }
-    
+
     const query: MongoQuery = { company_id: new Types.ObjectId(companyId) };
-    
+
     if (filters) {
       this.applyFilters(query, filters);
     }
@@ -182,7 +212,7 @@ export class JobPostingRepository extends RepositoryBase<JobPosting, JobPostingD
     ]);
 
     return {
-      jobs: jobs.map(job => this.mapToEntity(job)),
+      jobs: jobs.map((job) => this.mapToEntity(job)),
       pagination: {
         page,
         limit,
@@ -192,11 +222,11 @@ export class JobPostingRepository extends RepositoryBase<JobPosting, JobPostingD
     };
   }
 
-  async findAll(filters?: JobPostingFilters): Promise<JobPosting[]>
-  async findAll(filters: JobPostingFilters): Promise<PaginatedJobPostings>
+  async findAll(filters?: JobPostingFilters): Promise<JobPosting[]>;
+  async findAll(filters: JobPostingFilters): Promise<PaginatedJobPostings>;
   async findAll(filters?: JobPostingFilters): Promise<JobPosting[] | PaginatedJobPostings> {
     const query: MongoQuery = {};
-    
+
     if (filters) {
       this.applyFilters(query, filters);
     }
@@ -216,7 +246,7 @@ export class JobPostingRepository extends RepositoryBase<JobPosting, JobPostingD
     ]);
 
     return {
-      jobs: jobs.map(job => this.mapToEntity(job)),
+      jobs: jobs.map((job) => this.mapToEntity(job)),
       pagination: {
         page,
         limit,
@@ -237,11 +267,7 @@ export class JobPostingRepository extends RepositoryBase<JobPosting, JobPostingD
     if (data.skills_required) updateData.skills_required = data.skills_required;
     if (data.category_ids) updateData.category_ids = data.category_ids;
 
-    const result = await JobPostingModel.findByIdAndUpdate(
-      id,
-      updateData,
-      { new: true },
-    )
+    const result = await JobPostingModel.findByIdAndUpdate(id, updateData, { new: true })
       .populate('company_id', 'companyName logo')
       .populate('skills_required', 'name')
       .populate('category_ids', 'name');
@@ -250,27 +276,21 @@ export class JobPostingRepository extends RepositoryBase<JobPosting, JobPostingD
   }
 
   async incrementViewCount(id: string): Promise<void> {
-    await JobPostingModel.findByIdAndUpdate(
-      id,
-      { $inc: { view_count: 1 } },
-    );
+    await JobPostingModel.findByIdAndUpdate(id, { $inc: { view_count: 1 } });
   }
 
   async incrementApplicationCount(id: string): Promise<void> {
-    await JobPostingModel.findByIdAndUpdate(
-      id,
-      { $inc: { application_count: 1 } },
-    );
+    await JobPostingModel.findByIdAndUpdate(id, { $inc: { application_count: 1 } });
   }
 
   async updateJobStatus(id: string, status: string): Promise<JobPosting | null> {
     const result = await JobPostingModel.findByIdAndUpdate(
       id,
-      { 
+      {
         is_active: status === 'active',
         updatedAt: new Date(),
       },
-      { new: true },
+      { new: true }
     )
       .populate('company_id', 'companyName logo')
       .populate('skills_required', 'name')
@@ -320,7 +340,7 @@ export class JobPostingRepository extends RepositoryBase<JobPosting, JobPostingD
     totalApplications: number;
   }> {
     const companyObjectId = new Types.ObjectId(companyId);
-    
+
     const [totalJobs, activeJobs, inactiveJobs, statsAggregate] = await Promise.all([
       JobPostingModel.countDocuments({ company_id: companyObjectId }),
       JobPostingModel.countDocuments({ company_id: companyObjectId, is_active: true }),
@@ -366,11 +386,11 @@ export class JobPostingRepository extends RepositoryBase<JobPosting, JobPostingD
     if (filters.salary_min !== undefined || filters.salary_max !== undefined) {
       query['salary.min'] = {};
       query['salary.max'] = {};
-      
+
       if (filters.salary_min !== undefined) {
         query['salary.min'].$gte = filters.salary_min;
       }
-      
+
       if (filters.salary_max !== undefined) {
         query['salary.max'].$lte = filters.salary_max;
       }
@@ -393,4 +413,3 @@ export class JobPostingRepository extends RepositoryBase<JobPosting, JobPostingD
     }
   }
 }
-

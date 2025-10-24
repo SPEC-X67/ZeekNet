@@ -7,4 +7,3 @@ export { ICompanyTechStackRepository } from './ICompanyTechStackRepository';
 export { ICompanyOfficeLocationRepository } from './ICompanyOfficeLocationRepository';
 export { ICompanyWorkplacePicturesRepository } from './ICompanyWorkplacePicturesRepository';
 export type { ICompanyProfileRepository as ICompanyRepository } from './ICompanyProfileRepository';
-

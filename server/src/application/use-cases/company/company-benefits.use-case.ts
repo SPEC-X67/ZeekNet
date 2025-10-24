@@ -4,9 +4,7 @@ import { CreateCompanyBenefitsDto, UpdateCompanyBenefitsDto } from '../../dto/co
 import { NotFoundError } from '../../../domain/errors/errors';
 
 export class CompanyBenefitsUseCase {
-  constructor(
-    private readonly _companyBenefitsRepository: ICompanyBenefitsRepository,
-  ) {}
+  constructor(private readonly _companyBenefitsRepository: ICompanyBenefitsRepository) {}
 
   async createBenefit(companyId: string, data: CreateCompanyBenefitsDto): Promise<CompanyBenefits> {
     const benefit = CompanyBenefits.create({ ...data, companyId });

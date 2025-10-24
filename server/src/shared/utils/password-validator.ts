@@ -4,8 +4,16 @@ export class PasswordValidator {
   private static readonly MIN_LENGTH = 8;
   private static readonly MAX_LENGTH = 128;
   private static readonly COMMON_PASSWORDS = [
-    'password', '123456', '123456789', 'qwerty', 'abc123',
-    'password123', 'admin', 'letmein', 'welcome', 'monkey',
+    'password',
+    '123456',
+    '123456789',
+    'qwerty',
+    'abc123',
+    'password123',
+    'admin',
+    'letmein',
+    'welcome',
+    'monkey',
   ];
 
   static validate(password: string): { isValid: boolean; errors: string[] } {

@@ -1,4 +1,4 @@
-import { 
+import {
   ICompanyProfileRepository,
   ICompanyContactRepository,
   ICompanyTechStackRepository,
@@ -6,12 +6,12 @@ import {
   ICompanyBenefitsRepository,
   ICompanyWorkplacePicturesRepository,
 } from '../../../domain/interfaces/repositories';
-import { 
-  CompanyProfile, 
-  CompanyContact, 
-  CompanyTechStack, 
-  CompanyOfficeLocation, 
-  CompanyBenefits, 
+import {
+  CompanyProfile,
+  CompanyContact,
+  CompanyTechStack,
+  CompanyOfficeLocation,
+  CompanyBenefits,
   CompanyWorkplacePictures,
 } from '../../../domain/entities';
 
@@ -31,20 +31,14 @@ export class GetCompanyProfileUseCase {
     private readonly _companyTechStackRepository: ICompanyTechStackRepository,
     private readonly _companyOfficeLocationRepository: ICompanyOfficeLocationRepository,
     private readonly _companyBenefitsRepository: ICompanyBenefitsRepository,
-    private readonly _companyWorkplacePicturesRepository: ICompanyWorkplacePicturesRepository,
+    private readonly _companyWorkplacePicturesRepository: ICompanyWorkplacePicturesRepository
   ) {}
 
   async execute(userId: string): Promise<CompanyProfileWithDetails | null> {
     const profile = await this._companyProfileRepository.getProfileByUserId(userId);
     if (!profile) return null;
 
-    const [
-      contact,
-      locations,
-      techStack,
-      benefits,
-      workplacePictures,
-    ] = await Promise.all([
+    const [contact, locations, techStack, benefits, workplacePictures] = await Promise.all([
       this._companyContactRepository.findByCompanyId(profile.id),
       this._companyOfficeLocationRepository.findByCompanyId(profile.id),
       this._companyTechStackRepository.findByCompanyId(profile.id),

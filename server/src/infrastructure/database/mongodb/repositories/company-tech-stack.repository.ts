@@ -28,7 +28,7 @@ export class CompanyTechStackRepository extends RepositoryBase<CompanyTechStack,
 
   async findByCompanyId(companyId: string): Promise<CompanyTechStack[]> {
     const techStacks = await CompanyTechStackModel.find({ companyId: new Types.ObjectId(companyId) });
-    return techStacks.map(techStack => this.mapToEntity(techStack));
+    return techStacks.map((techStack) => this.mapToEntity(techStack));
   }
 
   async update(id: string, data: Partial<CompanyTechStack>): Promise<CompanyTechStack | null> {
@@ -42,10 +42,9 @@ export class CompanyTechStackRepository extends RepositoryBase<CompanyTechStack,
         ...data,
         updatedAt: new Date(),
       },
-      { new: true },
+      { new: true }
     );
 
     return updatedTechStack ? this.mapToEntity(updatedTechStack) : null;
   }
 }
-

@@ -3,9 +3,7 @@ import { CompanyProfile } from '../../../domain/entities/company-profile.entity'
 import { AppError } from '../../../domain/errors/errors';
 
 export class GetCompanyProfileByUserIdUseCase {
-  constructor(
-    private readonly _companyProfileRepository: ICompanyProfileRepository,
-  ) {}
+  constructor(private readonly _companyProfileRepository: ICompanyProfileRepository) {}
 
   async execute(userId: string): Promise<CompanyProfile | null> {
     try {

@@ -1,5 +1,5 @@
 export * from './IAuthUseCases';
-export { 
+export {
   IGetAllUsersUseCase,
   IBlockUserUseCase,
   IAdminGetUserByIdUseCase,

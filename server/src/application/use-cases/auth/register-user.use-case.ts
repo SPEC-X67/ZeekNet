@@ -11,15 +11,10 @@ export class RegisterUserUseCase implements IRegisterUserUseCase {
     private readonly _userRepository: IUserRepository,
     private readonly _passwordHasher: IPasswordHasher,
     private readonly _otpService: IOtpService,
-    private readonly _mailerService: IMailerService,
+    private readonly _mailerService: IMailerService
   ) {}
 
-  async execute(
-    email: string,
-    password: string,
-    role?: UserRole,
-    name?: string,
-  ): Promise<RegisterResult> {
+  async execute(email: string, password: string, role?: UserRole, name?: string): Promise<RegisterResult> {
     const validationResult = this.validateInput(email, password, name);
     if (!validationResult.isValid) {
       throw new ValidationError(validationResult.errors.join(', '));
@@ -42,12 +37,16 @@ export class RegisterUserUseCase implements IRegisterUserUseCase {
       refreshToken: null,
     });
 
-    this.sendOtpEmail(user.email).catch(error => {});
+    this.sendOtpEmail(user.email).catch((error) => {});
 
     return { user };
   }
 
-  private validateInput(email: string, password: string, name?: string): {
+  private validateInput(
+    email: string,
+    password: string,
+    name?: string
+  ): {
     isValid: boolean;
     errors: string[];
   } {

@@ -69,8 +69,4 @@ export type {
   CompanyProfileWithDetailsResponseDto,
 } from '../dto/company/company-response.dto';
 
-export type {
-  JobPostingResponseDto,
-  JobPostingDetailResponseDto,
-  PaginatedJobPostingsResponse,
-} from '../dto/job-posting/job-posting-response.dto';
+export type { JobPostingResponseDto, JobPostingDetailResponseDto, PaginatedJobPostingsResponse } from '../dto/job-posting/job-posting-response.dto';

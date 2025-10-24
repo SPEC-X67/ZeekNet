@@ -14,11 +14,7 @@ const CompanyTechStackSchema = new Schema<CompanyTechStackDocument>(
   },
   {
     timestamps: true,
-  },
+  }
 );
 
-export const CompanyTechStackModel = model<CompanyTechStackDocument>(
-  'CompanyTechStack',
-  CompanyTechStackSchema,
-);
-
+export const CompanyTechStackModel = model<CompanyTechStackDocument>('CompanyTechStack', CompanyTechStackSchema);

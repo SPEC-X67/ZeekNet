@@ -43,25 +43,21 @@ export class CompanyController {
     private readonly _companyOfficeLocationUseCase: ICompanyOfficeLocationUseCase,
     private readonly _companyBenefitsUseCase: ICompanyBenefitsUseCase,
     private readonly _companyWorkplacePicturesUseCase: ICompanyWorkplacePicturesUseCase,
-    private readonly _getCompanyJobPostingsUseCase: IGetCompanyJobPostingsUseCase,
-  ) {  }
+    private readonly _getCompanyJobPostingsUseCase: IGetCompanyJobPostingsUseCase
+  ) {}
 
-  createCompanyProfile = async (
-    req: AuthenticatedRequest,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> => {
+  createCompanyProfile = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
     const parsed = SimpleCompanyProfileDto.safeParse(req.body);
     if (!parsed.success) {
       console.error('Company profile validation failed:', {
         body: req.body,
-        errors: parsed.error.errors.map(err => ({
+        errors: parsed.error.errors.map((err) => ({
           path: err.path,
           message: err.message,
           code: err.code,
         })),
       });
-      return handleValidationError(`Invalid profile data: ${parsed.error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join(', ')}`, next);
+      return handleValidationError(`Invalid profile data: ${parsed.error.errors.map((e) => `${e.path.join('.')}: ${e.message}`).join(', ')}`, next);
     }
 
     try {
@@ -80,10 +76,7 @@ export class CompanyController {
         email: parsed.data.email,
         location: parsed.data.location,
       };
-      const profile = await this._createCompanyProfileUseCase.execute(
-        userId,
-        profileData,
-      );
+      const profile = await this._createCompanyProfileUseCase.execute(userId, profileData);
 
       sendSuccessResponse(res, 'Company profile created successfully', profile, undefined, 201);
     } catch (error) {
@@ -91,22 +84,21 @@ export class CompanyController {
     }
   };
 
-  updateCompanyProfile = async (
-    req: AuthenticatedRequest,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> => {
+  updateCompanyProfile = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
     const parsed = SimpleUpdateCompanyProfileDto.safeParse(req.body);
     if (!parsed.success) {
       console.error('Company profile update validation failed:', {
         body: req.body,
-        errors: parsed.error.errors.map(err => ({
+        errors: parsed.error.errors.map((err) => ({
           path: err.path,
           message: err.message,
           code: err.code,
         })),
       });
-      return handleValidationError(`Invalid company profile data: ${parsed.error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join(', ')}`, next);
+      return handleValidationError(
+        `Invalid company profile data: ${parsed.error.errors.map((e) => `${e.path.join('.')}: ${e.message}`).join(', ')}`,
+        next
+      );
     }
 
     try {
@@ -114,27 +106,19 @@ export class CompanyController {
       const updateData = {
         profile: parsed.data,
       };
-      const companyProfile = await this._updateCompanyProfileUseCase.execute(
-        userId,
-        updateData,
-      );
-      
+      const companyProfile = await this._updateCompanyProfileUseCase.execute(userId, updateData);
+
       sendSuccessResponse(res, 'Company profile updated successfully', companyProfile, undefined, 200);
     } catch (error) {
       handleAsyncError(error, next);
     }
   };
 
-
-  getCompanyProfile = async (
-    req: AuthenticatedRequest,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> => {
+  getCompanyProfile = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = validateUserId(req);
       const companyProfile = await this._getCompanyProfileUseCase.execute(userId);
-      
+
       if (!companyProfile) {
         return sendNotFoundResponse(res, 'Company profile not found');
       }
@@ -150,9 +134,9 @@ export class CompanyController {
         location: undefined,
         search: undefined,
       };
-      
+
       const jobPostings = await this._getCompanyJobPostingsUseCase.execute(userId, jobPostingsQuery);
-      
+
       const responseData = CompanyProfileMapper.toDetailedDto({
         ...companyProfile,
         jobPostings: jobPostings.jobs,
@@ -163,11 +147,7 @@ export class CompanyController {
     }
   };
 
-  getCompanyProfileById = async (
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> => {
+  getCompanyProfileById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { profileId } = req.params;
       if (!profileId) {
@@ -179,11 +159,7 @@ export class CompanyController {
     }
   };
 
-  getCompanyDashboard = async (
-    req: AuthenticatedRequest,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> => {
+  getCompanyDashboard = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = validateUserId(req);
       const companyProfile = await this._getCompanyProfileUseCase.execute(userId);
@@ -200,43 +176,28 @@ export class CompanyController {
     }
   };
 
-  reapplyVerification = async (
-    req: AuthenticatedRequest,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> => {
+  reapplyVerification = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = validateUserId(req);
-      
+
       const parsed = SimpleCompanyProfileDto.safeParse(req.body);
       if (!parsed.success) {
         return handleValidationError('Invalid profile data', next);
       }
-  
+
       const verificationData = {
         taxId: parsed.data.tax_id,
         businessLicenseUrl: parsed.data.business_license,
       };
-      const updatedProfile = await this._reapplyCompanyVerificationUseCase.execute(
-        userId,
-        verificationData,
-      );
-      
-      sendSuccessResponse(
-        res, 
-        'Verification reapplication submitted successfully. Your application is now under review.',
-        updatedProfile,
-      );
+      const updatedProfile = await this._reapplyCompanyVerificationUseCase.execute(userId, verificationData);
+
+      sendSuccessResponse(res, 'Verification reapplication submitted successfully. Your application is now under review.', updatedProfile);
     } catch (error) {
       handleAsyncError(error, next);
     }
   };
 
-  uploadLogo = async (
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> => {
+  uploadLogo = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const result = await UploadService.handleFileUpload(req, this._s3Service, 'logo');
       sendSuccessResponse(res, 'Logo uploaded successfully', result);
@@ -245,11 +206,7 @@ export class CompanyController {
     }
   };
 
-  uploadBusinessLicense = async (
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> => {
+  uploadBusinessLicense = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const result = await UploadService.handleFileUpload(req, this._s3Service, 'business_license');
       sendSuccessResponse(res, 'Business license uploaded successfully', result);
@@ -258,11 +215,7 @@ export class CompanyController {
     }
   };
 
-  deleteImage = async (
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> => {
+  deleteImage = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { imageUrl } = req.body;
       await UploadService.handleFileDeletion(imageUrl, this._s3Service);
@@ -272,18 +225,14 @@ export class CompanyController {
     }
   };
 
-  getCompanyContact = async (
-    req: AuthenticatedRequest,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> => {
+  getCompanyContact = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = validateUserId(req);
       const companyProfile = await this._getCompanyProfileUseCase.execute(userId);
       if (!companyProfile) {
         return sendNotFoundResponse(res, 'Company profile not found');
       }
-      
+
       const contact = await this._companyContactUseCase.getContactsByCompanyId(companyProfile.profile.id);
       sendSuccessResponse(res, 'Company contact retrieved successfully', contact);
     } catch (error) {
@@ -291,25 +240,21 @@ export class CompanyController {
     }
   };
 
-  updateCompanyContact = async (
-    req: AuthenticatedRequest,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> => {
+  updateCompanyContact = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = validateUserId(req);
       const companyProfile = await this._getCompanyProfileUseCase.execute(userId);
       if (!companyProfile) {
         return sendNotFoundResponse(res, 'Company profile not found');
       }
-      
+
       const parsed = UpdateCompanyContactDto.safeParse(req.body);
       if (!parsed.success) {
-        return handleValidationError(`Invalid contact data: ${parsed.error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join(', ')}`, next);
+        return handleValidationError(`Invalid contact data: ${parsed.error.errors.map((e) => `${e.path.join('.')}: ${e.message}`).join(', ')}`, next);
       }
-      
+
       const existingContacts = await this._companyContactUseCase.getContactsByCompanyId(companyProfile.profile.id);
-      
+
       if (existingContacts.length > 0) {
         const contact = await this._companyContactUseCase.updateContact(existingContacts[0].id, parsed.data);
         sendSuccessResponse(res, 'Company contact updated successfully', contact);
@@ -322,18 +267,14 @@ export class CompanyController {
     }
   };
 
-  getCompanyTechStacks = async (
-    req: AuthenticatedRequest,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> => {
+  getCompanyTechStacks = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = validateUserId(req);
       const companyProfile = await this._getCompanyProfileUseCase.execute(userId);
       if (!companyProfile) {
         return sendNotFoundResponse(res, 'Company profile not found');
       }
-      
+
       const techStacks = await this._companyTechStackUseCase.getTechStackByCompanyId(companyProfile.profile.id);
       sendSuccessResponse(res, 'Company tech stacks retrieved successfully', techStacks);
     } catch (error) {
@@ -341,18 +282,14 @@ export class CompanyController {
     }
   };
 
-  createCompanyTechStack = async (
-    req: AuthenticatedRequest,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> => {
+  createCompanyTechStack = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = validateUserId(req);
       const companyProfile = await this._getCompanyProfileUseCase.execute(userId);
       if (!companyProfile) {
         return sendNotFoundResponse(res, 'Company profile not found');
       }
-      
+
       const techStack = await this._companyTechStackUseCase.createTechStack(companyProfile.profile.id, req.body);
       sendSuccessResponse(res, 'Tech stack created successfully', techStack, undefined, 201);
     } catch (error) {
@@ -360,11 +297,7 @@ export class CompanyController {
     }
   };
 
-  updateCompanyTechStack = async (
-    req: AuthenticatedRequest,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> => {
+  updateCompanyTechStack = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = validateUserId(req);
       const companyProfile = await this._getCompanyProfileUseCase.execute(userId);
@@ -373,12 +306,12 @@ export class CompanyController {
       }
 
       const { id } = req.params;
-      
+
       const existingTechStack = await this._companyTechStackUseCase.getTechStackById(id);
       if (!existingTechStack || existingTechStack.companyId !== companyProfile.profile.id) {
         return sendNotFoundResponse(res, 'Tech stack not found');
       }
-      
+
       const techStack = await this._companyTechStackUseCase.updateTechStack(id, req.body);
       sendSuccessResponse(res, 'Tech stack updated successfully', techStack);
     } catch (error) {
@@ -386,11 +319,7 @@ export class CompanyController {
     }
   };
 
-  deleteCompanyTechStack = async (
-    req: AuthenticatedRequest,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> => {
+  deleteCompanyTechStack = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = validateUserId(req);
       const companyProfile = await this._getCompanyProfileUseCase.execute(userId);
@@ -399,12 +328,12 @@ export class CompanyController {
       }
 
       const { id } = req.params;
-      
+
       const existingTechStack = await this._companyTechStackUseCase.getTechStackById(id);
       if (!existingTechStack || existingTechStack.companyId !== companyProfile.profile.id) {
         return sendNotFoundResponse(res, 'Tech stack not found');
       }
-      
+
       await this._companyTechStackUseCase.deleteTechStack(id);
       sendSuccessResponse(res, 'Tech stack deleted successfully', null);
     } catch (error) {
@@ -412,18 +341,14 @@ export class CompanyController {
     }
   };
 
-  getCompanyOfficeLocations = async (
-    req: AuthenticatedRequest,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> => {
+  getCompanyOfficeLocations = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = validateUserId(req);
       const companyProfile = await this._getCompanyProfileUseCase.execute(userId);
       if (!companyProfile) {
         return sendNotFoundResponse(res, 'Company profile not found');
       }
-      
+
       const locations = await this._companyOfficeLocationUseCase.getOfficeLocationsByCompanyId(companyProfile.profile.id);
       sendSuccessResponse(res, 'Company office locations retrieved successfully', locations);
     } catch (error) {
@@ -431,18 +356,14 @@ export class CompanyController {
     }
   };
 
-  createCompanyOfficeLocation = async (
-    req: AuthenticatedRequest,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> => {
+  createCompanyOfficeLocation = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = validateUserId(req);
       const companyProfile = await this._getCompanyProfileUseCase.execute(userId);
       if (!companyProfile) {
         return sendNotFoundResponse(res, 'Company profile not found');
       }
-      
+
       const location = await this._companyOfficeLocationUseCase.createOfficeLocation(companyProfile.profile.id, req.body);
       sendSuccessResponse(res, 'Office location created successfully', location, undefined, 201);
     } catch (error) {
@@ -450,11 +371,7 @@ export class CompanyController {
     }
   };
 
-  updateCompanyOfficeLocation = async (
-    req: AuthenticatedRequest,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> => {
+  updateCompanyOfficeLocation = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = validateUserId(req);
       const companyProfile = await this._getCompanyProfileUseCase.execute(userId);
@@ -463,12 +380,12 @@ export class CompanyController {
       }
 
       const { id } = req.params;
-      
+
       const existingLocation = await this._companyOfficeLocationUseCase.getOfficeLocationById(id);
       if (!existingLocation || existingLocation.companyId !== companyProfile.profile.id) {
         return sendNotFoundResponse(res, 'Office location not found');
       }
-      
+
       const location = await this._companyOfficeLocationUseCase.updateOfficeLocation(id, req.body);
       sendSuccessResponse(res, 'Office location updated successfully', location);
     } catch (error) {
@@ -476,11 +393,7 @@ export class CompanyController {
     }
   };
 
-  deleteCompanyOfficeLocation = async (
-    req: AuthenticatedRequest,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> => {
+  deleteCompanyOfficeLocation = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = validateUserId(req);
       const companyProfile = await this._getCompanyProfileUseCase.execute(userId);
@@ -489,12 +402,12 @@ export class CompanyController {
       }
 
       const { id } = req.params;
-      
+
       const existingLocation = await this._companyOfficeLocationUseCase.getOfficeLocationById(id);
       if (!existingLocation || existingLocation.companyId !== companyProfile.profile.id) {
         return sendNotFoundResponse(res, 'Office location not found');
       }
-      
+
       await this._companyOfficeLocationUseCase.deleteOfficeLocation(id);
       sendSuccessResponse(res, 'Office location deleted successfully', null);
     } catch (error) {
@@ -502,18 +415,14 @@ export class CompanyController {
     }
   };
 
-  getCompanyBenefits = async (
-    req: AuthenticatedRequest,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> => {
+  getCompanyBenefits = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = validateUserId(req);
       const companyProfile = await this._getCompanyProfileUseCase.execute(userId);
       if (!companyProfile) {
         return sendNotFoundResponse(res, 'Company profile not found');
       }
-      
+
       const benefits = await this._companyBenefitsUseCase.getBenefitsByCompanyId(companyProfile.profile.id);
       sendSuccessResponse(res, 'Company benefits retrieved successfully', benefits);
     } catch (error) {
@@ -521,18 +430,14 @@ export class CompanyController {
     }
   };
 
-  createCompanyBenefit = async (
-    req: AuthenticatedRequest,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> => {
+  createCompanyBenefit = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = validateUserId(req);
       const companyProfile = await this._getCompanyProfileUseCase.execute(userId);
       if (!companyProfile) {
         return sendNotFoundResponse(res, 'Company profile not found');
       }
-      
+
       const benefit = await this._companyBenefitsUseCase.createBenefit(companyProfile.profile.id, req.body);
       sendSuccessResponse(res, 'Benefit created successfully', benefit, undefined, 201);
     } catch (error) {
@@ -540,11 +445,7 @@ export class CompanyController {
     }
   };
 
-  updateCompanyBenefit = async (
-    req: AuthenticatedRequest,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> => {
+  updateCompanyBenefit = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = validateUserId(req);
       const companyProfile = await this._getCompanyProfileUseCase.execute(userId);
@@ -553,12 +454,12 @@ export class CompanyController {
       }
 
       const { id } = req.params;
-      
+
       const existingBenefit = await this._companyBenefitsUseCase.getBenefitById(id);
       if (!existingBenefit || existingBenefit.companyId !== companyProfile.profile.id) {
         return sendNotFoundResponse(res, 'Benefit not found');
       }
-      
+
       const benefit = await this._companyBenefitsUseCase.updateBenefit(id, req.body);
       sendSuccessResponse(res, 'Benefit updated successfully', benefit);
     } catch (error) {
@@ -566,11 +467,7 @@ export class CompanyController {
     }
   };
 
-  deleteCompanyBenefit = async (
-    req: AuthenticatedRequest,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> => {
+  deleteCompanyBenefit = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = validateUserId(req);
       const companyProfile = await this._getCompanyProfileUseCase.execute(userId);
@@ -579,12 +476,12 @@ export class CompanyController {
       }
 
       const { id } = req.params;
-      
+
       const existingBenefit = await this._companyBenefitsUseCase.getBenefitById(id);
       if (!existingBenefit || existingBenefit.companyId !== companyProfile.profile.id) {
         return sendNotFoundResponse(res, 'Benefit not found');
       }
-      
+
       await this._companyBenefitsUseCase.deleteBenefit(id);
       sendSuccessResponse(res, 'Benefit deleted successfully', null);
     } catch (error) {
@@ -592,18 +489,14 @@ export class CompanyController {
     }
   };
 
-  getCompanyWorkplacePictures = async (
-    req: AuthenticatedRequest,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> => {
+  getCompanyWorkplacePictures = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = validateUserId(req);
       const companyProfile = await this._getCompanyProfileUseCase.execute(userId);
       if (!companyProfile) {
         return sendNotFoundResponse(res, 'Company profile not found');
       }
-      
+
       const pictures = await this._companyWorkplacePicturesUseCase.getPicturesByCompanyId(companyProfile.profile.id);
       sendSuccessResponse(res, 'Company workplace pictures retrieved successfully', pictures);
     } catch (error) {
@@ -611,18 +504,14 @@ export class CompanyController {
     }
   };
 
-  createCompanyWorkplacePicture = async (
-    req: AuthenticatedRequest,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> => {
+  createCompanyWorkplacePicture = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = validateUserId(req);
       const companyProfile = await this._getCompanyProfileUseCase.execute(userId);
       if (!companyProfile) {
         return sendNotFoundResponse(res, 'Company profile not found');
       }
-      
+
       const picture = await this._companyWorkplacePicturesUseCase.createPicture(companyProfile.profile.id, req.body);
       sendSuccessResponse(res, 'Workplace picture created successfully', picture, undefined, 201);
     } catch (error) {
@@ -630,11 +519,7 @@ export class CompanyController {
     }
   };
 
-  updateCompanyWorkplacePicture = async (
-    req: AuthenticatedRequest,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> => {
+  updateCompanyWorkplacePicture = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = validateUserId(req);
       const companyProfile = await this._getCompanyProfileUseCase.execute(userId);
@@ -643,12 +528,12 @@ export class CompanyController {
       }
 
       const { id } = req.params;
-      
+
       const existingPicture = await this._companyWorkplacePicturesUseCase.getPictureById(id);
       if (!existingPicture || existingPicture.companyId !== companyProfile.profile.id) {
         return sendNotFoundResponse(res, 'Workplace picture not found');
       }
-      
+
       const picture = await this._companyWorkplacePicturesUseCase.updatePicture(id, req.body);
       sendSuccessResponse(res, 'Workplace picture updated successfully', picture);
     } catch (error) {
@@ -656,11 +541,7 @@ export class CompanyController {
     }
   };
 
-  deleteCompanyWorkplacePicture = async (
-    req: AuthenticatedRequest,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> => {
+  deleteCompanyWorkplacePicture = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = validateUserId(req);
       const companyProfile = await this._getCompanyProfileUseCase.execute(userId);
@@ -669,12 +550,12 @@ export class CompanyController {
       }
 
       const { id } = req.params;
-      
+
       const picture = await this._companyWorkplacePicturesUseCase.getPictureById(id);
       if (!picture || picture.companyId !== companyProfile.profile.id) {
         return sendNotFoundResponse(res, 'Workplace picture not found');
       }
-      
+
       await this._companyWorkplacePicturesUseCase.deletePicture(id);
       sendSuccessResponse(res, 'Workplace picture deleted successfully', null);
     } catch (error) {
@@ -682,21 +563,13 @@ export class CompanyController {
     }
   };
 
-  uploadWorkplacePicture = async (
-    req: AuthenticatedRequest,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> => {
+  uploadWorkplacePicture = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       if (!req.file) {
         return badRequest(res, 'No image file provided');
       }
 
-      const imageUrl = await this._s3Service.uploadImage(
-        req.file.buffer,
-        req.file.originalname,
-        req.file.mimetype,
-      );
+      const imageUrl = await this._s3Service.uploadImage(req.file.buffer, req.file.originalname, req.file.mimetype);
 
       sendSuccessResponse(res, 'Image uploaded successfully', { url: imageUrl });
     } catch (error) {
