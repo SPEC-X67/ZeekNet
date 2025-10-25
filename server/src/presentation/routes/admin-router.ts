@@ -8,10 +8,10 @@ export class AdminRouter {
 
   constructor() {
     this.router = Router();
-    this.initializeRoutes();
+    this._initializeRoutes();
   }
 
-  private initializeRoutes(): void {
+  private _initializeRoutes(): void {
     this.router.use(authenticateToken);
     this.router.use(requireAdmin);
 

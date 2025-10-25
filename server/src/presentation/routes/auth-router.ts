@@ -9,10 +9,10 @@ export class AuthRouter {
 
   constructor() {
     this.router = Router();
-    this.initializeRoutes();
+    this._initializeRoutes();
   }
 
-  private initializeRoutes(): void {
+  private _initializeRoutes(): void {
     this.router.post('/register', validateBody(RegisterDto), registrationController.register);
 
     this.router.post('/login', loginController.login);

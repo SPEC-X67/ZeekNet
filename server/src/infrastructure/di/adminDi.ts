@@ -60,22 +60,8 @@ const adminDeleteJobUseCase = new AdminDeleteJobUseCase(jobPostingRepository);
 
 const adminGetJobStatsUseCase = new AdminGetJobStatsUseCase(jobPostingRepository);
 
-const adminController = new AdminController(
-  getAllUsersUseCase,
-  blockUserUseCase,
-  adminGetUserByIdUseCase,
-  getAllCompaniesUseCase,
-  getCompaniesWithVerificationUseCase,
-  verifyCompanyUseCase,
-  blockCompanyUseCase
-);
+const adminController = new AdminController(getAllUsersUseCase, blockUserUseCase, adminGetUserByIdUseCase, getAllCompaniesUseCase, getCompaniesWithVerificationUseCase, verifyCompanyUseCase, blockCompanyUseCase);
 
-const adminJobController = new AdminJobController(
-  adminGetAllJobsUseCase,
-  adminGetJobByIdUseCase,
-  adminUpdateJobStatusUseCase,
-  adminDeleteJobUseCase,
-  adminGetJobStatsUseCase
-);
+const adminJobController = new AdminJobController(adminGetAllJobsUseCase, adminGetJobByIdUseCase, adminUpdateJobStatusUseCase, adminDeleteJobUseCase, adminGetJobStatsUseCase);
 
 export { adminController, adminJobController };

@@ -2,16 +2,7 @@ import { SimpleCompanyProfileRequestDto } from '../dto/company/create-company.dt
 import { CompanyProfile } from '../../domain/entities/company-profile.entity';
 import { CompanyContact, CompanyTechStack, CompanyOfficeLocation, CompanyBenefits, CompanyWorkplacePictures } from '../../domain/entities';
 import { JobPosting } from '../../domain/entities/job-posting.entity';
-import {
-  CompanyProfileData,
-  CompanyContactData,
-  CompanyLocationData,
-  CompanyVerificationData,
-  CompanyProfileResponseDto,
-  CompanyContactResponseDto,
-  CompanyLocationResponseDto,
-  CompanyProfileWithDetailsResponseDto,
-} from './types';
+import { CompanyProfileData, CompanyContactData, CompanyLocationData, CompanyVerificationData, CompanyProfileResponseDto, CompanyContactResponseDto, CompanyLocationResponseDto, CompanyProfileWithDetailsResponseDto } from './types';
 
 interface CompanyProfileWithDetails {
   profile: CompanyProfile;

@@ -1,7 +1,1 @@
-export {
-  IJobPostingRepository,
-  IJobPostingSearchRepository,
-  IJobPostingAnalyticsRepository,
-  IJobPostingManagementRepository,
-  JobPostingDetailResponseDto,
-} from './IJobPostingRepository';
+export { IJobPostingRepository, IJobPostingSearchRepository, IJobPostingAnalyticsRepository, IJobPostingManagementRepository, JobPostingDetailResponseDto } from './IJobPostingRepository';

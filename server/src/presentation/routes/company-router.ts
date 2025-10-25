@@ -13,10 +13,10 @@ export class CompanyRouter {
 
   constructor() {
     this.router = Router();
-    this.initializeRoute();
+    this._initializeRoute();
   }
 
-  private initializeRoute(): void {
+  private _initializeRoute(): void {
     const { companyRepository } = require('../../infrastructure/di/companyDi');
     const { userRepository } = require('../../infrastructure/di/authDi');
 

@@ -11,11 +11,7 @@ export class UploadService {
     return SingleFileUploadService.handleFileUpload(req, s3Service, fieldName);
   }
 
-  static async handleMultipleFileUpload(
-    req: Request,
-    s3Service: IS3Service,
-    fieldName: string = 'files'
-  ): Promise<Array<{ url: string; filename: string }>> {
+  static async handleMultipleFileUpload(req: Request, s3Service: IS3Service, fieldName: string = 'files'): Promise<Array<{ url: string; filename: string }>> {
     return MultipleFileUploadService.handleMultipleFileUpload(req, s3Service, fieldName);
   }
 

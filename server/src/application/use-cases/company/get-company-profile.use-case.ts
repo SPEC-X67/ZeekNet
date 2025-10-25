@@ -1,19 +1,5 @@
-import {
-  ICompanyProfileRepository,
-  ICompanyContactRepository,
-  ICompanyTechStackRepository,
-  ICompanyOfficeLocationRepository,
-  ICompanyBenefitsRepository,
-  ICompanyWorkplacePicturesRepository,
-} from '../../../domain/interfaces/repositories';
-import {
-  CompanyProfile,
-  CompanyContact,
-  CompanyTechStack,
-  CompanyOfficeLocation,
-  CompanyBenefits,
-  CompanyWorkplacePictures,
-} from '../../../domain/entities';
+import { ICompanyProfileRepository, ICompanyContactRepository, ICompanyTechStackRepository, ICompanyOfficeLocationRepository, ICompanyBenefitsRepository, ICompanyWorkplacePicturesRepository } from '../../../domain/interfaces/repositories';
+import { CompanyProfile, CompanyContact, CompanyTechStack, CompanyOfficeLocation, CompanyBenefits, CompanyWorkplacePictures } from '../../../domain/entities';
 
 interface CompanyProfileWithDetails {
   profile: CompanyProfile;

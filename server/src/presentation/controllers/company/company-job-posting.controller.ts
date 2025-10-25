@@ -1,31 +1,8 @@
 import { Request, Response } from 'express';
 import { AuthenticatedRequest } from '../../../shared/types';
-import {
-  handleValidationError,
-  handleAsyncError,
-  sendSuccessResponse,
-  sendNotFoundResponse,
-  badRequest,
-  validateUserId,
-  success,
-  created,
-  unauthorized,
-  handleError,
-} from '../../../shared/utils';
-import {
-  ICreateJobPostingUseCase,
-  IGetJobPostingUseCase,
-  IGetCompanyJobPostingsUseCase,
-  IUpdateJobPostingUseCase,
-  IDeleteJobPostingUseCase,
-  IIncrementJobViewCountUseCase,
-  IUpdateJobStatusUseCase,
-} from '../../../domain/interfaces/use-cases';
-import {
-  CreateJobPostingRequestDto,
-  UpdateJobPostingRequestDto,
-  JobPostingQueryRequestDto,
-} from '../../../application/dto/job-posting/job-posting.dto';
+import { handleValidationError, handleAsyncError, sendSuccessResponse, sendNotFoundResponse, badRequest, validateUserId, success, created, unauthorized, handleError } from '../../../shared/utils';
+import { ICreateJobPostingUseCase, IGetJobPostingUseCase, IGetCompanyJobPostingsUseCase, IUpdateJobPostingUseCase, IDeleteJobPostingUseCase, IIncrementJobViewCountUseCase, IUpdateJobStatusUseCase } from '../../../domain/interfaces/use-cases';
+import { CreateJobPostingRequestDto, UpdateJobPostingRequestDto, JobPostingQueryRequestDto } from '../../../application/dto/job-posting/job-posting.dto';
 import { ICompanyProfileRepository } from 'src/domain/interfaces';
 
 export class CompanyJobPostingController {
@@ -91,9 +68,7 @@ export class CompanyJobPostingController {
         limit: parseInt(req.query.limit as string) || 10,
         is_active: req.query.is_active !== undefined ? req.query.is_active === 'true' : undefined,
         category_ids: req.query.category_ids ? (req.query.category_ids as string).split(',') : undefined,
-        employment_types: req.query.employment_types
-          ? ((req.query.employment_types as string).split(',') as ('full-time' | 'part-time' | 'contract' | 'internship' | 'remote')[])
-          : undefined,
+        employment_types: req.query.employment_types ? ((req.query.employment_types as string).split(',') as ('full-time' | 'part-time' | 'contract' | 'internship' | 'remote')[]) : undefined,
         salary_min: req.query.salary_min ? parseInt(req.query.salary_min as string) : undefined,
         salary_max: req.query.salary_max ? parseInt(req.query.salary_max as string) : undefined,
         location: req.query.location as string,

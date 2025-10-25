@@ -64,15 +64,7 @@ export class UserRepository implements IUserRepository, IUserAuthRepository, IUs
     await this.model.findByIdAndUpdate(id, { password: hashedPassword }).exec();
   }
 
-  async findAllUsers(options: {
-    page?: number;
-    limit?: number;
-    search?: string;
-    role?: UserRole;
-    isBlocked?: boolean;
-    sortBy?: string;
-    sortOrder?: 'asc' | 'desc';
-  }): Promise<{ users: User[]; total: number }> {
+  async findAllUsers(options: { page?: number; limit?: number; search?: string; role?: UserRole; isBlocked?: boolean; sortBy?: string; sortOrder?: 'asc' | 'desc' }): Promise<{ users: User[]; total: number }> {
     const query: Record<string, unknown> = {};
 
     if (options.search) {
@@ -98,10 +90,7 @@ export class UserRepository implements IUserRepository, IUserAuthRepository, IUs
       sort.createdAt = -1;
     }
 
-    const [documents, total] = await Promise.all([
-      this.model.find(query).sort(sort).skip(skip).limit(limit).exec(),
-      this.model.countDocuments(query).exec(),
-    ]);
+    const [documents, total] = await Promise.all([this.model.find(query).sort(sort).skip(skip).limit(limit).exec(), this.model.countDocuments(query).exec()]);
 
     return {
       users: documents.map((doc) => this.mapToEntity(doc)),
@@ -138,12 +127,7 @@ export class UserRepository implements IUserRepository, IUserAuthRepository, IUs
     blockedUsers: number;
     usersByRole: Record<string, number>;
   }> {
-    const [totalUsers, verifiedUsers, blockedUsers, usersByRole] = await Promise.all([
-      this.model.countDocuments(),
-      this.model.countDocuments({ isVerified: true }),
-      this.model.countDocuments({ isBlocked: true }),
-      this.model.aggregate([{ $group: { _id: '$role', count: { $sum: 1 } } }]),
-    ]);
+    const [totalUsers, verifiedUsers, blockedUsers, usersByRole] = await Promise.all([this.model.countDocuments(), this.model.countDocuments({ isVerified: true }), this.model.countDocuments({ isBlocked: true }), this.model.aggregate([{ $group: { _id: '$role', count: { $sum: 1 } } }])]);
 
     const roleStats: Record<string, number> = {};
     usersByRole.forEach((stat: { _id: string; count: number }) => {
@@ -163,14 +147,7 @@ export class UserRepository implements IUserRepository, IUserAuthRepository, IUs
     return document ? this.mapToEntity(document) : null;
   }
 
-  async getAllUsers(options: {
-    page: number;
-    limit: number;
-    search?: string;
-    role?: UserRole;
-    isVerified?: boolean;
-    isBlocked?: boolean;
-  }): Promise<{ users: User[]; total: number }> {
+  async getAllUsers(options: { page: number; limit: number; search?: string; role?: UserRole; isVerified?: boolean; isBlocked?: boolean }): Promise<{ users: User[]; total: number }> {
     return this.findAllUsers({
       ...options,
       sortBy: 'createdAt',

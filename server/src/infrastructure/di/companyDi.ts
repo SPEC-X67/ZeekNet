@@ -39,23 +39,11 @@ const jobPostingRepository = new JobPostingRepository();
 
 const s3Service = new S3Service();
 
-const createCompanyProfileUseCase = new CreateCompanyProfileUseCase(
-  companyProfileRepository,
-  companyContactRepository,
-  companyOfficeLocationRepository,
-  companyVerificationRepository
-);
+const createCompanyProfileUseCase = new CreateCompanyProfileUseCase(companyProfileRepository, companyContactRepository, companyOfficeLocationRepository, companyVerificationRepository);
 
 const updateCompanyProfileUseCase = new UpdateCompanyProfileUseCase(companyProfileRepository);
 
-const getCompanyProfileUseCase = new GetCompanyProfileUseCase(
-  companyProfileRepository,
-  companyContactRepository,
-  companyTechStackRepository,
-  companyOfficeLocationRepository,
-  companyBenefitsRepository,
-  companyWorkplacePicturesRepository
-);
+const getCompanyProfileUseCase = new GetCompanyProfileUseCase(companyProfileRepository, companyContactRepository, companyTechStackRepository, companyOfficeLocationRepository, companyBenefitsRepository, companyWorkplacePicturesRepository);
 
 const reapplyCompanyVerificationUseCase = new ReapplyCompanyVerificationUseCase(companyProfileRepository, companyVerificationRepository);
 
@@ -97,22 +85,6 @@ const companyController = new CompanyController(
   getCompanyJobPostingsUseCase
 );
 
-const companyJobPostingController = new CompanyJobPostingController(
-  createJobPostingUseCase,
-  getJobPostingUseCase,
-  getCompanyJobPostingsUseCase,
-  updateJobPostingUseCase,
-  deleteJobPostingUseCase,
-  incrementJobViewCountUseCase,
-  updateJobStatusUseCase,
-  companyProfileRepository
-);
+const companyJobPostingController = new CompanyJobPostingController(createJobPostingUseCase, getJobPostingUseCase, getCompanyJobPostingsUseCase, updateJobPostingUseCase, deleteJobPostingUseCase, incrementJobViewCountUseCase, updateJobStatusUseCase, companyProfileRepository);
 
-export {
-  companyController,
-  companyJobPostingController,
-  companyProfileRepository,
-  companyProfileRepository as companyRepository,
-  companyListingRepository,
-  companyVerificationRepository,
-};
+export { companyController, companyJobPostingController, companyProfileRepository, companyProfileRepository as companyRepository, companyListingRepository, companyVerificationRepository };

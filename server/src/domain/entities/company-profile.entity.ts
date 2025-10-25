@@ -110,22 +110,8 @@ export class CompanyVerification {
     public readonly updatedAt: Date
   ) {}
 
-  static create(data: {
-    id: string;
-    companyId: string;
-    taxId?: string;
-    businessLicenseUrl?: string;
-    createdAt?: Date;
-    updatedAt?: Date;
-  }): CompanyVerification {
+  static create(data: { id: string; companyId: string; taxId?: string; businessLicenseUrl?: string; createdAt?: Date; updatedAt?: Date }): CompanyVerification {
     const now = new Date();
-    return new CompanyVerification(
-      data.id,
-      data.companyId,
-      data.taxId ?? '',
-      data.businessLicenseUrl ?? '',
-      data.createdAt ?? now,
-      data.updatedAt ?? now
-    );
+    return new CompanyVerification(data.id, data.companyId, data.taxId ?? '', data.businessLicenseUrl ?? '', data.createdAt ?? now, data.updatedAt ?? now);
   }
 }

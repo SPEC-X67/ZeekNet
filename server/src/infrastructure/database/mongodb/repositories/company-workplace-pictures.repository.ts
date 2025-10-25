@@ -5,10 +5,7 @@ import { Types } from 'mongoose';
 import { RepositoryBase } from '../../../../shared/base';
 import { CompanyWorkplacePicturesMapper } from '../mappers';
 
-export class CompanyWorkplacePicturesRepository
-  extends RepositoryBase<CompanyWorkplacePictures, CompanyWorkplacePicturesDocument>
-  implements ICompanyWorkplacePicturesRepository
-{
+export class CompanyWorkplacePicturesRepository extends RepositoryBase<CompanyWorkplacePictures, CompanyWorkplacePicturesDocument> implements ICompanyWorkplacePicturesRepository {
   constructor() {
     super(CompanyWorkplacePicturesModel);
   }

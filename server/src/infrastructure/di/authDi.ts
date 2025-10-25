@@ -47,15 +47,7 @@ const resetPasswordUseCase = new ResetPasswordUseCase(passwordHasher, passwordRe
 
 const verifyOtpUseCase = new VerifyOtpUseCase(otpService, userRepository, userRepository);
 
-const googleLoginUseCase = new GoogleLoginUseCase(
-  userRepository,
-  userRepository,
-  passwordHasher,
-  tokenService,
-  googleTokenVerifier,
-  otpService,
-  mailerService
-);
+const googleLoginUseCase = new GoogleLoginUseCase(userRepository, userRepository, passwordHasher, tokenService, googleTokenVerifier, otpService, mailerService);
 
 const refreshTokenUseCase = new RefreshTokenUseCase(userRepository, userRepository, companyProfileRepository, tokenService, passwordHasher);
 
@@ -73,27 +65,12 @@ const getCompanyProfileByUserIdUseCase = new GetCompanyProfileByUserIdUseCase(co
 
 export const registrationController = new RegistrationController(registerUserUseCase);
 
-export const loginController = new LoginController(
-  loginUserUseCase,
-  adminLoginUseCase,
-  googleLoginUseCase,
-  tokenService,
-  passwordHasher,
-  updateUserRefreshTokenUseCase
-);
+export const loginController = new LoginController(loginUserUseCase, adminLoginUseCase, googleLoginUseCase, tokenService, passwordHasher, updateUserRefreshTokenUseCase);
 
 export const tokenController = new TokenController(refreshTokenUseCase, getUserByIdUseCase, tokenService, getCompanyProfileByUserIdUseCase);
 
 export const passwordController = new PasswordController(forgotPasswordUseCase, resetPasswordUseCase, logoutUseCase);
 
-export const otpController = new OtpController(
-  otpService,
-  mailerService,
-  getUserByEmailUseCase,
-  updateUserVerificationStatusUseCase,
-  updateUserRefreshTokenUseCase,
-  tokenService,
-  passwordHasher
-);
+export const otpController = new OtpController(otpService, mailerService, getUserByEmailUseCase, updateUserVerificationStatusUseCase, updateUserRefreshTokenUseCase, tokenService, passwordHasher);
 
 export { userRepository };

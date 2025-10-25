@@ -1,9 +1,4 @@
-import {
-  ICompanyProfileRepository,
-  ICompanyContactRepository,
-  ICompanyVerificationRepository,
-  ICompanyOfficeLocationRepository,
-} from '../../../domain/interfaces/repositories';
+import { ICompanyProfileRepository, ICompanyContactRepository, ICompanyVerificationRepository, ICompanyOfficeLocationRepository } from '../../../domain/interfaces/repositories';
 import { ICreateCompanyProfileUseCase, CreateCompanyProfileData } from '../../../domain/interfaces/use-cases';
 import { CompanyProfile, CompanyContact, CompanyOfficeLocation } from '../../../domain/entities';
 

@@ -2,14 +2,8 @@ import { Request, Response, NextFunction } from 'express';
 import { LoginDto, GoogleLoginDto } from '../../../application/dto/auth';
 import { ILoginUserUseCase, IAdminLoginUseCase, IGoogleLoginUseCase, IUpdateUserRefreshTokenUseCase } from '../../../domain/interfaces/use-cases';
 import { ITokenService, IPasswordHasher } from '../../../domain/interfaces/services';
-import { AuthenticatedRequest } from '../../../shared/types';
-import {
-  createRefreshTokenCookieOptions,
-  handleValidationError,
-  handleAsyncError,
-  sanitizeUserForResponse,
-  sendSuccessResponse,
-} from '../../../shared/utils';
+import { createRefreshTokenCookieOptions, handleValidationError, handleAsyncError, sendSuccessResponse } from '../../../shared/utils';
+import { UserMapper } from '../../../application/mappers';
 import { env } from '../../../infrastructure/config/env';
 
 export class LoginController {
@@ -40,10 +34,10 @@ export class LoginController {
 
         res.cookie(env.COOKIE_NAME_REFRESH!, refreshToken, createRefreshTokenCookieOptions());
 
-        const userDetails = sanitizeUserForResponse(user);
+        const userDetails = UserMapper.toDto(user);
         sendSuccessResponse(res, 'Login successful', userDetails, accessToken);
       } else {
-        const userDetails = sanitizeUserForResponse(user);
+        const userDetails = UserMapper.toDto(user);
         sendSuccessResponse(res, 'Login successful, verification required', userDetails, undefined);
       }
     } catch (error) {
@@ -62,7 +56,7 @@ export class LoginController {
 
       res.cookie(env.COOKIE_NAME_REFRESH!, tokens.refreshToken, createRefreshTokenCookieOptions());
 
-      const userDetails = sanitizeUserForResponse(user);
+      const userDetails = UserMapper.toDto(user);
       sendSuccessResponse(res, 'Admin login successful', userDetails, tokens.accessToken);
     } catch (error) {
       handleAsyncError(error, next);
@@ -80,7 +74,7 @@ export class LoginController {
 
       res.cookie(env.COOKIE_NAME_REFRESH!, tokens.refreshToken, createRefreshTokenCookieOptions());
 
-      const userDetails = sanitizeUserForResponse(user);
+      const userDetails = UserMapper.toDto(user);
       sendSuccessResponse(res, 'Login successful', userDetails, tokens.accessToken);
     } catch (error) {
       handleAsyncError(error, next);

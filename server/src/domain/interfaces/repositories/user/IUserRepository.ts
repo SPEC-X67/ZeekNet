@@ -28,22 +28,9 @@ export interface IUserAuthRepository {
 }
 
 export interface IUserManagementRepository {
-  getAllUsers(options: {
-    page: number;
-    limit: number;
-    search?: string;
-    role?: UserRole;
-    isVerified?: boolean;
-    isBlocked?: boolean;
-  }): Promise<{ users: User[]; total: number }>;
+  getAllUsers(options: { page: number; limit: number; search?: string; role?: UserRole; isVerified?: boolean; isBlocked?: boolean }): Promise<{ users: User[]; total: number }>;
 
-  findAllUsers(options: {
-    page: number;
-    limit: number;
-    search?: string;
-    role?: UserRole;
-    isBlocked?: boolean;
-  }): Promise<{ users: User[]; total: number }>;
+  findAllUsers(options: { page: number; limit: number; search?: string; role?: UserRole; isBlocked?: boolean }): Promise<{ users: User[]; total: number }>;
 
   blockUser(userId: string, isBlocked: boolean): Promise<void>;
   updateUserBlockStatus(userId: string, isBlocked: boolean): Promise<void>;

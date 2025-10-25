@@ -6,10 +6,10 @@ export class PublicRouter {
 
   constructor() {
     this.router = Router();
-    this.initializeRoutes();
+    this._initializeRoutes();
   }
 
-  private initializeRoutes(): void {
+  private _initializeRoutes(): void {
     this.router.get('/jobs', publicJobController.getAllJobPostings);
     this.router.get('/jobs/:id', publicJobController.getJobPosting);
   }

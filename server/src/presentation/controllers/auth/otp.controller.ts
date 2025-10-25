@@ -3,14 +3,8 @@ import { IMailerService, IOtpService, IPasswordHasher, ITokenService } from '../
 import { IGetUserByEmailUseCase, IUpdateUserVerificationStatusUseCase, IUpdateUserRefreshTokenUseCase } from '../../../domain/interfaces/use-cases';
 import { z } from 'zod';
 import { env } from '../../../infrastructure/config/env';
-import {
-  createRefreshTokenCookieOptions,
-  handleValidationError,
-  handleAsyncError,
-  sendSuccessResponse,
-  sendErrorResponse,
-  sanitizeUserForResponse,
-} from '../../../shared/utils';
+import { createRefreshTokenCookieOptions, handleValidationError, handleAsyncError, sendSuccessResponse, sendErrorResponse } from '../../../shared/utils';
+import { UserMapper } from '../../../application/mappers';
 import { welcomeTemplate } from '../../../infrastructure/messaging/templates/welcome.template';
 
 const RequestOtpDto = z.object({ email: z.string().email() });
@@ -113,7 +107,7 @@ export class OtpController {
       const dashboardLink = this.getDashboardLink(user.role);
       await this._mailer.sendMail(user.email, welcomeTemplate.subject, welcomeTemplate.html(user.name || 'User', dashboardLink));
 
-      const userDetails = sanitizeUserForResponse(user);
+      const userDetails = UserMapper.toDto(user);
       sendSuccessResponse(res, 'OTP verified and user verified', userDetails, accessToken);
     } catch (err) {
       handleAsyncError(err, next);

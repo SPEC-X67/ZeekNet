@@ -1,14 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { GetAllUsersDto, BlockUserDto, GetAllCompaniesDto, CompanyVerificationDto } from '../../../application/dto/admin';
-import {
-  IGetAllUsersUseCase,
-  IBlockUserUseCase,
-  IAdminGetUserByIdUseCase,
-  IGetAllCompaniesUseCase,
-  IGetCompaniesWithVerificationUseCase,
-  IVerifyCompanyUseCase,
-  IBlockCompanyUseCase,
-} from '../../../domain/interfaces/use-cases';
+import { IGetAllUsersUseCase, IBlockUserUseCase, IAdminGetUserByIdUseCase, IGetAllCompaniesUseCase, IGetCompaniesWithVerificationUseCase, IVerifyCompanyUseCase, IBlockCompanyUseCase } from '../../../domain/interfaces/use-cases';
 import { handleValidationError, handleAsyncError, sendSuccessResponse, sendNotFoundResponse } from '../../../shared/utils';
 
 export class AdminController {

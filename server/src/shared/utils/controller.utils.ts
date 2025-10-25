@@ -1,6 +1,6 @@
 import { Response, NextFunction } from 'express';
 import { User } from '../../domain/entities/user.entity';
-import { createSuccessResponse, createErrorResponse, sanitizeUserForResponse, ErrorHandler } from './';
+import { createSuccessResponse, createErrorResponse, ErrorHandler } from './';
 import { AuthenticatedRequest } from '../types';
 
 export function extractUserId(req: AuthenticatedRequest): string | null {

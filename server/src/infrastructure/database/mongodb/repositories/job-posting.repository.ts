@@ -1,16 +1,5 @@
-import {
-  IJobPostingRepository,
-  IJobPostingSearchRepository,
-  IJobPostingAnalyticsRepository,
-  IJobPostingManagementRepository,
-} from '../../../../domain/interfaces/repositories';
-import {
-  JobPosting,
-  CreateJobPostingRequest,
-  UpdateJobPostingRequest,
-  JobPostingFilters,
-  PaginatedJobPostings,
-} from '../../../../domain/entities/job-posting.entity';
+import { IJobPostingRepository, IJobPostingSearchRepository, IJobPostingAnalyticsRepository, IJobPostingManagementRepository } from '../../../../domain/interfaces/repositories';
+import { JobPosting, CreateJobPostingRequest, UpdateJobPostingRequest, JobPostingFilters, PaginatedJobPostings } from '../../../../domain/entities/job-posting.entity';
 import { JobPostingModel, JobPostingDocument } from '../models/job-posting.model';
 import { Types } from 'mongoose';
 import { RepositoryBase } from '../../../../shared/base';
@@ -63,10 +52,7 @@ interface MongoUpdateData {
   category_ids?: string[];
 }
 
-export class JobPostingRepository
-  extends RepositoryBase<JobPosting, JobPostingDocument>
-  implements IJobPostingRepository, IJobPostingSearchRepository, IJobPostingAnalyticsRepository, IJobPostingManagementRepository
-{
+export class JobPostingRepository extends RepositoryBase<JobPosting, JobPostingDocument> implements IJobPostingRepository, IJobPostingSearchRepository, IJobPostingAnalyticsRepository, IJobPostingManagementRepository {
   constructor() {
     super(JobPostingModel);
   }
@@ -202,12 +188,7 @@ export class JobPostingRepository
     const skip = (page - 1) * limit;
 
     const [jobs, total] = await Promise.all([
-      JobPostingModel.find(query)
-        .select('_id title description location employment_types salary is_active application_count view_count createdAt updatedAt')
-        .populate('company_id', 'companyName logo')
-        .skip(skip)
-        .limit(limit)
-        .sort({ createdAt: -1 }),
+      JobPostingModel.find(query).select('_id title description location employment_types salary is_active application_count view_count createdAt updatedAt').populate('company_id', 'companyName logo').skip(skip).limit(limit).sort({ createdAt: -1 }),
       JobPostingModel.countDocuments(query),
     ]);
 
@@ -235,15 +216,7 @@ export class JobPostingRepository
     const limit = filters?.limit || 10;
     const skip = (page - 1) * limit;
 
-    const [jobs, total] = await Promise.all([
-      JobPostingModel.find(query)
-        .select('_id title company_id salary employment_types location category_ids createdAt')
-        .populate('company_id', 'companyName logo')
-        .skip(skip)
-        .limit(limit)
-        .sort({ createdAt: -1 }),
-      JobPostingModel.countDocuments(query),
-    ]);
+    const [jobs, total] = await Promise.all([JobPostingModel.find(query).select('_id title company_id salary employment_types location category_ids createdAt').populate('company_id', 'companyName logo').skip(skip).limit(limit).sort({ createdAt: -1 }), JobPostingModel.countDocuments(query)]);
 
     return {
       jobs: jobs.map((job) => this.mapToEntity(job)),
@@ -267,10 +240,7 @@ export class JobPostingRepository
     if (data.skills_required) updateData.skills_required = data.skills_required;
     if (data.category_ids) updateData.category_ids = data.category_ids;
 
-    const result = await JobPostingModel.findByIdAndUpdate(id, updateData, { new: true })
-      .populate('company_id', 'companyName logo')
-      .populate('skills_required', 'name')
-      .populate('category_ids', 'name');
+    const result = await JobPostingModel.findByIdAndUpdate(id, updateData, { new: true }).populate('company_id', 'companyName logo').populate('skills_required', 'name').populate('category_ids', 'name');
 
     return result ? this.mapToEntity(result) : null;
   }
@@ -405,11 +375,7 @@ export class JobPostingRepository
     }
 
     if (filters.search) {
-      query.$or = [
-        { title: { $regex: filters.search, $options: 'i' } },
-        { description: { $regex: filters.search, $options: 'i' } },
-        { location: { $regex: filters.search, $options: 'i' } },
-      ];
+      query.$or = [{ title: { $regex: filters.search, $options: 'i' } }, { description: { $regex: filters.search, $options: 'i' } }, { location: { $regex: filters.search, $options: 'i' } }];
     }
   }
 }

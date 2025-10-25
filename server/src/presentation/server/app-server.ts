@@ -101,9 +101,7 @@ export class AppServer {
       })
     );
 
-    this._app.get('/home', authenticateToken, userBlockedMiddleware.checkUserBlocked, (req, res) =>
-      res.json({ message: 'Welcome to ZeekNet Job Portal API' })
-    );
+    this._app.get('/home', authenticateToken, userBlockedMiddleware.checkUserBlocked, (req, res) => res.json({ message: 'Welcome to ZeekNet Job Portal API' }));
 
     this._app.use('/api/auth', new AuthRouter().router);
     this._app.use('/api/admin', new AdminRouter().router);

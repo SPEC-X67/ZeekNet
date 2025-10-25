@@ -30,9 +30,7 @@ export const CreateJobPostingDto = z.object({
   company_id: z.string().min(1, 'Company ID is required'),
   title: z.string().min(5, 'Title must be at least 5 characters').max(100, 'Title must not exceed 100 characters'),
   description: z.string().min(10, 'Description must be at least 10 characters').max(2000, 'Description must not exceed 2000 characters'),
-  responsibilities: z
-    .array(z.string().min(10, 'Each responsibility must be at least 10 characters'))
-    .min(1, 'At least one responsibility is required'),
+  responsibilities: z.array(z.string().min(10, 'Each responsibility must be at least 10 characters')).min(1, 'At least one responsibility is required'),
   qualifications: z.array(z.string().min(10, 'Each qualification must be at least 10 characters')).min(1, 'At least one qualification is required'),
   nice_to_haves: z.array(z.string()).default([]),
   benefits: z.array(z.string()).default([]),

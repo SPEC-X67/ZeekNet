@@ -27,10 +27,3 @@ export const createErrorResponse = <T>(message: string, data: T = null as T): Ap
   };
 };
 
-export const createValidationErrorResponse = (message: string): ApiResponse<null> => {
-  return createErrorResponse(message, null);
-};
-
-export const createNotFoundResponse = (message: string): ApiResponse<null> => {
-  return createErrorResponse(message, null);
-};

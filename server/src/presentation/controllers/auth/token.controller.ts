@@ -3,15 +3,8 @@ import { RefreshTokenDto } from '../../../application/dto/auth';
 import { IRefreshTokenUseCase, IAuthGetUserByIdUseCase, IGetCompanyProfileByUserIdUseCase } from '../../../domain/interfaces/use-cases';
 import { ITokenService } from '../../../domain/interfaces/services';
 import { AuthenticatedRequest } from '../../../shared/types';
-import {
-  createRefreshTokenCookieOptions,
-  handleValidationError,
-  handleAsyncError,
-  validateUserId,
-  sanitizeUserForResponse,
-  sendSuccessResponse,
-  sendErrorResponse,
-} from '../../../shared/utils';
+import { createRefreshTokenCookieOptions, handleValidationError, handleAsyncError, validateUserId, sendSuccessResponse, sendErrorResponse } from '../../../shared/utils';
+import { UserMapper } from '../../../application/mappers';
 import { env } from '../../../infrastructure/config/env';
 import { UserRole } from '../../../domain/enums/user-role.enum';
 
@@ -39,7 +32,7 @@ export class TokenController {
 
       res.cookie(env.COOKIE_NAME_REFRESH!, tokens.refreshToken, createRefreshTokenCookieOptions());
 
-      const userDetails = sanitizeUserForResponse(user);
+      const userDetails = UserMapper.toDto(user);
       sendSuccessResponse(res, 'Token refreshed', userDetails, tokens.accessToken);
     } catch (error) {
       handleAsyncError(error, next);
@@ -67,7 +60,7 @@ export class TokenController {
       }
 
       const accessToken = this._tokenService.signAccess({ sub: user.id, role: user.role });
-      const userDetails = sanitizeUserForResponse(user);
+      const userDetails = UserMapper.toDto(user);
 
       sendSuccessResponse(res, 'Authenticated', userDetails, accessToken);
     } catch (error) {

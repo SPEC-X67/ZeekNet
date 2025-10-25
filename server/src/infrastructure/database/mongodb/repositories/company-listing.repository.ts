@@ -26,11 +26,7 @@ export class CompanyListingRepository implements ICompanyListingRepository {
     const query: CompanyQuery = {};
 
     if (search) {
-      query.$or = [
-        { companyName: { $regex: search, $options: 'i' } },
-        { industry: { $regex: search, $options: 'i' } },
-        { organisation: { $regex: search, $options: 'i' } },
-      ];
+      query.$or = [{ companyName: { $regex: search, $options: 'i' } }, { industry: { $regex: search, $options: 'i' } }, { organisation: { $regex: search, $options: 'i' } }];
     }
 
     if (industry) {
@@ -75,12 +71,7 @@ export class CompanyListingRepository implements ICompanyListingRepository {
 
   async searchCompanies(query: string, limit: number = 10): Promise<CompanyProfile[]> {
     const docs = await CompanyProfileModel.find({
-      $or: [
-        { companyName: { $regex: query, $options: 'i' } },
-        { industry: { $regex: query, $options: 'i' } },
-        { organisation: { $regex: query, $options: 'i' } },
-        { aboutUs: { $regex: query, $options: 'i' } },
-      ],
+      $or: [{ companyName: { $regex: query, $options: 'i' } }, { industry: { $regex: query, $options: 'i' } }, { organisation: { $regex: query, $options: 'i' } }, { aboutUs: { $regex: query, $options: 'i' } }],
     })
       .limit(limit)
       .sort({ createdAt: -1 })

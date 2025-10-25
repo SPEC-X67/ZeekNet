@@ -4,11 +4,7 @@ import { IS3Service } from '../../domain/interfaces';
 import { FileValidationService } from './file-validation.service';
 
 export class MultipleFileUploadService {
-  static async handleMultipleFileUpload(
-    req: Request,
-    s3Service: IS3Service,
-    fieldName: string = 'files'
-  ): Promise<Array<{ url: string; filename: string }>> {
+  static async handleMultipleFileUpload(req: Request, s3Service: IS3Service, fieldName: string = 'files'): Promise<Array<{ url: string; filename: string }>> {
     const files = req.files as Express.Multer.File[];
 
     if (!files || files.length === 0) {

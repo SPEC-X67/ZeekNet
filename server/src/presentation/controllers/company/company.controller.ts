@@ -1,11 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { IS3Service } from '../../../domain/interfaces';
-import {
-  CreateCompanyProfileDto,
-  SimpleCompanyProfileDto,
-  SimpleUpdateCompanyProfileDto,
-  UpdateCompanyContactDto,
-} from '../../../application/dto/company';
+import { CreateCompanyProfileDto, SimpleCompanyProfileDto, SimpleUpdateCompanyProfileDto, UpdateCompanyContactDto } from '../../../application/dto/company';
 import {
   ICreateCompanyProfileUseCase,
   IUpdateCompanyProfileUseCase,
@@ -19,15 +14,7 @@ import {
   IGetCompanyJobPostingsUseCase,
 } from '../../../domain/interfaces/use-cases';
 import { AuthenticatedRequest } from '../../../shared/types';
-import {
-  handleValidationError,
-  handleAsyncError,
-  sendSuccessResponse,
-  sendNotFoundResponse,
-  sendErrorResponse,
-  badRequest,
-  validateUserId,
-} from '../../../shared/utils';
+import { handleValidationError, handleAsyncError, sendSuccessResponse, sendNotFoundResponse, sendErrorResponse, badRequest, validateUserId } from '../../../shared/utils';
 import { UploadService } from '../../../shared/services/upload.service';
 import { CompanyProfileMapper } from '../../../application/mappers';
 
@@ -95,10 +82,7 @@ export class CompanyController {
           code: err.code,
         })),
       });
-      return handleValidationError(
-        `Invalid company profile data: ${parsed.error.errors.map((e) => `${e.path.join('.')}: ${e.message}`).join(', ')}`,
-        next
-      );
+      return handleValidationError(`Invalid company profile data: ${parsed.error.errors.map((e) => `${e.path.join('.')}: ${e.message}`).join(', ')}`, next);
     }
 
     try {

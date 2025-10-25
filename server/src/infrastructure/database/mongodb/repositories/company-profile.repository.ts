@@ -4,19 +4,7 @@ import { CompanyProfileModel } from '../models/company-profile.model';
 import { CompanyProfileDocument, CompanyProfileMapper } from '../mappers';
 
 export class CompanyProfileRepository implements ICompanyProfileRepository {
-  async createProfile(profile: {
-    userId: string;
-    companyName: string;
-    logo: string;
-    banner: string;
-    websiteLink: string;
-    employeeCount: number;
-    industry: string;
-    organisation: string;
-    aboutUs: string;
-    isVerified: 'pending' | 'rejected' | 'verified';
-    isBlocked: boolean;
-  }): Promise<CompanyProfile> {
+  async createProfile(profile: { userId: string; companyName: string; logo: string; banner: string; websiteLink: string; employeeCount: number; industry: string; organisation: string; aboutUs: string; isVerified: 'pending' | 'rejected' | 'verified'; isBlocked: boolean }): Promise<CompanyProfile> {
     const created = await CompanyProfileModel.create(profile);
     return CompanyProfileMapper.toEntity(created as CompanyProfileDocument);
   }

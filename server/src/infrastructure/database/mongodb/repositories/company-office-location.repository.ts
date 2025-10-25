@@ -5,10 +5,7 @@ import { Types } from 'mongoose';
 import { RepositoryBase } from '../../../../shared/base';
 import { CompanyOfficeLocationMapper } from '../mappers';
 
-export class CompanyOfficeLocationRepository
-  extends RepositoryBase<CompanyOfficeLocation, CompanyOfficeLocationDocument>
-  implements ICompanyOfficeLocationRepository
-{
+export class CompanyOfficeLocationRepository extends RepositoryBase<CompanyOfficeLocation, CompanyOfficeLocationDocument> implements ICompanyOfficeLocationRepository {
   constructor() {
     super(CompanyOfficeLocationModel);
   }
