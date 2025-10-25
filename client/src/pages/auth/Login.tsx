@@ -122,7 +122,8 @@ const Login = () => {
         <div className="relative z-10 flex flex-col justify-center px-12 py-12">
           <div className="flex items-center space-x-3 mb-8">
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary shadow-lg">
-              <Briefcase className="h-7 w-7 text-primary-foreground" />
+              {/* <Briefcase className="h-7 w-7 text-primary-foreground" /> */}
+              <img src="/white.png" alt="ZeekNet Logo" className="h-8 w-8" />
             </div>
             <div>
               <h1 className="text-2xl font-bold text-foreground">ZeekNet</h1>
@@ -198,7 +199,8 @@ const Login = () => {
           <div className="lg:hidden text-center">
             <div className="flex items-center justify-center space-x-3 mb-6">
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
-                <Briefcase className="h-6 w-6 text-primary-foreground" />
+                {/* <Briefcase className="h-6 w-6 text-primary-foreground" /> */}
+                <img src="/white.png" alt="ZeekNet Logo" className="h-6 w-6" />
               </div>
               <div>
                 <h1 className="text-xl font-bold text-foreground">ZeekNet</h1>

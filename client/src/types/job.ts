@@ -1,6 +1,9 @@
 export interface JobPostingResponse {
-  id: string;
+  _id: string;
+  id?: string; // Alias for _id from backend
   company_id: string;
+  company_name?: string;
+  company_logo?: string;
   title: string;
   description: string;
   responsibilities: string[];
@@ -39,7 +42,7 @@ export interface JobPostingQuery {
   salary_max?: number;
   location?: string;
   search?: string;
-  is_active?: boolean; // For company API
+  is_active?: boolean;
 }
 
 export interface PaginatedJobPostings {

@@ -1,46 +1,32 @@
-import { GetAllUsersRequestDto } from '../../dto/admin/user-management.dto';
 import { IUserManagementRepository } from '../../../domain/interfaces/repositories';
-import { IGetAllUsersUseCase } from '../../../domain/interfaces/use-cases';
-import { UserMapper } from '../../mappers/user.mapper';
-import { UserResponseDto } from '../../mappers/types';
-
-interface GetAllUsersResult {
-  users: UserResponseDto[];
-  pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-    hasNext: boolean;
-    hasPrev: boolean;
-  };
-}
+import { IGetAllUsersUseCase, UserQueryOptions, PaginatedUsers } from '../../../domain/interfaces/use-cases';
+import { UserRole } from '../../../domain/enums/user-role.enum';
 
 export class GetAllUsersUseCase implements IGetAllUsersUseCase {
-  constructor(
-      private readonly _userRepository: IUserManagementRepository,
-    private readonly _userMapper: UserMapper,
-  ) {}
+  constructor(private readonly _userRepository: IUserManagementRepository) {}
 
-  async execute(options: GetAllUsersRequestDto): Promise<GetAllUsersResult> {
+  async execute(options: UserQueryOptions): Promise<PaginatedUsers> {
+    const page = options.page || 1;
+    const limit = options.limit || 10;
+
     const convertedOptions = {
-      page: parseInt(options.page),
-      limit: parseInt(options.limit),
+      page,
+      limit,
       search: options.search,
-      role: options.role,
-      isBlocked: options.isBlocked ? options.isBlocked === 'true' : undefined,
+      role: options.role as UserRole | undefined,
+      isBlocked: options.isBlocked,
+      sortBy: options.sortBy,
+      sortOrder: options.sortOrder,
     };
+
     const result = await this._userRepository.findAllUsers(convertedOptions);
+
     return {
-      users: result.users.map(user => this._userMapper.toDto(user)),
-      pagination: {
-        page: convertedOptions.page,
-        limit: convertedOptions.limit,
-        total: result.total,
-        totalPages: Math.ceil(result.total / convertedOptions.limit),
-        hasNext: convertedOptions.page * convertedOptions.limit < result.total,
-        hasPrev: convertedOptions.page > 1,
-      },
+      users: result.users,
+      total: result.total,
+      page,
+      limit,
+      totalPages: Math.ceil(result.total / limit),
     };
   }
 }

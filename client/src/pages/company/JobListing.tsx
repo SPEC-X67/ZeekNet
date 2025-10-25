@@ -94,8 +94,7 @@ const CompanyJobListing = () => {
       } else {
         setError(response.message || 'Failed to fetch jobs')
       }
-    } catch (err) {
-      console.error('Error fetching jobs:', err)
+    } catch {
       setError('Failed to fetch jobs')
     } finally {
       setLoading(false)
@@ -138,13 +137,17 @@ const CompanyJobListing = () => {
 
     try {
       setDeleteDialog(prev => ({ ...prev, isLoading: true }))
+
+      const previousJobs = [...jobs]
+      setJobs(prevJobs => prevJobs.filter(job => job._id !== deleteDialog.jobId))
+      setPagination(prev => ({ ...prev, total: prev.total - 1 }))
+      
       const response = await companyApi.deleteJobPosting(deleteDialog.jobId)
       
       if (response.success) {
         toast.success('Job deleted successfully', {
           description: `"${deleteDialog.jobTitle}" has been deleted.`
         })
-        await fetchJobs(pagination.page, pagination.limit)
         setDeleteDialog({
           isOpen: false,
           jobId: null,
@@ -152,15 +155,17 @@ const CompanyJobListing = () => {
           isLoading: false
         })
       } else {
+        setJobs(previousJobs)
+        setPagination(prev => ({ ...prev, total: prev.total + 1 }))
         toast.error('Failed to delete job', {
           description: response.message || 'Please try again later.'
         })
       }
-    } catch (error) {
-      console.error('Error deleting job:', error)
+    } catch {
       toast.error('Failed to delete job', {
         description: 'An unexpected error occurred. Please try again.'
       })
+      await fetchJobs(pagination.page, pagination.limit) // Refetch to restore accurate state
     } finally {
       setDeleteDialog(prev => ({ ...prev, isLoading: false }))
     }
@@ -176,27 +181,47 @@ const CompanyJobListing = () => {
   }
 
   const handleToggleJobStatus = async (jobId: string, currentStatus: boolean) => {
+    const newStatus = !currentStatus
+    const statusText = newStatus ? 'listed' : 'unlisted'
+    
     try {
-      setLoading(true)
-      const response = await companyApi.updateJobStatus(jobId, !currentStatus)
+      setJobs(prevJobs => 
+        prevJobs.map(job => 
+          job._id === jobId ? { ...job, is_active: newStatus } : job
+        )
+      )
+      
+      const response = await companyApi.updateJobStatus(jobId, newStatus)
       
       if (response.success) {
-        await fetchJobs(pagination.page, pagination.limit)
+        toast.success(`Job ${statusText} successfully`, {
+          description: `The job status has been updated.`
+        })
       } else {
-        setError(response.message || 'Failed to update job status')
+        setJobs(prevJobs => 
+          prevJobs.map(job => 
+            job._id === jobId ? { ...job, is_active: currentStatus } : job
+          )
+        )
+        toast.error('Failed to update job status', {
+          description: response.message || 'Please try again later.'
+        })
       }
-    } catch (error) {
-      console.error('Error updating job status:', error)
-      setError('Failed to update job status')
-    } finally {
-      setLoading(false)
+    } catch {
+      setJobs(prevJobs => 
+        prevJobs.map(job => 
+          job._id === jobId ? { ...job, is_active: currentStatus } : job
+        )
+      )
+      toast.error('Failed to update job status', {
+        description: 'An unexpected error occurred. Please try again.'
+      })
     }
   }
 
   return (
     <CompanyLayout>
       <div className="min-h-screen bg-white">
-        {/* Header Section - matches Figma greeting section */}
         <div className="flex items-center justify-between px-7 py-7">
           <div className="flex flex-col gap-1">
             <h1 className="text-xl font-bold text-[#25324B]">Job Listing</h1>
@@ -205,14 +230,12 @@ const CompanyJobListing = () => {
             </p>
           </div>
 
-          {/* Date Filter - matches Figma dropdown */}
           <div className="flex items-center gap-3 px-3 py-2 border border-[#D6DDEB] rounded-lg bg-white">
             <Calendar className="w-4 h-4 text-[#4640DE]" />
             <span className="text-sm text-[#25324B]">Jul 19 - Jul 25</span>
           </div>
         </div>
 
-        {/* Job Listing Table */}
         <div className="px-5 pb-5">
           <Card className="border border-[#D6DDEB] rounded-lg">
             <CardHeader className="border-b border-[#D6DDEB]">
@@ -227,7 +250,6 @@ const CompanyJobListing = () => {
               </div>
             </CardHeader>
 
-            {/* Table Header */}
             <div className="px-5 py-2 border-b border-[#D6DDEB]">
               <div className="grid grid-cols-6 gap-10 text-md font-medium text-[#202430] opacity-60">
                 <div className="w-[248px]">Roles</div>
@@ -239,7 +261,6 @@ const CompanyJobListing = () => {
               </div>
             </div>
 
-            {/* Table Rows */}
             <div className="divide-y divide-[#D6DDEB]">
               {loading ? (
                 <div className="px-5 py-10 flex justify-center">
@@ -263,22 +284,21 @@ const CompanyJobListing = () => {
               ) : (
                 jobs.map((job, index) => (
                   <div
-                    key={job.id}
+                    key={job._id}
                     className={`px-5 py-5 grid grid-cols-6 gap-10 items-center ${
                       index % 2 === 0 ? 'bg-white' : 'bg-[#F8F8FD]'
                     }`}
                   >
-                    {/* Role */}
+
                     <div className="w-[248px]">
                       <button 
-                        onClick={() => handleJobClick(job.id)}
+                        onClick={() => handleJobClick(job._id)}
                         className="text-sm font-medium text-[#25324B] hover:text-[#4640DE] transition-colors text-left"
                       >
                         {job.title}
                       </button>
                     </div>
 
-                    {/* Status */}
                     <div className="w-[111px]">
                       <Badge
                         variant="outline"
@@ -292,12 +312,11 @@ const CompanyJobListing = () => {
                       </Badge>
                     </div>
 
-                    {/* Date Posted */}
                     <div className="w-[149px]">
                       <span className="text-xs text-[#25324B]">{formatDate(job.createdAt)}</span>
                     </div>
 
-                    {/* Job Type */}
+
                     <div className="w-[128px]">
                       <Badge
                         variant="outline"
@@ -307,16 +326,16 @@ const CompanyJobListing = () => {
                       </Badge>
                     </div>
 
-                    {/* Applicants */}
+
                     <div className="w-[114px]">
                       <span className="text-xs text-[#25324B]">{(job.application_count || 0).toLocaleString()}</span>
                     </div>
 
-                    {/* Views */}
+
                     <div className="w-[98px] flex items-center justify-between">
                       <span className="text-xs text-[#25324B]">{(job.view_count || 0).toLocaleString()}</span>
                       
-                      {/* Action Dropdown */}
+
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
@@ -324,16 +343,16 @@ const CompanyJobListing = () => {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-48">
-                          <DropdownMenuItem onClick={() => handleViewJob(job.id)}>
+                          <DropdownMenuItem onClick={() => handleViewJob(job._id)}>
                             <Eye className="w-4 h-4 mr-2" />
                             View
                           </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handleEditJob(job.id)}>
+                          <DropdownMenuItem onClick={() => handleEditJob(job._id)}>
                             <Edit className="w-4 h-4 mr-2" />
                             Edit
                           </DropdownMenuItem>
                           <DropdownMenuItem 
-                            onClick={() => handleToggleJobStatus(job.id, job.is_active)}
+                            onClick={() => handleToggleJobStatus(job._id, job.is_active)}
                             className={job.is_active ? 'text-orange-600' : 'text-green-600'}
                           >
                             {job.is_active ? (
@@ -349,7 +368,7 @@ const CompanyJobListing = () => {
                             )}
                           </DropdownMenuItem>
                           <DropdownMenuItem 
-                            onClick={() => handleDeleteJob(job.id, job.title)}
+                            onClick={() => handleDeleteJob(job._id, job.title)}
                             className="text-red-600"
                           >
                             <Trash2 className="w-4 h-4 mr-2" />
@@ -363,10 +382,10 @@ const CompanyJobListing = () => {
               )}
             </div>
 
-            {/* Footer with View Controls and Pagination */}
+
             <div className="px-3 py-3 border-t border-[#D6DDEB]">
               <div className="flex items-center justify-between">
-                {/* View Controls */}
+
                 <div className="flex items-center gap-3">
                   <span className="text-xs font-medium text-[#7C8493]">View</span>
                   <div className="flex items-center gap-1 px-3 py-2 border border-[#D6DDEB] rounded-lg bg-white">
@@ -376,7 +395,7 @@ const CompanyJobListing = () => {
                   <span className="text-xs font-medium text-[#7C8493]">Applicants per page</span>
                 </div>
 
-                {/* Pagination */}
+
                 <div className="flex items-center gap-1">
                   <Button 
                     variant="outline" 
@@ -426,7 +445,6 @@ const CompanyJobListing = () => {
           </Card>
         </div>
 
-        {/* Delete Confirmation Dialog */}
         <ConfirmationDialog
           isOpen={deleteDialog.isOpen}
           onClose={cancelDeleteJob}

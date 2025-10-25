@@ -1,8 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import {
-  AuthenticationError,
-  AuthorizationError,
-} from '../../domain/errors/errors';
+import { AuthenticationError, AuthorizationError } from '../../domain/errors/errors';
 import { UserRole } from '../../domain/enums/user-role.enum';
 
 interface AuthenticatedRequest extends Request {
@@ -13,11 +10,7 @@ interface AuthenticatedRequest extends Request {
   };
 }
 
-export const requireAdmin = (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction,
-): void => {
+export const requireAdmin = (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
   try {
     const user = req.user;
     if (!user) {

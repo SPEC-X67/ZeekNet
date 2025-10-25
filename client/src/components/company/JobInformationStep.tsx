@@ -145,16 +145,16 @@ const JobInformationStep: React.FC<JobPostingStepProps> = ({
 
   return (
     <div className="flex flex-col items-end gap-5 px-4 py-6">
-      {/* Basic Information Header */}
+      {}
       <div className="flex flex-col gap-1 w-full">
         <h2 className="text-base font-semibold text-[#25324B]">Basic Information</h2>
         <p className="text-sm text-[#7C8493]">This information will be displayed publicly</p>
       </div>
 
-      {/* Divider */}
+      {}
       <div className="w-full h-px bg-[#D6DDEB]"></div>
 
-      {/* Job Title */}
+      {}
       <div className="flex gap-30 w-full">
         <div className="flex flex-col gap-1">
           <h3 className="text-sm font-semibold text-[#25324B]">
@@ -176,10 +176,10 @@ const JobInformationStep: React.FC<JobPostingStepProps> = ({
         </div>
       </div>
 
-      {/* Divider */}
+      {}
       <div className="w-full h-px bg-[#D6DDEB]"></div>
 
-      {/* Location */}
+      {}
       <div className="flex gap-30 w-full">
         <div className="flex flex-col gap-1">
           <h3 className="text-sm font-semibold text-[#25324B]">
@@ -201,10 +201,10 @@ const JobInformationStep: React.FC<JobPostingStepProps> = ({
         </div>
       </div>
 
-      {/* Divider */}
+      {}
       <div className="w-full h-px bg-[#D6DDEB]"></div>
 
-      {/* Type of Employment */}
+      {}
       <div className="flex gap-30 w-full">
         <div className="flex flex-col gap-1">
           <h3 className="text-sm font-semibold text-[#25324B]">
@@ -232,10 +232,10 @@ const JobInformationStep: React.FC<JobPostingStepProps> = ({
         </div>
       </div>
 
-      {/* Divider */}
+      {}
       <div className="w-full h-px bg-[#D6DDEB]"></div>
 
-      {/* Salary */}
+      {}
       <div className="flex gap-30 w-full">
         <div className="flex flex-col gap-1">
           <h3 className="text-sm font-semibold text-[#25324B]">Salary</h3>
@@ -271,10 +271,10 @@ const JobInformationStep: React.FC<JobPostingStepProps> = ({
           </div>
       </div>
 
-      {/* Divider */}
+      {}
       <div className="w-full h-px bg-[#D6DDEB]"></div>
 
-      {/* Categories */}
+      {}
       <div className="flex gap-30 w-full">
         <div className="flex flex-col gap-1">
           <h3 className="text-sm font-semibold text-[#25324B]">
@@ -285,7 +285,7 @@ const JobInformationStep: React.FC<JobPostingStepProps> = ({
         <div className="flex flex-col gap-3">
           <Label className="text-sm font-semibold text-[#515B6F]">Add Job Categories</Label>
           
-          {/* Add Category Section */}
+          {}
           <div className="flex items-center gap-2">
             <Select value={selectedCategory} onValueChange={setSelectedCategory}>
               <SelectTrigger className="w-[200px] h-11 px-4 py-3 border border-[#D6DDEB] rounded-[10px]">
@@ -311,7 +311,7 @@ const JobInformationStep: React.FC<JobPostingStepProps> = ({
             </Button>
           </div>
 
-          {/* Selected Categories Display */}
+          {}
           {data.categoryIds.length > 0 && (
             <div className="flex flex-wrap gap-2">
               {data.categoryIds.map((categoryId) => {
@@ -341,10 +341,10 @@ const JobInformationStep: React.FC<JobPostingStepProps> = ({
         </div>
       </div>
 
-      {/* Divider */}
+      {}
       <div className="w-full h-px bg-[#D6DDEB]"></div>
 
-      {/* Required Skills */}
+      {}
       <div className="flex gap-30 w-full">
         <div className="flex flex-col gap-1">
           <h3 className="text-sm font-semibold text-[#25324B]">Required Skills</h3>
@@ -390,10 +390,10 @@ const JobInformationStep: React.FC<JobPostingStepProps> = ({
         </div>
       </div>
 
-      {/* Divider */}
+      {}
       <div className="w-full h-px bg-[#D6DDEB]"></div>
 
-      {/* Next Step Button */}
+      {}
       <Button 
         onClick={handleNext} 
         variant="company"

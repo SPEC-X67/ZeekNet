@@ -1,10 +1,8 @@
-import { ICompanyRepository } from '../../../domain/interfaces/repositories';
+import { ICompanyProfileRepository } from '../../../domain/interfaces/repositories';
 import { AppError } from '../../../domain/errors/errors';
 
 export class BlockCompanyUseCase {
-  constructor(
-    private readonly _companyRepository: ICompanyRepository,
-  ) {}
+  constructor(private readonly _companyProfileRepository: ICompanyProfileRepository) {}
 
   async execute(companyId: string, isBlocked: boolean): Promise<void> {
     try {
@@ -16,7 +14,7 @@ export class BlockCompanyUseCase {
         throw new AppError('isBlocked must be a boolean value', 400);
       }
 
-      await this._companyRepository.updateProfile(companyId, { isBlocked });
+      await this._companyProfileRepository.updateProfile(companyId, { isBlocked });
     } catch (error) {
       if (error instanceof AppError) {
         throw error;

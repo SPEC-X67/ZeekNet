@@ -1,12 +1,10 @@
-import { ICompanyWorkplacePicturesRepository } from '../../../domain/interfaces/repositories/company-workplace-pictures.repository';
+import { ICompanyWorkplacePicturesRepository } from '../../../domain/interfaces/repositories';
 import { CompanyWorkplacePictures } from '../../../domain/entities/company-workplace-pictures.entity';
 import { CreateCompanyWorkplacePicturesDto, UpdateCompanyWorkplacePicturesDto } from '../../dto/company/company-workplace-pictures.dto';
 import { NotFoundError } from '../../../domain/errors/errors';
 
 export class CompanyWorkplacePicturesUseCase {
-  constructor(
-    private readonly _companyWorkplacePicturesRepository: ICompanyWorkplacePicturesRepository,
-  ) {}
+  constructor(private readonly _companyWorkplacePicturesRepository: ICompanyWorkplacePicturesRepository) {}
 
   async createPicture(companyId: string, data: CreateCompanyWorkplacePicturesDto): Promise<CompanyWorkplacePictures> {
     const picture = CompanyWorkplacePictures.create({ ...data, companyId });

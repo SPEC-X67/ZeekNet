@@ -54,7 +54,7 @@ const CompanyOfficeLocationsSection: React.FC<CompanyOfficeLocationsSectionProps
         </div>
       ) : (
         <div>
-          {/* Locations List */}
+          {}
           <div className="space-y-2.5 mb-3.5">
             {locations.map((location, index) => (
               <div key={location.id || index} className="flex items-center gap-2.5">

@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const CreateCompanyOfficeLocationDto = z.object({
-  companyId: z.string().optional(), // Will be set by the system
+  companyId: z.string().optional(),
   location: z.string().min(1, 'Location cannot be empty'),
   officeName: z.string().optional(),
   address: z.string().optional(),

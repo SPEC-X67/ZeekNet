@@ -22,10 +22,7 @@ const CompanyContactSchema = new Schema<CompanyContactDocument>(
   },
   {
     timestamps: true,
-  },
+  }
 );
 
-export const CompanyContactModel = model<CompanyContactDocument>(
-  'CompanyContact',
-  CompanyContactSchema,
-);
+export const CompanyContactModel = model<CompanyContactDocument>('CompanyContact', CompanyContactSchema);

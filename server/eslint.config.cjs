@@ -23,11 +23,11 @@ module.exports = [
     rules: {
       '@typescript-eslint/no-explicit-any': 'error',
       'no-console': 'off',
-      'semi': ['error', 'always'],
-      'quotes': ['error', 'single'],
+      semi: ['error', 'always'],
+      quotes: ['error', 'single'],
       'comma-dangle': ['error', 'always-multiline'],
       'object-curly-spacing': ['error', 'always'],
-      'indent': ['error', 2],
+      indent: ['error', 2],
     },
   },
 ];

@@ -72,7 +72,7 @@ function App() {
               <AdminDashboard />
             </ProtectedRoute>
           } />
-          <Route path="/admin/users" element={
+          <Route path="/admin/seekers" element={
             <ProtectedRoute allowedRoles={[UserRole.ADMIN]}>
               <UserManagement />
             </ProtectedRoute>

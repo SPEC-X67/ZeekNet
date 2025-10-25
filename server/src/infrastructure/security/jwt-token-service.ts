@@ -4,16 +4,14 @@ import { env } from '../config/env';
 
 export class JwtTokenService implements ITokenService {
   signAccess(payload: ITokenPayload): string {
-    const expiresIn =
-      env.JWT_ACCESS_EXPIRES_IN as unknown as SignOptions['expiresIn'];
+    const expiresIn = env.JWT_ACCESS_EXPIRES_IN as unknown as SignOptions['expiresIn'];
     return jwt.sign(payload as object, env.JWT_ACCESS_SECRET as string, {
       expiresIn,
     });
   }
 
   signRefresh(payload: ITokenPayload): string {
-    const expiresIn =
-      env.JWT_REFRESH_EXPIRES_IN as unknown as SignOptions['expiresIn'];
+    const expiresIn = env.JWT_REFRESH_EXPIRES_IN as unknown as SignOptions['expiresIn'];
     return jwt.sign(payload as object, env.JWT_REFRESH_SECRET as string, {
       expiresIn,
     });

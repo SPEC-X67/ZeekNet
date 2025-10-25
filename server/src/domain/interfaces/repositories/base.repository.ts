@@ -6,4 +6,3 @@ export interface IBaseRepository<T> {
   delete(id: string): Promise<boolean>;
   count(): Promise<number>;
 }
-

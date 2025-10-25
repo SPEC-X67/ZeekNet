@@ -54,7 +54,7 @@ export const ArrayInputField: React.FC<ArrayInputFieldProps> = ({
         <p className="text-sm text-[#7C8493]">{helperText}</p>
       </div>
       <div className="flex flex-col gap-3 w-full">
-        {/* Add Item Section */}
+        {}
         <div className="flex items-center gap-2">
           <Input
             placeholder={placeholder}
@@ -73,7 +73,7 @@ export const ArrayInputField: React.FC<ArrayInputFieldProps> = ({
           </Button>
         </div>
 
-        {/* Items List */}
+        {}
         {value.length > 0 && (
           <div className="flex flex-col gap-2 max-h-[200px] overflow-y-auto">
             {value.map((item, index) => (
@@ -94,7 +94,7 @@ export const ArrayInputField: React.FC<ArrayInputFieldProps> = ({
           </div>
         )}
 
-        {/* Character count and error */}
+        {}
         <div className="flex justify-between items-center">
           <span className="text-xs text-[#7C8493]">
             {value.length} item{value.length !== 1 ? 's' : ''} added

@@ -1,16 +1,9 @@
-import { Result } from '../../../shared/base/result';
 import { RegisterResult, LoginResult } from '../../../application/dto/auth/auth-response.dto';
 import { User } from '../../entities/user.entity';
 import { CompanyProfile } from '../../entities/company-profile.entity';
 
-// Auth Use Case Interfaces
 export interface IRegisterUserUseCase {
-  execute(
-    email: string,
-    password: string,
-    role?: any,
-    name?: string,
-  ): Promise<Result<RegisterResult, Error>>;
+  execute(email: string, password: string, role?: unknown, name?: string): Promise<RegisterResult>;
 }
 
 export interface ILoginUserUseCase {
@@ -45,7 +38,7 @@ export interface ILogoutUseCase {
   execute(userId: string): Promise<void>;
 }
 
-export interface IGetUserByIdUseCase {
+export interface IAuthGetUserByIdUseCase {
   execute(userId: string): Promise<User | null>;
 }
 
@@ -63,4 +56,8 @@ export interface IUpdateUserRefreshTokenUseCase {
 
 export interface IGetCompanyProfileByUserIdUseCase {
   execute(userId: string): Promise<CompanyProfile | null>;
+}
+
+export interface IRefreshTokenUseCase {
+  execute(refreshToken: string): Promise<LoginResult>;
 }

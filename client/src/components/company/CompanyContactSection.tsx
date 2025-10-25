@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Button } from '@/components/ui/button';
 import { 
   Edit3, 
@@ -60,7 +60,7 @@ const CompanyContactSection: React.FC<CompanyContactSectionProps> = ({
         <div className="space-y-2.5">
           {contacts.map((contact, index) => (
             <div key={contact.id || index} className="space-y-2.5">
-              {/* Email */}
+              {}
               {contact.email && (
                 <div className="flex items-center gap-3 px-2.5 py-1.5 border border-primary rounded-lg text-primary">
                   <Mail className="h-4 w-4" />
@@ -68,7 +68,7 @@ const CompanyContactSection: React.FC<CompanyContactSectionProps> = ({
                 </div>
               )}
 
-              {/* Phone */}
+              {}
               {contact.phone && (
                 <div className="flex items-center gap-3 px-2.5 py-1.5 border border-primary rounded-lg text-primary">
                   <Phone className="h-4 w-4" />
@@ -76,7 +76,7 @@ const CompanyContactSection: React.FC<CompanyContactSectionProps> = ({
                 </div>
               )}
 
-              {/* Social Links */}
+              {}
               <div className="flex gap-2.5">
                 {contact.twitterLink && (
                   <div className="flex items-center gap-3 px-2.5 py-1.5 border border-primary rounded-lg text-primary">

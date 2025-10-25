@@ -1,5 +1,5 @@
-// Environment configuration with validation
 export const env = {
+  NODE_ENV: process.env.NODE_ENV,
   PORT: process.env.PORT,
   MONGO_URI: process.env.MONGO_URI,
   JWT_ACCESS_SECRET: process.env.JWT_ACCESS_SECRET,
@@ -8,6 +8,7 @@ export const env = {
   JWT_ACCESS_EXPIRES_IN: process.env.JWT_ACCESS_EXPIRES_IN,
   JWT_REFRESH_EXPIRES_IN: process.env.JWT_REFRESH_EXPIRES_IN,
   REDIS_URL: process.env.REDIS_URL,
+  OTP_TTL_SECONDS: process.env.OTP_TTL_SECONDS,
   COOKIE_NAME_REFRESH: process.env.COOKIE_NAME_REFRESH,
   COOKIE_DOMAIN: process.env.COOKIE_DOMAIN,
   COOKIE_SECURE: process.env.COOKIE_SECURE,

@@ -2,7 +2,37 @@ import { IJobPostingRepository, IJobPostingSearchRepository, IJobPostingAnalytic
 import { JobPosting, CreateJobPostingRequest, UpdateJobPostingRequest, JobPostingFilters, PaginatedJobPostings } from '../../../../domain/entities/job-posting.entity';
 import { JobPostingModel, JobPostingDocument } from '../models/job-posting.model';
 import { Types } from 'mongoose';
-import { MongoBaseRepository } from '../../../../shared/base';
+import { RepositoryBase } from '../../../../shared/base';
+import { JobPostingMapper } from '../mappers';
+import { JobPostingResponseDto } from '../../../../application/dto/job-posting/job-posting-response.dto';
+
+export interface JobPostingDetailResponseDto {
+  id: string;
+  title: string;
+  description: string;
+  responsibilities: string[];
+  qualifications: string[];
+  nice_to_haves: string[];
+  benefits: string[];
+  salary: { min: number; max: number };
+  employment_types: string[];
+  location: string;
+  skills_required: string[];
+  category_ids: string[];
+  is_active: boolean;
+  view_count: number;
+  application_count: number;
+  createdAt: string;
+  updatedAt: string;
+  company: {
+    companyName: string;
+    logo: string;
+    workplacePictures: Array<{
+      pictureUrl: string;
+      caption?: string;
+    }>;
+  };
+}
 
 interface MongoQuery {
   [key: string]: unknown;
@@ -22,82 +52,19 @@ interface MongoUpdateData {
   category_ids?: string[];
 }
 
-export class MongoJobPostingRepository extends MongoBaseRepository<JobPosting> implements IJobPostingRepository, IJobPostingSearchRepository, IJobPostingAnalyticsRepository, IJobPostingManagementRepository {
+export class JobPostingRepository extends RepositoryBase<JobPosting, JobPostingDocument> implements IJobPostingRepository, IJobPostingSearchRepository, IJobPostingAnalyticsRepository, IJobPostingManagementRepository {
   constructor() {
     super(JobPostingModel);
   }
-  
+
   protected mapToEntity(doc: JobPostingDocument): JobPosting {
-    let companyId = '';
-    if (doc.company_id) {
-      const companyIdValue = doc.company_id as any;
-      if (typeof companyIdValue === 'object' && companyIdValue._id) {
-        companyId = companyIdValue._id.toString();
-      } else {
-        companyId = companyIdValue.toString();
-      }
-    }
-
-    return {
-      _id: doc._id ? doc._id.toString() : '',
-      company_id: companyId,
-      title: doc.title || '',
-      description: doc.description || '',
-      responsibilities: doc.responsibilities || [],
-      qualifications: doc.qualifications || [],
-      nice_to_haves: doc.nice_to_haves || [],
-      benefits: doc.benefits || [],
-      salary: doc.salary || { min: 0, max: 0 },
-      employment_types: doc.employment_types || [],
-      location: doc.location || '',
-      skills_required: doc.skills_required || [],
-      category_ids: doc.category_ids || [],
-      is_active: doc.is_active !== undefined ? doc.is_active : true,
-      view_count: doc.view_count || 0,
-      application_count: doc.application_count || 0,
-      createdAt: doc.createdAt || new Date(),
-      updatedAt: doc.updatedAt || new Date(),
-    };
+    return JobPostingMapper.toEntity(doc);
   }
 
-  private mapDocumentToClientResponse(doc: JobPostingDocument): any {
-    const populatedDoc = doc as any;
-
-    let company = null;
-    if (populatedDoc.company_id && typeof populatedDoc.company_id === 'object') {
-      company = {
-        companyName: populatedDoc.company_id.companyName || populatedDoc.company_id.company_name || 'Unknown Company',
-        logo: populatedDoc.company_id.logo || '/white.png'
-      };
-    } else {
-      company = {
-        companyName: 'Company',
-        logo: '/white.png'
-      };
-    }
-    
-    return {
-      id: doc._id.toString(),
-      title: doc.title,
-      salary: {
-        min: doc.salary.min,
-        max: doc.salary.max
-      },
-      employment_types: Array.isArray(doc.employment_types) ? doc.employment_types : [],
-      location: doc.location,
-      skills_required: Array.isArray(doc.skills_required) ? doc.skills_required : [],
-      category_ids: Array.isArray(doc.category_ids) ? doc.category_ids : [],
-      createdAt: doc.createdAt.toISOString(),
-      is_active: doc.is_active !== undefined ? doc.is_active : true,
-      application_count: doc.application_count || 0,
-      view_count: doc.view_count || 0,
-      company: company
-    };
+  private mapDocumentToClientResponse(doc: JobPostingDocument): JobPostingResponseDto {
+    return JobPostingMapper.toClientResponse(doc);
   }
 
-  /**
-   * Override create to handle ObjectId conversion
-   */
   async create(data: CreateJobPostingRequest): Promise<JobPosting> {
     try {
       const jobPostingData = {
@@ -111,59 +78,72 @@ export class MongoJobPostingRepository extends MongoBaseRepository<JobPosting> i
       };
 
       const jobPosting = new JobPostingModel(jobPostingData);
+
+      // const startOfDay = new Date();
+      // startOfDay.setHours(0, 0, 0, 0);
+
+      // const endOfDay = new Date();
+      // endOfDay.setHours(23, 59, 59, 999);
+
+      // const jobsToday = await JobPostingModel.countDocuments({
+      //   comapany_id: data.company_id,
+      //   createdAt: { $gte: startOfDay, $lte: endOfDay },
+      // });
+
+      // if (jobsToday >= 2) {
+      //   throw new Error('You can only create up to 2 jobs per day.');
+      // }
+
       const savedJobPosting = await jobPosting.save();
-      
+
       return this.mapToEntity(savedJobPosting);
     } catch (error) {
-      console.error('MongoJobPostingRepository.create error:', error);
+      console.error('JobPostingRepository.create error:', error);
       throw error;
     }
   }
 
-  /**
-   * Override findById to include population
-   */
   async findById(id: string): Promise<JobPosting | null> {
     if (!Types.ObjectId.isValid(id)) {
       return null;
     }
-    
-    const jobPosting = await JobPostingModel.findById(id)
-      .populate('company_id', 'companyName logo');
-    
+
+    const jobPosting = await JobPostingModel.findById(id).populate('company_id', 'companyName logo');
+
     return jobPosting ? this.mapToEntity(jobPosting) : null;
   }
 
-  async findByIdForClient(id: string): Promise<any> {
-    const jobPosting = await JobPostingModel.findById(id)
-      .populate('company_id', 'companyName logo');
-    
+  async findByIdForClient(id: string): Promise<JobPostingDetailResponseDto | null> {
+    const jobPosting = await JobPostingModel.findById(id).populate('company_id', 'companyName logo');
+
     if (!jobPosting) {
       return null;
     }
 
-    const populatedDoc = jobPosting as any;
-    
+    const populatedDoc = jobPosting as unknown as { company_id?: { companyName?: string; logo?: string; _id?: unknown } };
+
     let company = null;
     if (populatedDoc.company_id && typeof populatedDoc.company_id === 'object') {
       const { CompanyWorkplacePicturesModel } = await import('../models/company-workplace-pictures.model');
-      const workplacePictures = await CompanyWorkplacePicturesModel.find({ 
-        companyId: populatedDoc.company_id._id 
-      }).select('pictureUrl caption').limit(4);
-      
+      const workplacePictures = await CompanyWorkplacePicturesModel.find({
+        companyId: populatedDoc.company_id._id,
+      })
+        .select('pictureUrl caption')
+        .limit(4);
+
       company = {
         companyName: populatedDoc.company_id.companyName || 'Unknown Company',
         logo: populatedDoc.company_id.logo || '/white.png',
-        workplacePictures: workplacePictures.map(pic => ({
+        workplacePictures: workplacePictures.map((pic) => ({
           pictureUrl: pic.pictureUrl,
-          caption: pic.caption
-        }))
+          caption: pic.caption,
+        })),
       };
     } else {
       company = {
         companyName: 'ZeekNet Company',
         logo: '/white.png',
-        workplacePictures: []
+        workplacePictures: [],
       };
     }
 
@@ -177,7 +157,7 @@ export class MongoJobPostingRepository extends MongoBaseRepository<JobPosting> i
       benefits: jobPosting.benefits,
       salary: {
         min: jobPosting.salary.min,
-        max: jobPosting.salary.max
+        max: jobPosting.salary.max,
       },
       employment_types: jobPosting.employment_types,
       location: jobPosting.location,
@@ -188,7 +168,7 @@ export class MongoJobPostingRepository extends MongoBaseRepository<JobPosting> i
       application_count: jobPosting.application_count,
       createdAt: jobPosting.createdAt.toISOString(),
       updatedAt: jobPosting.updatedAt.toISOString(),
-      company: company
+      company: company,
     };
   }
 
@@ -196,9 +176,9 @@ export class MongoJobPostingRepository extends MongoBaseRepository<JobPosting> i
     if (!companyId || companyId === 'undefined') {
       throw new Error('Company ID is required and cannot be undefined');
     }
-    
+
     const query: MongoQuery = { company_id: new Types.ObjectId(companyId) };
-    
+
     if (filters) {
       this.applyFilters(query, filters);
     }
@@ -208,17 +188,12 @@ export class MongoJobPostingRepository extends MongoBaseRepository<JobPosting> i
     const skip = (page - 1) * limit;
 
     const [jobs, total] = await Promise.all([
-      JobPostingModel.find(query)
-        .select('_id title description location employment_types salary is_active application_count view_count createdAt updatedAt')
-        .populate('company_id', 'companyName logo')
-        .skip(skip)
-        .limit(limit)
-        .sort({ createdAt: -1 }),
+      JobPostingModel.find(query).select('_id title description location employment_types salary is_active application_count view_count createdAt updatedAt').populate('company_id', 'companyName logo').skip(skip).limit(limit).sort({ createdAt: -1 }),
       JobPostingModel.countDocuments(query),
     ]);
 
     return {
-      jobs: jobs.map(job => this.mapDocumentToClientResponse(job)),
+      jobs: jobs.map((job) => this.mapToEntity(job)),
       pagination: {
         page,
         limit,
@@ -228,15 +203,11 @@ export class MongoJobPostingRepository extends MongoBaseRepository<JobPosting> i
     };
   }
 
-  /**
-   * Custom findAll with pagination - overrides base class method
-   * For simple findAll without pagination, use the base class method
-   */
-  async findAll(filters?: JobPostingFilters): Promise<JobPosting[]>
-  async findAll(filters: JobPostingFilters): Promise<PaginatedJobPostings>
+  async findAll(filters?: JobPostingFilters): Promise<JobPosting[]>;
+  async findAll(filters: JobPostingFilters): Promise<PaginatedJobPostings>;
   async findAll(filters?: JobPostingFilters): Promise<JobPosting[] | PaginatedJobPostings> {
     const query: MongoQuery = {};
-    
+
     if (filters) {
       this.applyFilters(query, filters);
     }
@@ -245,17 +216,10 @@ export class MongoJobPostingRepository extends MongoBaseRepository<JobPosting> i
     const limit = filters?.limit || 10;
     const skip = (page - 1) * limit;
 
-    const [jobs, total] = await Promise.all([
-      JobPostingModel.find(query)
-        .populate('company_id', 'companyName logo')
-        .skip(skip)
-        .limit(limit)
-        .sort({ createdAt: -1 }),
-      JobPostingModel.countDocuments(query),
-    ]);
+    const [jobs, total] = await Promise.all([JobPostingModel.find(query).select('_id title company_id salary employment_types location category_ids createdAt').populate('company_id', 'companyName logo').skip(skip).limit(limit).sort({ createdAt: -1 }), JobPostingModel.countDocuments(query)]);
 
     return {
-      jobs: jobs.map(job => this.mapDocumentToClientResponse(job)),
+      jobs: jobs.map((job) => this.mapToEntity(job)),
       pagination: {
         page,
         limit,
@@ -265,9 +229,6 @@ export class MongoJobPostingRepository extends MongoBaseRepository<JobPosting> i
     };
   }
 
-  /**
-   * Override update to handle ObjectId conversion and population
-   */
   async update(id: string, data: UpdateJobPostingRequest): Promise<JobPosting | null> {
     if (!Types.ObjectId.isValid(id)) {
       return null;
@@ -279,46 +240,104 @@ export class MongoJobPostingRepository extends MongoBaseRepository<JobPosting> i
     if (data.skills_required) updateData.skills_required = data.skills_required;
     if (data.category_ids) updateData.category_ids = data.category_ids;
 
-    const result = await JobPostingModel.findByIdAndUpdate(
-      id,
-      updateData,
-      { new: true },
-    )
-      .populate('company_id', 'companyName logo')
-      .populate('skills_required', 'name')
-      .populate('category_ids', 'name');
+    const result = await JobPostingModel.findByIdAndUpdate(id, updateData, { new: true }).populate('company_id', 'companyName logo').populate('skills_required', 'name').populate('category_ids', 'name');
 
     return result ? this.mapToEntity(result) : null;
   }
 
   async incrementViewCount(id: string): Promise<void> {
-    await JobPostingModel.findByIdAndUpdate(
-      id,
-      { $inc: { view_count: 1 } },
-    );
+    await JobPostingModel.findByIdAndUpdate(id, { $inc: { view_count: 1 } });
   }
 
   async incrementApplicationCount(id: string): Promise<void> {
-    await JobPostingModel.findByIdAndUpdate(
-      id,
-      { $inc: { application_count: 1 } },
-    );
+    await JobPostingModel.findByIdAndUpdate(id, { $inc: { application_count: 1 } });
   }
 
   async updateJobStatus(id: string, status: string): Promise<JobPosting | null> {
     const result = await JobPostingModel.findByIdAndUpdate(
       id,
-      { 
+      {
         is_active: status === 'active',
         updatedAt: new Date(),
       },
-      { new: true },
+      { new: true }
     )
       .populate('company_id', 'companyName logo')
       .populate('skills_required', 'name')
       .populate('category_ids', 'name');
 
     return result ? this.mapToEntity(result) : null;
+  }
+
+  async getJobStats(): Promise<{
+    totalJobs: number;
+    activeJobs: number;
+    inactiveJobs: number;
+    totalViews: number;
+    totalApplications: number;
+  }> {
+    const [totalJobs, activeJobs, inactiveJobs, statsAggregate] = await Promise.all([
+      JobPostingModel.countDocuments(),
+      JobPostingModel.countDocuments({ is_active: true }),
+      JobPostingModel.countDocuments({ is_active: false }),
+      JobPostingModel.aggregate([
+        {
+          $group: {
+            _id: null,
+            totalViews: { $sum: '$view_count' },
+            totalApplications: { $sum: '$application_count' },
+          },
+        },
+      ]),
+    ]);
+
+    const stats = statsAggregate[0] || { totalViews: 0, totalApplications: 0 };
+
+    return {
+      totalJobs,
+      activeJobs,
+      inactiveJobs,
+      totalViews: stats.totalViews,
+      totalApplications: stats.totalApplications,
+    };
+  }
+
+  async getJobStatsByCompany(companyId: string): Promise<{
+    totalJobs: number;
+    activeJobs: number;
+    inactiveJobs: number;
+    totalViews: number;
+    totalApplications: number;
+  }> {
+    const companyObjectId = new Types.ObjectId(companyId);
+
+    const [totalJobs, activeJobs, inactiveJobs, statsAggregate] = await Promise.all([
+      JobPostingModel.countDocuments({ company_id: companyObjectId }),
+      JobPostingModel.countDocuments({ company_id: companyObjectId, is_active: true }),
+      JobPostingModel.countDocuments({ company_id: companyObjectId, is_active: false }),
+      JobPostingModel.aggregate([
+        {
+          $match: { company_id: companyObjectId },
+        },
+        {
+          $group: {
+            _id: null,
+            totalViews: { $sum: '$view_count' },
+            totalApplications: { $sum: '$application_count' },
+          },
+        },
+      ]),
+    ]);
+
+    const stats = statsAggregate[0] || { totalViews: 0, totalApplications: 0 };
+
+    return {
+      totalJobs,
+      activeJobs,
+      inactiveJobs,
+      totalViews: stats.totalViews,
+      totalApplications: stats.totalApplications,
+    };
   }
 
   private applyFilters(query: MongoQuery, filters: JobPostingFilters): void {
@@ -337,11 +356,11 @@ export class MongoJobPostingRepository extends MongoBaseRepository<JobPosting> i
     if (filters.salary_min !== undefined || filters.salary_max !== undefined) {
       query['salary.min'] = {};
       query['salary.max'] = {};
-      
+
       if (filters.salary_min !== undefined) {
         query['salary.min'].$gte = filters.salary_min;
       }
-      
+
       if (filters.salary_max !== undefined) {
         query['salary.max'].$lte = filters.salary_max;
       }
@@ -356,12 +375,7 @@ export class MongoJobPostingRepository extends MongoBaseRepository<JobPosting> i
     }
 
     if (filters.search) {
-      query.$or = [
-        { title: { $regex: filters.search, $options: 'i' } },
-        { description: { $regex: filters.search, $options: 'i' } },
-        { location: { $regex: filters.search, $options: 'i' } },
-      ];
+      query.$or = [{ title: { $regex: filters.search, $options: 'i' } }, { description: { $regex: filters.search, $options: 'i' } }, { location: { $regex: filters.search, $options: 'i' } }];
     }
   }
 }
-

@@ -39,7 +39,7 @@ const AdminSidebar = () => {
       icon: Building2,
     },
     {
-      path: '/admin/users',
+      path: '/admin/seekers',
       label: 'Candidate',
       icon: Users,
     }
@@ -94,22 +94,21 @@ const AdminSidebar = () => {
     try {
       await dispatch(logoutThunk()).unwrap()
       navigate('/admin/login')
-    } catch (error) {
-      console.error('Logout failed:', error)
+    } catch {
       navigate('/admin/login')
     }
   }
 
   return (
     <div className="w-64 bg-slate-800 h-[100vh] relative">
-      {/* Hamburger Menu */}
+      {}
       <div className="absolute top-4 right-4 z-10">
         <Button variant="ghost" size="sm" className="text-white hover:bg-slate-700">
           <Menu className="h-5 w-5" />
         </Button>
       </div>
 
-      {/* Logo Section */}
+      {}
       <div className="p-6 border-b border-slate-700">
         <div className="flex items-center space-x-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-lg">
@@ -121,7 +120,7 @@ const AdminSidebar = () => {
         </div>
       </div>
       
-      {/* General Navigation */}
+      {}
       <nav className="p-4">
         <div className="space-y-1">
           {generalItems.map((item) => {
@@ -145,7 +144,7 @@ const AdminSidebar = () => {
         </div>
       </nav>
 
-      {/* Manage Jobs Section */}
+      {}
       <div className="px-4 pb-2">
         <p className="text-xs text-slate-400 uppercase tracking-wider font-medium mb-2">MANAGE JOBS</p>
         <div className="space-y-1">
@@ -170,7 +169,7 @@ const AdminSidebar = () => {
         </div>
       </div>
       
-      {/* Bottom Navigation */}
+      {}
       <div className="absolute bottom-0 w-64 p-4 space-y-1">
         {bottomItems.map((item) => {
           const isActive = location.pathname === item.path

@@ -22,7 +22,6 @@ export const jobApi = {
       const response = await api.get(`/api/public/jobs?${params.toString()}`);
       return response.data;
     } catch (error: any) {
-      console.error('Failed to fetch jobs:', error);
       return {
         success: false,
         message: error.response?.data?.message || 'Failed to fetch jobs',
@@ -39,7 +38,6 @@ export const jobApi = {
       const response = await api.get(`/api/public/jobs/${id}`);
       return response.data;
     } catch (error: any) {
-      console.error('Failed to fetch job:', error);
       return {
         success: false,
         message: error.response?.data?.message || 'Failed to fetch job',

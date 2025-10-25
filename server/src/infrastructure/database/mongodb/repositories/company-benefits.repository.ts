@@ -1,31 +1,19 @@
-import { ICompanyBenefitsRepository } from '../../../../domain/interfaces/repositories/company-benefits.repository';
+import { ICompanyBenefitsRepository } from '../../../../domain/interfaces/repositories/company/ICompanyBenefitsRepository';
 import { CompanyBenefits } from '../../../../domain/entities/company-benefits.entity';
-import { CompanyBenefitsModel } from '../models/company-benefits.model';
+import { CompanyBenefitsModel, CompanyBenefitsDocument } from '../models/company-benefits.model';
 import { Types } from 'mongoose';
-import { MongoBaseRepository } from '../../../../shared/base';
+import { RepositoryBase } from '../../../../shared/base';
+import { CompanyBenefitsMapper } from '../mappers';
 
-export class MongoCompanyBenefitsRepository extends MongoBaseRepository<CompanyBenefits> implements ICompanyBenefitsRepository {
+export class CompanyBenefitsRepository extends RepositoryBase<CompanyBenefits, CompanyBenefitsDocument> implements ICompanyBenefitsRepository {
   constructor() {
     super(CompanyBenefitsModel);
   }
 
-  /**
-   * Map MongoDB document to CompanyBenefits entity
-   */
-  protected mapToEntity(doc: any): CompanyBenefits {
-    return CompanyBenefits.fromJSON({
-      id: doc._id.toString(),
-      companyId: doc.companyId.toString(),
-      perk: doc.perk,
-      description: doc.description,
-      createdAt: doc.createdAt,
-      updatedAt: doc.updatedAt,
-    });
+  protected mapToEntity(doc: CompanyBenefitsDocument): CompanyBenefits {
+    return CompanyBenefitsMapper.toEntity(doc);
   }
 
-  /**
-   * Override create to handle ObjectId conversion
-   */
   async create(benefit: Omit<CompanyBenefits, 'id' | 'createdAt' | 'updatedAt'>): Promise<CompanyBenefits> {
     const benefitDoc = new CompanyBenefitsModel({
       companyId: new Types.ObjectId(benefit.companyId),
@@ -41,12 +29,9 @@ export class MongoCompanyBenefitsRepository extends MongoBaseRepository<CompanyB
 
   async findByCompanyId(companyId: string): Promise<CompanyBenefits[]> {
     const benefits = await CompanyBenefitsModel.find({ companyId: new Types.ObjectId(companyId) });
-    return benefits.map(benefit => this.mapToEntity(benefit));
+    return benefits.map((benefit) => this.mapToEntity(benefit));
   }
 
-  /**
-   * Override update to handle ObjectId conversion
-   */
   async update(id: string, data: Partial<CompanyBenefits>): Promise<CompanyBenefits | null> {
     if (!Types.ObjectId.isValid(id)) {
       return null;
@@ -64,4 +49,3 @@ export class MongoCompanyBenefitsRepository extends MongoBaseRepository<CompanyB
     return updatedBenefit ? this.mapToEntity(updatedBenefit) : null;
   }
 }
-

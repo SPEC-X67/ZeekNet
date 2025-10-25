@@ -1,9 +1,7 @@
 import { api } from './index';
 import type { JobPostingResponse, JobPostingQuery, PaginatedJobPostings } from '@/types/job';
 
-// Flattened admin API for easier usage
 export const adminApi = {
-  // Job Management
   getAllJobs: async (query: JobPostingQuery & {
       status?: 'all' | 'active' | 'inactive';
       sortBy?: string;
@@ -34,7 +32,6 @@ export const adminApi = {
         const response = await api.get(`/api/admin/jobs?${params.toString()}`);
         return response.data;
       } catch (error: any) {
-        console.error('Failed to fetch admin jobs:', error);
         return {
           success: false,
           message: error.response?.data?.message || 'Failed to fetch jobs',
@@ -51,7 +48,6 @@ export const adminApi = {
         const response = await api.get(`/api/admin/jobs/${id}`);
         return response.data;
       } catch (error: any) {
-        console.error('Failed to fetch admin job:', error);
         return {
           success: false,
           message: error.response?.data?.message || 'Failed to fetch job',
@@ -69,7 +65,6 @@ export const adminApi = {
         });
         return response.data;
       } catch (error: any) {
-        console.error('Failed to update job status:', error);
         return {
           success: false,
           message: error.response?.data?.message || 'Failed to update job status',
@@ -85,7 +80,6 @@ export const adminApi = {
         const response = await api.delete(`/api/admin/jobs/${jobId}`);
         return response.data;
       } catch (error: any) {
-        console.error('Failed to delete job:', error);
         return {
           success: false,
           message: error.response?.data?.message || 'Failed to delete job',
@@ -108,7 +102,6 @@ export const adminApi = {
         const response = await api.get('/api/admin/jobs/stats');
         return response.data;
       } catch (error: any) {
-        console.error('Failed to fetch job stats:', error);
         return {
           success: false,
           message: error.response?.data?.message || 'Failed to fetch job statistics',
@@ -116,22 +109,14 @@ export const adminApi = {
       }
     },
 
-  // User Management
-  getAllUsers: async (query: {
-      page?: number;
-      limit?: number;
-      search?: string;
-      isBlocked?: boolean;
-    } = {}): Promise<{
+  getAllUsers: async (query: GetAllUsersParams = {} as GetAllUsersParams): Promise<{
       success: boolean;
       data?: {
         users: any[];
-        pagination: {
-          page: number;
-          limit: number;
-          total: number;
-          totalPages: number;
-        };
+        total: number;      
+        page: number;       
+        limit: number;
+        totalPages: number;
       };
       message?: string;
     }> => {
@@ -141,12 +126,16 @@ export const adminApi = {
         if (query.page) params.append('page', query.page.toString());
         if (query.limit) params.append('limit', query.limit.toString());
         if (query.search) params.append('search', query.search);
-        if (query.isBlocked !== undefined) params.append('isBlocked', query.isBlocked.toString());
+        if (query.role) params.append('role', query.role);
+        if (query.isBlocked !== undefined) {
+          const blocked = typeof query.isBlocked === 'string' ? query.isBlocked : query.isBlocked.toString();
+          params.append('isBlocked', blocked);
+        }
 
         const response = await api.get(`/api/admin/users?${params.toString()}`);
         return response.data;
       } catch (error: any) {
-        console.error('Failed to fetch users:', error);
+        console.error('API Error:', error.response || error); // Better error logging
         return {
           success: false,
           message: error.response?.data?.message || 'Failed to fetch users',
@@ -162,9 +151,8 @@ export const adminApi = {
       try {
         const response = await api.get(`/api/admin/users/${userId}`);
         return response.data;
-      } catch (error: any) {
-        console.error('Failed to fetch user:', error);
-        return {
+    } catch (error: any) {
+      return {
           success: false,
           message: error.response?.data?.message || 'Failed to fetch user',
         };
@@ -182,7 +170,6 @@ export const adminApi = {
         });
         return response.data;
       } catch (error: any) {
-        console.error('Failed to block/unblock user:', error);
         return {
           success: false,
           message: error.response?.data?.message || 'Failed to update user status',
@@ -190,19 +177,14 @@ export const adminApi = {
       }
     },
 
-  // Company Management
   getAllCompanies: async (query: GetAllCompaniesParams = {} as GetAllCompaniesParams): Promise<{
       success: boolean;
       data?: {
         companies: Company[];
-        pagination: {
-          page: number;
-          limit: number;
-          total: number;
-          totalPages: number;
-          hasNext: boolean;
-          hasPrev: boolean;
-        };
+        page: number;
+        limit: number;
+        total: number;
+        totalPages: number;
       };
       message?: string;
     }> => {
@@ -219,7 +201,6 @@ export const adminApi = {
         const response = await api.get(`/api/admin/companies?${params.toString()}`);
         return response.data;
       } catch (error: any) {
-        console.error('Failed to fetch companies:', error);
         return {
           success: false,
           message: error.response?.data?.message || 'Failed to fetch companies',
@@ -231,22 +212,17 @@ export const adminApi = {
       success: boolean;
       data?: {
         companies: Company[];
-        pagination: {
-          page: number;
-          limit: number;
-          total: number;
-          totalPages: number;
-          hasNext: boolean;
-          hasPrev: boolean;
-        };
+        total: number;
+        page: number;
+        limit: number;
+        totalPages: number;
       };
       message?: string;
     }> => {
       try {
-        const response = await api.get('/api/admin/companies/pending');
+        const response = await api.get('/api/admin/companies/verification');
         return response.data;
       } catch (error: any) {
-        console.error('Failed to fetch pending companies:', error);
         return {
           success: false,
           message: error.response?.data?.message || 'Failed to fetch pending companies',
@@ -262,9 +238,8 @@ export const adminApi = {
       try {
         const response = await api.get(`/api/admin/companies/${companyId}`);
         return response.data;
-      } catch (error: any) {
-        console.error('Failed to fetch company:', error);
-        return {
+    } catch (error: any) {
+      return {
           success: false,
           message: error.response?.data?.message || 'Failed to fetch company',
         };
@@ -279,7 +254,6 @@ export const adminApi = {
         const response = await api.patch('/api/admin/companies/verify', data);
         return response.data;
       } catch (error: any) {
-        console.error('Failed to verify company:', error);
         return {
           success: false,
           message: error.response?.data?.message || 'Failed to verify company',
@@ -295,7 +269,6 @@ export const adminApi = {
         const response = await api.patch('/api/admin/companies/block', data);
         return response.data;
       } catch (error: any) {
-        console.error('Failed to block/unblock company:', error);
         return {
           success: false,
           message: error.response?.data?.message || 'Failed to update company status',
@@ -304,33 +277,32 @@ export const adminApi = {
     }
 };
 
-// Export types for convenience
 export interface User {
   id: string;
   name?: string;
   email: string;
   role: string;
-  is_verified: boolean;
-  is_blocked: boolean;
-  created_at: string;
-  updated_at: string;
+  isVerified: boolean;
+  isBlocked: boolean;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface Company {
   id: string;
   userId?: string;
-  company_name: string;
+  companyName: string;
   logo: string;
   banner: string;
-  website_link: string;
-  employee_count: number;
+  websiteLink: string;
+  employeeCount: number;
   industry: string;
   organisation: string;
-  about_us: string;
-  is_verified: 'pending' | 'rejected' | 'verified';
-  is_blocked: boolean;
-  created_at: string;
-  updated_at: string;
+  aboutUs: string;
+  isVerified: 'pending' | 'rejected' | 'verified';
+  isBlocked: boolean;
+  createdAt: string;
+  updatedAt: string;
   verification?: {
     taxId: string;
     businessLicenseUrl: string;

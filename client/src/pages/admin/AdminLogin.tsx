@@ -85,19 +85,16 @@ const AdminLogin = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
-      {/* Header */}
+      {}
       <header className="border-b bg-white/80 backdrop-blur-sm dark:bg-slate-900/80">
         <div className="container mx-auto px-4 py-4">
           <nav className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-                <Briefcase className="h-5 w-5 text-primary-foreground" />
+                {/* <Briefcase className="h-5 w-5 text-primary-foreground" /> */}
+                <img src="/white.png" alt="ZeekNet Logo" className="h-6 w-6" />
               </div>
               <h1 className="text-xl font-bold text-foreground">ZeekNet</h1>
-              <Badge variant="secondary" className="ml-2">
-                <Sparkles className="mr-1 h-3 w-3" />
-                Job Portal
-              </Badge>
             </div>
             <Button 
               variant="outline" 
@@ -123,9 +120,9 @@ const AdminLogin = () => {
           <Card className="shadow-xl">
             <CardHeader className="space-y-1">
               <div className="flex items-center justify-center mb-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+                {/* <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
                   <Shield className="h-6 w-6 text-primary" />
-                </div>
+                </div> */}
               </div>
               <CardTitle className="text-2xl font-bold text-center">Admin Login</CardTitle>
               <CardDescription className="text-center">
@@ -183,7 +180,7 @@ const AdminLogin = () => {
                   </div>
                 </div>
                 
-                <Button type="submit" disabled={loading} className="w-full">
+                <Button type="submit" disabled={loading} className="w-full" variant="admin">
                   {loading ? (
                     <div className="flex items-center space-x-2">
                       <Loader2 className="h-4 w-4 animate-spin" />

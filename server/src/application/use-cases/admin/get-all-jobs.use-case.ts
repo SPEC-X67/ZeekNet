@@ -1,8 +1,8 @@
-import { IJobPostingRepositoryFull } from '../../../domain/interfaces/repositories';
+import { IJobPostingSearchRepository } from '../../../domain/interfaces/repositories';
 import { IAdminGetAllJobsUseCase } from '../../../domain/interfaces/use-cases';
 import { AppError } from '../../../domain/errors/errors';
 import { JobPostingMapper } from '../../mappers/job-posting.mapper';
-import { JobPostingResponseDto } from '../../mappers/types';
+import { JobPostingResponseDto } from '../../dto/job-posting/job-posting-response.dto';
 
 export interface GetAllJobsQuery {
   page?: number;
@@ -19,10 +19,7 @@ export interface GetAllJobsQuery {
 }
 
 export class AdminGetAllJobsUseCase implements IAdminGetAllJobsUseCase {
-  constructor(
-    private readonly _jobPostingRepository: IJobPostingRepositoryFull,
-    private readonly _jobPostingMapper: JobPostingMapper,
-  ) {}
+  constructor(private readonly _jobPostingSearchRepository: IJobPostingSearchRepository) {}
 
   async execute(query: GetAllJobsQuery) {
     try {
@@ -36,11 +33,13 @@ export class AdminGetAllJobsUseCase implements IAdminGetAllJobsUseCase {
         page: query.page || 1,
         limit: query.limit || 10,
         sortBy: query.sortBy || 'createdAt',
-        sortOrder: query.sortOrder || 'desc'
+        sortOrder: query.sortOrder || 'desc',
       };
 
-      const result = await this._jobPostingRepository.findAll(filters);
-      
+      const result = await this._jobPostingSearchRepository.findAll(filters);
+
+      console.log('result', result);
+
       return result;
     } catch (error) {
       throw new AppError('Failed to fetch jobs', 500);

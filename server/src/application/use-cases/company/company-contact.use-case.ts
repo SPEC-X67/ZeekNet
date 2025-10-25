@@ -1,12 +1,10 @@
-import { ICompanyContactRepository } from '../../../domain/interfaces/repositories/company-contact.repository';
+import { ICompanyContactRepository } from '../../../domain/interfaces/repositories';
 import { CompanyContact } from '../../../domain/entities/company-contact.entity';
 import { CreateCompanyContactDto, UpdateCompanyContactDto } from '../../dto/company/company-contact.dto';
 import { NotFoundError } from '../../../domain/errors/errors';
 
 export class CompanyContactUseCase {
-  constructor(
-    private readonly _companyContactRepository: ICompanyContactRepository,
-  ) {}
+  constructor(private readonly _companyContactRepository: ICompanyContactRepository) {}
 
   async createContact(companyId: string, data: CreateCompanyContactDto): Promise<CompanyContact> {
     const contact = CompanyContact.create({ ...data, companyId });
@@ -14,7 +12,8 @@ export class CompanyContactUseCase {
   }
 
   async getContactsByCompanyId(companyId: string): Promise<CompanyContact[]> {
-    return this._companyContactRepository.findByCompanyId(companyId);
+    const contact = await this._companyContactRepository.findByCompanyId(companyId);
+    return contact ? [contact] : [];
   }
 
   async updateContact(contactId: string, data: UpdateCompanyContactDto): Promise<CompanyContact> {

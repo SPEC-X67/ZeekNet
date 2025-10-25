@@ -34,8 +34,7 @@ const UserHeader = () => {
     try {
       await dispatch(logoutThunk()).unwrap()
       navigate('/auth/login')
-    } catch (error) {
-      console.error('Logout failed:', error)
+    } catch {
       navigate('/auth/login')
     }
   }
@@ -43,7 +42,7 @@ const UserHeader = () => {
   return (
     <header className="bg-white border-b border-gray-200 shadow-sm">
       <div className="flex items-center justify-between px-6 py-4">
-        {/* Left Section - Search */}
+        {}
         <div className="flex items-center space-x-4 flex-1 max-w-md">
           <div className="relative w-full">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -54,7 +53,7 @@ const UserHeader = () => {
           </div>
         </div>
 
-        {/* Center Section - Quick Actions */}
+        {}
         <div className="flex items-center space-x-2">
           <Button variant="ghost" size="sm" className="relative text-gray-600 hover:text-gray-900">
             <Bell className="h-4 w-4" />
@@ -70,9 +69,9 @@ const UserHeader = () => {
           </Button>
         </div>
 
-        {/* Right Section - User Menu */}
+        {}
         <div className="flex items-center space-x-4">
-          {/* User Dropdown */}
+          {}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative h-10 w-10 rounded-full">

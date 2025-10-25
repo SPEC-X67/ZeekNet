@@ -1,18 +1,11 @@
 import { Router } from 'express';
 import { companyController, companyJobPostingController } from '../../infrastructure/di/companyDi';
-import {
-  authenticateToken,
-  authorizeRoles,
-} from '../middleware/auth.middleware';
+import { authenticateToken, authorizeRoles } from '../middleware/auth.middleware';
 import { uploadSingle } from '../middleware/upload.middleware';
 import { validateBody, validateQuery } from '../middleware/validation.middleware';
 import { UserBlockedMiddleware } from '../middleware/user-blocked.middleware';
 import { CompanyVerificationMiddleware } from '../middleware/company-verification.middleware';
-import { 
-  CreateJobPostingRequestDto, 
-  UpdateJobPostingDto, 
-  JobPostingQueryDto, 
-} from '../../application/dto/job-posting/job-posting.dto';
+import { CreateJobPostingRequestDto, UpdateJobPostingDto, JobPostingQueryDto } from '../../application/dto/job-posting/job-posting.dto';
 import { SimpleCompanyProfileDto } from '../../application/dto/company';
 
 export class CompanyRouter {
@@ -20,15 +13,14 @@ export class CompanyRouter {
 
   constructor() {
     this.router = Router();
-    this.initializeRoute();
+    this._initializeRoute();
   }
 
-  private initializeRoute(): void {
-    // Import repositories from companyDi
+  private _initializeRoute(): void {
     const { companyRepository } = require('../../infrastructure/di/companyDi');
-    const { userRepositoryFull } = require('../../infrastructure/di/authDi');
-    
-    const userBlockedMiddleware = new UserBlockedMiddleware(userRepositoryFull, companyRepository);
+    const { userRepository } = require('../../infrastructure/di/authDi');
+
+    const userBlockedMiddleware = new UserBlockedMiddleware(userRepository, companyRepository);
     const companyVerificationMiddleware = new CompanyVerificationMiddleware(companyRepository);
 
     this.router.use(authenticateToken);
@@ -71,11 +63,6 @@ export class CompanyRouter {
     this.router.put('/workplace-pictures/:id', companyController.updateCompanyWorkplacePicture);
     this.router.delete('/workplace-pictures/:id', companyController.deleteCompanyWorkplacePicture);
     this.router.post('/workplace-pictures/upload', uploadSingle('image'), companyController.uploadWorkplacePicture);
-
-    this.router.get('/team', companyController.getCompanyTeam);
-    this.router.post('/team', companyController.createCompanyTeamMember);
-    this.router.put('/team/:id', companyController.updateCompanyTeamMember);
-    this.router.delete('/team/:id', companyController.deleteCompanyTeamMember);
 
     this.router.post('/jobs', validateBody(CreateJobPostingRequestDto), companyJobPostingController.createJobPosting);
     this.router.get('/jobs', validateQuery(JobPostingQueryDto), companyJobPostingController.getCompanyJobPostings);

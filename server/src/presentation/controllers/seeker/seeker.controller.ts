@@ -1,18 +1,15 @@
 import { Request, Response } from 'express';
-import { BaseController, AuthenticatedRequest } from '../../../shared/base/base-controller';
-import { GetJobPostingUseCase } from '../../../application/use-cases/company';
-import { GetAllJobPostingsUseCase } from '../../../application/use-cases/public/get-all-job-postings.use-case';
+import { AuthenticatedRequest } from '../../../shared/types';
+import { handleValidationError, handleAsyncError, sendSuccessResponse, sendNotFoundResponse, badRequest, validateUserId, success, created, unauthorized, handleError } from '../../../shared/utils';
+import { IGetJobPostingUseCase, IGetAllJobPostingsUseCase, IIncrementJobViewCountUseCase } from '../../../domain/interfaces/use-cases';
 import { JobPostingQueryRequestDto } from '../../../application/dto/job-posting/job-posting.dto';
-import { IncrementJobViewCountUseCase } from '../../../application/use-cases/company';
 
-export class SeekerController extends BaseController {
+export class SeekerController {
   constructor(
-    private readonly _getJobPostingUseCase: GetJobPostingUseCase,
-    private readonly _getAllJobPostingsUseCase: GetAllJobPostingsUseCase,
-    private readonly _incrementJobViewCountUseCase: IncrementJobViewCountUseCase,
-  ) {
-    super();
-  }
+    private readonly _getJobPostingUseCase: IGetJobPostingUseCase,
+    private readonly _getAllJobPostingsUseCase: IGetAllJobPostingsUseCase,
+    private readonly _incrementJobViewCountUseCase: IIncrementJobViewCountUseCase
+  ) {}
 
   getAllJobPostings = async (req: Request, res: Response): Promise<void> => {
     try {
@@ -21,7 +18,7 @@ export class SeekerController extends BaseController {
         limit: parseInt(req.query.limit as string) || 10,
         is_active: req.query.is_active !== undefined ? req.query.is_active === 'true' : undefined,
         category_ids: req.query.category_ids ? (req.query.category_ids as string).split(',') : undefined,
-        employment_types: req.query.employment_types ? (req.query.employment_types as string).split(',') as ('full-time' | 'part-time' | 'contract' | 'internship' | 'remote')[] : undefined,
+        employment_types: req.query.employment_types ? ((req.query.employment_types as string).split(',') as ('full-time' | 'part-time' | 'contract' | 'internship' | 'remote')[]) : undefined,
         salary_min: req.query.salary_min ? parseInt(req.query.salary_min as string) : undefined,
         salary_max: req.query.salary_max ? parseInt(req.query.salary_max as string) : undefined,
         location: req.query.location as string,
@@ -29,26 +26,25 @@ export class SeekerController extends BaseController {
       };
 
       const result = await this._getAllJobPostingsUseCase.execute(query);
-      
-      this.success(res, result, 'Job postings retrieved successfully');
+
+      success(res, result, 'Job postings retrieved successfully');
     } catch (error) {
-      this.handleError(res, error);
+      handleError(res, error);
     }
   };
 
-  getJobPosting = async (req: Request, res: Response): Promise<void> => {
+  getJobPosting = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
       const { id } = req.params;
-      const userRole = (req as any).user?.role;
-      
+      const userRole = req.user?.role;
+
       const jobPosting = await this._getJobPostingUseCase.execute(id);
-      
-      // Only increment view count for seekers
-      this._incrementJobViewCountUseCase.execute(id, userRole).catch(console.error);
-      
-      this.success(res, jobPosting, 'Job posting retrieved successfully');
+
+      this._incrementJobViewCountUseCase.execute(id, userRole || '').catch(() => {});
+
+      success(res, jobPosting, 'Job posting retrieved successfully');
     } catch (error) {
-      this.handleError(res, error);
+      handleError(res, error);
     }
   };
 }

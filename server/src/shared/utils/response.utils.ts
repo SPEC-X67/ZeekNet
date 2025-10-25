@@ -5,11 +5,7 @@ export interface ApiResponse<T = unknown> {
   token?: string;
 }
 
-export const createSuccessResponse = <T>(
-  message: string, 
-  data: T, 
-  token?: string,
-): ApiResponse<T> => {
+export const createSuccessResponse = <T>(message: string, data: T, token?: string): ApiResponse<T> => {
   const response: ApiResponse<T> = {
     success: true,
     message,
@@ -23,10 +19,7 @@ export const createSuccessResponse = <T>(
   return response;
 };
 
-export const createErrorResponse = <T>(
-  message: string, 
-  data: T = null as T,
-): ApiResponse<T> => {
+export const createErrorResponse = <T>(message: string, data: T = null as T): ApiResponse<T> => {
   return {
     success: false,
     message,
@@ -34,10 +27,3 @@ export const createErrorResponse = <T>(
   };
 };
 
-export const createValidationErrorResponse = (message: string): ApiResponse<null> => {
-  return createErrorResponse(message, null);
-};
-
-export const createNotFoundResponse = (message: string): ApiResponse<null> => {
-  return createErrorResponse(message, null);
-};

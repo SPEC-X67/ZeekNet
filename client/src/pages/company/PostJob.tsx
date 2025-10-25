@@ -158,7 +158,6 @@ const PostJob = () => {
         });
       }
     } catch (error: unknown) {
-      console.error("Error creating job posting:", error);
       const errorMessage = error && typeof error === 'object' && 'message' in error 
         ? (error as { message: string }).message 
         : "Please try again later.";
@@ -173,7 +172,7 @@ const PostJob = () => {
   return (
     <CompanyLayout>
       <div className="flex flex-col items-center px-5">
-        {/* Top Navigation */}
+        {}
         <div className="flex items-center py-6 w-full">
           <Button variant="ghost" size="sm" onClick={handlePrevious}>
             <ArrowLeft className="h-4 w-4" />
@@ -181,7 +180,7 @@ const PostJob = () => {
           <h1 className="text-xl font-semibold text-[#25324B]">Post a Job</h1>
         </div>
 
-        {/* Steppers */}
+        {}
         <div className="flex items-center justify-center gap-20 px-5 py-3  w-full">
           {steps.map((step, index) => {
             const Icon = step.icon;
@@ -235,7 +234,7 @@ const PostJob = () => {
           })}
         </div>
 
-        {/* Step Content */}
+        {}
         <div className="w-full">
         <CurrentStepComponent
           data={jobData}

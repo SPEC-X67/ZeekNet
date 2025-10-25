@@ -13,22 +13,19 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
         <AdminSidebar />
       </div>
 
-      {/* Main Content */}
+      {}
       <div className="flex-1 flex flex-col ml-64">
-        {/* Fixed Header */}
+        {}
         <div className="fixed top-0 right-0 left-64 z-20">
           <AdminHeader />
         </div>
 
-        {/* Scrollable Main Content Area */}
+        {}
         <main className="flex-1 p-6 bg-gray-50 mt-16 overflow-y-auto">
           <div className="max-w-7xl mx-auto">
             {children}
           </div>
         </main>
-
-        {/* Footer */}
-        {/* <AdminFooter /> */}
       </div>
     </div>
   )

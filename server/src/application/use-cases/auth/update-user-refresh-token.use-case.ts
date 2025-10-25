@@ -1,10 +1,9 @@
-import { IUserRepositoryFull } from '../../../domain/interfaces/repositories';
+import { IUserAuthRepository } from '../../../domain/interfaces/repositories';
+import { IUpdateUserRefreshTokenUseCase } from '../../../domain/interfaces/use-cases';
 import { AppError } from '../../../domain/errors/errors';
 
-export class UpdateUserRefreshTokenUseCase {
-  constructor(
-    private readonly _userRepository: IUserRepositoryFull,
-  ) {}
+export class UpdateUserRefreshTokenUseCase implements IUpdateUserRefreshTokenUseCase {
+  constructor(private readonly _userAuthRepository: IUserAuthRepository) {}
 
   async execute(userId: string, hashedRefreshToken: string): Promise<void> {
     try {
@@ -16,7 +15,7 @@ export class UpdateUserRefreshTokenUseCase {
         throw new AppError('Hashed refresh token is required', 400);
       }
 
-      await this._userRepository.updateRefreshToken(userId, hashedRefreshToken);
+      await this._userAuthRepository.updateRefreshToken(userId, hashedRefreshToken);
     } catch (error) {
       if (error instanceof AppError) {
         throw error;

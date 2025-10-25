@@ -167,7 +167,6 @@ const Register = () => {
   }
 
   const handleGoogleError = () => {
-    console.error('Google login error')
     toast.error('Google Registration Failed', { description: 'Failed to authenticate with Google. Please try again.' })
   }
 
@@ -190,23 +189,24 @@ const Register = () => {
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary/10 via-primary/5 to-secondary/10 relative overflow-hidden">
         <div className="absolute inset-0 bg-grid-slate-100 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))] dark:bg-grid-slate-700/25"></div>
         
-        {/* Content */}
+        {}
         <div className="relative z-10 flex flex-col justify-center px-12 py-12">
-          {/* Logo */}
+          {}
           <div className="flex items-center space-x-3 mb-8">
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary shadow-lg">
-              <Briefcase className="h-7 w-7 text-primary-foreground" />
+              {/* <Briefcase className="h-7 w-7 text-primary-foreground" /> */}
+              <img src="/white.png" alt="ZeekNet Logo" className="h-8 w-8" />
             </div>
             <div>
               <h1 className="text-2xl font-bold text-foreground">ZeekNet</h1>
-              <Badge variant="secondary" className="bg-primary/20 text-primary">
+              <Badge variant="secondary" className="bg-primary/20 text-foreground">
                 <Sparkles className="mr-1 h-3 w-3" />
                 Job Portal
               </Badge>
             </div>
           </div>
 
-          {/* Hero Content */}
+          {}
           <div className="max-w-md">
             <h2 className="text-4xl font-bold text-foreground mb-4">
               Start your career journey today
@@ -215,7 +215,7 @@ const Register = () => {
               Join thousands of professionals and companies who trust ZeekNet for their job search and hiring needs.
             </p>
 
-            {/* Features */}
+            {}
             <div className="space-y-4">
               <div className="flex items-center space-x-3">
                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
@@ -248,7 +248,7 @@ const Register = () => {
               </div>
             </div>
 
-            {/* Stats */}
+            {}
             <div className="mt-12 pt-8 border-t border-border/50">
               <div className="flex items-center justify-between text-sm text-muted-foreground">
                 <div className="flex items-center space-x-1">
@@ -442,7 +442,7 @@ const Register = () => {
             
             <Separator className="my-6" />
             
-            {/* Google login only for job seekers */}
+            {}
             {formData.role === UserRole.SEEKER && (
               <div className="text-center space-y-4">
                 <GoogleLogin

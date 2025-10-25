@@ -5,8 +5,14 @@ export const AdminGetAllJobsDto = z.object({
   limit: z.coerce.number().min(1).max(100).optional().default(10),
   search: z.string().optional(),
   is_active: z.coerce.boolean().optional(),
-  category_ids: z.string().optional().transform(val => val ? val.split(',') : undefined),
-  employment_types: z.string().optional().transform(val => val ? val.split(',') : undefined),
+  category_ids: z
+    .string()
+    .optional()
+    .transform((val) => (val ? val.split(',') : undefined)),
+  employment_types: z
+    .string()
+    .optional()
+    .transform((val) => (val ? val.split(',') : undefined)),
   salary_min: z.coerce.number().min(0).optional(),
   salary_max: z.coerce.number().min(0).optional(),
   location: z.string().optional(),

@@ -11,15 +11,9 @@ export interface AuthenticatedRequest extends Request {
 }
 
 export class CompanyVerificationMiddleware {
-  constructor(
-    private readonly _companyRepository: ICompanyRepository,
-  ) {}
+  constructor(private readonly _companyRepository: ICompanyRepository) {}
 
-  checkCompanyVerified = async (
-    req: AuthenticatedRequest,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> => {
+  checkCompanyVerified = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = req.user?.id;
       const userRole = req.user?.role;
@@ -38,7 +32,7 @@ export class CompanyVerificationMiddleware {
       }
 
       const companyProfile = await this._companyRepository.getProfileByUserId(userId);
-      
+
       if (!companyProfile) {
         res.status(403).json({
           success: false,

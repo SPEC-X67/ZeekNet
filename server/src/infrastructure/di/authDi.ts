@@ -1,15 +1,11 @@
-// Manual Dependency Injection for Auth Module
-import { BaseUserRepository } from '../database/mongodb/repositories/base-user.repository';
-import { MongoCompanyRepository } from '../database/mongodb/repositories/company.repository';
-
+import { UserRepository } from '../database/mongodb/repositories/user.repository';
+import { CompanyProfileRepository } from '../database/mongodb/repositories/company-profile.repository';
 import { BcryptPasswordHasher } from '../security/bcrypt-password-hasher';
 import { JwtTokenService } from '../security/jwt-token-service';
 import { GoogleAuthTokenVerifier } from '../security/google-token-verifier';
 import { PasswordResetServiceImpl } from '../security/password-reset-service';
 import { RedisOtpService } from '../database/redis/services/redis-otp-service';
 import { NodemailerService } from '../messaging/mailer';
-
-// Auth Use Cases
 import { RegisterUserUseCase } from '../../application/use-cases/auth/register-user.use-case';
 import { LoginUserUseCase } from '../../application/use-cases/auth/login-user.use-case';
 import { AdminLoginUseCase } from '../../application/use-cases/auth/admin-login.use-case';
@@ -24,17 +20,14 @@ import { GetUserByEmailUseCase } from '../../application/use-cases/auth/get-user
 import { UpdateUserVerificationStatusUseCase } from '../../application/use-cases/auth/update-user-verification-status.use-case';
 import { UpdateUserRefreshTokenUseCase } from '../../application/use-cases/auth/update-user-refresh-token.use-case';
 import { GetCompanyProfileByUserIdUseCase } from '../../application/use-cases/auth/get-company-profile-by-user-id.use-case';
-
-// Auth Controllers
 import { RegistrationController } from '../../presentation/controllers/auth/registration.controller';
 import { LoginController } from '../../presentation/controllers/auth/login.controller';
 import { TokenController } from '../../presentation/controllers/auth/token.controller';
 import { PasswordController } from '../../presentation/controllers/auth/password.controller';
 import { OtpController } from '../../presentation/controllers/auth/otp.controller';
 
-// Create Infrastructure Services
-const userRepository = new BaseUserRepository() as any;
-const companyRepository = new MongoCompanyRepository() as any;
+const userRepository = new UserRepository();
+const companyProfileRepository = new CompanyProfileRepository();
 const passwordHasher = new BcryptPasswordHasher();
 const tokenService = new JwtTokenService();
 const googleTokenVerifier = new GoogleAuthTokenVerifier();
@@ -42,117 +35,42 @@ const otpService = new RedisOtpService();
 const mailerService = new NodemailerService();
 const passwordResetService = new PasswordResetServiceImpl(mailerService);
 
+const registerUserUseCase = new RegisterUserUseCase(userRepository, passwordHasher, otpService, mailerService);
 
-// Create Use Cases
-const registerUserUseCase = new RegisterUserUseCase(
-  userRepository,
-  passwordHasher,
-  otpService,
-  mailerService
-);
+const loginUserUseCase = new LoginUserUseCase(userRepository, userRepository, passwordHasher, tokenService, otpService, mailerService);
 
-const loginUserUseCase = new LoginUserUseCase(
-  userRepository,
-  userRepository, // Same instance implements both IUserRepository and IUserAuthRepository
-  passwordHasher,
-  tokenService,
-  otpService,
-  mailerService
-);
+const adminLoginUseCase = new AdminLoginUseCase(userRepository, userRepository, passwordHasher, tokenService, otpService, mailerService);
 
-const adminLoginUseCase = new AdminLoginUseCase(
-  userRepository,
-  userRepository, // Same instance implements both IUserRepository and IUserAuthRepository
-  passwordHasher,
-  tokenService,
-  otpService,
-  mailerService
-);
+const forgotPasswordUseCase = new ForgotPasswordUseCase(userRepository, passwordResetService);
 
-const forgotPasswordUseCase = new ForgotPasswordUseCase(
-  userRepository,
-  passwordResetService
-);
+const resetPasswordUseCase = new ResetPasswordUseCase(passwordHasher, passwordResetService, userRepository);
 
-const resetPasswordUseCase = new ResetPasswordUseCase(
-  passwordHasher,
-  passwordResetService,
-  userRepository );
+const verifyOtpUseCase = new VerifyOtpUseCase(otpService, userRepository, userRepository);
 
-const verifyOtpUseCase = new VerifyOtpUseCase(
-  otpService,
-  userRepository );
+const googleLoginUseCase = new GoogleLoginUseCase(userRepository, userRepository, passwordHasher, tokenService, googleTokenVerifier, otpService, mailerService);
 
-const googleLoginUseCase = new GoogleLoginUseCase(
-  userRepository ,
-  passwordHasher,
-  tokenService,
-  googleTokenVerifier,
-  otpService,
-  mailerService
-);
+const refreshTokenUseCase = new RefreshTokenUseCase(userRepository, userRepository, companyProfileRepository, tokenService, passwordHasher);
 
-const refreshTokenUseCase = new RefreshTokenUseCase(
-  userRepository ,
-  companyRepository ,
-  tokenService,
-  passwordHasher
-);
+const logoutUseCase = new LogoutUseCase(userRepository);
 
-const logoutUseCase = new LogoutUseCase(
-  userRepository );
+const getUserByIdUseCase = new GetUserByIdUseCase(userRepository);
 
-const getUserByIdUseCase = new GetUserByIdUseCase(
-  userRepository
-);
+const getUserByEmailUseCase = new GetUserByEmailUseCase(userRepository);
 
-const getUserByEmailUseCase = new GetUserByEmailUseCase(
-  userRepository );
+const updateUserVerificationStatusUseCase = new UpdateUserVerificationStatusUseCase(userRepository);
 
-const updateUserVerificationStatusUseCase = new UpdateUserVerificationStatusUseCase(
-  userRepository );
+const updateUserRefreshTokenUseCase = new UpdateUserRefreshTokenUseCase(userRepository);
 
-const updateUserRefreshTokenUseCase = new UpdateUserRefreshTokenUseCase(
-  userRepository );
+const getCompanyProfileByUserIdUseCase = new GetCompanyProfileByUserIdUseCase(companyProfileRepository);
 
-const getCompanyProfileByUserIdUseCase = new GetCompanyProfileByUserIdUseCase(
-  companyRepository );
+export const registrationController = new RegistrationController(registerUserUseCase);
 
-// Create Controllers
-export const registrationController = new RegistrationController(
-  registerUserUseCase
-);
+export const loginController = new LoginController(loginUserUseCase, adminLoginUseCase, googleLoginUseCase, tokenService, passwordHasher, updateUserRefreshTokenUseCase);
 
-export const loginController = new LoginController(
-  loginUserUseCase,
-  adminLoginUseCase,
-  googleLoginUseCase,
-  tokenService,
-  passwordHasher,
-  updateUserRefreshTokenUseCase
-);
+export const tokenController = new TokenController(refreshTokenUseCase, getUserByIdUseCase, tokenService, getCompanyProfileByUserIdUseCase);
 
-export const tokenController = new TokenController(
-  refreshTokenUseCase,
-  getUserByIdUseCase,
-  tokenService,
-  getCompanyProfileByUserIdUseCase
-);
+export const passwordController = new PasswordController(forgotPasswordUseCase, resetPasswordUseCase, logoutUseCase);
 
-export const passwordController = new PasswordController(
-  forgotPasswordUseCase,
-  resetPasswordUseCase,
-  logoutUseCase
-);
-
-export const otpController = new OtpController(
-  otpService,
-  mailerService,
-  getUserByEmailUseCase,
-  updateUserVerificationStatusUseCase,
-  updateUserRefreshTokenUseCase,
-  tokenService,
-  passwordHasher
-);
+export const otpController = new OtpController(otpService, mailerService, getUserByEmailUseCase, updateUserVerificationStatusUseCase, updateUserRefreshTokenUseCase, tokenService, passwordHasher);
 
 export { userRepository };

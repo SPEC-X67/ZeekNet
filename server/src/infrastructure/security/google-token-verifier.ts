@@ -3,13 +3,10 @@ import { IGoogleTokenVerifier, IGoogleProfile } from '../../domain/interfaces/se
 import { env } from '../config/env';
 
 export class GoogleAuthTokenVerifier implements IGoogleTokenVerifier {
-  private client = new OAuth2Client(
-    env.GOOGLE_CLIENT_ID,
-    env.GOOGLE_CLIENT_SECRET,
-  );
+  private _client = new OAuth2Client(env.GOOGLE_CLIENT_ID, env.GOOGLE_CLIENT_SECRET);
 
   async verifyIdToken(idToken: string): Promise<IGoogleProfile> {
-    const ticket = await this.client.verifyIdToken({
+    const ticket = await this._client.verifyIdToken({
       idToken,
       audience: env.GOOGLE_CLIENT_ID,
     });

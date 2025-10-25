@@ -1,19 +1,16 @@
 import { IUserRepository } from '../../../domain/interfaces/repositories';
+import { IAdminGetUserByIdUseCase } from '../../../domain/interfaces/use-cases';
 import { NotFoundError } from '../../../domain/errors/errors';
-import { UserMapper } from '../../mappers/user.mapper';
-import { UserResponseDto } from '../../mappers/types';
+import { User } from '../../../domain/entities/user.entity';
 
-export class GetUserByIdUseCase {
-  constructor(
-    private readonly _userRepository: IUserRepository,
-    private readonly _userMapper: UserMapper,
-  ) {}
+export class GetUserByIdUseCase implements IAdminGetUserByIdUseCase {
+  constructor(private readonly _userRepository: IUserRepository) {}
 
-  async execute(userId: string): Promise<UserResponseDto> {
+  async execute(userId: string): Promise<User> {
     const user = await this._userRepository.findById(userId);
     if (!user) {
       throw new NotFoundError('User not found');
     }
-    return this._userMapper.toDto(user);
+    return user;
   }
 }

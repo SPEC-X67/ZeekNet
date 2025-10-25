@@ -1,33 +1,23 @@
 import { Request, Response, NextFunction } from 'express';
-import {
-  AuthenticationError,
-  AuthorizationError,
-} from '../../domain/errors/errors';
+import { AuthenticationError, AuthorizationError } from '../../domain/errors/errors';
 import { JwtTokenService } from '../../infrastructure/security/jwt-token-service';
 
 export interface AuthenticatedRequest extends Request {
   user?: { id: string; email: string; role: string };
 }
 
-// Create token service instance for manual dependency injection
 const tokenService = new JwtTokenService();
 
-export function authenticateToken(
-  req: AuthenticatedRequest,
-  _res: Response,
-  next: NextFunction,
-): void {
+export function authenticateToken(req: AuthenticatedRequest, _res: Response, next: NextFunction): void {
   const authHeader = req.headers.authorization;
-  const token = authHeader?.startsWith('Bearer ')
-    ? authHeader.substring(7)
-    : undefined;
-  
+  const token = authHeader?.startsWith('Bearer ') ? authHeader.substring(7) : undefined;
+
   if (!token) {
     return next(new AuthenticationError('Missing access token'));
   }
   try {
     const payload = tokenService.verifyAccess(token);
-    
+
     req.user = {
       id: payload.sub,
       email: payload.email || '',
@@ -40,11 +30,7 @@ export function authenticateToken(
 }
 
 export function authorizeRoles(...roles: string[]) {
-  return (
-    req: AuthenticatedRequest,
-    _res: Response,
-    next: NextFunction,
-  ): void => {
+  return (req: AuthenticatedRequest, _res: Response, next: NextFunction): void => {
     const role = req.user?.role;
     if (!role || !roles.includes(role)) {
       return next(new AuthorizationError());

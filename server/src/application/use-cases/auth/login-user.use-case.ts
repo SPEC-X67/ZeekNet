@@ -13,7 +13,7 @@ export class LoginUserUseCase implements ILoginUserUseCase {
     private readonly _passwordHasher: IPasswordHasher,
     private readonly _tokenService: ITokenService,
     private readonly _otpService: IOtpService,
-    private readonly _mailerService: IMailerService,
+    private readonly _mailerService: IMailerService
   ) {}
 
   async execute(email: string, password: string): Promise<LoginResult> {
@@ -35,8 +35,6 @@ export class LoginUserUseCase implements ILoginUserUseCase {
     if (user.role === UserRole.ADMIN) {
       throw new AuthenticationError('Please use admin login endpoint');
     }
-
-    // Company blocking check can be added later if needed
 
     const isPasswordValid = await this._passwordHasher.compare(password, user.password);
     if (!isPasswordValid) {

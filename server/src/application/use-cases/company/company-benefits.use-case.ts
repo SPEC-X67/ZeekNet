@@ -1,12 +1,10 @@
-import { ICompanyBenefitsRepository } from '../../../domain/interfaces/repositories/company-benefits.repository';
+import { ICompanyBenefitsRepository } from '../../../domain/interfaces/repositories';
 import { CompanyBenefits } from '../../../domain/entities/company-benefits.entity';
 import { CreateCompanyBenefitsDto, UpdateCompanyBenefitsDto } from '../../dto/company/company-benefits.dto';
 import { NotFoundError } from '../../../domain/errors/errors';
 
 export class CompanyBenefitsUseCase {
-  constructor(
-    private readonly _companyBenefitsRepository: ICompanyBenefitsRepository,
-  ) {}
+  constructor(private readonly _companyBenefitsRepository: ICompanyBenefitsRepository) {}
 
   async createBenefit(companyId: string, data: CreateCompanyBenefitsDto): Promise<CompanyBenefits> {
     const benefit = CompanyBenefits.create({ ...data, companyId });

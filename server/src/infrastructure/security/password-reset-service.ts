@@ -12,9 +12,7 @@ interface PasswordResetToken {
 }
 
 export class PasswordResetServiceImpl implements IPasswordResetService {
-  constructor(
-    private readonly _mailerService: IMailerService,
-  ) {}
+  constructor(private readonly _mailerService: IMailerService) {}
 
   async generateResetToken(userId: string, email: string): Promise<string> {
     const token = randomBytes(32).toString('hex');
@@ -33,9 +31,7 @@ export class PasswordResetServiceImpl implements IPasswordResetService {
     return token;
   }
 
-  async getResetToken(
-    token: string,
-  ): Promise<{ userId: string; email: string } | null> {
+  async getResetToken(token: string): Promise<{ userId: string; email: string } | null> {
     const key = `password_reset:${token}`;
     const data = await redisClient.get(key);
 
@@ -69,10 +65,6 @@ export class PasswordResetServiceImpl implements IPasswordResetService {
     const resetUrl = `${env.FRONTEND_URL}/reset-password?token=${token}`;
     const htmlContent = passwordResetTemplate.html(resetUrl);
 
-    await this._mailerService.sendMail(
-      email,
-      passwordResetTemplate.subject,
-      htmlContent,
-    );
+    await this._mailerService.sendMail(email, passwordResetTemplate.subject, htmlContent);
   }
 }

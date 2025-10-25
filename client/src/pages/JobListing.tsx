@@ -56,8 +56,7 @@ const JobListing = () => {
       } else {
         setError(response.message || 'Failed to fetch jobs');
       }
-    } catch (err) {
-      console.error('Error fetching jobs:', err);
+    } catch {
       setError('An unexpected error occurred');
     } finally {
       setLoading(false);
@@ -204,7 +203,7 @@ const JobListing = () => {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-6">
+      <div className="container max-w-[1352px] mx-auto px-4 py-6">
         <div className="mb-6">
           <JobSearchFilters onSearch={handleSearch} loading={searchLoading} />
         </div>
@@ -244,9 +243,8 @@ const JobListing = () => {
             }>
               {jobs.map((job) => (
                 <JobCard
-                  key={job.id}
+                  key={job.id || job._id}
                   job={job}
-                  onApply={handleApplyJob}
                   onViewDetails={handleViewDetails}
                 />
               ))}

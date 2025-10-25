@@ -61,15 +61,6 @@ interface OfficeLocation {
   isHeadquarters: boolean;
 }
 
-interface TeamMember {
-  id?: string;
-  name: string;
-  role: string;
-  avatar?: string;
-  instagram?: string;
-  linkedin?: string;
-}
-
 interface WorkplacePicture {
   id?: string;
   pictureUrl: string;
@@ -95,7 +86,6 @@ const CompanyProfile = () => {
   const [techStack, setTechStack] = useState<TechStackItem[]>([])
   const [benefits, setBenefits] = useState<Benefit[]>([])
   const [officeLocations, setOfficeLocations] = useState<OfficeLocation[]>([])
-  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([])
   const [workplacePictures, setWorkplacePictures] = useState<WorkplacePicture[]>([])
   const [jobPostings, setJobPostings] = useState<JobPosting[]>([])
   
@@ -116,7 +106,7 @@ const CompanyProfile = () => {
       const response = await companyApi.getCompleteProfile()
 
       if (response.success && response.data) {
-        const { profile, contact, locations, techStack, benefits, team, workplacePictures, jobPostings } = response.data
+        const { profile, contact, locations, techStack, benefits, workplacePictures, jobPostings } = response.data
         
         setCompanyProfile(profile)
         setContact(contact)
@@ -130,13 +120,11 @@ const CompanyProfile = () => {
         setOfficeLocations(mappedLocations)
         setTechStack(techStack)
         setBenefits(benefits)
-        setTeamMembers(team)
         setWorkplacePictures(workplacePictures)
         setJobPostings(jobPostings || [])
       }
       
-    } catch (error) {
-      console.error('Error fetching company data:', error)
+    } catch {
       toast.error('Failed to load company data')
     } finally {
       setLoading(false)
@@ -165,8 +153,7 @@ const CompanyProfile = () => {
         } else {
         toast.error('Failed to update contact information')
         }
-      } catch (error) {
-      console.error('Error updating contact:', error)
+      } catch {
       toast.error('Failed to update contact information')
     } finally {
       setSaving(false)
@@ -207,8 +194,7 @@ const CompanyProfile = () => {
       
       setTechStack(techStackData)
       toast.success('Tech stack updated successfully')
-    } catch (error) {
-      console.error('Error updating tech stack:', error)
+    } catch {
       toast.error('Failed to update tech stack')
     } finally {
       setSaving(false)
@@ -256,8 +242,7 @@ const CompanyProfile = () => {
       
       setBenefits(benefitsData)
       toast.success('Benefits updated successfully')
-    } catch (error) {
-      console.error('Error updating benefits:', error)
+    } catch {
       toast.error('Failed to update benefits')
     } finally {
       setSaving(false)
@@ -312,8 +297,7 @@ const CompanyProfile = () => {
       
       setOfficeLocations(locationsData)
       toast.success('Office locations updated successfully')
-    } catch (error) {
-      console.error('Error updating office locations:', error)
+    } catch {
       toast.error('Failed to update office locations')
     } finally {
       setSaving(false)
@@ -330,8 +314,7 @@ const CompanyProfile = () => {
       } else {
         toast.error('Failed to update about section')
       }
-    } catch (error) {
-      console.error('Error updating about section:', error)
+    } catch {
       toast.error('Failed to update about section')
     } finally {
       setSaving(false)
@@ -379,8 +362,7 @@ const CompanyProfile = () => {
       
       setWorkplacePictures(pictures)
       toast.success('Workplace pictures updated successfully')
-    } catch (error) {
-      console.error('Error updating workplace pictures:', error)
+    } catch {
       toast.error('Failed to update workplace pictures')
     } finally {
       setSaving(false)
@@ -625,60 +607,6 @@ const CompanyProfile = () => {
 
           <div className="bg-white rounded-lg p-4">
             <div className="flex items-center justify-between mb-3.5">
-              <h3 className="text-lg font-semibold">Team</h3>
-              <div className="flex gap-1.5">
-                <Button variant="outline" size="sm" className="p-1.5">
-                  <Plus className="h-3.5 w-3.5" />
-                </Button>
-                <Button variant="outline" size="sm" className="p-1.5">
-                  <Edit3 className="h-3.5 w-3.5" />
-                </Button>
-              </div>
-            </div>
-            
-            {teamMembers.length > 0 ? (
-            <div className="grid grid-cols-3 gap-3.5">
-                {teamMembers.map((member, index) => (
-                  <div key={member.id || index} className="bg-gray-50 border border-gray-200 rounded-lg p-5 text-center">
-                  <Avatar className="w-16 h-16 mx-auto mb-3">
-                    <AvatarImage src={member.avatar} />
-                    <AvatarFallback>{member.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-                  </Avatar>
-                  <h4 className="font-semibold text-sm">{member.name}</h4>
-                  <p className="text-gray-600 text-xs">{member.role}</p>
-                  <div className="flex justify-center gap-1.5 mt-2.5">
-                      {member.instagram && (
-                    <Button variant="ghost" size="sm" className="p-1">
-                      <Instagram className="h-3.5 w-3.5 text-gray-600" />
-                    </Button>
-                      )}
-                      {member.linkedin && (
-                    <Button variant="ghost" size="sm" className="p-1">
-                      <Linkedin className="h-3.5 w-3.5 text-gray-600" />
-                    </Button>
-                      )}
-                  </div>
-                </div>
-              ))}
-            </div>
-            ) : (
-              <div className="text-gray-500 text-sm">
-                No team members added yet. Click add to add team members.
-              </div>
-            )}
-            
-            <div className="flex justify-end mt-3.5">
-              <Button variant="ghost" className="text-primary text-sm">
-                View all core teams
-                <ArrowRight className="h-3.5 w-3.5 ml-1.5" />
-              </Button>
-            </div>
-          </div>
-
-          <div className="border-t border-gray-200"></div>
-
-          <div className="bg-white rounded-lg p-4">
-            <div className="flex items-center justify-between mb-3.5">
               <h3 className="text-lg font-semibold">Benefits</h3>
               <div className="flex gap-1.5">
                 <Button 
@@ -694,7 +622,7 @@ const CompanyProfile = () => {
                   </div>
                   
             {benefits.length > 0 ? (
-            <div className="grid grid-cols-3 gap-3.5">
+            <div className="grid grid-cols-2 gap-3.5">
                 {benefits.map((benefit, index) => (
                   <div key={benefit.id || index} className="bg-gray-50 p-5 rounded-lg">
                 <div className="flex items-center gap-3.5 mb-3.5">

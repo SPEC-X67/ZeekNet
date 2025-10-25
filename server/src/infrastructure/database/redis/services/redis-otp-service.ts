@@ -1,5 +1,6 @@
 import { IOtpService } from '../../../../domain/interfaces/services';
 import { redisClient } from '../connection/redis';
+import { env } from '../../../config/env';
 
 function generateCode(): string {
   return String(Math.floor(100000 + Math.random() * 900000));
@@ -10,22 +11,17 @@ export class RedisOtpService implements IOtpService {
     return this.generateAndStoreOtp(email);
   }
 
-  async generateAndStoreOtp(
-    identifier: string,
-    ttlSeconds = 300,
-  ): Promise<string> {
-
+  async generateAndStoreOtp(identifier: string, ttlSeconds = Number(env.OTP_TTL_SECONDS) || 300): Promise<string> {
     const existingKey = `otp:${identifier}`;
     const existingOtp = await redisClient.get(existingKey);
-    
-    if (existingOtp) {
 
+    if (existingOtp) {
       const lastSentKey = `otp_last_sent:${identifier}`;
       const lastSent = await redisClient.get(lastSentKey);
-      
+
       if (lastSent) {
         const timeDiff = Date.now() - parseInt(lastSent);
-        if (timeDiff < 30000) { // 30 seconds cooldown
+        if (timeDiff < 30000) {
           throw new Error('Please wait before requesting another OTP');
         }
       }
@@ -34,12 +30,9 @@ export class RedisOtpService implements IOtpService {
     const code = generateCode();
     const key = `otp:${identifier}`;
     const lastSentKey = `otp_last_sent:${identifier}`;
-    
-    await Promise.all([
-      redisClient.set(key, code, { EX: ttlSeconds }),
-      redisClient.set(lastSentKey, Date.now().toString(), { EX: 60 }),
-    ]);
-    
+
+    await Promise.all([redisClient.set(key, code, { EX: ttlSeconds }), redisClient.set(lastSentKey, Date.now().toString(), { EX: 60 })]);
+
     return code;
   }
 

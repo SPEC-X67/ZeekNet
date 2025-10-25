@@ -20,8 +20,7 @@ const AdminHeader = () => {
     try {
       await dispatch(logoutThunk()).unwrap()
       navigate('/admin/login')
-    } catch (error) {
-      console.error('Logout failed:', error)
+    } catch {
       navigate('/admin/login')
     }
   }

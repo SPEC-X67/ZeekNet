@@ -1,32 +1,17 @@
-import { BaseEntity } from './base.entity';
+import { v4 as uuidv4 } from 'uuid';
 
-export class CompanyTechStack extends BaseEntity {
+export class CompanyTechStack {
   private constructor(
-    id: string,
+    public readonly id: string,
     public readonly companyId: string,
     public techStack: string,
-    createdAt?: Date,
-    updatedAt?: Date,
-  ) {
-    const now = new Date();
-    super(id, createdAt || now, updatedAt || now);
-  }
+    public readonly createdAt: Date,
+    public readonly updatedAt: Date
+  ) {}
 
-  static create(data: {
-    id?: string;
-    companyId: string;
-    techStack: string;
-    createdAt?: Date;
-    updatedAt?: Date;
-  }): CompanyTechStack {
+  static create(data: { id?: string; companyId: string; techStack: string; createdAt?: Date; updatedAt?: Date }): CompanyTechStack {
     const now = new Date();
-    return new CompanyTechStack(
-      data.id || BaseEntity.generateId(),
-      data.companyId,
-      data.techStack,
-      data.createdAt ?? now,
-      data.updatedAt ?? now,
-    );
+    return new CompanyTechStack(data.id || uuidv4(), data.companyId, data.techStack, data.createdAt ?? now, data.updatedAt ?? now);
   }
 
   updateTechStack(data: { techStack?: string }): CompanyTechStack {
@@ -47,13 +32,7 @@ export class CompanyTechStack extends BaseEntity {
     };
   }
 
-  static fromJSON(data: any): CompanyTechStack {
-    return new CompanyTechStack(
-      data.id,
-      data.companyId,
-      data.techStack,
-      new Date(data.createdAt),
-      new Date(data.updatedAt),
-    );
+  static fromJSON(data: { id: string; companyId: string; techStack: string; createdAt: string | Date; updatedAt: string | Date }): CompanyTechStack {
+    return new CompanyTechStack(data.id, data.companyId, data.techStack, new Date(data.createdAt), new Date(data.updatedAt));
   }
 }

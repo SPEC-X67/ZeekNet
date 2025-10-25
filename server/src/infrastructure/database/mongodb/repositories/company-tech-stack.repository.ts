@@ -1,30 +1,19 @@
-import { ICompanyTechStackRepository } from '../../../../domain/interfaces/repositories/company-tech-stack.repository';
+import { ICompanyTechStackRepository } from '../../../../domain/interfaces/repositories/company/ICompanyTechStackRepository';
 import { CompanyTechStack } from '../../../../domain/entities/company-tech-stack.entity';
-import { CompanyTechStackModel } from '../models/company-tech-stack.model';
+import { CompanyTechStackModel, CompanyTechStackDocument } from '../models/company-tech-stack.model';
 import { Types } from 'mongoose';
-import { MongoBaseRepository } from '../../../../shared/base';
+import { RepositoryBase } from '../../../../shared/base';
+import { CompanyTechStackMapper } from '../mappers';
 
-export class MongoCompanyTechStackRepository extends MongoBaseRepository<CompanyTechStack> implements ICompanyTechStackRepository {
+export class CompanyTechStackRepository extends RepositoryBase<CompanyTechStack, CompanyTechStackDocument> implements ICompanyTechStackRepository {
   constructor() {
     super(CompanyTechStackModel);
   }
 
-  /**
-   * Map MongoDB document to CompanyTechStack entity
-   */
-  protected mapToEntity(doc: any): CompanyTechStack {
-    return CompanyTechStack.fromJSON({
-      id: doc._id.toString(),
-      companyId: doc.companyId.toString(),
-      techStack: doc.techStack,
-      createdAt: doc.createdAt,
-      updatedAt: doc.updatedAt,
-    });
+  protected mapToEntity(doc: CompanyTechStackDocument): CompanyTechStack {
+    return CompanyTechStackMapper.toEntity(doc);
   }
 
-  /**
-   * Override create to handle ObjectId conversion
-   */
   async create(techStack: Omit<CompanyTechStack, 'id' | 'createdAt' | 'updatedAt'>): Promise<CompanyTechStack> {
     const techStackDoc = new CompanyTechStackModel({
       companyId: new Types.ObjectId(techStack.companyId),
@@ -39,12 +28,9 @@ export class MongoCompanyTechStackRepository extends MongoBaseRepository<Company
 
   async findByCompanyId(companyId: string): Promise<CompanyTechStack[]> {
     const techStacks = await CompanyTechStackModel.find({ companyId: new Types.ObjectId(companyId) });
-    return techStacks.map(techStack => this.mapToEntity(techStack));
+    return techStacks.map((techStack) => this.mapToEntity(techStack));
   }
 
-  /**
-   * Override update to handle ObjectId conversion
-   */
   async update(id: string, data: Partial<CompanyTechStack>): Promise<CompanyTechStack | null> {
     if (!Types.ObjectId.isValid(id)) {
       return null;
@@ -62,4 +48,3 @@ export class MongoCompanyTechStackRepository extends MongoBaseRepository<Company
     return updatedTechStack ? this.mapToEntity(updatedTechStack) : null;
   }
 }
-

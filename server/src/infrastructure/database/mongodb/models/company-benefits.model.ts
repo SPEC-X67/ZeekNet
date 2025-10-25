@@ -10,22 +10,25 @@ export interface CompanyBenefitsDocument extends Document {
   updatedAt: Date;
 }
 
-const CompanyBenefitsSchema = new Schema<CompanyBenefitsDocument>({
-  companyId: {
-    type: Schema.Types.ObjectId,
-    ref: 'CompanyProfile',
-    required: true,
+const CompanyBenefitsSchema = new Schema<CompanyBenefitsDocument>(
+  {
+    companyId: {
+      type: Schema.Types.ObjectId,
+      ref: 'CompanyProfile',
+      required: true,
+    },
+    perk: {
+      type: String,
+      required: true,
+    },
+    description: {
+      type: String,
+      required: true,
+    },
   },
-  perk: {
-    type: String,
-    required: true,
-  },
-  description: {
-    type: String,
-    required: true,
-  },
-}, {
-  timestamps: true,
-});
+  {
+    timestamps: true,
+  }
+);
 
 export const CompanyBenefitsModel = model<CompanyBenefitsDocument>('CompanyBenefits', CompanyBenefitsSchema);

@@ -1,11 +1,9 @@
-import { IUserRepositoryFull } from '../../../domain/interfaces/repositories';
+import { IUserRepository } from '../../../domain/interfaces/repositories';
 import { User } from '../../../domain/entities/user.entity';
 import { AppError } from '../../../domain/errors/errors';
 
 export class GetUserByEmailUseCase {
-  constructor(
-    private readonly _userRepository: IUserRepositoryFull,
-  ) {}
+  constructor(private readonly _userRepository: IUserRepository) {}
 
   async execute(email: string): Promise<User | null> {
     try {

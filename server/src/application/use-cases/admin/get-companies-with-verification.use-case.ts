@@ -1,95 +1,63 @@
-import { GetAllCompaniesRequestDto } from '../../dto/admin/user-management.dto';
-import { ICompanyRepository } from '../../../domain/interfaces/repositories';
-import { CompanyProfileMapper } from '../../mappers/company-profile.mapper';
-import { CompanyProfileResponseDto } from '../../mappers/types';
+import { ICompanyListingRepository, ICompanyVerificationRepository } from '../../../domain/interfaces/repositories';
+import { IGetCompaniesWithVerificationUseCase, CompanyQueryOptions, PaginatedCompaniesWithVerification } from '../../../domain/interfaces/use-cases';
 
-interface CompanyWithVerification extends CompanyProfileResponseDto {
-  verification?: {
-    taxId: string;
-    businessLicenseUrl: string;
-  } | null;
-}
-
-interface GetAllCompaniesWithVerificationResult {
-  companies: CompanyWithVerification[];
-  pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-    hasNext: boolean;
-    hasPrev: boolean;
-  };
-}
-
-export class GetCompaniesWithVerificationUseCase {
+export class GetCompaniesWithVerificationUseCase implements IGetCompaniesWithVerificationUseCase {
   constructor(
-    private readonly _companyRepository: ICompanyRepository,
-    private readonly _companyProfileMapper: CompanyProfileMapper,
+    private readonly _companyListingRepository: ICompanyListingRepository,
+    private readonly _companyVerificationRepository: ICompanyVerificationRepository
   ) {}
 
-  async execute(options: GetAllCompaniesRequestDto): Promise<GetAllCompaniesWithVerificationResult> {
+  async execute(options: CompanyQueryOptions): Promise<PaginatedCompaniesWithVerification> {
+    const page = options.page || 1;
+    const limit = options.limit || 10;
+
     const convertedOptions = {
-      page: parseInt(options.page),
-      limit: parseInt(options.limit),
+      page,
+      limit,
       search: options.search,
-      industry: options.industry,
       isVerified: options.isVerified,
-      isBlocked: options.isBlocked ? options.isBlocked === 'true' : undefined,
+      isBlocked: options.isBlocked,
+      sortBy: options.sortBy as 'createdAt' | 'companyName' | 'employeeCount' | undefined,
+      sortOrder: options.sortOrder,
     };
 
-    const result = await this._companyRepository.getAllCompanies(convertedOptions);
+    const result = await this._companyListingRepository.getAllCompanies(convertedOptions);
 
     const companiesWithVerification = await Promise.all(
       result.companies.map(async (company) => {
-        const verification = await this._companyRepository.getVerificationByCompanyId(company.id);
-        const companyDto = this._companyProfileMapper.toDto(company);
+        const verification = await this._companyVerificationRepository.getVerificationByCompanyId(company.id);
+
+        const companyData = company.toJSON();
         return {
-          ...companyDto,
-          verification: verification ? {
-            taxId: verification.taxId,
-            businessLicenseUrl: verification.businessLicenseUrl,
-          } : null,
+          id: companyData.id as string,
+          userId: companyData.userId as string,
+          companyName: companyData.companyName as string,
+          logo: companyData.logo as string,
+          websiteLink: companyData.websiteLink as string,
+          employeeCount: companyData.employeeCount as number,
+          industry: companyData.industry as string,
+          organisation: companyData.organisation as string,
+          aboutUs: companyData.aboutUs as string,
+          isVerified: companyData.isVerified as 'pending' | 'rejected' | 'verified',
+          isBlocked: companyData.isBlocked as boolean,
+          createdAt: companyData.createdAt as string,
+          updatedAt: companyData.updatedAt as string,
+          ...(verification && {
+            verification: {
+              taxId: verification.taxId,
+              businessLicenseUrl: verification.businessLicenseUrl,
+            },
+          }),
         };
-      }),
+      })
     );
 
     return {
       companies: companiesWithVerification,
-      pagination: {
-        page: convertedOptions.page,
-        limit: convertedOptions.limit,
-        total: result.total,
-        totalPages: Math.ceil(result.total / convertedOptions.limit),
-        hasNext: convertedOptions.page * convertedOptions.limit < result.total,
-        hasPrev: convertedOptions.page > 1,
-      },
-    };
-  }
-
-  async executeForPending(): Promise<GetAllCompaniesWithVerificationResult> {
-    const options = {
-      page: '1',
-      limit: '100',
-      isVerified: 'pending' as const,
-    };
-    return this.execute(options);
-  }
-
-  async executeById(companyId: string): Promise<CompanyWithVerification | null> {
-    const company = await this._companyRepository.getProfileById(companyId);
-    if (!company) {
-      return null;
-    }
-
-    const verification = await this._companyRepository.getVerificationByCompanyId(companyId);
-    const companyDto = this._companyProfileMapper.toDto(company);
-    return {
-      ...companyDto,
-      verification: verification ? {
-        taxId: verification.taxId,
-        businessLicenseUrl: verification.businessLicenseUrl,
-      } : null,
+      total: result.total,
+      page,
+      limit,
+      totalPages: Math.ceil(result.total / limit),
     };
   }
 }

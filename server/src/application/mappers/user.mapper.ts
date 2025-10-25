@@ -1,39 +1,44 @@
-import { RegisterRequestDto } from '../dto/auth/register.dto';
 import { User } from '../../domain/entities/user.entity';
-import { UserData, UserResponseDto, AuthResponseDto } from './types';
+import { UserResponseDto } from '../dto/auth/user-response.dto';
+import { UserRole } from '../../domain/enums/user-role.enum';
 
 export class UserMapper {
-  
-  toDomain(dto: RegisterRequestDto, id: string): UserData {
+  static toDto(user: User): UserResponseDto {
     return {
-      id,
-      name: dto.name,
-      email: dto.email,
-      password: dto.password,
-      role: dto.role,
-      isVerified: false,
-      isBlocked: false,
-      refreshToken: null,
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      isVerified: user.isVerified,
+      isBlocked: user.isBlocked,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
     };
   }
 
-  toDto(domain: User): UserResponseDto {
-    return {
-      id: domain.id,
-      name: domain.name,
-      email: domain.email,
-      role: domain.role,
-      is_verified: domain.isVerified,
-      is_blocked: domain.isBlocked,
-      created_at: domain.createdAt,
-      updated_at: domain.updatedAt,
-    };
-  }
-
-  toAuthResponse(user: User, tokens: { accessToken: string; refreshToken: string }): AuthResponseDto {
-    return {
-      user: this.toDto(user),
-      tokens,
-    };
+  static toDomain(data: {
+    id: string;
+    name: string;
+    email: string;
+    password: string;
+    role: string;
+    isVerified: boolean;
+    isBlocked: boolean;
+    refreshToken: string | null;
+    createdAt: Date;
+    updatedAt: Date;
+  }): User {
+    return User.create({
+      id: data.id,
+      name: data.name,
+      email: data.email,
+      password: data.password,
+      role: data.role as UserRole, 
+      isVerified: data.isVerified,
+      isBlocked: data.isBlocked,
+      refreshToken: data.refreshToken,
+      createdAt: data.createdAt,
+      updatedAt: data.updatedAt,
+    });
   }
 }

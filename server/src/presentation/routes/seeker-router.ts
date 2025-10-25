@@ -7,14 +7,12 @@ export class SeekerRouter {
 
   constructor() {
     this.router = Router();
-    this.initializeRoutes();
+    this._initializeRoutes();
   }
 
-  private initializeRoutes(): void {
-    // Apply auth middleware to all seeker routes
+  private _initializeRoutes(): void {
     this.router.use(authenticateToken);
 
-    // Job search routes
     this.router.get('/jobs', seekerController.getAllJobPostings);
     this.router.get('/jobs/:id', seekerController.getJobPosting);
   }

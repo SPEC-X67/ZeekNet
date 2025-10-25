@@ -80,11 +80,11 @@ const JobSearchFilters = ({ onSearch, loading = false }: JobSearchFiltersProps) 
 
   return (
     <div className="space-y-4">
-      {/* Main Search Bar */}
+      {}
       <Card className="border border-gray-100 shadow-sm bg-white">
         <CardContent className="p-3">
           <div className="flex items-center gap-3">
-            {/* Search Input */}
+            {}
             <div className="flex-1 relative">
               <div className="flex items-center bg-white border border-gray-200 rounded-lg">
                 <div className="flex items-center px-3 py-3 border-r border-gray-200">
@@ -101,10 +101,10 @@ const JobSearchFilters = ({ onSearch, loading = false }: JobSearchFiltersProps) 
               </div>
             </div>
             
-            {/* Divider */}
+            {}
             <div className="w-px h-12 bg-gray-200"></div>
             
-            {/* Location Input */}
+            {}
             <div className="flex-1 relative">
               <div className="flex items-center bg-white border border-gray-200 rounded-lg">
                 <div className="flex items-center px-3 py-3 border-r border-gray-200">
@@ -124,7 +124,7 @@ const JobSearchFilters = ({ onSearch, loading = false }: JobSearchFiltersProps) 
               </div>
             </div>
             
-            {/* Filter and Search Buttons */}
+            {}
             <div className="flex items-center gap-3">
               <Button
                 variant="outline"
@@ -156,7 +156,7 @@ const JobSearchFilters = ({ onSearch, loading = false }: JobSearchFiltersProps) 
         </CardContent>
       </Card>
 
-      {/* Clear Filters */}
+      {}
       {hasActiveFilters && (
         <div className="flex items-center justify-end">
           <Button
@@ -169,7 +169,7 @@ const JobSearchFilters = ({ onSearch, loading = false }: JobSearchFiltersProps) 
         </div>
       )}
 
-      {/* Advanced Filters */}
+      {}
       {showFilters && (
         <Card className="border border-gray-200">
           <CardHeader className="pb-4">
@@ -179,7 +179,7 @@ const JobSearchFilters = ({ onSearch, loading = false }: JobSearchFiltersProps) 
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
-            {/* Employment Types */}
+            {}
             <div>
               <h4 className="font-medium text-gray-900 mb-3 flex items-center gap-2">
                 <Briefcase className="w-4 h-4" />
@@ -203,7 +203,7 @@ const JobSearchFilters = ({ onSearch, loading = false }: JobSearchFiltersProps) 
               </div>
             </div>
 
-            {/* Salary Range */}
+            {}
             <div>
               <h4 className="font-medium text-gray-900 mb-3 flex items-center gap-2">
                 <IndianRupee className="w-4 h-4" />
@@ -227,7 +227,7 @@ const JobSearchFilters = ({ onSearch, loading = false }: JobSearchFiltersProps) 
               </div>
             </div>
 
-            {/* Apply Filters Button */}
+            {}
             <div className="flex justify-end pt-4 border-t border-gray-200">
               <Button
                 onClick={handleSearch}
@@ -241,7 +241,7 @@ const JobSearchFilters = ({ onSearch, loading = false }: JobSearchFiltersProps) 
         </Card>
       )}
 
-      {/* Active Filters Display */}
+      {}
       {hasActiveFilters && (
         <div className="flex flex-wrap gap-2">
           {searchQuery && (

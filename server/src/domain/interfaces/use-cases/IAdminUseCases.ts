@@ -1,26 +1,104 @@
-// Admin Use Case Interfaces
+import { User } from '../../entities/user.entity';
+import { CompanyProfile } from '../../entities/company-profile.entity';
+import { JobPosting, PaginatedJobPostings, JobPostingFilters } from '../../entities/job-posting.entity';
+
+export interface AuthResponse {
+  accessToken: string;
+  refreshToken: string;
+  user: {
+    id: string;
+    email: string;
+    name: string;
+    role: string;
+  };
+}
+
+export interface PaginatedUsers {
+  users: User[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
+export interface CompanyWithVerification {
+  id: string;
+  userId: string;
+  companyName: string;
+  logo: string;
+  websiteLink: string;
+  employeeCount: number;
+  industry: string;
+  organisation: string;
+  aboutUs: string;
+  isVerified: 'pending' | 'rejected' | 'verified';
+  isBlocked: boolean;
+  createdAt: string;
+  updatedAt: string;
+  verification?: {
+    taxId: string;
+    businessLicenseUrl: string;
+  };
+}
+
+export interface PaginatedCompanies {
+  companies: CompanyProfile[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
+export interface PaginatedCompaniesWithVerification {
+  companies: CompanyWithVerification[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
+export interface UserQueryOptions {
+  page?: number;
+  limit?: number;
+  search?: string;
+  role?: string;
+  isBlocked?: boolean;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
+}
+
+export interface CompanyQueryOptions {
+  page?: number;
+  limit?: number;
+  search?: string;
+  isVerified?: 'pending' | 'rejected' | 'verified';
+  isBlocked?: boolean;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
+}
+
 export interface IAdminLoginUseCase {
-  execute(email: string, password: string): Promise<any>;
+  execute(email: string, password: string): Promise<AuthResponse>;
 }
 
 export interface IGetAllUsersUseCase {
-  execute(options: any): Promise<any>;
+  execute(options: UserQueryOptions): Promise<PaginatedUsers>;
 }
 
 export interface IBlockUserUseCase {
   execute(userId: string, isBlocked: boolean): Promise<void>;
 }
 
-export interface IGetUserByIdUseCase {
-  execute(userId: string): Promise<any>;
+export interface IAdminGetUserByIdUseCase {
+  execute(userId: string): Promise<User>;
 }
 
 export interface IGetAllCompaniesUseCase {
-  execute(options: any): Promise<any>;
+  execute(options: CompanyQueryOptions): Promise<PaginatedCompanies>;
 }
 
 export interface IGetCompaniesWithVerificationUseCase {
-  execute(options: any): Promise<any>;
+  execute(options: CompanyQueryOptions): Promise<PaginatedCompaniesWithVerification>;
 }
 
 export interface IVerifyCompanyUseCase {
@@ -32,21 +110,29 @@ export interface IBlockCompanyUseCase {
 }
 
 export interface IAdminGetAllJobsUseCase {
-  execute(query: any): Promise<any>;
+  execute(query: JobPostingFilters): Promise<PaginatedJobPostings>;
 }
 
 export interface IAdminGetJobByIdUseCase {
-  execute(jobId: string): Promise<any>;
+  execute(jobId: string): Promise<JobPosting>;
 }
 
 export interface IAdminUpdateJobStatusUseCase {
-  execute(jobId: string, isActive: boolean): Promise<any>;
+  execute(jobId: string, isActive: boolean): Promise<JobPosting>;
 }
 
 export interface IAdminDeleteJobUseCase {
-  execute(jobId: string): Promise<any>;
+  execute(jobId: string): Promise<boolean>;
+}
+
+export interface AdminJobStats {
+  total: number;
+  active: number;
+  inactive: number;
+  totalApplications: number;
+  totalViews: number;
 }
 
 export interface IAdminGetJobStatsUseCase {
-  execute(): Promise<any>;
+  execute(): Promise<AdminJobStats>;
 }

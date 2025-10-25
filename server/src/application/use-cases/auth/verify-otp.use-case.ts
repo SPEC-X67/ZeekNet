@@ -1,11 +1,13 @@
 import { IOtpService } from '../../../domain/interfaces/services';
-import { IUserRepositoryFull } from '../../../domain/interfaces/repositories';
+import { IUserRepository, IUserAuthRepository } from '../../../domain/interfaces/repositories';
+import { IVerifyOtpUseCase } from '../../../domain/interfaces/use-cases';
 import { ValidationError, NotFoundError } from '../../../domain/errors/errors';
 
-export class VerifyOtpUseCase {
+export class VerifyOtpUseCase implements IVerifyOtpUseCase {
   constructor(
     private readonly _otpService: IOtpService,
-    private readonly _userRepository: IUserRepositoryFull,
+    private readonly _userRepository: IUserRepository,
+    private readonly _userAuthRepository: IUserAuthRepository
   ) {}
 
   async execute(email: string, code: string): Promise<void> {
@@ -17,6 +19,6 @@ export class VerifyOtpUseCase {
     if (!isValid) {
       throw new ValidationError('Invalid or expired OTP code');
     }
-    await this._userRepository.updateVerificationStatus(email, true);
+    await this._userAuthRepository.updateVerificationStatus(email, true);
   }
 }

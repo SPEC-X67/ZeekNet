@@ -61,10 +61,10 @@ const PendingCompanies = () => {
 
   const filteredCompanies = companies.filter(company => {
     const matchesSearch = !searchTerm || 
-      company.company_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      company.companyName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       company.industry?.toLowerCase().includes(searchTerm.toLowerCase())
     
-    const matchesStatus = !statusFilter || company.is_verified === statusFilter
+    const matchesStatus = !statusFilter || company.isVerified === statusFilter
     const matchesIndustry = !industryFilter || company.industry === industryFilter
     
     return matchesSearch && matchesStatus && matchesIndustry
@@ -94,9 +94,9 @@ const PendingCompanies = () => {
         isVerified: 'verified'
       })
       
-      toast.success(`Company ${selectedCompany.company_name || 'Unknown'} accepted successfully`)
-    setAcceptDialogOpen(false)
-    setSelectedCompany(null)
+      toast.success(`Company ${selectedCompany.companyName || 'Unknown'} accepted successfully`)
+      setAcceptDialogOpen(false)
+      setSelectedCompany(null)
       fetchPendingCompanies()
     } catch {
       toast.error('Failed to accept company')
@@ -112,9 +112,9 @@ const PendingCompanies = () => {
         isVerified: 'rejected'
       })
       
-      toast.success(`Company ${selectedCompany.company_name || 'Unknown'} rejected successfully`)
-    setRejectDialogOpen(false)
-    setSelectedCompany(null)
+      toast.success(`Company ${selectedCompany.companyName || 'Unknown'} rejected successfully`)
+      setRejectDialogOpen(false)
+      setSelectedCompany(null)
       fetchPendingCompanies()
     } catch {
       toast.error('Failed to reject company')
@@ -142,7 +142,7 @@ const PendingCompanies = () => {
   return (
     <AdminLayout>
       <div className="space-y-6">
-        {/* Header */}
+        {}
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold text-foreground">Pending Companies</h1>
           <div className="flex items-center space-x-2">
@@ -154,7 +154,7 @@ const PendingCompanies = () => {
           </div>
         </div>
 
-        {/* Search and Filter Section */}
+        {}
         <div className="flex flex-col sm:flex-row gap-4">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
@@ -208,7 +208,7 @@ const PendingCompanies = () => {
           </div>
         </div>
 
-        {/* Loading State */}
+        {}
         {loading && (
           <Card className="border-0 shadow-md">
             <CardContent className="p-8">
@@ -222,7 +222,7 @@ const PendingCompanies = () => {
           </Card>
         )}
 
-        {/* Error State */}
+        {}
         {error && (
           <Card className="border-0 shadow-md">
             <CardContent className="p-8">
@@ -236,7 +236,7 @@ const PendingCompanies = () => {
           </Card>
         )}
 
-        {/* Companies Table */}
+        {}
         {!loading && !error && (
         <Card className="border-0 shadow-md">
           <CardContent className="p-0">
@@ -259,13 +259,13 @@ const PendingCompanies = () => {
                       <td className="p-4">
                         <div className="flex items-center space-x-3">
                           <img 
-                              src={company.logo || 'https://api.dicebear.com/7.x/shapes/svg?seed=' + (company.company_name?.charAt(0) || 'C')} 
-                              alt={company.company_name || 'Company'}
+                              src={company.logo || 'https://api.dicebear.com/7.x/shapes/svg?seed=' + (company.companyName?.charAt(0) || 'C')} 
+                              alt={company.companyName || 'Company'}
                             className="h-10 w-10 rounded-full object-cover"
                           />
                           <div>
-                              <p className="font-medium text-gray-900">{company.company_name || 'Unknown Company'}</p>
-                              <p className="text-sm text-gray-500">{company.website_link}</p>
+                              <p className="font-medium text-gray-900">{company.companyName || 'Unknown Company'}</p>
+                              <p className="text-sm text-gray-500">{company.websiteLink}</p>
                           </div>
                         </div>
                       </td>
@@ -276,18 +276,18 @@ const PendingCompanies = () => {
                           <span className="text-sm text-gray-700">{company.organisation}</span>
                       </td>
                       <td className="p-4">
-                          <span className="text-sm text-gray-700">{company.employee_count}+</span>
+                          <span className="text-sm text-gray-700">{company.employeeCount}+</span>
                       </td>
                       <td className="p-4">
                         <span className={`text-xs px-2 py-1 rounded-full ${
-                            company.is_verified === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                            company.isVerified === 'pending' ? 'bg-yellow-100 text-yellow-700' :
                           'bg-red-100 text-red-700'
                         }`}>
-                            {company.is_verified === 'pending' ? 'Pending' : 'Rejected'}
+                            {company.isVerified === 'pending' ? 'Pending' : 'Rejected'}
                           </span>
                         </td>
                         <td className="p-4 text-sm text-gray-700">
-                          {new Date(company.created_at).toLocaleDateString()}
+                          {new Date(company.createdAt).toLocaleDateString()}
                       </td>
                       <td className="p-4">
                     <div className="flex items-center space-x-2">
@@ -326,31 +326,31 @@ const PendingCompanies = () => {
                   </Card>
         )}
 
-        {/* Company Details Dialog */}
+        {}
         <Dialog open={detailsDialogOpen} onOpenChange={setDetailsDialogOpen}>
           <DialogContent className="max-w-4xl h-[90vh] flex flex-col p-0">
-            {/* Header */}
+            {}
             <DialogHeader className="px-6 py-4 border-b border-border/50 flex-shrink-0">
               <DialogTitle className="text-xl font-semibold">Company Details</DialogTitle>
               <DialogDescription>
-                Review the complete information for {selectedCompany?.company_name}
+                Review the complete information for {selectedCompany?.companyName}
               </DialogDescription>
             </DialogHeader>
 
-            {/* Scrollable Content */}
+            {}
             <div className="flex-1 overflow-y-auto px-6 py-4 min-h-0">
               {selectedCompany && (
                 <div className="space-y-6">
                   <div className="flex items-center space-x-4">
                     <img 
-                      src={selectedCompany.logo || 'https://api.dicebear.com/7.x/shapes/svg?seed=' + (selectedCompany.company_name?.charAt(0) || 'C')} 
-                      alt={selectedCompany.company_name || 'Company'}
+                      src={selectedCompany.logo || 'https://api.dicebear.com/7.x/shapes/svg?seed=' + (selectedCompany.companyName?.charAt(0) || 'C')} 
+                      alt={selectedCompany.companyName || 'Company'}
                       className="h-16 w-16 rounded-full object-cover"
                     />
                     <div>
-                      <h3 className="text-xl font-semibold">{selectedCompany.company_name || 'Unknown Company'}</h3>
-                      <p className="text-gray-600">{selectedCompany.website_link}</p>
-                      <p className="text-sm text-gray-500">Created: {new Date(selectedCompany.created_at).toLocaleDateString()}</p>
+                      <h3 className="text-xl font-semibold">{selectedCompany.companyName || 'Unknown Company'}</h3>
+                      <p className="text-gray-600">{selectedCompany.websiteLink}</p>
+                      <p className="text-sm text-gray-500">Created: {new Date(selectedCompany.createdAt).toLocaleDateString()}</p>
                     </div>
                   </div>
                   
@@ -365,38 +365,38 @@ const PendingCompanies = () => {
                     </div>
                     <div>
                       <label className="text-sm font-medium text-gray-700">Employees</label>
-                      <p className="text-sm text-gray-900">{selectedCompany.employee_count}+</p>
+                      <p className="text-sm text-gray-900">{selectedCompany.employeeCount}+</p>
                     </div>
                     <div>
                       <label className="text-sm font-medium text-gray-700">Status</label>
                     <span className={`text-xs px-2 py-1 rounded-full ${
-                        selectedCompany.is_verified === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                        selectedCompany.isVerified === 'pending' ? 'bg-yellow-100 text-yellow-700' :
                       'bg-red-100 text-red-700'
                     }`}>
-                        {selectedCompany.is_verified === 'pending' ? 'Pending' : 'Rejected'}
+                        {selectedCompany.isVerified === 'pending' ? 'Pending' : 'Rejected'}
                       </span>
                     </div>
                   </div>
 
                   <div>
                     <label className="text-sm font-medium text-gray-700">About Us</label>
-                    <p className="text-sm text-gray-900 mt-1">{selectedCompany.about_us || 'No description provided'}</p>
+                    <p className="text-sm text-gray-900 mt-1">{selectedCompany.aboutUs || 'No description provided'}</p>
                   </div>
 
                   <div>
                     <label className="text-sm font-medium text-gray-700">Verification Status</label>
                     <div className="mt-2">
                       <span className={`text-sm px-3 py-1 rounded-full ${
-                        selectedCompany.is_verified === 'verified' ? 'bg-green-100 text-green-700' :
-                        selectedCompany.is_verified === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                        selectedCompany.isVerified === 'verified' ? 'bg-green-100 text-green-700' :
+                        selectedCompany.isVerified === 'pending' ? 'bg-yellow-100 text-yellow-700' :
                         'bg-red-100 text-red-700'
                       }`}>
-                        {selectedCompany.is_verified.charAt(0).toUpperCase() + selectedCompany.is_verified.slice(1)}
+                        {selectedCompany.isVerified.charAt(0).toUpperCase() + selectedCompany.isVerified.slice(1)}
                         </span>
                     </div>
                   </div>
 
-                  {/* Verification Documents Section */}
+                  {}
                   {selectedCompany.verification && (
                     <div className="border-t pt-6">
                       <div className="flex items-center gap-2 mb-4">
@@ -405,7 +405,7 @@ const PendingCompanies = () => {
                       </div>
                       
                       <div className="grid grid-cols-1 gap-4">
-                        {/* Tax ID */}
+                        {}
                         <div className="bg-gray-50 p-4 rounded-lg">
                           <label className="text-sm font-medium text-gray-700 block mb-2">Tax ID</label>
                           <div className="flex items-center justify-between">
@@ -428,7 +428,7 @@ const PendingCompanies = () => {
                           </div>
                         </div>
 
-                        {/* Business License */}
+                        {}
                         <div className="bg-gray-50 p-4 rounded-lg">
                           <label className="text-sm font-medium text-gray-700 block mb-2">Business License</label>
                           <div className="flex items-center justify-between">
@@ -474,7 +474,7 @@ const PendingCompanies = () => {
                     </div>
                   )}
 
-                  {/* No Verification Documents Message */}
+                  {}
                   {!selectedCompany.verification && (
                     <div className="border-t pt-6">
                       <div className="flex items-center gap-2 mb-4">
@@ -495,7 +495,7 @@ const PendingCompanies = () => {
               )}
             </div>
 
-            {/* Fixed Footer */}
+            {}
             <div className="px-6 py-4 border-t border-border/50 bg-gray-50/50 flex-shrink-0">
               <div className="flex justify-between w-full">
                 <Button variant="outline" onClick={() => setDetailsDialogOpen(false)}>
@@ -529,13 +529,13 @@ const PendingCompanies = () => {
           </DialogContent>
         </Dialog>
 
-        {/* Accept Confirmation Dialog */}
+        {}
         <Dialog open={acceptDialogOpen} onOpenChange={setAcceptDialogOpen}>
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Accept Company</DialogTitle>
               <DialogDescription>
-                Are you sure you want to accept {selectedCompany?.company_name}? This will approve their registration and grant them access to the platform.
+                Are you sure you want to accept {selectedCompany?.companyName}? This will approve their registration and grant them access to the platform.
               </DialogDescription>
             </DialogHeader>
             <DialogFooter>
@@ -552,13 +552,13 @@ const PendingCompanies = () => {
           </DialogContent>
         </Dialog>
 
-        {/* Reject Confirmation Dialog */}
+        {}
         <Dialog open={rejectDialogOpen} onOpenChange={setRejectDialogOpen}>
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Reject Company</DialogTitle>
               <DialogDescription>
-                Are you sure you want to reject {selectedCompany?.company_name}? This will deny their registration and they will need to reapply.
+                Are you sure you want to reject {selectedCompany?.companyName}? This will deny their registration and they will need to reapply.
               </DialogDescription>
             </DialogHeader>
             <DialogFooter>

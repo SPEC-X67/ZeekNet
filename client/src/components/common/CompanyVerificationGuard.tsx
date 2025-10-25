@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAppSelector } from '@/hooks/useRedux';
 import { UserRole } from '@/constants/enums';
 import { companyApi } from '@/api/company.api';
@@ -11,20 +12,18 @@ interface CompanyVerificationGuardProps {
 type ProfileStatus = 'not_created' | 'pending' | 'verified' | 'rejected';
 
 const CompanyVerificationGuard: React.FC<CompanyVerificationGuardProps> = ({ children }) => {
+  const navigate = useNavigate();
   const { role, isAuthenticated } = useAppSelector((state) => state.auth);
   const [profileStatus, setProfileStatus] = useState<ProfileStatus | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  if (role !== UserRole.COMPANY || !isAuthenticated) {
-    return <>{children}</>;
-  }
 
   useEffect(() => {
+    if (role !== UserRole.COMPANY || !isAuthenticated) {
+      return;
+    }
     const checkVerificationStatus = async () => {
       try {
         setLoading(true);
-        setError(null);
         
         const response = await companyApi.getDashboard();
         
@@ -33,22 +32,32 @@ const CompanyVerificationGuard: React.FC<CompanyVerificationGuardProps> = ({ chi
           const status = (data.profileStatus || data.verificationStatus || 'not_created') as ProfileStatus;
           setProfileStatus(status);
         } else {
+          if (response.message?.includes('Company profile not found') || 
+              response.message?.includes('Please complete your profile')) {
+            navigate('/company/profile-setup', { replace: true });
+            return;
+          }
+          
           if (response.message && (response.data as any)?.verificationStatus) {
             const status = (response.data as any).verificationStatus as ProfileStatus;
             setProfileStatus(status);
           } else {
-            setError(response.message || 'Failed to check verification status');
             setProfileStatus('not_created');
           }
         }
       } catch (err: any) {
-        console.error('Error checking verification status:', err);
+        const errorMessage = err.response?.data?.message || err.message || '';
+        
+        if (errorMessage.includes('Company profile not found') || 
+            errorMessage.includes('Please complete your profile')) {
+          navigate('/company/profile-setup', { replace: true });
+          return;
+        }
         
         if (err.response?.data?.data?.verificationStatus) {
           const status = err.response.data.data.verificationStatus as ProfileStatus;
           setProfileStatus(status);
         } else {
-          setError(err.response?.data?.message || 'Failed to check verification status');
           setProfileStatus('not_created');
         }
       } finally {
@@ -57,7 +66,11 @@ const CompanyVerificationGuard: React.FC<CompanyVerificationGuardProps> = ({ chi
     };
 
     checkVerificationStatus();
-  }, []);
+  }, [role, isAuthenticated, navigate]);
+
+  if (role !== UserRole.COMPANY || !isAuthenticated) {
+    return <>{children}</>;
+  }
 
   if (loading) {
     return (
@@ -65,23 +78,6 @@ const CompanyVerificationGuard: React.FC<CompanyVerificationGuardProps> = ({ chi
         <div className="flex flex-col items-center space-y-4">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
           <p className="text-muted-foreground">Checking verification status...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-xl font-semibold text-red-600 mb-2">Error</h2>
-          <p className="text-muted-foreground mb-4">{error}</p>
-          <button 
-            onClick={() => window.location.reload()} 
-            className="px-4 py-2 bg-primary text-white rounded hover:bg-primary/90"
-          >
-            Retry
-          </button>
         </div>
       </div>
     );
