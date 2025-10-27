@@ -16,7 +16,7 @@ const PerksAndBenefitsSchema = new Schema<PerksAndBenefitsDocument>(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 export const PerksAndBenefitsModel = model<PerksAndBenefitsDocument>('PerksAndBenefits', PerksAndBenefitsSchema);

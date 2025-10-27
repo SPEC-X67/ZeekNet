@@ -2,8 +2,8 @@ import { ICompanyOfficeLocationRepository } from '../../../../domain/interfaces/
 import { CompanyOfficeLocation } from '../../../../domain/entities/company-office-location.entity';
 import { CompanyOfficeLocationModel, CompanyOfficeLocationDocument } from '../models/company-office-location.model';
 import { Types } from 'mongoose';
-import { RepositoryBase } from '../../../../shared/base';
 import { CompanyOfficeLocationMapper } from '../mappers';
+import { RepositoryBase } from './base-repository';
 
 export class CompanyOfficeLocationRepository extends RepositoryBase<CompanyOfficeLocation, CompanyOfficeLocationDocument> implements ICompanyOfficeLocationRepository {
   constructor() {
@@ -45,7 +45,7 @@ export class CompanyOfficeLocationRepository extends RepositoryBase<CompanyOffic
         ...data,
         updatedAt: new Date(),
       },
-      { new: true }
+      { new: true },
     );
 
     return updatedLocation ? this.mapToEntity(updatedLocation) : null;

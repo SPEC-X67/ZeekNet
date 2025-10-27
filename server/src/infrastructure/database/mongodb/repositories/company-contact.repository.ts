@@ -33,7 +33,7 @@ export class CompanyContactRepository implements ICompanyContactRepository {
         ...updates,
         updatedAt: new Date(),
       },
-      { new: true }
+      { new: true },
     );
     if (!updated) throw new Error('Contact not found');
     return CompanyContactMapper.toEntity(updated);
@@ -73,7 +73,7 @@ export class CompanyContactRepository implements ICompanyContactRepository {
         ...updates,
         updatedAt: new Date(),
       },
-      { new: true }
+      { new: true },
     );
     return updated ? CompanyContactMapper.toEntity(updated) : null;
   }

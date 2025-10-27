@@ -2,9 +2,9 @@ import { IJobPostingRepository, IJobPostingSearchRepository, IJobPostingAnalytic
 import { JobPosting, CreateJobPostingRequest, UpdateJobPostingRequest, JobPostingFilters, PaginatedJobPostings } from '../../../../domain/entities/job-posting.entity';
 import { JobPostingModel, JobPostingDocument } from '../models/job-posting.model';
 import { Types } from 'mongoose';
-import { RepositoryBase } from '../../../../shared/base';
 import { JobPostingMapper } from '../mappers';
 import { JobPostingResponseDto } from '../../../../application/dto/job-posting/job-posting-response.dto';
+import { RepositoryBase } from './base-repository';
 
 export interface JobPostingDetailResponseDto {
   id: string;
@@ -260,7 +260,7 @@ export class JobPostingRepository extends RepositoryBase<JobPosting, JobPostingD
         is_active: status === 'active',
         updatedAt: new Date(),
       },
-      { new: true }
+      { new: true },
     )
       .populate('company_id', 'companyName logo')
       .populate('skills_required', 'name')

@@ -36,7 +36,7 @@ const CompanyProfileSchema = new Schema<CompanyProfileDocument>(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 export const CompanyProfileModel = model<CompanyProfileDocument>('CompanyProfile', CompanyProfileSchema);
