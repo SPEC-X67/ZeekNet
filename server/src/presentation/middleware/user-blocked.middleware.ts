@@ -14,7 +14,7 @@ export interface AuthenticatedRequest extends Request {
 export class UserBlockedMiddleware {
   constructor(
     private readonly _userRepository: IUserRepository,
-    private readonly _companyRepository: ICompanyRepository
+    private readonly _companyRepository: ICompanyRepository,
   ) {}
 
   checkUserBlocked = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {

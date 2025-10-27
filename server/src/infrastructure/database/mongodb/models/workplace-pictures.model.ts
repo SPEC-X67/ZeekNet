@@ -16,7 +16,7 @@ const WorkplacePicturesSchema = new Schema<WorkplacePicturesDocument>(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 export const WorkplacePicturesModel = model<WorkplacePicturesDocument>('WorkplacePictures', WorkplacePicturesSchema);

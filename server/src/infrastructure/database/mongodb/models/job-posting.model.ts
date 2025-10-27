@@ -147,7 +147,7 @@ const JobPostingSchema = new Schema<JobPostingDocument>(
   {
     timestamps: true,
     collection: 'job_postings',
-  }
+  },
 );
 
 JobPostingSchema.index({ company_id: 1, is_active: 1 });

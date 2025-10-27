@@ -7,7 +7,7 @@ export class CompanyBenefits {
     public perk: string,
     public readonly createdAt: Date,
     public readonly updatedAt: Date,
-    public description?: string
+    public description?: string,
   ) {}
 
   static create(data: { id?: string; companyId: string; perk: string; description?: string; createdAt?: Date; updatedAt?: Date }): CompanyBenefits {

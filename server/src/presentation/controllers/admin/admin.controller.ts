@@ -11,7 +11,7 @@ export class AdminController {
     private readonly _getAllCompaniesUseCase: IGetAllCompaniesUseCase,
     private readonly _getCompaniesWithVerificationUseCase: IGetCompaniesWithVerificationUseCase,
     private readonly _verifyCompanyUseCase: IVerifyCompanyUseCase,
-    private readonly _blockCompanyUseCase: IBlockCompanyUseCase
+    private readonly _blockCompanyUseCase: IBlockCompanyUseCase,
   ) {}
 
   getAllUsers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {

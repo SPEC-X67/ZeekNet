@@ -6,7 +6,7 @@ export class CompanyTechStack {
     public readonly companyId: string,
     public techStack: string,
     public readonly createdAt: Date,
-    public readonly updatedAt: Date
+    public readonly updatedAt: Date,
   ) {}
 
   static create(data: { id?: string; companyId: string; techStack: string; createdAt?: Date; updatedAt?: Date }): CompanyTechStack {

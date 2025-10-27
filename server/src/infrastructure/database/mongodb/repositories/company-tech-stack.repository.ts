@@ -2,8 +2,8 @@ import { ICompanyTechStackRepository } from '../../../../domain/interfaces/repos
 import { CompanyTechStack } from '../../../../domain/entities/company-tech-stack.entity';
 import { CompanyTechStackModel, CompanyTechStackDocument } from '../models/company-tech-stack.model';
 import { Types } from 'mongoose';
-import { RepositoryBase } from '../../../../shared/base';
 import { CompanyTechStackMapper } from '../mappers';
+import { RepositoryBase } from './base-repository';
 
 export class CompanyTechStackRepository extends RepositoryBase<CompanyTechStack, CompanyTechStackDocument> implements ICompanyTechStackRepository {
   constructor() {
@@ -42,7 +42,7 @@ export class CompanyTechStackRepository extends RepositoryBase<CompanyTechStack,
         ...data,
         updatedAt: new Date(),
       },
-      { new: true }
+      { new: true },
     );
 
     return updatedTechStack ? this.mapToEntity(updatedTechStack) : null;

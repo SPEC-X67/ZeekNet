@@ -6,7 +6,7 @@ import { PaginatedJobPostings } from '../../../domain/entities/job-posting.entit
 export class GetCompanyJobPostingsUseCase {
   constructor(
     private readonly _jobPostingRepository: IJobPostingSearchRepository,
-    private readonly _companyProfileRepository: ICompanyProfileRepository
+    private readonly _companyProfileRepository: ICompanyProfileRepository,
   ) {}
 
   async execute(userId: string, query: JobPostingQueryRequestDto): Promise<PaginatedJobPostings> {

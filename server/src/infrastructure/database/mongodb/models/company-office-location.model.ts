@@ -37,7 +37,7 @@ const CompanyOfficeLocationSchema = new Schema<CompanyOfficeLocationDocument>(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 export const CompanyOfficeLocationModel = model<CompanyOfficeLocationDocument>('CompanyOfficeLocation', CompanyOfficeLocationSchema);

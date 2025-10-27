@@ -11,7 +11,7 @@ export class User {
     public readonly isBlocked: boolean,
     public readonly refreshToken: string | null,
     public readonly createdAt: Date,
-    public readonly updatedAt: Date
+    public readonly updatedAt: Date,
   ) {}
 
   static create(data: { id: string; name: string; email: string; password: string; role?: UserRole; isVerified?: boolean; isBlocked?: boolean; refreshToken?: string | null; createdAt?: Date; updatedAt?: Date }): User {

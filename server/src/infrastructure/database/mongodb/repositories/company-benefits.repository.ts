@@ -2,8 +2,8 @@ import { ICompanyBenefitsRepository } from '../../../../domain/interfaces/reposi
 import { CompanyBenefits } from '../../../../domain/entities/company-benefits.entity';
 import { CompanyBenefitsModel, CompanyBenefitsDocument } from '../models/company-benefits.model';
 import { Types } from 'mongoose';
-import { RepositoryBase } from '../../../../shared/base';
 import { CompanyBenefitsMapper } from '../mappers';
+import { RepositoryBase } from './base-repository';
 
 export class CompanyBenefitsRepository extends RepositoryBase<CompanyBenefits, CompanyBenefitsDocument> implements ICompanyBenefitsRepository {
   constructor() {
@@ -43,7 +43,7 @@ export class CompanyBenefitsRepository extends RepositoryBase<CompanyBenefits, C
         ...data,
         updatedAt: new Date(),
       },
-      { new: true }
+      { new: true },
     );
 
     return updatedBenefit ? this.mapToEntity(updatedBenefit) : null;

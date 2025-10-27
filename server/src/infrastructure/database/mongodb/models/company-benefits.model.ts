@@ -28,7 +28,7 @@ const CompanyBenefitsSchema = new Schema<CompanyBenefitsDocument>(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 export const CompanyBenefitsModel = model<CompanyBenefitsDocument>('CompanyBenefits', CompanyBenefitsSchema);

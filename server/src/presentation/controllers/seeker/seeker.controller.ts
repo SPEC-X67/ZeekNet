@@ -8,7 +8,7 @@ export class SeekerController {
   constructor(
     private readonly _getJobPostingUseCase: IGetJobPostingUseCase,
     private readonly _getAllJobPostingsUseCase: IGetAllJobPostingsUseCase,
-    private readonly _incrementJobViewCountUseCase: IIncrementJobViewCountUseCase
+    private readonly _incrementJobViewCountUseCase: IIncrementJobViewCountUseCase,
   ) {}
 
   getAllJobPostings = async (req: Request, res: Response): Promise<void> => {

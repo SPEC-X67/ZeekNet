@@ -12,7 +12,7 @@ export class AdminLoginUseCase implements IAdminLoginUseCase {
     private readonly _passwordHasher: IPasswordHasher,
     private readonly _tokenService: ITokenService,
     private readonly _otpService: IOtpService,
-    private readonly _mailerService: IMailerService
+    private readonly _mailerService: IMailerService,
   ) {}
 
   async execute(email: string, password: string): Promise<LoginResult> {

@@ -2,8 +2,8 @@ import { ICompanyWorkplacePicturesRepository } from '../../../../domain/interfac
 import { CompanyWorkplacePictures } from '../../../../domain/entities/company-workplace-pictures.entity';
 import { CompanyWorkplacePicturesModel, CompanyWorkplacePicturesDocument } from '../models/company-workplace-pictures.model';
 import { Types } from 'mongoose';
-import { RepositoryBase } from '../../../../shared/base';
 import { CompanyWorkplacePicturesMapper } from '../mappers';
+import { RepositoryBase } from './base-repository';
 
 export class CompanyWorkplacePicturesRepository extends RepositoryBase<CompanyWorkplacePictures, CompanyWorkplacePicturesDocument> implements ICompanyWorkplacePicturesRepository {
   constructor() {
@@ -43,7 +43,7 @@ export class CompanyWorkplacePicturesRepository extends RepositoryBase<CompanyWo
         ...data,
         updatedAt: new Date(),
       },
-      { new: true }
+      { new: true },
     );
 
     return updatedPicture ? this.mapToEntity(updatedPicture) : null;

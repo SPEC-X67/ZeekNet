@@ -13,7 +13,7 @@ export class LoginController {
     private readonly _googleLoginUseCase: IGoogleLoginUseCase,
     private readonly _tokenService: ITokenService,
     private readonly _passwordHasher: IPasswordHasher,
-    private readonly _updateUserRefreshTokenUseCase: IUpdateUserRefreshTokenUseCase
+    private readonly _updateUserRefreshTokenUseCase: IUpdateUserRefreshTokenUseCase,
   ) {}
 
   login = async (req: Request, res: Response, next: NextFunction): Promise<void> => {

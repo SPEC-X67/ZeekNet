@@ -16,7 +16,7 @@ const CompanyVerificationSchema = new Schema<CompanyVerificationDocument>(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 export const CompanyVerificationModel = model<CompanyVerificationDocument>('CompanyVerification', CompanyVerificationSchema);

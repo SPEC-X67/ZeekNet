@@ -4,7 +4,7 @@ import { IGetCompaniesWithVerificationUseCase, CompanyQueryOptions, PaginatedCom
 export class GetCompaniesWithVerificationUseCase implements IGetCompaniesWithVerificationUseCase {
   constructor(
     private readonly _companyListingRepository: ICompanyListingRepository,
-    private readonly _companyVerificationRepository: ICompanyVerificationRepository
+    private readonly _companyVerificationRepository: ICompanyVerificationRepository,
   ) {}
 
   async execute(options: CompanyQueryOptions): Promise<PaginatedCompaniesWithVerification> {
@@ -49,7 +49,7 @@ export class GetCompaniesWithVerificationUseCase implements IGetCompaniesWithVer
             },
           }),
         };
-      })
+      }),
     );
 
     return {
