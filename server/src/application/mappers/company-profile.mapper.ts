@@ -105,17 +105,17 @@ export class CompanyProfileMapper {
       })),
       jobPostings: domain.jobPostings
         ? domain.jobPostings.map((job) => ({
-            id: job._id,
-            title: job.title,
-            description: job.description,
-            location: job.location,
-            employmentType: job.employment_types?.[0] || '',
-            salaryMin: job.salary?.min,
-            salaryMax: job.salary?.max,
-            isActive: job.is_active,
-            createdAt: job.createdAt.toISOString(),
-            updatedAt: job.updatedAt.toISOString(),
-          }))
+          id: job._id,
+          title: job.title,
+          description: job.description,
+          location: job.location,
+          employmentType: job.employment_types?.[0] || '',
+          salaryMin: job.salary?.min,
+          salaryMax: job.salary?.max,
+          isActive: job.is_active,
+          createdAt: job.createdAt.toISOString(),
+          updatedAt: job.updatedAt.toISOString(),
+        }))
         : [],
     };
   }

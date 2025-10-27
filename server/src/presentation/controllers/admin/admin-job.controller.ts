@@ -9,7 +9,7 @@ export class AdminJobController {
     private readonly _getJobByIdUseCase: IAdminGetJobByIdUseCase,
     private readonly _updateJobStatusUseCase: IAdminUpdateJobStatusUseCase,
     private readonly _deleteJobUseCase: IAdminDeleteJobUseCase,
-    private readonly _getJobStatsUseCase: IAdminGetJobStatsUseCase
+    private readonly _getJobStatsUseCase: IAdminGetJobStatsUseCase,
   ) {}
 
   getAllJobs = async (req: Request, res: Response, next: NextFunction): Promise<void> => {

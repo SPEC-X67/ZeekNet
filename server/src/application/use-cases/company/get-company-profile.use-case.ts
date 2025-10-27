@@ -17,7 +17,7 @@ export class GetCompanyProfileUseCase {
     private readonly _companyTechStackRepository: ICompanyTechStackRepository,
     private readonly _companyOfficeLocationRepository: ICompanyOfficeLocationRepository,
     private readonly _companyBenefitsRepository: ICompanyBenefitsRepository,
-    private readonly _companyWorkplacePicturesRepository: ICompanyWorkplacePicturesRepository
+    private readonly _companyWorkplacePicturesRepository: ICompanyWorkplacePicturesRepository,
   ) {}
 
   async execute(userId: string): Promise<CompanyProfileWithDetails | null> {

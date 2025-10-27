@@ -21,7 +21,7 @@ export class OtpController {
     private readonly _updateUserVerificationStatusUseCase: IUpdateUserVerificationStatusUseCase,
     private readonly _updateUserRefreshTokenUseCase: IUpdateUserRefreshTokenUseCase,
     private readonly _tokenService: ITokenService,
-    private readonly _passwordHasher: IPasswordHasher
+    private readonly _passwordHasher: IPasswordHasher,
   ) {}
 
   request = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -117,14 +117,14 @@ export class OtpController {
   private getDashboardLink(role: string): string {
     const baseUrl = env.FRONTEND_URL || 'http://localhost:3000';
     switch (role) {
-      case 'admin':
-        return `${baseUrl}/admin/dashboard`;
-      case 'company':
-        return `${baseUrl}/company/dashboard`;
-      case 'seeker':
-        return `${baseUrl}/seeker/dashboard`;
-      default:
-        return `${baseUrl}/seeker/dashboard`;
+    case 'admin':
+      return `${baseUrl}/admin/dashboard`;
+    case 'company':
+      return `${baseUrl}/company/dashboard`;
+    case 'seeker':
+      return `${baseUrl}/seeker/dashboard`;
+    default:
+      return `${baseUrl}/seeker/dashboard`;
     }
   }
 }

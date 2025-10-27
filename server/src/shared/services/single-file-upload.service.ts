@@ -25,7 +25,7 @@ export class SingleFileUploadService {
 
   static extractFileInfo(
     req: Request,
-    fieldName: string = 'file'
+    fieldName: string = 'file',
   ): {
     buffer: Buffer;
     originalname: string;

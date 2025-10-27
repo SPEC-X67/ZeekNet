@@ -10,7 +10,7 @@ export class CompanyContact {
     public facebookLink?: string,
     public linkedin?: string,
     public email?: string,
-    public phone?: string
+    public phone?: string,
   ) {}
 
   static create(data: {
@@ -34,7 +34,7 @@ export class CompanyContact {
       data.facebookLink,
       data.linkedin,
       data.email,
-      data.phone
+      data.phone,
     );
   }
 
@@ -80,7 +80,7 @@ export class CompanyContact {
       data.facebookLink,
       data.linkedin,
       data.email,
-      data.phone
+      data.phone,
     );
   }
 }

@@ -29,7 +29,7 @@ export class MultipleFileUploadService {
 
   static extractMultipleFileInfo(
     req: Request,
-    fieldName: string = 'files'
+    fieldName: string = 'files',
   ): Array<{
     buffer: Buffer;
     originalname: string;

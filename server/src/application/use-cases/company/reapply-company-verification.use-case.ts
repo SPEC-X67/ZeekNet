@@ -5,7 +5,7 @@ import { CompanyProfile } from '../../../domain/entities/company-profile.entity'
 export class ReapplyCompanyVerificationUseCase implements IReapplyCompanyVerificationUseCase {
   constructor(
     private readonly _companyProfileRepository: ICompanyProfileRepository,
-    private readonly _companyVerificationRepository: ICompanyVerificationRepository
+    private readonly _companyVerificationRepository: ICompanyVerificationRepository,
   ) {}
 
   async execute(userId: string, verificationData: CompanyVerificationData): Promise<CompanyProfile> {

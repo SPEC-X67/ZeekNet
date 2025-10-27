@@ -7,7 +7,7 @@ export class ResetPasswordUseCase implements IResetPasswordUseCase {
   constructor(
     private readonly _passwordHasher: IPasswordHasher,
     private readonly _passwordResetService: IPasswordResetService,
-    private readonly _userAuthRepository: IUserAuthRepository
+    private readonly _userAuthRepository: IUserAuthRepository,
   ) {}
 
   async execute(token: string, newPassword: string): Promise<void> {

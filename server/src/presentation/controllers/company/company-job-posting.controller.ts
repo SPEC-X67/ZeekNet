@@ -14,7 +14,7 @@ export class CompanyJobPostingController {
     private readonly _deleteJobPostingUseCase: IDeleteJobPostingUseCase,
     private readonly _incrementJobViewCountUseCase: IIncrementJobViewCountUseCase,
     private readonly _updateJobStatusUseCase: IUpdateJobStatusUseCase,
-    private readonly _companyProfileRepository: ICompanyProfileRepository
+    private readonly _companyProfileRepository: ICompanyProfileRepository,
   ) {}
 
   createJobPosting = async (req: AuthenticatedRequest, res: Response): Promise<void> => {

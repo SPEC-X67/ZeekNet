@@ -7,7 +7,7 @@ export class CompanyWorkplacePictures {
     public pictureUrl: string,
     public readonly createdAt: Date,
     public readonly updatedAt: Date,
-    public caption?: string
+    public caption?: string,
   ) {}
 
   static create(data: {
@@ -25,7 +25,7 @@ export class CompanyWorkplacePictures {
       data.pictureUrl,
       data.createdAt ?? now,
       data.updatedAt ?? now,
-      data.caption
+      data.caption,
     );
   }
 

@@ -30,7 +30,7 @@ export class CompanyController {
     private readonly _companyOfficeLocationUseCase: ICompanyOfficeLocationUseCase,
     private readonly _companyBenefitsUseCase: ICompanyBenefitsUseCase,
     private readonly _companyWorkplacePicturesUseCase: ICompanyWorkplacePicturesUseCase,
-    private readonly _getCompanyJobPostingsUseCase: IGetCompanyJobPostingsUseCase
+    private readonly _getCompanyJobPostingsUseCase: IGetCompanyJobPostingsUseCase,
   ) {}
 
   createCompanyProfile = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {

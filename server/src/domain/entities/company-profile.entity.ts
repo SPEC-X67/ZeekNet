@@ -15,7 +15,7 @@ export class CompanyProfile {
     public readonly createdAt: Date,
     public readonly updatedAt: Date,
     public readonly foundedDate?: Date,
-    public readonly phone?: string
+    public readonly phone?: string,
   ) {}
 
   static create(data: {
@@ -53,7 +53,7 @@ export class CompanyProfile {
       data.createdAt ?? now,
       data.updatedAt ?? now,
       data.foundedDate,
-      data.phone
+      data.phone,
     );
   }
 
@@ -95,7 +95,7 @@ export class CompanyProfile {
       new Date(data.createdAt as string),
       new Date(data.updatedAt as string),
       data.foundedDate ? new Date(data.foundedDate as string) : undefined,
-      data.phone as string
+      data.phone as string,
     );
   }
 }
@@ -107,7 +107,7 @@ export class CompanyVerification {
     public readonly taxId: string,
     public readonly businessLicenseUrl: string,
     public readonly createdAt: Date,
-    public readonly updatedAt: Date
+    public readonly updatedAt: Date,
   ) {}
 
   static create(data: { id: string; companyId: string; taxId?: string; businessLicenseUrl?: string; createdAt?: Date; updatedAt?: Date }): CompanyVerification {

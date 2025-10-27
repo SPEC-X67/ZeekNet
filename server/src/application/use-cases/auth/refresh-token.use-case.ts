@@ -11,7 +11,7 @@ export class RefreshTokenUseCase implements IRefreshTokenUseCase {
     private readonly _userAuthRepository: IUserAuthRepository,
     private readonly _companyProfileRepository: ICompanyProfileRepository,
     private readonly _tokenService: ITokenService,
-    private readonly _passwordHasher: IPasswordHasher
+    private readonly _passwordHasher: IPasswordHasher,
   ) {}
 
   async execute(refreshToken: string): Promise<LoginResult> {

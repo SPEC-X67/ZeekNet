@@ -13,7 +13,7 @@ export class TokenController {
     private readonly _refreshTokenUseCase: IRefreshTokenUseCase,
     private readonly _getUserByIdUseCase: IAuthGetUserByIdUseCase,
     private readonly _tokenService: ITokenService,
-    private readonly _getCompanyProfileByUserIdUseCase: IGetCompanyProfileByUserIdUseCase
+    private readonly _getCompanyProfileByUserIdUseCase: IGetCompanyProfileByUserIdUseCase,
   ) {}
 
   refresh = async (req: Request, res: Response, next: NextFunction): Promise<void> => {

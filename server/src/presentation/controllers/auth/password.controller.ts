@@ -9,7 +9,7 @@ export class PasswordController {
   constructor(
     private readonly _forgotPasswordUseCase: IForgotPasswordUseCase,
     private readonly _resetPasswordUseCase: IResetPasswordUseCase,
-    private readonly _logoutUseCase: ILogoutUseCase
+    private readonly _logoutUseCase: ILogoutUseCase,
   ) {}
 
   forgotPassword = async (req: Request, res: Response, next: NextFunction): Promise<void> => {

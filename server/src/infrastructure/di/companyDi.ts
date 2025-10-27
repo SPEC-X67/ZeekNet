@@ -82,7 +82,7 @@ const companyController = new CompanyController(
   companyOfficeLocationUseCase,
   companyBenefitsUseCase,
   companyWorkplacePicturesUseCase,
-  getCompanyJobPostingsUseCase
+  getCompanyJobPostingsUseCase,
 );
 
 const companyJobPostingController = new CompanyJobPostingController(createJobPostingUseCase, getJobPostingUseCase, getCompanyJobPostingsUseCase, updateJobPostingUseCase, deleteJobPostingUseCase, incrementJobViewCountUseCase, updateJobStatusUseCase, companyProfileRepository);

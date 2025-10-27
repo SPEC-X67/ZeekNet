@@ -4,7 +4,7 @@ import { AppError } from '../../../domain/errors/errors';
 export class DeleteJobPostingUseCase {
   constructor(
     private readonly _jobPostingRepository: IJobPostingRepository,
-    private readonly _companyProfileRepository: ICompanyProfileRepository
+    private readonly _companyProfileRepository: ICompanyProfileRepository,
   ) {}
 
   async execute(id: string, userId: string): Promise<void> {

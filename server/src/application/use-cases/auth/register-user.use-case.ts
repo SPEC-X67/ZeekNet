@@ -11,7 +11,7 @@ export class RegisterUserUseCase implements IRegisterUserUseCase {
     private readonly _userRepository: IUserRepository,
     private readonly _passwordHasher: IPasswordHasher,
     private readonly _otpService: IOtpService,
-    private readonly _mailerService: IMailerService
+    private readonly _mailerService: IMailerService,
   ) {}
 
   async execute(email: string, password: string, role?: UserRole, name?: string): Promise<RegisterResult> {
@@ -45,7 +45,7 @@ export class RegisterUserUseCase implements IRegisterUserUseCase {
   private validateInput(
     email: string,
     password: string,
-    name?: string
+    name?: string,
   ): {
     isValid: boolean;
     errors: string[];

@@ -13,7 +13,7 @@ export class GoogleLoginUseCase implements IGoogleLoginUseCase {
     private readonly _tokenService: ITokenService,
     private readonly _googleVerifier: IGoogleTokenVerifier,
     private readonly _otpService: IOtpService,
-    private readonly _mailerService: IMailerService
+    private readonly _mailerService: IMailerService,
   ) {}
 
   async execute(idToken: string): Promise<LoginResult> {
