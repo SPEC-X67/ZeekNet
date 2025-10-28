@@ -6,3 +6,4 @@ export * from './company-workplace-pictures.mapper';
 export * from './job-posting.mapper';
 export * from './company-profile.mapper';
 export * from './company-verification.mapper';
+export * from './user.mapper';

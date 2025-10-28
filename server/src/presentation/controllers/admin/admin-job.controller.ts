@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { AdminGetAllJobsDto, AdminUpdateJobStatusDto } from '../../../application/dto/admin/admin-job.dto';
+import { AdminGetAllJobsDtoType, AdminUpdateJobStatusDto } from '../../../application/dto/admin/admin-job.dto';
 import { IAdminGetAllJobsUseCase, IAdminGetJobByIdUseCase, IAdminUpdateJobStatusUseCase, IAdminDeleteJobUseCase, IAdminGetJobStatsUseCase } from '../../../domain/interfaces/use-cases';
 import { handleValidationError, handleAsyncError, sendSuccessResponse } from '../../../shared/utils';
 
@@ -13,13 +13,10 @@ export class AdminJobController {
   ) {}
 
   getAllJobs = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const parsed = AdminGetAllJobsDto.safeParse(req.query);
-    if (!parsed.success) {
-      return handleValidationError('Invalid query parameters', next);
-    }
-
     try {
-      const result = await this._getAllJobsUseCase.execute(parsed.data);
+      
+      const query = req.query as unknown as AdminGetAllJobsDtoType;
+      const result = await this._getAllJobsUseCase.execute(query);
       sendSuccessResponse(res, 'Jobs retrieved successfully', result);
     } catch (error) {
       handleAsyncError(error, next);

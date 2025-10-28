@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
-import { handleValidationError, handleAsyncError, sendSuccessResponse, success, handleError } from '../../../shared/utils';
 import { IGetAllJobPostingsUseCase, IGetJobPostingForPublicUseCase } from '../../../domain/interfaces/use-cases';
-import { JobPostingQueryRequestDto } from '../../../application/dto/job-posting/job-posting.dto';
+import { handleError, success } from '../../../shared/utils';
+import { JobPostingQueryRequestDto } from '../../../application/dto/job-posting';
 
 export class PublicJobController {
   constructor(
@@ -11,26 +11,10 @@ export class PublicJobController {
 
   getAllJobPostings = async (req: Request, res: Response): Promise<void> => {
     try {
-      const parseQueryArray = (value: unknown): string[] | undefined => {
-        if (!value) return undefined;
-        if (Array.isArray(value)) return value.map(String);
-        if (typeof value === 'string') return value.split(',');
-        return undefined;
-      };
-
-      const query: JobPostingQueryRequestDto = {
-        page: parseInt(req.query.page as string) || 1,
-        limit: parseInt(req.query.limit as string) || 10,
-        is_active: true,
-        category_ids: parseQueryArray(req.query.category_ids as unknown),
-        employment_types: parseQueryArray(req.query.employment_types as unknown) as ('full-time' | 'part-time' | 'contract' | 'internship' | 'remote')[] | undefined,
-        salary_min: req.query.salary_min ? parseInt(req.query.salary_min as string) : undefined,
-        salary_max: req.query.salary_max ? parseInt(req.query.salary_max as string) : undefined,
-        location: req.query.location as string,
-        search: req.query.search as string,
-      };
-
-      const result = await this._getAllJobPostingsUseCase.execute(query);
+      
+      const filters = req.query as unknown as JobPostingQueryRequestDto;
+      
+      const result = await this._getAllJobPostingsUseCase.execute(filters);
 
       success(res, result, 'Job postings retrieved successfully');
     } catch (error) {
@@ -50,3 +34,4 @@ export class PublicJobController {
     }
   };
 }
+

@@ -4,7 +4,7 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 import path from 'path';
-import { createStream } from 'rotating-file-stream';
+
 
 import { connectToDatabase } from '../../infrastructure/database/mongodb/connection/mongoose';
 import { connectRedis } from '../../infrastructure/database/redis/connection/redis';
@@ -57,36 +57,39 @@ export class AppServer {
     if (env.NODE_ENV === 'development') {
       this._app.use(morgan('dev'));
     } else if (env.NODE_ENV === 'production') {
-      const accessLogs = createStream(
-        (time, index) => {
-          if (!time) return path.join(__dirname, 'logs', 'accessLogs', 'buffer.txt');
-          return path.join(__dirname, 'logs', 'accessLogs', DateTimeUtil.getFormatedDateTime(new Date(time)) + '-' + index + '.txt');
-        },
-        {
-          interval: '1d',
-          size: '100M',
-        },
-      );
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
 
-      const errorLogs = createStream(
-        (time, index) => {
-          if (!time) return path.join(__dirname, 'logs', 'errorLogs', 'buffer.txt');
-          return path.join(__dirname, 'logs', 'errorLogs', DateTimeUtil.getFormatedDateTime(new Date(time)) + '-' + index + '.txt');
-        },
-        {
-          interval: '1d',
-          size: '100M',
-        },
-      );
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
 
-      this._app.use(morgan('combined', { stream: accessLogs }));
+      
+      
+      
+      
+      
+      
+      
 
-      this._app.use(
-        morgan('combined', {
-          stream: errorLogs,
-          skip: (req, res) => res.statusCode < 400,
-        }),
-      );
+      
+      this._app.use(morgan('combined'));
     }
   }
 

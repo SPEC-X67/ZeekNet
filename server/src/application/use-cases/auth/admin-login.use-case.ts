@@ -4,6 +4,7 @@ import { IPasswordHasher, ITokenService, IOtpService, IMailerService } from '../
 import { IAdminLoginUseCase } from '../../../domain/interfaces/use-cases';
 import { AuthenticationError, AuthorizationError } from '../../../domain/errors/errors';
 import { UserRole } from '../../../domain/enums/user-role.enum';
+import { UserMapper } from '../../mappers';
 
 export class AdminLoginUseCase implements IAdminLoginUseCase {
   constructor(
@@ -41,7 +42,7 @@ export class AdminLoginUseCase implements IAdminLoginUseCase {
 
     return {
       tokens: { accessToken, refreshToken },
-      user,
+      user: UserMapper.toDto(user),
     };
   }
 }

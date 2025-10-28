@@ -38,13 +38,6 @@ export class CompanyContact {
     );
   }
 
-  updateContact(data: { twitterLink?: string; facebookLink?: string; linkedin?: string; email?: string; phone?: string }): CompanyContact {
-    return CompanyContact.create({
-      ...this.toJSON(),
-      ...data,
-      updatedAt: new Date(),
-    });
-  }
 
   toJSON() {
     return {

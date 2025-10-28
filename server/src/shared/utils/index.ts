@@ -3,3 +3,4 @@ export * from './error.utils';
 export * from './cookie.utils';
 export * from './controller.utils';
 export * from './datetime.utils';
+export * from './dashboard.utils';

@@ -8,10 +8,17 @@ export class GetAllJobPostingsUseCase implements IGetAllJobPostingsUseCase {
 
   async execute(query: JobPostingFilters): Promise<PaginatedJobPostings> {
     try {
-      const result = await this._jobPostingSearchRepository.findAll(query);
+      
+      const filters = {
+        ...query,
+        is_active: query.is_active ?? true,
+      };
+      
+      const result = await this._jobPostingSearchRepository.findAll(filters);
       return result;
     } catch (error) {
       throw new AppError('Failed to fetch job postings', 500);
     }
   }
 }
+

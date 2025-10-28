@@ -4,8 +4,8 @@ import { IGetUserByEmailUseCase, IUpdateUserVerificationStatusUseCase, IUpdateUs
 import { z } from 'zod';
 import { env } from '../../../infrastructure/config/env';
 import { createRefreshTokenCookieOptions, handleValidationError, handleAsyncError, sendSuccessResponse, sendErrorResponse } from '../../../shared/utils';
-import { UserMapper } from '../../../application/mappers';
 import { welcomeTemplate } from '../../../infrastructure/messaging/templates/welcome.template';
+import { getDashboardLink } from '../../../shared/utils/dashboard.utils';
 
 const RequestOtpDto = z.object({ email: z.string().email() });
 const VerifyOtpDto = z.object({
@@ -96,7 +96,7 @@ export class OtpController {
         return handleValidationError('User not found', next);
       }
 
-      const accessToken = this._tokenService.signAccess({ sub: user.id, role: user.role });
+      const accessToken = this._tokenService.signAccess({ sub: user.id, role: user.role as any });
       const refreshToken = this._tokenService.signRefresh({ sub: user.id });
       const hashedRefresh = await this._passwordHasher.hash(refreshToken);
 
@@ -104,27 +104,12 @@ export class OtpController {
 
       res.cookie(env.COOKIE_NAME_REFRESH!, refreshToken, createRefreshTokenCookieOptions());
 
-      const dashboardLink = this.getDashboardLink(user.role);
+      const dashboardLink = getDashboardLink(user.role);
       await this._mailer.sendMail(user.email, welcomeTemplate.subject, welcomeTemplate.html(user.name || 'User', dashboardLink));
 
-      const userDetails = UserMapper.toDto(user);
-      sendSuccessResponse(res, 'OTP verified and user verified', userDetails, accessToken);
+      sendSuccessResponse(res, 'OTP verified and user verified', user, accessToken);
     } catch (err) {
       handleAsyncError(err, next);
     }
   };
-
-  private getDashboardLink(role: string): string {
-    const baseUrl = env.FRONTEND_URL || 'http://localhost:3000';
-    switch (role) {
-    case 'admin':
-      return `${baseUrl}/admin/dashboard`;
-    case 'company':
-      return `${baseUrl}/company/dashboard`;
-    case 'seeker':
-      return `${baseUrl}/seeker/dashboard`;
-    default:
-      return `${baseUrl}/seeker/dashboard`;
-    }
-  }
 }

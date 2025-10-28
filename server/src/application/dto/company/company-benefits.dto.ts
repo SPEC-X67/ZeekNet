@@ -1,12 +1,15 @@
 import { z } from 'zod';
 
-export const CreateCompanyBenefitsDto = z.object({
+export const CreateCompanyBenefitsDtoSchema = z.object({
   companyId: z.string().optional(),
   perk: z.string().min(1, 'Perk name cannot be empty'),
   description: z.string().optional(),
 });
 
-export const UpdateCompanyBenefitsDto = CreateCompanyBenefitsDto.partial();
+export const UpdateCompanyBenefitsDtoSchema = CreateCompanyBenefitsDtoSchema.partial();
 
-export type CreateCompanyBenefitsDto = z.infer<typeof CreateCompanyBenefitsDto>;
-export type UpdateCompanyBenefitsDto = z.infer<typeof UpdateCompanyBenefitsDto>;
+export const CreateCompanyBenefitsDto = CreateCompanyBenefitsDtoSchema;
+export const UpdateCompanyBenefitsDto = UpdateCompanyBenefitsDtoSchema;
+
+export type CreateCompanyBenefitsRequestDto = z.infer<typeof CreateCompanyBenefitsDto>;
+export type UpdateCompanyBenefitsRequestDto = z.infer<typeof UpdateCompanyBenefitsDto>;

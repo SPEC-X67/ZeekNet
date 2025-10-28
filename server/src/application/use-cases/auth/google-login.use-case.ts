@@ -4,6 +4,7 @@ import { IPasswordHasher, ITokenService, IGoogleTokenVerifier, IOtpService, IMai
 import { IGoogleLoginUseCase } from '../../../domain/interfaces/use-cases';
 import { UserRole } from '../../../domain/enums/user-role.enum';
 import { otpVerificationTemplate } from '../../../infrastructure/messaging/templates/otp-verification.template';
+import { UserMapper } from '../../mappers';
 
 export class GoogleLoginUseCase implements IGoogleLoginUseCase {
   constructor(
@@ -35,6 +36,6 @@ export class GoogleLoginUseCase implements IGoogleLoginUseCase {
     const refreshToken = this._tokenService.signRefresh({ sub: user.id });
     const hashedRefresh = await this._passwordHasher.hash(refreshToken);
     await this._userAuthRepository.updateRefreshToken(user.id, hashedRefresh);
-    return { tokens: { accessToken, refreshToken }, user };
+    return { tokens: { accessToken, refreshToken }, user: UserMapper.toDto(user) };
   }
 }

@@ -1,14 +1,12 @@
 import { ICompanyContactRepository } from '../../../domain/interfaces/repositories';
 import { CompanyContact } from '../../../domain/entities/company-contact.entity';
-import { CreateCompanyContactDto, UpdateCompanyContactDto } from '../../dto/company/company-contact.dto';
-import { NotFoundError } from '../../../domain/errors/errors';
+import { ICompanyContactUseCase } from '../../../domain/interfaces/use-cases';
 
-export class CompanyContactUseCase {
+export class CompanyContactUseCase implements ICompanyContactUseCase {
   constructor(private readonly _companyContactRepository: ICompanyContactRepository) {}
 
-  async createContact(companyId: string, data: CreateCompanyContactDto): Promise<CompanyContact> {
-    const contact = CompanyContact.create({ ...data, companyId });
-    return this._companyContactRepository.create(contact);
+  async createContact(companyId: string, data: any): Promise<CompanyContact> {
+    return this._companyContactRepository.create({ ...data, companyId });
   }
 
   async getContactsByCompanyId(companyId: string): Promise<CompanyContact[]> {
@@ -16,19 +14,15 @@ export class CompanyContactUseCase {
     return contact ? [contact] : [];
   }
 
-  async updateContact(contactId: string, data: UpdateCompanyContactDto): Promise<CompanyContact> {
-    const existingContact = await this._companyContactRepository.findById(contactId);
-    if (!existingContact) {
-      throw new NotFoundError(`Company contact with ID ${contactId} not found`);
-    }
-    const updatedContact = await this._companyContactRepository.update(contactId, data);
-    if (!updatedContact) {
-      throw new NotFoundError(`Failed to update company contact with ID ${contactId}`);
-    }
-    return updatedContact;
+  async updateContact(contactId: string, data: any): Promise<CompanyContact> {
+    const updated = await this._companyContactRepository.update(contactId, data);
+    if (!updated) throw new Error('Contact not found');
+    return updated;
   }
 
   async deleteContact(contactId: string): Promise<void> {
-    await this._companyContactRepository.delete(contactId);
+    const deleted = await this._companyContactRepository.delete(contactId);
+    if (!deleted) throw new Error('Contact not found');
   }
 }
+

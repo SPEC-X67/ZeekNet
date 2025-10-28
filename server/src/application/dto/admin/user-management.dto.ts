@@ -2,11 +2,11 @@ import { z } from 'zod';
 import { UserRole } from '../../../domain/enums/user-role.enum';
 
 export const GetAllUsersDto = z.object({
-  page: z.string().optional().default('1'),
-  limit: z.string().optional().default('10'),
+  page: z.coerce.number().int().min(1).optional().default(1),
+  limit: z.coerce.number().int().min(1).optional().default(10),
   search: z.string().optional(),
   role: z.nativeEnum(UserRole).optional(),
-  isBlocked: z.string().optional(),
+  isBlocked: z.coerce.boolean().optional(),
 });
 
 export const BlockUserDto = z.object({
@@ -15,12 +15,12 @@ export const BlockUserDto = z.object({
 });
 
 export const GetAllCompaniesDto = z.object({
-  page: z.string().optional().default('1'),
-  limit: z.string().optional().default('10'),
+  page: z.coerce.number().int().min(1).optional().default(1),
+  limit: z.coerce.number().int().min(1).optional().default(10),
   search: z.string().optional(),
   industry: z.string().optional(),
   isVerified: z.enum(['pending', 'rejected', 'verified']).optional(),
-  isBlocked: z.string().optional(),
+  isBlocked: z.coerce.boolean().optional(),
 });
 
 export const CompanyVerificationDto = z.object({

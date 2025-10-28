@@ -6,3 +6,5 @@ export * from './company-office-location.dto';
 export * from './company-benefits.dto';
 export * from './company-workplace-pictures.dto';
 export * from './company-response.dto';
+export * from './delete-image.dto';
+export * from './upload-image.dto';

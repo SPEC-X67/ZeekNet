@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import { GetAllUsersDto, BlockUserDto, GetAllCompaniesDto, CompanyVerificationDto } from '../../../application/dto/admin';
+import { BlockUserDto, CompanyVerificationDto, BlockCompanyDto } from '../../../application/dto/admin';
+import { GetAllUsersRequestDto, GetAllCompaniesRequestDto } from '../../../application/dto/admin/user-management.dto';
 import { IGetAllUsersUseCase, IBlockUserUseCase, IAdminGetUserByIdUseCase, IGetAllCompaniesUseCase, IGetCompaniesWithVerificationUseCase, IVerifyCompanyUseCase, IBlockCompanyUseCase } from '../../../domain/interfaces/use-cases';
 import { handleValidationError, handleAsyncError, sendSuccessResponse, sendNotFoundResponse } from '../../../shared/utils';
 
@@ -15,20 +16,10 @@ export class AdminController {
   ) {}
 
   getAllUsers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const parsed = GetAllUsersDto.safeParse(req.query);
-    if (!parsed.success) {
-      return handleValidationError('Invalid query parameters', next);
-    }
-
     try {
-      const options = {
-        page: parseInt(parsed.data.page) || 1,
-        limit: parseInt(parsed.data.limit) || 10,
-        search: parsed.data.search,
-        role: parsed.data.role,
-        isBlocked: parsed.data.isBlocked ? parsed.data.isBlocked === 'true' : undefined,
-      };
-      const result = await this._getAllUsersUseCase.execute(options);
+      
+      const query = req.query as unknown as GetAllUsersRequestDto;
+      const result = await this._getAllUsersUseCase.execute(query);
       sendSuccessResponse(res, 'Users retrieved successfully', result);
     } catch (error) {
       handleAsyncError(error, next);
@@ -65,20 +56,10 @@ export class AdminController {
   };
 
   getAllCompanies = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const parsed = GetAllCompaniesDto.safeParse(req.query);
-    if (!parsed.success) {
-      return handleValidationError('Invalid query parameters', next);
-    }
-
     try {
-      const options = {
-        page: parseInt(parsed.data.page) || 1,
-        limit: parseInt(parsed.data.limit) || 10,
-        search: parsed.data.search,
-        isVerified: parsed.data.isVerified,
-        isBlocked: parsed.data.isBlocked ? parsed.data.isBlocked === 'true' : undefined,
-      };
-      const result = await this._getCompaniesWithVerificationUseCase.execute(options);
+      
+      const query = req.query as unknown as GetAllCompaniesRequestDto;
+      const result = await this._getCompaniesWithVerificationUseCase.execute(query);
       sendSuccessResponse(res, 'Companies retrieved successfully', result);
     } catch (error) {
       handleAsyncError(error, next);
@@ -137,15 +118,14 @@ export class AdminController {
   };
 
   blockCompany = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const { companyId, isBlocked } = req.body;
-
-    if (!companyId || typeof isBlocked !== 'boolean') {
-      return handleValidationError('Company ID and isBlocked status are required', next);
+    const parsed = BlockCompanyDto.safeParse(req.body);
+    if (!parsed.success) {
+      return handleValidationError('Invalid block company data', next);
     }
 
     try {
-      await this._blockCompanyUseCase.execute(companyId, isBlocked);
-      const message = `Company ${isBlocked ? 'blocked' : 'unblocked'} successfully`;
+      await this._blockCompanyUseCase.execute(parsed.data.companyId, parsed.data.isBlocked);
+      const message = `Company ${parsed.data.isBlocked ? 'blocked' : 'unblocked'} successfully`;
       sendSuccessResponse(res, message, null);
     } catch (error) {
       handleAsyncError(error, next);

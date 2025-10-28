@@ -5,6 +5,7 @@ import { IPasswordHasher, IOtpService, IMailerService } from '../../../domain/in
 import { IRegisterUserUseCase } from '../../../domain/interfaces/use-cases';
 import { ValidationError } from '../../../domain/errors/errors';
 import { otpVerificationTemplate } from '../../../infrastructure/messaging/templates/otp-verification.template';
+import { UserMapper } from '../../mappers';
 
 export class RegisterUserUseCase implements IRegisterUserUseCase {
   constructor(
@@ -39,7 +40,7 @@ export class RegisterUserUseCase implements IRegisterUserUseCase {
 
     this.sendOtpEmail(user.email).catch((error) => {});
 
-    return { user };
+    return { user: UserMapper.toDto(user) };
   }
 
   private validateInput(

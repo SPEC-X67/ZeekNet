@@ -1,9 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { LoginDto, GoogleLoginDto } from '../../../application/dto/auth';
-import { ILoginUserUseCase, IAdminLoginUseCase, IGoogleLoginUseCase, IUpdateUserRefreshTokenUseCase } from '../../../domain/interfaces/use-cases';
-import { ITokenService, IPasswordHasher } from '../../../domain/interfaces/services';
+import { ILoginUserUseCase, IAdminLoginUseCase, IGoogleLoginUseCase } from '../../../domain/interfaces/use-cases';
 import { createRefreshTokenCookieOptions, handleValidationError, handleAsyncError, sendSuccessResponse } from '../../../shared/utils';
-import { UserMapper } from '../../../application/mappers';
 import { env } from '../../../infrastructure/config/env';
 
 export class LoginController {
@@ -11,9 +9,6 @@ export class LoginController {
     private readonly _loginUserUseCase: ILoginUserUseCase,
     private readonly _adminLoginUseCase: IAdminLoginUseCase,
     private readonly _googleLoginUseCase: IGoogleLoginUseCase,
-    private readonly _tokenService: ITokenService,
-    private readonly _passwordHasher: IPasswordHasher,
-    private readonly _updateUserRefreshTokenUseCase: IUpdateUserRefreshTokenUseCase,
   ) {}
 
   login = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -23,22 +18,13 @@ export class LoginController {
     }
 
     try {
-      const { user } = await this._loginUserUseCase.execute(parsed.data.email, parsed.data.password);
+      const result = await this._loginUserUseCase.execute(parsed.data.email, parsed.data.password);
 
-      if (user.isVerified) {
-        const accessToken = this._tokenService.signAccess({ sub: user.id, role: user.role });
-        const refreshToken = this._tokenService.signRefresh({ sub: user.id });
-        const hashedRefresh = await this._passwordHasher.hash(refreshToken);
-
-        await this._updateUserRefreshTokenUseCase.execute(user.id, hashedRefresh);
-
-        res.cookie(env.COOKIE_NAME_REFRESH!, refreshToken, createRefreshTokenCookieOptions());
-
-        const userDetails = UserMapper.toDto(user);
-        sendSuccessResponse(res, 'Login successful', userDetails, accessToken);
+      if (result.tokens) {
+        res.cookie(env.COOKIE_NAME_REFRESH!, result.tokens.refreshToken, createRefreshTokenCookieOptions());
+        sendSuccessResponse(res, 'Login successful', result.user, result.tokens.accessToken);
       } else {
-        const userDetails = UserMapper.toDto(user);
-        sendSuccessResponse(res, 'Login successful, verification required', userDetails, undefined);
+        sendSuccessResponse(res, 'Login successful, verification required', result.user, undefined);
       }
     } catch (error) {
       handleAsyncError(error, next);
@@ -52,12 +38,14 @@ export class LoginController {
     }
 
     try {
-      const { tokens, user } = await this._adminLoginUseCase.execute(parsed.data.email, parsed.data.password);
+      const result = await this._adminLoginUseCase.execute(parsed.data.email, parsed.data.password);
 
-      res.cookie(env.COOKIE_NAME_REFRESH!, tokens.refreshToken, createRefreshTokenCookieOptions());
-
-      const userDetails = UserMapper.toDto(user);
-      sendSuccessResponse(res, 'Admin login successful', userDetails, tokens.accessToken);
+      if (result.tokens) {
+        res.cookie(env.COOKIE_NAME_REFRESH!, result.tokens.refreshToken, createRefreshTokenCookieOptions());
+        sendSuccessResponse(res, 'Admin login successful', result.user, result.tokens.accessToken);
+      } else {
+        sendSuccessResponse(res, 'Admin login successful', result.user, undefined);
+      }
     } catch (error) {
       handleAsyncError(error, next);
     }
@@ -70,12 +58,14 @@ export class LoginController {
     }
 
     try {
-      const { tokens, user } = await this._googleLoginUseCase.execute(parsed.data.idToken);
+      const result = await this._googleLoginUseCase.execute(parsed.data.idToken);
 
-      res.cookie(env.COOKIE_NAME_REFRESH!, tokens.refreshToken, createRefreshTokenCookieOptions());
-
-      const userDetails = UserMapper.toDto(user);
-      sendSuccessResponse(res, 'Login successful', userDetails, tokens.accessToken);
+      if (result.tokens) {
+        res.cookie(env.COOKIE_NAME_REFRESH!, result.tokens.refreshToken, createRefreshTokenCookieOptions());
+        sendSuccessResponse(res, 'Login successful', result.user, result.tokens.accessToken);
+      } else {
+        sendSuccessResponse(res, 'Login successful', result.user, undefined);
+      }
     } catch (error) {
       handleAsyncError(error, next);
     }

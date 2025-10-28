@@ -4,6 +4,7 @@ import { ITokenService, IPasswordHasher } from '../../../domain/interfaces/servi
 import { IRefreshTokenUseCase } from '../../../domain/interfaces/use-cases';
 import { AuthenticationError, NotFoundError, AuthorizationError } from '../../../domain/errors/errors';
 import { UserRole } from '../../../domain/enums/user-role.enum';
+import { UserMapper } from '../../mappers';
 
 export class RefreshTokenUseCase implements IRefreshTokenUseCase {
   constructor(
@@ -47,7 +48,7 @@ export class RefreshTokenUseCase implements IRefreshTokenUseCase {
 
     return {
       tokens: { accessToken, refreshToken: newRefreshToken },
-      user,
+      user: UserMapper.toDto(user),
     };
   }
 }

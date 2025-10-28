@@ -29,13 +29,6 @@ export class CompanyWorkplacePictures {
     );
   }
 
-  updatePicture(data: { pictureUrl?: string; caption?: string }): CompanyWorkplacePictures {
-    return CompanyWorkplacePictures.create({
-      ...this.toJSON(),
-      ...data,
-      updatedAt: new Date(),
-    });
-  }
 
   toJSON() {
     return {

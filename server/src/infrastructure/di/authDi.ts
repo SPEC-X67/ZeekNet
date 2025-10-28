@@ -65,7 +65,7 @@ const getCompanyProfileByUserIdUseCase = new GetCompanyProfileByUserIdUseCase(co
 
 export const registrationController = new RegistrationController(registerUserUseCase);
 
-export const loginController = new LoginController(loginUserUseCase, adminLoginUseCase, googleLoginUseCase, tokenService, passwordHasher, updateUserRefreshTokenUseCase);
+export const loginController = new LoginController(loginUserUseCase, adminLoginUseCase, googleLoginUseCase);
 
 export const tokenController = new TokenController(refreshTokenUseCase, getUserByIdUseCase, tokenService, getCompanyProfileByUserIdUseCase);
 

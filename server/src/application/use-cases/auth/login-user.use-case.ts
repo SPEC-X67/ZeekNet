@@ -5,6 +5,7 @@ import { ILoginUserUseCase } from '../../../domain/interfaces/use-cases';
 import { AuthenticationError, AuthorizationError } from '../../../domain/errors/errors';
 import { UserRole } from '../../../domain/enums/user-role.enum';
 import { otpVerificationTemplate } from '../../../infrastructure/messaging/templates/otp-verification.template';
+import { UserMapper } from '../../mappers';
 
 export class LoginUserUseCase implements ILoginUserUseCase {
   constructor(
@@ -26,6 +27,7 @@ export class LoginUserUseCase implements ILoginUserUseCase {
       const code = await this._otpService.generateAndStoreOtp(user.email);
       const htmlContent = otpVerificationTemplate.html(code);
       await this._mailerService.sendMail(user.email, otpVerificationTemplate.subject, htmlContent);
+      return { user: UserMapper.toDto(user) };
     }
 
     if (user.isBlocked) {
@@ -48,7 +50,7 @@ export class LoginUserUseCase implements ILoginUserUseCase {
 
     return {
       tokens: { accessToken, refreshToken },
-      user,
+      user: UserMapper.toDto(user),
     };
   }
 }

@@ -7,7 +7,7 @@ const jobPostingRepository = new JobPostingRepository();
 
 const getAllJobPostingsUseCase = new GetAllJobPostingsUseCase(jobPostingRepository);
 
-const getJobPostingForPublicUseCase = new GetJobPostingForPublicUseCase(jobPostingRepository);
+const getJobPostingForPublicUseCase = new GetJobPostingForPublicUseCase(jobPostingRepository, jobPostingRepository);
 
 const publicJobController = new PublicJobController(getAllJobPostingsUseCase, getJobPostingForPublicUseCase);
 

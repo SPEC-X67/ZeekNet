@@ -7,9 +7,29 @@ implements IBaseRepository<T>
 {
   constructor(protected model: Model<TDocument>) {}
 
+  
+  protected convertToObjectIds(data: Record<string, unknown>): Record<string, unknown> {
+    const converted = { ...data };
+    
+    
+    for (const key in converted) {
+      if (key.endsWith('Id') || key === 'companyId') {
+        const value = converted[key];
+        if (typeof value === 'string' && value.length === 24 && /^[0-9a-fA-F]{24}$/.test(value)) {
+          
+          converted[key] = this.toObjectId(value);
+        }
+      }
+    }
+    
+    return converted;
+  }
+
   async create(data: Omit<T, 'id' | 'createdAt' | 'updatedAt'>): Promise<T> {
+    const convertedData = this.convertToObjectIds(data as Record<string, unknown>);
+    
     const document = new this.model({
-      ...data,
+      ...convertedData,
       createdAt: new Date(),
       updatedAt: new Date(),
     });

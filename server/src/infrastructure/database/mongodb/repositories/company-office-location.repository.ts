@@ -14,40 +14,15 @@ export class CompanyOfficeLocationRepository extends RepositoryBase<CompanyOffic
     return CompanyOfficeLocationMapper.toEntity(doc);
   }
 
-  async create(location: Omit<CompanyOfficeLocation, 'id' | 'createdAt' | 'updatedAt'>): Promise<CompanyOfficeLocation> {
-    const locationDoc = new CompanyOfficeLocationModel({
-      companyId: new Types.ObjectId(location.companyId),
-      location: location.location,
-      isHeadquarters: location.isHeadquarters,
-      officeName: location.officeName,
-      address: location.address,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    });
-
-    const savedLocation = await locationDoc.save();
-    return this.mapToEntity(savedLocation);
+  protected convertToObjectIds(data: Partial<CompanyOfficeLocation>): Partial<CompanyOfficeLocation> {
+    const converted = { ...data };
+    if (converted.companyId && typeof converted.companyId === 'string') {
+      (converted as Record<string, unknown>).companyId = new Types.ObjectId(converted.companyId);
+    }
+    return converted;
   }
 
   async findByCompanyId(companyId: string): Promise<CompanyOfficeLocation[]> {
-    const locations = await CompanyOfficeLocationModel.find({ companyId: new Types.ObjectId(companyId) });
-    return locations.map((location) => this.mapToEntity(location));
-  }
-
-  async update(id: string, data: Partial<CompanyOfficeLocation>): Promise<CompanyOfficeLocation | null> {
-    if (!Types.ObjectId.isValid(id)) {
-      return null;
-    }
-
-    const updatedLocation = await CompanyOfficeLocationModel.findByIdAndUpdate(
-      id,
-      {
-        ...data,
-        updatedAt: new Date(),
-      },
-      { new: true },
-    );
-
-    return updatedLocation ? this.mapToEntity(updatedLocation) : null;
+    return await this.findMany({ companyId: new Types.ObjectId(companyId) });
   }
 }
