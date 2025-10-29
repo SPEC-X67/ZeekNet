@@ -1,6 +1,6 @@
 import { Request } from 'express';
 import { ValidationError } from '../../domain/errors/errors';
-import { IS3Service } from '../../domain/interfaces';
+import { IS3Service } from '../../domain/interfaces/services/IS3Service';
 
 export class UploadService {
   

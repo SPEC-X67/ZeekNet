@@ -1,6 +1,6 @@
 import { S3Client, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
-import { IS3Service } from '../../../domain/interfaces';
 import { env } from '../../config/env';
+import { IS3Service } from '../../../domain/interfaces/services/IS3Service';
 
 export class S3Service implements IS3Service {
   private _s3Client: S3Client;

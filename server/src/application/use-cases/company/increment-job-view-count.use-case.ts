@@ -1,4 +1,4 @@
-import { IJobPostingAnalyticsRepository } from '../../../domain/interfaces/repositories';
+import { IJobPostingAnalyticsRepository } from '../../../domain/interfaces/repositories/job/IJobPostingRepository';
 
 export class IncrementJobViewCountUseCase {
   constructor(private readonly _jobPostingRepository: IJobPostingAnalyticsRepository) {}

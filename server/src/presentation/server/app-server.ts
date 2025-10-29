@@ -20,7 +20,7 @@ import { errorHandler } from '../middleware/error-handler';
 import { UserBlockedMiddleware } from '../middleware/user-blocked.middleware';
 import { userRepository } from '../../infrastructure/di/authDi';
 import { companyRepository } from '../../infrastructure/di/companyDi';
-import { DateTimeUtil } from '../../shared/utils';
+import { DateTimeUtil } from '../../shared/utils/datetime.utils';
 
 export class AppServer {
   private _app: express.Application;

@@ -1,5 +1,5 @@
-import { ICompanyVerificationRepository } from '../../../domain/interfaces/repositories';
-import { IVerifyCompanyUseCase } from '../../../domain/interfaces/use-cases';
+import { ICompanyVerificationRepository } from '../../../domain/interfaces/repositories/company/ICompanyVerificationRepository';
+import { IVerifyCompanyUseCase } from '../../../domain/interfaces/use-cases/IAdminUseCases';
 
 export class VerifyCompanyUseCase implements IVerifyCompanyUseCase {
   constructor(private readonly _companyVerificationRepository: ICompanyVerificationRepository) {}

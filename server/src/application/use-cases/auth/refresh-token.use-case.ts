@@ -1,10 +1,13 @@
 import { LoginResult } from '../../dto/auth/auth-response.dto';
-import { IUserRepository, IUserAuthRepository, ICompanyProfileRepository } from '../../../domain/interfaces/repositories';
-import { ITokenService, IPasswordHasher } from '../../../domain/interfaces/services';
-import { IRefreshTokenUseCase } from '../../../domain/interfaces/use-cases';
+import { IUserRepository } from '../../../domain/interfaces/repositories/user/IUserRepository';
+import { IUserAuthRepository } from '../../../domain/interfaces/repositories/user/IUserRepository';
+import { ICompanyProfileRepository } from '../../../domain/interfaces/repositories/company/ICompanyProfileRepository';
+import { ITokenService } from '../../../domain/interfaces/services/ITokenService';
+import { IPasswordHasher } from '../../../domain/interfaces/services/IPasswordHasher';
+import { IRefreshTokenUseCase } from '../../../domain/interfaces/use-cases/IAuthUseCases';
 import { AuthenticationError, NotFoundError, AuthorizationError } from '../../../domain/errors/errors';
 import { UserRole } from '../../../domain/enums/user-role.enum';
-import { UserMapper } from '../../mappers';
+import { UserMapper } from '../../mappers/user.mapper';
 
 export class RefreshTokenUseCase implements IRefreshTokenUseCase {
   constructor(

@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import { IUserRepository, ICompanyRepository } from '../../domain/interfaces/repositories';
+import { IUserRepository } from '../../domain/interfaces/repositories/user/IUserRepository';
+import { ICompanyProfileRepository } from '../../domain/interfaces/repositories/company/ICompanyProfileRepository';
 import { AuthorizationError } from '../../domain/errors/errors';
 import { UserRole } from '../../domain/enums/user-role.enum';
 
@@ -14,7 +15,7 @@ export interface AuthenticatedRequest extends Request {
 export class UserBlockedMiddleware {
   constructor(
     private readonly _userRepository: IUserRepository,
-    private readonly _companyRepository: ICompanyRepository,
+    private readonly _companyRepository: ICompanyProfileRepository,
   ) {}
 
   checkUserBlocked = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {

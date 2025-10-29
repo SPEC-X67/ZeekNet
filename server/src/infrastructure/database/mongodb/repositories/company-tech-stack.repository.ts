@@ -2,7 +2,7 @@ import { ICompanyTechStackRepository } from '../../../../domain/interfaces/repos
 import { CompanyTechStack } from '../../../../domain/entities/company-tech-stack.entity';
 import { CompanyTechStackModel, CompanyTechStackDocument } from '../models/company-tech-stack.model';
 import { Types } from 'mongoose';
-import { CompanyTechStackMapper } from '../mappers';
+import { CompanyTechStackMapper } from '../mappers/company-tech-stack.mapper';
 import { RepositoryBase } from './base-repository';
 
 export class CompanyTechStackRepository extends RepositoryBase<CompanyTechStack, CompanyTechStackDocument> implements ICompanyTechStackRepository {

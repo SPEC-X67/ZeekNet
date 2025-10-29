@@ -1,6 +1,6 @@
-import { IUserRepository } from '../../../domain/interfaces/repositories';
+import { IUserRepository } from '../../../domain/interfaces/repositories/user/IUserRepository';
 import { AppError } from '../../../domain/errors/errors';
-import { UserMapper } from '../../mappers';
+import { UserMapper } from '../../mappers/user.mapper';
 import { UserResponseDto } from '../../dto/auth/user-response.dto';
 
 export class GetUserByEmailUseCase {

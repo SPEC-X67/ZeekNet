@@ -1,5 +1,5 @@
-import { IJobPostingManagementRepository } from '../../../domain/interfaces/repositories';
-import { IUpdateJobStatusUseCase } from '../../../domain/interfaces/use-cases';
+import { IJobPostingManagementRepository } from '../../../domain/interfaces/repositories/job/IJobPostingRepository';
+import { IUpdateJobStatusUseCase } from '../../../domain/interfaces/use-cases/IAdminUseCases';
 import { AppError } from '../../../domain/errors/errors';
 import { JobPosting } from '../../../domain/entities/job-posting.entity';
 

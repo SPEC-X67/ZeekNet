@@ -1,6 +1,10 @@
 import { SimpleCompanyProfileRequestDto } from '../dto/company/create-company.dto';
 import { CompanyProfile } from '../../domain/entities/company-profile.entity';
-import { CompanyContact, CompanyTechStack, CompanyOfficeLocation, CompanyBenefits, CompanyWorkplacePictures } from '../../domain/entities';
+import { CompanyContact } from '../../domain/entities/company-contact.entity';
+import { CompanyTechStack } from '../../domain/entities/company-tech-stack.entity';
+import { CompanyOfficeLocation } from '../../domain/entities/company-office-location.entity';
+import { CompanyBenefits } from '../../domain/entities/company-benefits.entity';
+import { CompanyWorkplacePictures } from '../../domain/entities/company-workplace-pictures.entity';
 import { JobPosting } from '../../domain/entities/job-posting.entity';
 import { CompanyProfileData, CompanyContactData, CompanyLocationData, CompanyVerificationData, CompanyProfileResponseDto, CompanyContactResponseDto, CompanyLocationResponseDto, CompanyProfileWithDetailsResponseDto } from './types';
 

@@ -1,7 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
-import { LoginDto, GoogleLoginDto } from '../../../application/dto/auth';
-import { ILoginUserUseCase, IAdminLoginUseCase, IGoogleLoginUseCase } from '../../../domain/interfaces/use-cases';
-import { createRefreshTokenCookieOptions, handleValidationError, handleAsyncError, sendSuccessResponse } from '../../../shared/utils';
+import { LoginDto } from '../../../application/dto/auth/login.dto';
+import { GoogleLoginDto } from '../../../application/dto/auth/google-login.dto';
+import { ILoginUserUseCase, IAdminLoginUseCase, IGoogleLoginUseCase } from '../../../domain/interfaces/use-cases/IAuthUseCases';
+import { handleValidationError, handleAsyncError, sendSuccessResponse } from '../../../shared/utils/controller.utils';
+import { createRefreshTokenCookieOptions } from '../../../shared/utils/cookie.utils';
 import { env } from '../../../infrastructure/config/env';
 
 export class LoginController {

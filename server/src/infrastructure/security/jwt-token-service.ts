@@ -1,5 +1,5 @@
 import jwt, { SignOptions } from 'jsonwebtoken';
-import { ITokenPayload, ITokenService } from '../../domain/interfaces/services';
+import { ITokenPayload, ITokenService } from '../../domain/interfaces/services/ITokenService';
 import { env } from '../config/env';
 
 export class JwtTokenService implements ITokenService {

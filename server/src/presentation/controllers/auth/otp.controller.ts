@@ -1,11 +1,16 @@
 import { Request, Response, NextFunction } from 'express';
-import { IMailerService, IOtpService, IPasswordHasher, ITokenService } from '../../../domain/interfaces/services';
-import { IGetUserByEmailUseCase, IUpdateUserVerificationStatusUseCase, IUpdateUserRefreshTokenUseCase } from '../../../domain/interfaces/use-cases';
+import { IMailerService } from '../../../domain/interfaces/services/IMailerService';
+import { IOtpService } from '../../../domain/interfaces/services/IOtpService';
+import { IPasswordHasher } from '../../../domain/interfaces/services/IPasswordHasher';
+import { ITokenService } from '../../../domain/interfaces/services/ITokenService';
+import { IGetUserByEmailUseCase, IUpdateUserVerificationStatusUseCase, IUpdateUserRefreshTokenUseCase } from '../../../domain/interfaces/use-cases/IAuthUseCases';
 import { z } from 'zod';
 import { env } from '../../../infrastructure/config/env';
-import { createRefreshTokenCookieOptions, handleValidationError, handleAsyncError, sendSuccessResponse, sendErrorResponse } from '../../../shared/utils';
+import { handleValidationError, handleAsyncError, sendSuccessResponse, sendErrorResponse } from '../../../shared/utils/controller.utils';
+import { createRefreshTokenCookieOptions } from '../../../shared/utils/cookie.utils';
 import { welcomeTemplate } from '../../../infrastructure/messaging/templates/welcome.template';
 import { getDashboardLink } from '../../../shared/utils/dashboard.utils';
+import { UserRole } from 'src/domain/enums/user-role.enum';
 
 const RequestOtpDto = z.object({ email: z.string().email() });
 const VerifyOtpDto = z.object({
@@ -96,7 +101,7 @@ export class OtpController {
         return handleValidationError('User not found', next);
       }
 
-      const accessToken = this._tokenService.signAccess({ sub: user.id, role: user.role as any });
+      const accessToken = this._tokenService.signAccess({ sub: user.id, role: user.role as UserRole });
       const refreshToken = this._tokenService.signRefresh({ sub: user.id });
       const hashedRefresh = await this._passwordHasher.hash(refreshToken);
 

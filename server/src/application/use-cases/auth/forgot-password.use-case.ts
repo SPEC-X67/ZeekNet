@@ -1,5 +1,5 @@
-import { IUserRepository } from '../../../domain/interfaces/repositories';
-import { IPasswordResetService } from '../../../domain/interfaces/services';
+import { IUserRepository } from '../../../domain/interfaces/repositories/user/IUserRepository';
+import { IPasswordResetService } from '../../../domain/interfaces/services/IPasswordResetService';
 import { NotFoundError } from '../../../domain/errors/errors';
 
 export class ForgotPasswordUseCase {

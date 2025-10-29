@@ -1,53 +1,35 @@
 import { Request, Response, NextFunction } from 'express';
-import { IS3Service } from '../../../domain/interfaces';
+import { IS3Service } from '../../../domain/interfaces/services/IS3Service';
 import {
   CreateCompanyProfileDto,
   SimpleCompanyProfileDto,
-  SimpleUpdateCompanyProfileDto,
-  UpdateCompanyContactDto,
+  UpdateCompanyProfileDto,
+} from '../../../application/dto/company/create-company.dto';
+import { SimpleUpdateCompanyProfileDto } from '../../../application/dto/company/company-profile.dto';
+import { UpdateCompanyContactDto } from '../../../application/dto/company/company-contact.dto';
+import {
   CreateCompanyTechStackDto,
   UpdateCompanyTechStackDto,
+} from '../../../application/dto/company/company-tech-stack.dto';
+import {
   CreateCompanyOfficeLocationDto,
   UpdateCompanyOfficeLocationDto,
+} from '../../../application/dto/company/company-office-location.dto';
+import {
   CreateCompanyBenefitsDto,
   UpdateCompanyBenefitsDto,
+} from '../../../application/dto/company/company-benefits.dto';
+import {
   CreateCompanyWorkplacePicturesDto,
   UpdateCompanyWorkplacePicturesDto,
-  DeleteImageDto,
-  UploadWorkplacePictureDto,
-} from '../../../application/dto/company';
-import {
-  ICreateCompanyProfileUseCase,
-  IUpdateCompanyProfileUseCase,
-  IGetCompanyProfileUseCase,
-  IReapplyCompanyVerificationUseCase,
-  ICompanyContactUseCase,
-  IGetCompanyJobPostingsUseCase,
-  
-  ICreateCompanyTechStackUseCase,
-  IUpdateCompanyTechStackUseCase,
-  IDeleteCompanyTechStackUseCase,
-  IGetCompanyTechStackUseCase,
-  
-  ICreateCompanyOfficeLocationUseCase,
-  IUpdateCompanyOfficeLocationUseCase,
-  IDeleteCompanyOfficeLocationUseCase,
-  IGetCompanyOfficeLocationUseCase,
-  
-  ICreateCompanyBenefitUseCase,
-  IUpdateCompanyBenefitUseCase,
-  IDeleteCompanyBenefitUseCase,
-  IGetCompanyBenefitUseCase,
-  
-  ICreateCompanyWorkplacePictureUseCase,
-  IUpdateCompanyWorkplacePictureUseCase,
-  IDeleteCompanyWorkplacePictureUseCase,
-  IGetCompanyWorkplacePictureUseCase,
-} from '../../../domain/interfaces/use-cases';
-import { AuthenticatedRequest } from '../../../shared/types';
-import { handleValidationError, handleAsyncError, sendSuccessResponse, sendNotFoundResponse, sendErrorResponse, badRequest, validateUserId } from '../../../shared/utils';
+} from '../../../application/dto/company/company-workplace-pictures.dto';
+import { DeleteImageDto } from '../../../application/dto/company/delete-image.dto';
+import { UploadWorkplacePictureDto } from '../../../application/dto/company/upload-image.dto';
+import { ICompanyContactUseCase, ICreateCompanyTechStackUseCase, IUpdateCompanyTechStackUseCase, IDeleteCompanyTechStackUseCase, IGetCompanyTechStackUseCase, ICreateCompanyOfficeLocationUseCase, IUpdateCompanyOfficeLocationUseCase, IDeleteCompanyOfficeLocationUseCase, IGetCompanyOfficeLocationUseCase, ICreateCompanyBenefitUseCase, IUpdateCompanyBenefitUseCase, IDeleteCompanyBenefitUseCase, IGetCompanyBenefitUseCase, ICreateCompanyWorkplacePictureUseCase, IUpdateCompanyWorkplacePictureUseCase, IDeleteCompanyWorkplacePictureUseCase, IGetCompanyWorkplacePictureUseCase, ICreateCompanyProfileUseCase, IReapplyCompanyVerificationUseCase, IUpdateCompanyProfileUseCase, IGetCompanyProfileUseCase, IGetCompanyJobPostingsUseCase, CompanyWorkplacePicturesData, CompanyBenefitsData, CompanyOfficeLocationData, CompanyTechStackData } from '../../../domain/interfaces/use-cases/ICompanyUseCases';
+import { AuthenticatedRequest } from '../../../shared/types/authenticated-request';
+import { handleValidationError, handleAsyncError, sendSuccessResponse, sendNotFoundResponse, sendErrorResponse, badRequest, validateUserId } from '../../../shared/utils/controller.utils';
 import { UploadService } from '../../../shared/services/upload.service';
-import { CompanyProfileMapper } from '../../../application/mappers';
+import { CompanyProfileMapper } from '../../../application/mappers/company-profile.mapper';
 
 export class CompanyController {
   constructor(
@@ -357,7 +339,7 @@ export class CompanyController {
         return sendNotFoundResponse(res, 'Tech stack not found');
       }
 
-      const techStack = await this._updateCompanyTechStackUseCase.execute(id, parsed.data as any);
+      const techStack = await this._updateCompanyTechStackUseCase.execute(id, parsed.data as CompanyTechStackData);
       sendSuccessResponse(res, 'Tech stack updated successfully', techStack);
     } catch (error) {
       handleAsyncError(error, next);
@@ -441,7 +423,7 @@ export class CompanyController {
         return sendNotFoundResponse(res, 'Office location not found');
       }
 
-      const location = await this._updateCompanyOfficeLocationUseCase.execute(id, parsed.data as any);
+      const location = await this._updateCompanyOfficeLocationUseCase.execute(id, parsed.data as CompanyOfficeLocationData);
       sendSuccessResponse(res, 'Office location updated successfully', location);
     } catch (error) {
       handleAsyncError(error, next);
@@ -498,7 +480,7 @@ export class CompanyController {
         return sendNotFoundResponse(res, 'Company profile not found');
       }
 
-      const benefit = await this._createCompanyBenefitUseCase.execute(companyProfile.profile.id, parsed.data);
+      const benefit = await this._createCompanyBenefitUseCase.execute(companyProfile.profile.id, parsed.data as CompanyBenefitsData);
       sendSuccessResponse(res, 'Benefit created successfully', benefit, undefined, 201);
     } catch (error) {
       handleAsyncError(error, next);
@@ -525,7 +507,7 @@ export class CompanyController {
         return sendNotFoundResponse(res, 'Benefit not found');
       }
 
-      const benefit = await this._updateCompanyBenefitUseCase.execute(id, parsed.data as any);
+      const benefit = await this._updateCompanyBenefitUseCase.execute(id, parsed.data as CompanyBenefitsData);
       sendSuccessResponse(res, 'Benefit updated successfully', benefit);
     } catch (error) {
       handleAsyncError(error, next);
@@ -609,7 +591,7 @@ export class CompanyController {
         return sendNotFoundResponse(res, 'Workplace picture not found');
       }
 
-      const picture = await this._updateCompanyWorkplacePictureUseCase.execute(id, parsed.data as any);
+      const picture = await this._updateCompanyWorkplacePictureUseCase.execute(id, parsed.data as CompanyWorkplacePicturesData);
       sendSuccessResponse(res, 'Workplace picture updated successfully', picture);
     } catch (error) {
       handleAsyncError(error, next);

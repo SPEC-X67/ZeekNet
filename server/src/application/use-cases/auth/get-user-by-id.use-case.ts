@@ -1,7 +1,7 @@
-import { IUserRepository } from '../../../domain/interfaces/repositories';
-import { IAuthGetUserByIdUseCase } from '../../../domain/interfaces/use-cases';
-import { User } from '../../../domain/entities';
-import { UserMapper } from '../../mappers';
+import { IUserRepository } from '../../../domain/interfaces/repositories/user/IUserRepository';
+import { IAuthGetUserByIdUseCase } from '../../../domain/interfaces/use-cases/IAuthUseCases';
+import { User } from '../../../domain/entities/user.entity';
+import { UserMapper } from '../../mappers/user.mapper';
 import { UserResponseDto } from '../../dto/auth/user-response.dto';
 
 export class GetUserByIdUseCase implements IAuthGetUserByIdUseCase {

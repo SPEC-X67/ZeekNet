@@ -1,8 +1,9 @@
-import { IOtpService } from '../../../domain/interfaces/services';
-import { IUserRepository, IUserAuthRepository } from '../../../domain/interfaces/repositories';
-import { IVerifyOtpUseCase } from '../../../domain/interfaces/use-cases';
+import { IOtpService } from '../../../domain/interfaces/services/IOtpService';
+import { IUserRepository } from '../../../domain/interfaces/repositories/user/IUserRepository';
+import { IUserAuthRepository } from '../../../domain/interfaces/repositories/user/IUserRepository';
+import { IVerifyOtpUseCase } from '../../../domain/interfaces/use-cases/IAuthUseCases';
 import { ValidationError, NotFoundError } from '../../../domain/errors/errors';
-import { UserMapper } from '../../mappers';
+import { UserMapper } from '../../mappers/user.mapper';
 import { UserResponseDto } from '../../dto/auth/user-response.dto';
 
 export class VerifyOtpUseCase implements IVerifyOtpUseCase {

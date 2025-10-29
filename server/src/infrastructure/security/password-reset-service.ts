@@ -1,6 +1,7 @@
 import { randomBytes } from 'crypto';
 import { redisClient } from '../database/redis/connection/redis';
-import { IMailerService, IPasswordResetService } from '../../domain/interfaces/services';
+import { IMailerService } from '../../domain/interfaces/services/IMailerService';
+import { IPasswordResetService } from '../../domain/interfaces/services/IPasswordResetService';
 import { env } from '../config/env';
 import { passwordResetTemplate } from '../messaging/templates/password-reset.template';
 

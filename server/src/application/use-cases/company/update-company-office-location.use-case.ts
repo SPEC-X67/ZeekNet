@@ -1,8 +1,8 @@
-import { ICompanyOfficeLocationRepository } from '../../../domain/interfaces/repositories';
+import { ICompanyOfficeLocationRepository } from '../../../domain/interfaces/repositories/company/ICompanyOfficeLocationRepository';
 import { CompanyOfficeLocation } from '../../../domain/entities/company-office-location.entity';
 import { UpdateCompanyOfficeLocationRequestDto } from '../../dto/company/company-office-location.dto';
 import { NotFoundError } from '../../../domain/errors/errors';
-import { IUpdateCompanyOfficeLocationUseCase } from '../../../domain/interfaces/use-cases';
+import { IUpdateCompanyOfficeLocationUseCase } from '../../../domain/interfaces/use-cases/ICompanyUseCases';
 
 export class UpdateCompanyOfficeLocationUseCase implements IUpdateCompanyOfficeLocationUseCase {
   constructor(private readonly _companyOfficeLocationRepository: ICompanyOfficeLocationRepository) {}

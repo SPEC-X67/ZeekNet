@@ -1,11 +1,13 @@
 import { RegisterResult } from '../../dto/auth/auth-response.dto';
 import { UserRole } from '../../../domain/enums/user-role.enum';
-import { IUserRepository } from '../../../domain/interfaces/repositories';
-import { IPasswordHasher, IOtpService, IMailerService } from '../../../domain/interfaces/services';
-import { IRegisterUserUseCase } from '../../../domain/interfaces/use-cases';
+import { IUserRepository } from '../../../domain/interfaces/repositories/user/IUserRepository';
+import { IPasswordHasher } from '../../../domain/interfaces/services/IPasswordHasher';
+import { IOtpService } from '../../../domain/interfaces/services/IOtpService';
+import { IMailerService } from '../../../domain/interfaces/services/IMailerService';
+import { IRegisterUserUseCase } from '../../../domain/interfaces/use-cases/IAuthUseCases';
 import { ValidationError } from '../../../domain/errors/errors';
 import { otpVerificationTemplate } from '../../../infrastructure/messaging/templates/otp-verification.template';
-import { UserMapper } from '../../mappers';
+import { UserMapper } from '../../mappers/user.mapper';
 
 export class RegisterUserUseCase implements IRegisterUserUseCase {
   constructor(

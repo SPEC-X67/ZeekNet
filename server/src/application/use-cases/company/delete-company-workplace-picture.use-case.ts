@@ -1,6 +1,6 @@
-import { ICompanyWorkplacePicturesRepository } from '../../../domain/interfaces/repositories';
+import { ICompanyWorkplacePicturesRepository } from '../../../domain/interfaces/repositories/company/ICompanyWorkplacePicturesRepository';
 import { NotFoundError } from '../../../domain/errors/errors';
-import { IDeleteCompanyWorkplacePictureUseCase } from '../../../domain/interfaces/use-cases';
+import { IDeleteCompanyWorkplacePictureUseCase } from '../../../domain/interfaces/use-cases/ICompanyUseCases';
 
 export class DeleteCompanyWorkplacePictureUseCase implements IDeleteCompanyWorkplacePictureUseCase {
   constructor(private readonly _companyWorkplacePicturesRepository: ICompanyWorkplacePicturesRepository) {}

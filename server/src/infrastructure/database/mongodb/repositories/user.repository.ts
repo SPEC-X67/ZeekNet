@@ -1,9 +1,11 @@
-import { IUserRepository, IUserAuthRepository, IUserManagementRepository } from '../../../../domain/interfaces/repositories';
-import { User } from '../../../../domain/entities';
+import { IUserRepository } from '../../../../domain/interfaces/repositories/user/IUserRepository';
+import { IUserAuthRepository } from '../../../../domain/interfaces/repositories/user/IUserRepository';
+import { IUserManagementRepository } from '../../../../domain/interfaces/repositories/user/IUserRepository';
+import { User } from '../../../../domain/entities/user.entity';
 import { UserRole } from '../../../../domain/enums/user-role.enum';
 import { UserModel, UserDocument } from '../models/user.model';
 import { IUserData } from '../../../../domain/interfaces/repositories/user/IUserRepository';
-import { UserMapper } from '../mappers';
+import { UserMapper } from '../mappers/user.mapper';
 import { Types } from 'mongoose';
 
 export class UserRepository implements IUserRepository, IUserAuthRepository, IUserManagementRepository {

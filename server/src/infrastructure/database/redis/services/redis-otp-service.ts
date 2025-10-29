@@ -1,4 +1,4 @@
-import { IOtpService } from '../../../../domain/interfaces/services';
+import { IOtpService } from '../../../../domain/interfaces/services/IOtpService';
 import { redisClient } from '../connection/redis';
 import { env } from '../../../config/env';
 

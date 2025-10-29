@@ -1,8 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
-import { BlockUserDto, CompanyVerificationDto, BlockCompanyDto } from '../../../application/dto/admin';
+import { BlockUserDto, CompanyVerificationDto } from '../../../application/dto/admin/user-management.dto';
+import { BlockCompanyDto } from '../../../application/dto/admin/company-management.dto';
 import { GetAllUsersRequestDto, GetAllCompaniesRequestDto } from '../../../application/dto/admin/user-management.dto';
-import { IGetAllUsersUseCase, IBlockUserUseCase, IAdminGetUserByIdUseCase, IGetAllCompaniesUseCase, IGetCompaniesWithVerificationUseCase, IVerifyCompanyUseCase, IBlockCompanyUseCase } from '../../../domain/interfaces/use-cases';
-import { handleValidationError, handleAsyncError, sendSuccessResponse, sendNotFoundResponse } from '../../../shared/utils';
+import { IAdminGetUserByIdUseCase, IGetAllUsersUseCase, IBlockUserUseCase, IGetAllCompaniesUseCase, IGetCompaniesWithVerificationUseCase, IVerifyCompanyUseCase, IBlockCompanyUseCase } from '../../../domain/interfaces/use-cases/IAdminUseCases';
+import { handleValidationError, handleAsyncError, sendSuccessResponse, sendNotFoundResponse } from '../../../shared/utils/controller.utils';
 
 export class AdminController {
   constructor(

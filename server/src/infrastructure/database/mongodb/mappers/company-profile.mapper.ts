@@ -1,4 +1,4 @@
-import { CompanyProfile } from '../../../../domain/entities';
+import { CompanyProfile } from '../../../../domain/entities/company-profile.entity';
 import { Document } from 'mongoose';
 
 export interface CompanyProfileDocument extends Document {

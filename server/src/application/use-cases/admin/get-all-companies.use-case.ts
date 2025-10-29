@@ -1,5 +1,5 @@
-import { ICompanyListingRepository } from '../../../domain/interfaces/repositories';
-import { IGetAllCompaniesUseCase, CompanyQueryOptions, PaginatedCompanies } from '../../../domain/interfaces/use-cases';
+import { ICompanyListingRepository } from '../../../domain/interfaces/repositories/company/ICompanyListingRepository';
+import { CompanyQueryOptions, PaginatedCompanies, IGetAllCompaniesUseCase } from '../../../domain/interfaces/use-cases/IAdminUseCases';
 
 export class GetAllCompaniesUseCase implements IGetAllCompaniesUseCase {
   constructor(private readonly _companyListingRepository: ICompanyListingRepository) {}

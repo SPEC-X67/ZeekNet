@@ -1,8 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
-import { ForgotPasswordDto, ResetPasswordDto, LogoutDto } from '../../../application/dto/auth';
-import { IForgotPasswordUseCase, IResetPasswordUseCase, ILogoutUseCase } from '../../../domain/interfaces/use-cases';
-import { AuthenticatedRequest } from '../../../shared/types';
-import { createLogoutCookieOptions, handleValidationError, handleAsyncError, extractUserId, sendSuccessResponse } from '../../../shared/utils';
+import { ForgotPasswordDto } from '../../../application/dto/auth/forgot-password.dto';
+import { ResetPasswordDto } from '../../../application/dto/auth/reset-password.dto';
+import { LogoutDto } from '../../../application/dto/auth/logout.dto';
+import { IForgotPasswordUseCase, IResetPasswordUseCase, ILogoutUseCase } from '../../../domain/interfaces/use-cases/IAuthUseCases';
+import { AuthenticatedRequest } from '../../../shared/types/authenticated-request';
+import { createLogoutCookieOptions } from '../../../shared/utils/cookie.utils';
+import { extractUserId, handleValidationError, sendSuccessResponse, handleAsyncError } from '../../../shared/utils/controller.utils';
 import { env } from '../../../infrastructure/config/env';
 
 export class PasswordController {

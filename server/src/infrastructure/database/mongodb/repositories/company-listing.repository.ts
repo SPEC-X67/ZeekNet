@@ -1,7 +1,7 @@
-import { ICompanyListingRepository } from '../../../../domain/interfaces/repositories';
-import { CompanyProfile } from '../../../../domain/entities';
+import { ICompanyListingRepository } from '../../../../domain/interfaces/repositories/company/ICompanyListingRepository';
+import { CompanyProfile } from '../../../../domain/entities/company-profile.entity';
 import { CompanyProfileModel } from '../models/company-profile.model';
-import { CompanyProfileDocument, CompanyProfileMapper } from '../mappers';
+import { CompanyProfileMapper, CompanyProfileDocument } from '../mappers/company-profile.mapper';
 
 interface CompanyQuery {
   $or?: Array<{ [key: string]: { $regex: string; $options: string } }>;

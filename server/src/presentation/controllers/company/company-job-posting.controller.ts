@@ -1,9 +1,15 @@
 import { Request, Response } from 'express';
-import { AuthenticatedRequest } from '../../../shared/types';
-import { success, created, unauthorized, badRequest, handleError } from '../../../shared/utils';
-import { ICreateJobPostingUseCase, IGetJobPostingUseCase, IGetCompanyJobPostingsUseCase, IUpdateJobPostingUseCase, IDeleteJobPostingUseCase, IIncrementJobViewCountUseCase, IUpdateJobStatusUseCase } from '../../../domain/interfaces/use-cases';
+import { AuthenticatedRequest } from '../../../shared/types/authenticated-request';
+import { success, created, unauthorized, badRequest, handleError } from '../../../shared/utils/controller.utils';
+import { ICreateJobPostingUseCase } from '../../../domain/interfaces/use-cases/ICompanyUseCases';
+import { IGetJobPostingUseCase } from '../../../domain/interfaces/use-cases/ICompanyUseCases';
+import { IGetCompanyJobPostingsUseCase } from '../../../domain/interfaces/use-cases/ICompanyUseCases';
+import { IUpdateJobPostingUseCase } from '../../../domain/interfaces/use-cases/ICompanyUseCases';
+import { IDeleteJobPostingUseCase } from '../../../domain/interfaces/use-cases/ICompanyUseCases';
+import { IIncrementJobViewCountUseCase } from '../../../domain/interfaces/use-cases/ICompanyUseCases';
+import { IUpdateJobStatusUseCase } from '../../../domain/interfaces/use-cases/ICompanyUseCases';
 import { CreateJobPostingRequestDto, UpdateJobPostingRequestDto, JobPostingQueryRequestDto } from '../../../application/dto/job-posting/job-posting.dto';
-import { ICompanyProfileRepository } from '../../../domain/interfaces';
+import { ICompanyProfileRepository } from '../../../domain/interfaces/repositories/company/ICompanyProfileRepository';
 
 export class CompanyJobPostingController {
   constructor(

@@ -1,10 +1,14 @@
 import { LoginResult } from '../../dto/auth/auth-response.dto';
-import { IUserRepository, IUserAuthRepository } from '../../../domain/interfaces/repositories';
-import { IPasswordHasher, ITokenService, IOtpService, IMailerService } from '../../../domain/interfaces/services';
-import { IAdminLoginUseCase } from '../../../domain/interfaces/use-cases';
+import { IUserRepository } from '../../../domain/interfaces/repositories/user/IUserRepository';
+import { IUserAuthRepository } from '../../../domain/interfaces/repositories/user/IUserRepository';
+import { IPasswordHasher } from '../../../domain/interfaces/services/IPasswordHasher';
+import { ITokenService } from '../../../domain/interfaces/services/ITokenService';
+import { IOtpService } from '../../../domain/interfaces/services/IOtpService';
+import { IMailerService } from '../../../domain/interfaces/services/IMailerService';
+import { IAdminLoginUseCase } from '../../../domain/interfaces/use-cases/IAuthUseCases';
 import { AuthenticationError, AuthorizationError } from '../../../domain/errors/errors';
 import { UserRole } from '../../../domain/enums/user-role.enum';
-import { UserMapper } from '../../mappers';
+import { UserMapper } from '../../mappers/user.mapper';
 
 export class AdminLoginUseCase implements IAdminLoginUseCase {
   constructor(

@@ -1,5 +1,15 @@
-import { ICompanyProfileRepository, ICompanyContactRepository, ICompanyTechStackRepository, ICompanyOfficeLocationRepository, ICompanyBenefitsRepository, ICompanyWorkplacePicturesRepository } from '../../../domain/interfaces/repositories';
-import { CompanyProfile, CompanyContact, CompanyTechStack, CompanyOfficeLocation, CompanyBenefits, CompanyWorkplacePictures } from '../../../domain/entities';
+import { ICompanyProfileRepository } from '../../../domain/interfaces/repositories/company/ICompanyProfileRepository';
+import { ICompanyContactRepository } from '../../../domain/interfaces/repositories/company/ICompanyContactRepository';
+import { ICompanyTechStackRepository } from '../../../domain/interfaces/repositories/company/ICompanyTechStackRepository';
+import { ICompanyOfficeLocationRepository } from '../../../domain/interfaces/repositories/company/ICompanyOfficeLocationRepository';
+import { ICompanyBenefitsRepository } from '../../../domain/interfaces/repositories/company/ICompanyBenefitsRepository';
+import { ICompanyWorkplacePicturesRepository } from '../../../domain/interfaces/repositories/company/ICompanyWorkplacePicturesRepository';
+import { CompanyProfile } from '../../../domain/entities/company-profile.entity';
+import { CompanyContact } from '../../../domain/entities/company-contact.entity';
+import { CompanyTechStack } from '../../../domain/entities/company-tech-stack.entity';
+import { CompanyOfficeLocation } from '../../../domain/entities/company-office-location.entity';
+import { CompanyBenefits } from '../../../domain/entities/company-benefits.entity';
+import { CompanyWorkplacePictures } from '../../../domain/entities/company-workplace-pictures.entity';
 
 interface CompanyProfileWithDetails {
   profile: CompanyProfile;

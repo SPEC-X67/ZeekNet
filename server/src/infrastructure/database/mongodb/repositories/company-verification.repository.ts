@@ -1,8 +1,8 @@
-import { ICompanyVerificationRepository } from '../../../../domain/interfaces/repositories';
-import { CompanyVerification } from '../../../../domain/entities';
+import { ICompanyVerificationRepository } from '../../../../domain/interfaces/repositories/company/ICompanyVerificationRepository';
+import { CompanyVerification } from '../../../../domain/entities/company-profile.entity';
 import { CompanyVerificationModel, CompanyVerificationDocument } from '../models/company-verification.model';
 import { CompanyProfileModel } from '../models/company-profile.model';
-import { CompanyVerificationMapper } from '../mappers';
+import { CompanyVerificationMapper } from '../mappers/company-verification.mapper';
 import { RepositoryBase } from './base-repository';
 
 export class CompanyVerificationRepository extends RepositoryBase<CompanyVerification, CompanyVerificationDocument> implements ICompanyVerificationRepository {

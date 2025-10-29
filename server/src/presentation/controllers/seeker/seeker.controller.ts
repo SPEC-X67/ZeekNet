@@ -1,7 +1,10 @@
 import { Request, Response } from 'express';
-import { AuthenticatedRequest } from '../../../shared/types';
-import { success, handleError } from '../../../shared/utils';
-import { IGetJobPostingUseCase, IGetAllJobPostingsUseCase, IIncrementJobViewCountUseCase } from '../../../domain/interfaces/use-cases';
+import { AuthenticatedRequest } from '../../../shared/types/authenticated-request';
+import { success } from '../../../shared/utils/controller.utils';
+import { handleError } from '../../../shared/utils/controller.utils';
+import { IGetJobPostingUseCase } from '../../../domain/interfaces/use-cases/ICompanyUseCases';
+import { IGetAllJobPostingsUseCase } from '../../../domain/interfaces/use-cases/IPublicUseCases';
+import { IIncrementJobViewCountUseCase } from '../../../domain/interfaces/use-cases/ICompanyUseCases';
 import { JobPostingQueryRequestDto } from '../../../application/dto/job-posting/job-posting.dto';
 
 export class SeekerController {

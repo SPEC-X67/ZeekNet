@@ -1,4 +1,4 @@
-import { IJobPostingSearchRepository } from '../../../domain/interfaces/repositories';
+import { IJobPostingSearchRepository } from '../../../domain/interfaces/repositories/job/IJobPostingRepository';
 import { AppError } from '../../../domain/errors/errors';
 
 export class AdminGetJobStatsUseCase {

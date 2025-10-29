@@ -1,6 +1,6 @@
-import { ICompanyWorkplacePicturesRepository } from '../../../domain/interfaces/repositories';
+import { ICompanyWorkplacePicturesRepository } from '../../../domain/interfaces/repositories/company/ICompanyWorkplacePicturesRepository';
 import { CompanyWorkplacePictures } from '../../../domain/entities/company-workplace-pictures.entity';
-import { IGetCompanyWorkplacePictureUseCase } from '../../../domain/interfaces/use-cases';
+import { IGetCompanyWorkplacePictureUseCase } from '../../../domain/interfaces/use-cases/ICompanyUseCases';
 
 export class GetCompanyWorkplacePictureUseCase implements IGetCompanyWorkplacePictureUseCase {
   constructor(private readonly _companyWorkplacePicturesRepository: ICompanyWorkplacePicturesRepository) {}

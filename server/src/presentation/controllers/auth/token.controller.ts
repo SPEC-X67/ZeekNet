@@ -1,9 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
-import { RefreshTokenDto } from '../../../application/dto/auth';
-import { IRefreshTokenUseCase, IAuthGetUserByIdUseCase, IGetCompanyProfileByUserIdUseCase } from '../../../domain/interfaces/use-cases';
-import { ITokenService } from '../../../domain/interfaces/services';
-import { AuthenticatedRequest } from '../../../shared/types';
-import { createRefreshTokenCookieOptions, handleValidationError, handleAsyncError, validateUserId, sendSuccessResponse, sendErrorResponse } from '../../../shared/utils';
+import { RefreshTokenDto } from '../../../application/dto/auth/refresh-token.dto';
+import { IRefreshTokenUseCase, IAuthGetUserByIdUseCase, IGetCompanyProfileByUserIdUseCase } from '../../../domain/interfaces/use-cases/IAuthUseCases';
+import { ITokenService } from '../../../domain/interfaces/services/ITokenService';
+import { AuthenticatedRequest } from '../../../shared/types/authenticated-request';
+import { handleValidationError, handleAsyncError, validateUserId, sendSuccessResponse, sendErrorResponse } from '../../../shared/utils/controller.utils';
+import { createRefreshTokenCookieOptions } from '../../../shared/utils/cookie.utils';
 import { env } from '../../../infrastructure/config/env';
 import { UserRole } from '../../../domain/enums/user-role.enum';
 
@@ -59,7 +60,7 @@ export class TokenController {
         }
       }
 
-      const accessToken = this._tokenService.signAccess({ sub: user.id, role: user.role as any });
+      const accessToken = this._tokenService.signAccess({ sub: user.id, role: user.role as UserRole });
 
       sendSuccessResponse(res, 'Authenticated', user, accessToken);
     } catch (error) {

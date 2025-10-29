@@ -1,5 +1,5 @@
-import { IJobPostingSearchRepository } from '../../../domain/interfaces/repositories';
-import { IGetAllJobPostingsUseCase } from '../../../domain/interfaces/use-cases';
+import { IJobPostingSearchRepository } from '../../../domain/interfaces/repositories/job/IJobPostingRepository';
+import { IGetAllJobPostingsUseCase } from '../../../domain/interfaces/use-cases/IPublicUseCases';
 import { AppError } from '../../../domain/errors/errors';
 import { JobPostingFilters, PaginatedJobPostings } from '../../../domain/entities/job-posting.entity';
 

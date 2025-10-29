@@ -1,10 +1,15 @@
 import { LoginResult } from '../../dto/auth/auth-response.dto';
-import { IUserRepository, IUserAuthRepository } from '../../../domain/interfaces/repositories';
-import { IPasswordHasher, ITokenService, IGoogleTokenVerifier, IOtpService, IMailerService } from '../../../domain/interfaces/services';
-import { IGoogleLoginUseCase } from '../../../domain/interfaces/use-cases';
+import { IUserRepository } from '../../../domain/interfaces/repositories/user/IUserRepository';
+import { IUserAuthRepository } from '../../../domain/interfaces/repositories/user/IUserRepository';
+import { IPasswordHasher } from '../../../domain/interfaces/services/IPasswordHasher';
+import { ITokenService } from '../../../domain/interfaces/services/ITokenService';
+import { IGoogleTokenVerifier } from '../../../domain/interfaces/services/IGoogleTokenVerifier';
+import { IOtpService } from '../../../domain/interfaces/services/IOtpService';
+import { IMailerService } from '../../../domain/interfaces/services/IMailerService';
+import { IGoogleLoginUseCase } from '../../../domain/interfaces/use-cases/IAuthUseCases';
 import { UserRole } from '../../../domain/enums/user-role.enum';
 import { otpVerificationTemplate } from '../../../infrastructure/messaging/templates/otp-verification.template';
-import { UserMapper } from '../../mappers';
+import { UserMapper } from '../../mappers/user.mapper';
 
 export class GoogleLoginUseCase implements IGoogleLoginUseCase {
   constructor(

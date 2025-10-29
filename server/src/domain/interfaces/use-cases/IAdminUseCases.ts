@@ -136,3 +136,20 @@ export interface AdminJobStats {
 export interface IAdminGetJobStatsUseCase {
   execute(): Promise<AdminJobStats>;
 }
+
+// Additional interfaces that were missing
+export interface IGetJobByIdUseCase {
+  execute(jobId: string): Promise<JobPosting>;
+}
+
+export interface IGetJobStatsUseCase {
+  execute(): Promise<AdminJobStats>;
+}
+
+export interface IUpdateJobStatusUseCase {
+  execute(jobId: string, isActive: boolean): Promise<JobPosting>;
+}
+
+export interface IDeleteJobUseCase {
+  execute(jobId: string): Promise<boolean>;
+}

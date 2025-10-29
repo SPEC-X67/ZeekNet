@@ -1,4 +1,9 @@
-import { CompanyProfile, CompanyContact, CompanyTechStack, CompanyOfficeLocation, CompanyBenefits, CompanyWorkplacePictures } from '../../entities';
+import { CompanyProfile } from '../../entities/company-profile.entity';
+import { CompanyContact } from '../../entities/company-contact.entity';
+import { CompanyTechStack } from '../../entities/company-tech-stack.entity';
+import { CompanyOfficeLocation } from '../../entities/company-office-location.entity';
+import { CompanyBenefits } from '../../entities/company-benefits.entity';
+import { CompanyWorkplacePictures } from '../../entities/company-workplace-pictures.entity';
 import { JobPosting, PaginatedJobPostings, JobPostingFilters } from '../../entities/job-posting.entity';
 import { CompanyProfileResponseDto } from '../../../application/dto/company/company-response.dto';
 
@@ -133,11 +138,11 @@ export interface ICompanyContactUseCase {
 
 
 export interface ICreateCompanyTechStackUseCase {
-  execute(companyId: string, data: any): Promise<CompanyTechStack>;
+  execute(companyId: string, data: CompanyTechStackData): Promise<CompanyTechStack>;
 }
 
 export interface IUpdateCompanyTechStackUseCase {
-  execute(techStackId: string, data: any): Promise<CompanyTechStack>;
+  execute(techStackId: string, data: CompanyTechStackData): Promise<CompanyTechStack>;
 }
 
 export interface IDeleteCompanyTechStackUseCase {
@@ -151,11 +156,11 @@ export interface IGetCompanyTechStackUseCase {
 
 
 export interface ICreateCompanyOfficeLocationUseCase {
-  execute(companyId: string, data: any): Promise<CompanyOfficeLocation>;
+  execute(companyId: string, data: CompanyOfficeLocationData): Promise<CompanyOfficeLocation>;
 }
 
 export interface IUpdateCompanyOfficeLocationUseCase {
-  execute(locationId: string, data: any): Promise<CompanyOfficeLocation>;
+  execute(locationId: string, data: CompanyOfficeLocationData): Promise<CompanyOfficeLocation>;
 }
 
 export interface IDeleteCompanyOfficeLocationUseCase {
@@ -169,11 +174,11 @@ export interface IGetCompanyOfficeLocationUseCase {
 
 
 export interface ICreateCompanyBenefitUseCase {
-  execute(companyId: string, data: any): Promise<CompanyBenefits>;
+  execute(companyId: string, data: CompanyBenefitsData): Promise<CompanyBenefits>;
 }
 
 export interface IUpdateCompanyBenefitUseCase {
-  execute(benefitId: string, data: any): Promise<CompanyBenefits>;
+  execute(benefitId: string, data: CompanyBenefitsData): Promise<CompanyBenefits>;
 }
 
 export interface IDeleteCompanyBenefitUseCase {
@@ -187,11 +192,11 @@ export interface IGetCompanyBenefitUseCase {
 
 
 export interface ICreateCompanyWorkplacePictureUseCase {
-  execute(companyId: string, data: any): Promise<CompanyWorkplacePictures>;
+  execute(companyId: string, data: CompanyWorkplacePicturesData): Promise<CompanyWorkplacePictures>;
 }
 
 export interface IUpdateCompanyWorkplacePictureUseCase {
-  execute(pictureId: string, data: any): Promise<CompanyWorkplacePictures>;
+  execute(pictureId: string, data: CompanyWorkplacePicturesData): Promise<CompanyWorkplacePictures>;
 }
 
 export interface IDeleteCompanyWorkplacePictureUseCase {

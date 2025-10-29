@@ -1,5 +1,5 @@
-import { IJobPostingSearchRepository } from '../../../domain/interfaces/repositories';
-import { IAdminGetAllJobsUseCase } from '../../../domain/interfaces/use-cases';
+import { IJobPostingSearchRepository } from '../../../domain/interfaces/repositories/job/IJobPostingRepository';
+import { IAdminGetAllJobsUseCase } from '../../../domain/interfaces/use-cases/IAdminUseCases';
 import { AppError } from '../../../domain/errors/errors';
 import { JobPostingMapper } from '../../mappers/job-posting.mapper';
 import { JobPostingResponseDto } from '../../dto/job-posting/job-posting-response.dto';

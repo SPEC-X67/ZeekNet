@@ -1,6 +1,6 @@
-import { ICompanyTechStackRepository } from '../../../domain/interfaces/repositories';
+import { ICompanyTechStackRepository } from '../../../domain/interfaces/repositories/company/ICompanyTechStackRepository';
 import { CompanyTechStack } from '../../../domain/entities/company-tech-stack.entity';
-import { IGetCompanyTechStackUseCase } from '../../../domain/interfaces/use-cases';
+import { IGetCompanyTechStackUseCase } from '../../../domain/interfaces/use-cases/ICompanyUseCases';
 
 export class GetCompanyTechStackUseCase implements IGetCompanyTechStackUseCase {
   constructor(private readonly _companyTechStackRepository: ICompanyTechStackRepository) {}

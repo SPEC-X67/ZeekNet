@@ -1,8 +1,8 @@
-import { ICompanyBenefitsRepository } from '../../../domain/interfaces/repositories';
+import { ICompanyBenefitsRepository } from '../../../domain/interfaces/repositories/company/ICompanyBenefitsRepository';
 import { CompanyBenefits } from '../../../domain/entities/company-benefits.entity';
 import { UpdateCompanyBenefitsRequestDto } from '../../dto/company/company-benefits.dto';
 import { NotFoundError } from '../../../domain/errors/errors';
-import { IUpdateCompanyBenefitUseCase } from '../../../domain/interfaces/use-cases';
+import { IUpdateCompanyBenefitUseCase } from '../../../domain/interfaces/use-cases/ICompanyUseCases';
 
 export class UpdateCompanyBenefitUseCase implements IUpdateCompanyBenefitUseCase {
   constructor(private readonly _companyBenefitsRepository: ICompanyBenefitsRepository) {}

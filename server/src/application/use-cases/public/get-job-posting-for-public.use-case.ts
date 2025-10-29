@@ -1,5 +1,5 @@
-import { IJobPostingRepository, IJobPostingAnalyticsRepository } from '../../../domain/interfaces/repositories';
-import { IGetJobPostingForPublicUseCase } from '../../../domain/interfaces/use-cases';
+import { IJobPostingAnalyticsRepository, IJobPostingRepository } from '../../../domain/interfaces/repositories/job/IJobPostingRepository';
+import { IGetJobPostingForPublicUseCase } from '../../../domain/interfaces/use-cases/IPublicUseCases';
 import { AppError } from '../../../domain/errors/errors';
 import { JobPostingDetailResponseDto } from '../../dto/job-posting/job-posting-response.dto';
 

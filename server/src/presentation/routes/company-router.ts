@@ -6,7 +6,7 @@ import { validateBody, validateQuery } from '../middleware/validation.middleware
 import { UserBlockedMiddleware } from '../middleware/user-blocked.middleware';
 import { CompanyVerificationMiddleware } from '../middleware/company-verification.middleware';
 import { CreateJobPostingRequestDto, UpdateJobPostingDto, JobPostingQueryDto } from '../../application/dto/job-posting/job-posting.dto';
-import { SimpleCompanyProfileDto } from '../../application/dto/company';
+import { SimpleCompanyProfileDto } from '../../application/dto/company/create-company.dto';
 
 export class CompanyRouter {
   public router: Router;

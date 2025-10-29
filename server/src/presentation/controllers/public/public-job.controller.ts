@@ -1,7 +1,9 @@
 import { Request, Response } from 'express';
-import { IGetAllJobPostingsUseCase, IGetJobPostingForPublicUseCase } from '../../../domain/interfaces/use-cases';
-import { handleError, success } from '../../../shared/utils';
-import { JobPostingQueryRequestDto } from '../../../application/dto/job-posting';
+import { IGetAllJobPostingsUseCase } from '../../../domain/interfaces/use-cases/IPublicUseCases';
+import { IGetJobPostingForPublicUseCase } from '../../../domain/interfaces/use-cases/IPublicUseCases';
+import { handleError } from '../../../shared/utils/controller.utils';
+import { success } from '../../../shared/utils/controller.utils';
+import { JobPostingQueryRequestDto } from '../../../application/dto/job-posting/job-posting.dto';
 
 export class PublicJobController {
   constructor(

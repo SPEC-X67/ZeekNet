@@ -2,7 +2,12 @@ import { Router } from 'express';
 import { registrationController, loginController, tokenController, passwordController, otpController } from '../../infrastructure/di/authDi';
 import { authenticateToken } from '../middleware/auth.middleware';
 import { validateBody } from '../middleware/validation.middleware';
-import { RegisterDto, LoginDto, GoogleLoginDto, RefreshTokenDto, ForgotPasswordDto, ResetPasswordDto } from '../../application/dto/auth';
+import { RegisterDto } from '../../application/dto/auth/register.dto';
+import { LoginDto } from '../../application/dto/auth/login.dto';
+import { GoogleLoginDto } from '../../application/dto/auth/google-login.dto';
+import { RefreshTokenDto } from '../../application/dto/auth/refresh-token.dto';
+import { ForgotPasswordDto } from '../../application/dto/auth/forgot-password.dto';
+import { ResetPasswordDto } from '../../application/dto/auth/reset-password.dto';
 
 export class AuthRouter {
   public router: Router;

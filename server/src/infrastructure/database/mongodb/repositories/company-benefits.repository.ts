@@ -2,7 +2,7 @@ import { ICompanyBenefitsRepository } from '../../../../domain/interfaces/reposi
 import { CompanyBenefits } from '../../../../domain/entities/company-benefits.entity';
 import { CompanyBenefitsModel, CompanyBenefitsDocument } from '../models/company-benefits.model';
 import { Types } from 'mongoose';
-import { CompanyBenefitsMapper } from '../mappers';
+import { CompanyBenefitsMapper } from '../mappers/company-benefits.mapper';
 import { RepositoryBase } from './base-repository';
 
 export class CompanyBenefitsRepository extends RepositoryBase<CompanyBenefits, CompanyBenefitsDocument> implements ICompanyBenefitsRepository {

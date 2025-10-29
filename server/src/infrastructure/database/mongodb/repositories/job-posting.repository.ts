@@ -1,8 +1,8 @@
-import { IJobPostingRepository, IJobPostingSearchRepository, IJobPostingAnalyticsRepository, IJobPostingManagementRepository } from '../../../../domain/interfaces/repositories';
+import { IJobPostingSearchRepository, IJobPostingAnalyticsRepository, IJobPostingManagementRepository, IJobPostingRepository } from '../../../../domain/interfaces/repositories/job/IJobPostingRepository';
 import { JobPosting, CreateJobPostingRequest, UpdateJobPostingRequest, JobPostingFilters, PaginatedJobPostings } from '../../../../domain/entities/job-posting.entity';
 import { JobPostingModel, JobPostingDocument } from '../models/job-posting.model';
 import { Types } from 'mongoose';
-import { JobPostingMapper } from '../mappers';
+import { JobPostingMapper } from '../mappers/job-posting.mapper';
 import { JobPostingResponseDto } from '../../../../application/dto/job-posting/job-posting-response.dto';
 import { RepositoryBase } from './base-repository';
 

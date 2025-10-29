@@ -1,7 +1,7 @@
-import { ICompanyProfileRepository } from '../../../../domain/interfaces/repositories';
-import { CompanyProfile } from '../../../../domain/entities';
+import { ICompanyProfileRepository } from '../../../../domain/interfaces/repositories/company/ICompanyProfileRepository';
+import { CompanyProfile } from '../../../../domain/entities/company-profile.entity';
 import { CompanyProfileModel, CompanyProfileDocument as ModelDocument } from '../models/company-profile.model';
-import { CompanyProfileDocument, CompanyProfileMapper } from '../mappers';
+import { CompanyProfileMapper, CompanyProfileDocument } from '../mappers/company-profile.mapper';
 import { RepositoryBase } from './base-repository';
 
 export class CompanyProfileRepository extends RepositoryBase<CompanyProfile, CompanyProfileDocument> implements ICompanyProfileRepository {

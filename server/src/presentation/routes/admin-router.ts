@@ -3,7 +3,8 @@ import { adminController, adminJobController } from '../../infrastructure/di/adm
 import { requireAdmin } from '../middleware/admin.middleware';
 import { authenticateToken } from '../middleware/auth.middleware';
 import { validateQuery } from '../middleware/validation.middleware';
-import { GetAllUsersDto, GetAllCompaniesDto } from '../../application/dto/admin';
+import { GetAllUsersDto } from '../../application/dto/admin/user-management.dto';
+import { GetAllCompaniesDto } from '../../application/dto/admin/company-management.dto';
 import { AdminGetAllJobsDto } from '../../application/dto/admin/admin-job.dto';
 
 export class AdminRouter {

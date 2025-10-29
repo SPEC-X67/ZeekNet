@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { ICompanyRepository } from '../../domain/interfaces/repositories';
+import { ICompanyProfileRepository } from '../../domain/interfaces/repositories/company/ICompanyProfileRepository';
 import { UserRole } from '../../domain/enums/user-role.enum';
 
 export interface AuthenticatedRequest extends Request {
@@ -11,7 +11,7 @@ export interface AuthenticatedRequest extends Request {
 }
 
 export class CompanyVerificationMiddleware {
-  constructor(private readonly _companyRepository: ICompanyRepository) {}
+  constructor(private readonly _companyRepository: ICompanyProfileRepository) {}
 
   checkCompanyVerified = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
