@@ -1,4 +1,4 @@
-import { ICompanyProfileRepository } from '../../../domain/interfaces/repositories';
+import { ICompanyProfileRepository } from '../../../domain/interfaces/repositories/company/ICompanyProfileRepository';
 import { AppError } from '../../../domain/errors/errors';
 
 export class BlockCompanyUseCase {

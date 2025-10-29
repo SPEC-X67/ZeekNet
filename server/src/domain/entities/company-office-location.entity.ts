@@ -35,13 +35,6 @@ export class CompanyOfficeLocation {
     );
   }
 
-  updateOfficeLocation(data: { location?: string; officeName?: string; address?: string; isHeadquarters?: boolean }): CompanyOfficeLocation {
-    return CompanyOfficeLocation.create({
-      ...this.toJSON(),
-      ...data,
-      updatedAt: new Date(),
-    });
-  }
 
   toJSON() {
     return {

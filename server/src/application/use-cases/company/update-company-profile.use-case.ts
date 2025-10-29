@@ -1,5 +1,5 @@
 import { SimpleUpdateCompanyProfileRequestDto } from '../../dto/company/company-profile.dto';
-import { ICompanyProfileRepository } from '../../../domain/interfaces/repositories';
+import { ICompanyProfileRepository } from '../../../domain/interfaces/repositories/company/ICompanyProfileRepository';
 import { CompanyProfileMapper } from '../../mappers/company-profile.mapper';
 import { CompanyProfileResponseDto } from '../../dto/company/company-response.dto';
 

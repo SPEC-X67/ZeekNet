@@ -1,6 +1,11 @@
-import { ICompanyProfileRepository, ICompanyContactRepository, ICompanyVerificationRepository, ICompanyOfficeLocationRepository } from '../../../domain/interfaces/repositories';
-import { ICreateCompanyProfileUseCase, CreateCompanyProfileData } from '../../../domain/interfaces/use-cases';
-import { CompanyProfile, CompanyContact, CompanyOfficeLocation } from '../../../domain/entities';
+import { ICompanyProfileRepository } from '../../../domain/interfaces/repositories/company/ICompanyProfileRepository';
+import { ICompanyContactRepository } from '../../../domain/interfaces/repositories/company/ICompanyContactRepository';
+import { ICompanyVerificationRepository } from '../../../domain/interfaces/repositories/company/ICompanyVerificationRepository';
+import { ICompanyOfficeLocationRepository } from '../../../domain/interfaces/repositories/company/ICompanyOfficeLocationRepository';
+import { CreateCompanyProfileData, ICreateCompanyProfileUseCase } from '../../../domain/interfaces/use-cases/ICompanyUseCases';
+import { CompanyProfile } from '../../../domain/entities/company-profile.entity';
+import { CompanyContact } from '../../../domain/entities/company-contact.entity';
+import { CompanyOfficeLocation } from '../../../domain/entities/company-office-location.entity';
 
 export class CreateCompanyProfileUseCase implements ICreateCompanyProfileUseCase {
   constructor(

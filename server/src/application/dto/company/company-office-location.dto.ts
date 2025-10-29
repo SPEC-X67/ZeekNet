@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { commonValidations } from '../../../shared/validation/common';
 
 export const CreateCompanyOfficeLocationDto = z.object({
   companyId: z.string().optional(),
@@ -10,5 +11,5 @@ export const CreateCompanyOfficeLocationDto = z.object({
 
 export const UpdateCompanyOfficeLocationDto = CreateCompanyOfficeLocationDto.partial();
 
-export type CreateCompanyOfficeLocationDto = z.infer<typeof CreateCompanyOfficeLocationDto>;
-export type UpdateCompanyOfficeLocationDto = z.infer<typeof UpdateCompanyOfficeLocationDto>;
+export type CreateCompanyOfficeLocationRequestDto = z.infer<typeof CreateCompanyOfficeLocationDto>;
+export type UpdateCompanyOfficeLocationRequestDto = z.infer<typeof UpdateCompanyOfficeLocationDto>;

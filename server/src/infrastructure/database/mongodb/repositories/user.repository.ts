@@ -1,54 +1,64 @@
-import { IUserRepository, IUserAuthRepository, IUserManagementRepository } from '../../../../domain/interfaces/repositories';
-import { User } from '../../../../domain/entities';
+import { IUserRepository } from '../../../../domain/interfaces/repositories/user/IUserRepository';
+import { IUserAuthRepository } from '../../../../domain/interfaces/repositories/user/IUserRepository';
+import { IUserManagementRepository } from '../../../../domain/interfaces/repositories/user/IUserRepository';
+import { User } from '../../../../domain/entities/user.entity';
 import { UserRole } from '../../../../domain/enums/user-role.enum';
 import { UserModel, UserDocument } from '../models/user.model';
 import { IUserData } from '../../../../domain/interfaces/repositories/user/IUserRepository';
+import { UserMapper } from '../mappers/user.mapper';
+import { Types } from 'mongoose';
 
 export class UserRepository implements IUserRepository, IUserAuthRepository, IUserManagementRepository {
   protected model = UserModel;
 
   protected mapToEntity(document: UserDocument): User {
-    return User.create({
-      id: String(document._id),
-      name: document.name || '',
-      email: document.email,
-      password: document.password,
-      role: document.role,
-      isVerified: document.isVerified,
-      isBlocked: document.isBlocked,
-      refreshToken: document.refreshToken,
-      createdAt: document.createdAt,
-      updatedAt: document.updatedAt,
-    });
+    return UserMapper.toEntity(document);
   }
 
   async create(userData: IUserData): Promise<User> {
     const { id, ...dataWithoutId } = userData;
-    const document = await this.model.create(dataWithoutId);
+    const document = await this.model.create({
+      ...dataWithoutId,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
     return this.mapToEntity(document);
   }
 
-  async save(user: Omit<User, 'id' | 'createdAt' | 'updatedAt'>): Promise<User> {
-    const userData: IUserData = {
-      id: '',
-      name: user.name || '',
-      email: user.email,
-      password: user.password,
-      role: user.role,
-      isVerified: user.isVerified,
-      isBlocked: user.isBlocked,
-      refreshToken: user.refreshToken || null,
+  async save(userData: Partial<IUserData>): Promise<User> {
+    const data = {
+      name: userData.name || '',
+      email: userData.email || '',
+      password: userData.password || '',
+      role: userData.role || UserRole.SEEKER,
+      isVerified: userData.isVerified ?? false,
+      isBlocked: userData.isBlocked ?? false,
+      refreshToken: userData.refreshToken || null,
     };
-    return await this.create(userData);
+    
+    const document = await this.model.create({
+      ...data,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+    return this.mapToEntity(document);
   }
 
   async findById(id: string): Promise<User | null> {
+    if (!Types.ObjectId.isValid(id)) {
+      return null;
+    }
     const document = await this.model.findById(id);
     return document ? this.mapToEntity(document) : null;
   }
 
   async findByEmail(email: string): Promise<User | null> {
     const document = await this.model.findOne({ email });
+    return document ? this.mapToEntity(document) : null;
+  }
+
+  async findByRefreshToken(refreshToken: string): Promise<User | null> {
+    const document = await this.model.findOne({ refreshToken });
     return document ? this.mapToEntity(document) : null;
   }
 
@@ -61,7 +71,7 @@ export class UserRepository implements IUserRepository, IUserAuthRepository, IUs
   }
 
   async updatePassword(id: string, hashedPassword: string): Promise<void> {
-    await this.model.findByIdAndUpdate(id, { password: hashedPassword }).exec();
+    await this.model.findByIdAndUpdate(id, { password: hashedPassword, updatedAt: new Date() }).exec();
   }
 
   async findAllUsers(options: { page?: number; limit?: number; search?: string; role?: UserRole; isBlocked?: boolean; sortBy?: string; sortOrder?: 'asc' | 'desc' }): Promise<{ users: User[]; total: number }> {
@@ -109,12 +119,7 @@ export class UserRepository implements IUserRepository, IUserAuthRepository, IUs
   }
 
   private async setBlockStatus(id: string, isBlocked: boolean): Promise<void> {
-    await this.model.findByIdAndUpdate(id, { isBlocked }).exec();
-  }
-
-  async delete(id: string): Promise<boolean> {
-    const result = await this.model.findByIdAndDelete(id);
-    return result !== null;
+    await this.model.findByIdAndUpdate(id, { isBlocked, updatedAt: new Date() }).exec();
   }
 
   async deleteUser(id: string): Promise<void> {
@@ -140,11 +145,6 @@ export class UserRepository implements IUserRepository, IUserAuthRepository, IUs
       blockedUsers,
       usersByRole: roleStats,
     };
-  }
-
-  async findByRefreshToken(refreshToken: string): Promise<User | null> {
-    const document = await this.model.findOne({ refreshToken });
-    return document ? this.mapToEntity(document) : null;
   }
 
   async getAllUsers(options: { page: number; limit: number; search?: string; role?: UserRole; isVerified?: boolean; isBlocked?: boolean }): Promise<{ users: User[]; total: number }> {

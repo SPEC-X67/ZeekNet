@@ -1,5 +1,5 @@
 import { OAuth2Client } from 'google-auth-library';
-import { IGoogleTokenVerifier, IGoogleProfile } from '../../domain/interfaces/services';
+import { IGoogleProfile, IGoogleTokenVerifier } from '../../domain/interfaces/services/IGoogleTokenVerifier';
 import { env } from '../config/env';
 
 export class GoogleAuthTokenVerifier implements IGoogleTokenVerifier {

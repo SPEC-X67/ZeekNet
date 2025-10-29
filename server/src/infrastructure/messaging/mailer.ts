@@ -1,5 +1,5 @@
 import nodemailer from 'nodemailer';
-import { IMailerService } from '../../domain/interfaces/services';
+import { IMailerService } from '../../domain/interfaces/services/IMailerService';
 import { env } from '../config/env';
 
 export class NodemailerService implements IMailerService {

@@ -1,9 +1,13 @@
 import { LoginResult } from '../../dto/auth/auth-response.dto';
-import { IUserRepository, IUserAuthRepository } from '../../../domain/interfaces/repositories';
-import { IPasswordHasher, ITokenService, IOtpService, IMailerService } from '../../../domain/interfaces/services';
-import { ILoginUserUseCase } from '../../../domain/interfaces/use-cases';
+import { IUserRepository, IUserAuthRepository } from '../../../domain/interfaces/repositories/user/IUserRepository';
+import { IPasswordHasher } from '../../../domain/interfaces/services/IPasswordHasher';
+import { ITokenService } from '../../../domain/interfaces/services/ITokenService';
+import { IOtpService } from '../../../domain/interfaces/services/IOtpService';
+import { IMailerService } from '../../../domain/interfaces/services/IMailerService';
+import { ILoginUserUseCase } from '../../../domain/interfaces/use-cases/IAuthUseCases';
 import { AuthenticationError, AuthorizationError } from '../../../domain/errors/errors';
 import { UserRole } from '../../../domain/enums/user-role.enum';
+import { UserMapper } from '../../mappers/user.mapper';
 import { otpVerificationTemplate } from '../../../infrastructure/messaging/templates/otp-verification.template';
 
 export class LoginUserUseCase implements ILoginUserUseCase {
@@ -26,6 +30,7 @@ export class LoginUserUseCase implements ILoginUserUseCase {
       const code = await this._otpService.generateAndStoreOtp(user.email);
       const htmlContent = otpVerificationTemplate.html(code);
       await this._mailerService.sendMail(user.email, otpVerificationTemplate.subject, htmlContent);
+      return { user: UserMapper.toDto(user) };
     }
 
     if (user.isBlocked) {
@@ -48,7 +53,7 @@ export class LoginUserUseCase implements ILoginUserUseCase {
 
     return {
       tokens: { accessToken, refreshToken },
-      user,
+      user: UserMapper.toDto(user),
     };
   }
 }

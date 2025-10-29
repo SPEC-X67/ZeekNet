@@ -2,7 +2,7 @@ import { ICompanyBenefitsRepository } from '../../../../domain/interfaces/reposi
 import { CompanyBenefits } from '../../../../domain/entities/company-benefits.entity';
 import { CompanyBenefitsModel, CompanyBenefitsDocument } from '../models/company-benefits.model';
 import { Types } from 'mongoose';
-import { CompanyBenefitsMapper } from '../mappers';
+import { CompanyBenefitsMapper } from '../mappers/company-benefits.mapper';
 import { RepositoryBase } from './base-repository';
 
 export class CompanyBenefitsRepository extends RepositoryBase<CompanyBenefits, CompanyBenefitsDocument> implements ICompanyBenefitsRepository {
@@ -14,38 +14,15 @@ export class CompanyBenefitsRepository extends RepositoryBase<CompanyBenefits, C
     return CompanyBenefitsMapper.toEntity(doc);
   }
 
-  async create(benefit: Omit<CompanyBenefits, 'id' | 'createdAt' | 'updatedAt'>): Promise<CompanyBenefits> {
-    const benefitDoc = new CompanyBenefitsModel({
-      companyId: new Types.ObjectId(benefit.companyId),
-      perk: benefit.perk,
-      description: benefit.description,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    });
-
-    const savedBenefit = await benefitDoc.save();
-    return this.mapToEntity(savedBenefit);
+  protected convertToObjectIds(data: Partial<CompanyBenefits>): Partial<CompanyBenefits> {
+    const converted = { ...data };
+    if (converted.companyId && typeof converted.companyId === 'string') {
+      (converted as Record<string, unknown>).companyId = new Types.ObjectId(converted.companyId);
+    }
+    return converted;
   }
 
   async findByCompanyId(companyId: string): Promise<CompanyBenefits[]> {
-    const benefits = await CompanyBenefitsModel.find({ companyId: new Types.ObjectId(companyId) });
-    return benefits.map((benefit) => this.mapToEntity(benefit));
-  }
-
-  async update(id: string, data: Partial<CompanyBenefits>): Promise<CompanyBenefits | null> {
-    if (!Types.ObjectId.isValid(id)) {
-      return null;
-    }
-
-    const updatedBenefit = await CompanyBenefitsModel.findByIdAndUpdate(
-      id,
-      {
-        ...data,
-        updatedAt: new Date(),
-      },
-      { new: true },
-    );
-
-    return updatedBenefit ? this.mapToEntity(updatedBenefit) : null;
+    return await this.findMany({ companyId: new Types.ObjectId(companyId) });
   }
 }

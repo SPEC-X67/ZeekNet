@@ -1,5 +1,5 @@
 import { CompanyTechStack } from '../../../entities/company-tech-stack.entity';
-import { IBaseRepository } from '../base.repository';
+import { IBaseRepository } from '../IBaseRepository';
 
 export interface ICompanyTechStackRepository extends IBaseRepository<CompanyTechStack> {
   findByCompanyId(companyId: string): Promise<CompanyTechStack[]>;

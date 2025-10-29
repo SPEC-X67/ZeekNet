@@ -1,10 +1,13 @@
-import { IJobPostingRepository } from '../../../domain/interfaces/repositories';
-import { IGetJobPostingForPublicUseCase } from '../../../domain/interfaces/use-cases';
+import { IJobPostingAnalyticsRepository, IJobPostingRepository } from '../../../domain/interfaces/repositories/job/IJobPostingRepository';
+import { IGetJobPostingForPublicUseCase } from '../../../domain/interfaces/use-cases/IPublicUseCases';
 import { AppError } from '../../../domain/errors/errors';
-import { JobPostingDetailResponseDto } from '../../mappers/types';
+import { JobPostingDetailResponseDto } from '../../dto/job-posting/job-posting-response.dto';
 
 export class GetJobPostingForPublicUseCase implements IGetJobPostingForPublicUseCase {
-  constructor(private readonly _jobPostingRepository: IJobPostingRepository) {}
+  constructor(
+    private readonly _jobPostingRepository: IJobPostingRepository,
+    private readonly _analyticsRepository: IJobPostingAnalyticsRepository,
+  ) {}
 
   async execute(jobId: string): Promise<JobPostingDetailResponseDto> {
     try {
@@ -18,6 +21,9 @@ export class GetJobPostingForPublicUseCase implements IGetJobPostingForPublicUse
         throw new AppError('Job posting not found', 404);
       }
 
+      
+      await this._analyticsRepository.incrementViewCount(jobId);
+
       return jobPosting;
     } catch (error) {
       if (error instanceof AppError) {
@@ -27,3 +33,4 @@ export class GetJobPostingForPublicUseCase implements IGetJobPostingForPublicUse
     }
   }
 }
+

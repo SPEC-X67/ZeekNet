@@ -1,4 +1,5 @@
-import { IJobPostingSearchRepository, ICompanyProfileRepository } from '../../../domain/interfaces/repositories';
+import { IJobPostingSearchRepository } from '../../../domain/interfaces/repositories/job/IJobPostingRepository';
+import { ICompanyProfileRepository } from '../../../domain/interfaces/repositories/company/ICompanyProfileRepository';
 import { JobPostingQueryRequestDto } from '../../dto/job-posting/job-posting.dto';
 import { AppError } from '../../../domain/errors/errors';
 import { PaginatedJobPostings } from '../../../domain/entities/job-posting.entity';

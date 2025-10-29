@@ -1,4 +1,4 @@
-import { ICompanyProfileRepository } from '../../../domain/interfaces/repositories';
+import { ICompanyProfileRepository } from '../../../domain/interfaces/repositories/company/ICompanyProfileRepository';
 import { CompanyProfile } from '../../../domain/entities/company-profile.entity';
 import { AppError } from '../../../domain/errors/errors';
 

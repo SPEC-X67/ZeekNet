@@ -1,4 +1,4 @@
-import { CompanyVerification } from '../../../../domain/entities';
+import { CompanyVerification } from '../../../../domain/entities/company-profile.entity';
 import { Document } from 'mongoose';
 
 export interface CompanyVerificationDocument extends Document {

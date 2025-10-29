@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
-import { RegisterDto } from '../../../application/dto/auth';
-import { IRegisterUserUseCase } from '../../../domain/interfaces/use-cases';
+import { RegisterDto } from '../../../application/dto/auth/register.dto';
+import { IRegisterUserUseCase } from '../../../domain/interfaces/use-cases/IAuthUseCases';
 import { validateBody } from '../../middleware/validation.middleware';
-import { handleAsyncError, sendSuccessResponse } from '../../../shared/utils';
-import { UserMapper } from '../../../application/mappers';
+import { handleAsyncError } from '../../../shared/utils/controller.utils';
+import { sendSuccessResponse } from '../../../shared/utils/controller.utils';
 
 export class RegistrationController {
   constructor(private readonly _registerUserUseCase: IRegisterUserUseCase) {}
@@ -14,9 +14,7 @@ export class RegistrationController {
       try {
         const { user } = await this._registerUserUseCase.execute(req.body.email, req.body.password, req.body.role, req.body.name);
 
-        const userDetails = UserMapper.toDto(user);
-
-        sendSuccessResponse(res, 'User registered successfully. Please verify your email.', userDetails, undefined, 201);
+        sendSuccessResponse(res, 'User registered successfully. Please verify your email.', user, undefined, 201);
       } catch (error) {
         handleAsyncError(error, next);
       }

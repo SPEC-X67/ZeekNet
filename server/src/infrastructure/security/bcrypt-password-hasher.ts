@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs';
-import { IPasswordHasher } from '../../domain/interfaces/services';
+import { IPasswordHasher } from '../../domain/interfaces/services/IPasswordHasher';
 import { env } from '../config/env';
 
 export class BcryptPasswordHasher implements IPasswordHasher {

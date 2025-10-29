@@ -13,10 +13,22 @@ import { UpdateCompanyProfileUseCase } from '../../application/use-cases/company
 import { GetCompanyProfileUseCase } from '../../application/use-cases/company/get-company-profile.use-case';
 import { ReapplyCompanyVerificationUseCase } from '../../application/use-cases/company/reapply-company-verification.use-case';
 import { CompanyContactUseCase } from '../../application/use-cases/company/company-contact.use-case';
-import { CompanyTechStackUseCase } from '../../application/use-cases/company/company-tech-stack.use-case';
-import { CompanyOfficeLocationUseCase } from '../../application/use-cases/company/company-office-location.use-case';
-import { CompanyBenefitsUseCase } from '../../application/use-cases/company/company-benefits.use-case';
-import { CompanyWorkplacePicturesUseCase } from '../../application/use-cases/company/company-workplace-pictures.use-case';
+import { CreateCompanyTechStackUseCase } from '../../application/use-cases/company/create-company-tech-stack.use-case';
+import { UpdateCompanyTechStackUseCase } from '../../application/use-cases/company/update-company-tech-stack.use-case';
+import { DeleteCompanyTechStackUseCase } from '../../application/use-cases/company/delete-company-tech-stack.use-case';
+import { GetCompanyTechStackUseCase } from '../../application/use-cases/company/get-company-tech-stack.use-case';
+import { CreateCompanyOfficeLocationUseCase } from '../../application/use-cases/company/create-company-office-location.use-case';
+import { UpdateCompanyOfficeLocationUseCase } from '../../application/use-cases/company/update-company-office-location.use-case';
+import { DeleteCompanyOfficeLocationUseCase } from '../../application/use-cases/company/delete-company-office-location.use-case';
+import { GetCompanyOfficeLocationUseCase } from '../../application/use-cases/company/get-company-office-location.use-case';
+import { CreateCompanyBenefitUseCase } from '../../application/use-cases/company/create-company-benefit.use-case';
+import { UpdateCompanyBenefitUseCase } from '../../application/use-cases/company/update-company-benefit.use-case';
+import { DeleteCompanyBenefitUseCase } from '../../application/use-cases/company/delete-company-benefit.use-case';
+import { GetCompanyBenefitUseCase } from '../../application/use-cases/company/get-company-benefit.use-case';
+import { CreateCompanyWorkplacePictureUseCase } from '../../application/use-cases/company/create-company-workplace-picture.use-case';
+import { UpdateCompanyWorkplacePictureUseCase } from '../../application/use-cases/company/update-company-workplace-picture.use-case';
+import { DeleteCompanyWorkplacePictureUseCase } from '../../application/use-cases/company/delete-company-workplace-picture.use-case';
+import { GetCompanyWorkplacePictureUseCase } from '../../application/use-cases/company/get-company-workplace-picture.use-case';
 import { CreateJobPostingUseCase } from '../../application/use-cases/company/create-job-posting.use-case';
 import { GetJobPostingUseCase } from '../../application/use-cases/company/get-job-posting.use-case';
 import { GetCompanyJobPostingsUseCase } from '../../application/use-cases/company/get-company-job-postings.use-case';
@@ -49,13 +61,29 @@ const reapplyCompanyVerificationUseCase = new ReapplyCompanyVerificationUseCase(
 
 const companyContactUseCase = new CompanyContactUseCase(companyContactRepository);
 
-const companyTechStackUseCase = new CompanyTechStackUseCase(companyTechStackRepository);
 
-const companyOfficeLocationUseCase = new CompanyOfficeLocationUseCase(companyOfficeLocationRepository);
+const createCompanyTechStackUseCase = new CreateCompanyTechStackUseCase(companyTechStackRepository);
+const updateCompanyTechStackUseCase = new UpdateCompanyTechStackUseCase(companyTechStackRepository);
+const deleteCompanyTechStackUseCase = new DeleteCompanyTechStackUseCase(companyTechStackRepository);
+const getCompanyTechStackUseCase = new GetCompanyTechStackUseCase(companyTechStackRepository);
 
-const companyBenefitsUseCase = new CompanyBenefitsUseCase(companyBenefitsRepository);
 
-const companyWorkplacePicturesUseCase = new CompanyWorkplacePicturesUseCase(companyWorkplacePicturesRepository);
+const createCompanyOfficeLocationUseCase = new CreateCompanyOfficeLocationUseCase(companyOfficeLocationRepository);
+const updateCompanyOfficeLocationUseCase = new UpdateCompanyOfficeLocationUseCase(companyOfficeLocationRepository);
+const deleteCompanyOfficeLocationUseCase = new DeleteCompanyOfficeLocationUseCase(companyOfficeLocationRepository);
+const getCompanyOfficeLocationUseCase = new GetCompanyOfficeLocationUseCase(companyOfficeLocationRepository);
+
+
+const createCompanyBenefitUseCase = new CreateCompanyBenefitUseCase(companyBenefitsRepository);
+const updateCompanyBenefitUseCase = new UpdateCompanyBenefitUseCase(companyBenefitsRepository);
+const deleteCompanyBenefitUseCase = new DeleteCompanyBenefitUseCase(companyBenefitsRepository);
+const getCompanyBenefitUseCase = new GetCompanyBenefitUseCase(companyBenefitsRepository);
+
+
+const createCompanyWorkplacePictureUseCase = new CreateCompanyWorkplacePictureUseCase(companyWorkplacePicturesRepository);
+const updateCompanyWorkplacePictureUseCase = new UpdateCompanyWorkplacePictureUseCase(companyWorkplacePicturesRepository);
+const deleteCompanyWorkplacePictureUseCase = new DeleteCompanyWorkplacePictureUseCase(companyWorkplacePicturesRepository);
+const getCompanyWorkplacePictureUseCase = new GetCompanyWorkplacePictureUseCase(companyWorkplacePicturesRepository);
 
 const createJobPostingUseCase = new CreateJobPostingUseCase(jobPostingRepository);
 
@@ -78,10 +106,26 @@ const companyController = new CompanyController(
   getCompanyProfileUseCase,
   s3Service,
   companyContactUseCase,
-  companyTechStackUseCase,
-  companyOfficeLocationUseCase,
-  companyBenefitsUseCase,
-  companyWorkplacePicturesUseCase,
+  
+  createCompanyTechStackUseCase,
+  updateCompanyTechStackUseCase,
+  deleteCompanyTechStackUseCase,
+  getCompanyTechStackUseCase,
+  
+  createCompanyOfficeLocationUseCase,
+  updateCompanyOfficeLocationUseCase,
+  deleteCompanyOfficeLocationUseCase,
+  getCompanyOfficeLocationUseCase,
+  
+  createCompanyBenefitUseCase,
+  updateCompanyBenefitUseCase,
+  deleteCompanyBenefitUseCase,
+  getCompanyBenefitUseCase,
+  
+  createCompanyWorkplacePictureUseCase,
+  updateCompanyWorkplacePictureUseCase,
+  deleteCompanyWorkplacePictureUseCase,
+  getCompanyWorkplacePictureUseCase,
   getCompanyJobPostingsUseCase,
 );
 

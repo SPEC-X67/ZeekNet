@@ -2,7 +2,7 @@ import { ICompanyTechStackRepository } from '../../../../domain/interfaces/repos
 import { CompanyTechStack } from '../../../../domain/entities/company-tech-stack.entity';
 import { CompanyTechStackModel, CompanyTechStackDocument } from '../models/company-tech-stack.model';
 import { Types } from 'mongoose';
-import { CompanyTechStackMapper } from '../mappers';
+import { CompanyTechStackMapper } from '../mappers/company-tech-stack.mapper';
 import { RepositoryBase } from './base-repository';
 
 export class CompanyTechStackRepository extends RepositoryBase<CompanyTechStack, CompanyTechStackDocument> implements ICompanyTechStackRepository {
@@ -14,37 +14,15 @@ export class CompanyTechStackRepository extends RepositoryBase<CompanyTechStack,
     return CompanyTechStackMapper.toEntity(doc);
   }
 
-  async create(techStack: Omit<CompanyTechStack, 'id' | 'createdAt' | 'updatedAt'>): Promise<CompanyTechStack> {
-    const techStackDoc = new CompanyTechStackModel({
-      companyId: new Types.ObjectId(techStack.companyId),
-      techStack: techStack.techStack,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    });
-
-    const savedTechStack = await techStackDoc.save();
-    return this.mapToEntity(savedTechStack);
+  protected convertToObjectIds(data: Partial<CompanyTechStack>): Partial<CompanyTechStack> {
+    const converted = { ...data };
+    if (converted.companyId && typeof converted.companyId === 'string') {
+      (converted as Record<string, unknown>).companyId = new Types.ObjectId(converted.companyId);
+    }
+    return converted;
   }
 
   async findByCompanyId(companyId: string): Promise<CompanyTechStack[]> {
-    const techStacks = await CompanyTechStackModel.find({ companyId: new Types.ObjectId(companyId) });
-    return techStacks.map((techStack) => this.mapToEntity(techStack));
-  }
-
-  async update(id: string, data: Partial<CompanyTechStack>): Promise<CompanyTechStack | null> {
-    if (!Types.ObjectId.isValid(id)) {
-      return null;
-    }
-
-    const updatedTechStack = await CompanyTechStackModel.findByIdAndUpdate(
-      id,
-      {
-        ...data,
-        updatedAt: new Date(),
-      },
-      { new: true },
-    );
-
-    return updatedTechStack ? this.mapToEntity(updatedTechStack) : null;
+    return await this.findMany({ companyId: new Types.ObjectId(companyId) });
   }
 }

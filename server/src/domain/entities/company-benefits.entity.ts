@@ -15,13 +15,6 @@ export class CompanyBenefits {
     return new CompanyBenefits(data.id || uuidv4(), data.companyId, data.perk, data.createdAt ?? now, data.updatedAt ?? now, data.description);
   }
 
-  updateBenefit(data: { perk?: string; description?: string }): CompanyBenefits {
-    return CompanyBenefits.create({
-      ...this.toJSON(),
-      ...data,
-      updatedAt: new Date(),
-    });
-  }
 
   toJSON() {
     return {

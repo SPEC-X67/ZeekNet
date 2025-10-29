@@ -1,5 +1,6 @@
-import { ICompanyListingRepository, ICompanyVerificationRepository } from '../../../domain/interfaces/repositories';
-import { IGetCompaniesWithVerificationUseCase, CompanyQueryOptions, PaginatedCompaniesWithVerification } from '../../../domain/interfaces/use-cases';
+import { ICompanyListingRepository } from '../../../domain/interfaces/repositories/company/ICompanyListingRepository';
+import { ICompanyVerificationRepository } from '../../../domain/interfaces/repositories/company/ICompanyVerificationRepository';
+import { CompanyQueryOptions, PaginatedCompaniesWithVerification, IGetCompaniesWithVerificationUseCase } from '../../../domain/interfaces/use-cases/IAdminUseCases';
 
 export class GetCompaniesWithVerificationUseCase implements IGetCompaniesWithVerificationUseCase {
   constructor(

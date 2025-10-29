@@ -12,7 +12,7 @@ export interface CompanyProfileDocument extends Document {
   aboutUs: string;
   foundedDate?: Date;
   phone?: string;
-  isVerified: string;
+  isVerified: 'pending' | 'rejected' | 'verified';
   isBlocked: boolean;
   createdAt: Date;
   updatedAt: Date;

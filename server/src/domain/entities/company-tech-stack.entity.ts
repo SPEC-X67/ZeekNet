@@ -14,13 +14,6 @@ export class CompanyTechStack {
     return new CompanyTechStack(data.id || uuidv4(), data.companyId, data.techStack, data.createdAt ?? now, data.updatedAt ?? now);
   }
 
-  updateTechStack(data: { techStack?: string }): CompanyTechStack {
-    return CompanyTechStack.create({
-      ...this.toJSON(),
-      ...data,
-      updatedAt: new Date(),
-    });
-  }
 
   toJSON() {
     return {

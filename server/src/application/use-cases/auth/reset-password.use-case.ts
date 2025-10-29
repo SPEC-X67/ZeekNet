@@ -1,6 +1,7 @@
-import { IPasswordHasher, IPasswordResetService } from '../../../domain/interfaces/services';
-import { IUserAuthRepository } from '../../../domain/interfaces/repositories';
-import { IResetPasswordUseCase } from '../../../domain/interfaces/use-cases';
+import { IPasswordHasher } from '../../../domain/interfaces/services/IPasswordHasher';
+import { IPasswordResetService } from '../../../domain/interfaces/services/IPasswordResetService';
+import { IUserAuthRepository } from '../../../domain/interfaces/repositories/user/IUserRepository';
+import { IResetPasswordUseCase } from '../../../domain/interfaces/use-cases/IAuthUseCases';
 import { ValidationError } from '../../../domain/errors/errors';
 
 export class ResetPasswordUseCase implements IResetPasswordUseCase {

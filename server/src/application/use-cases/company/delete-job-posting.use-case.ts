@@ -1,4 +1,5 @@
-import { IJobPostingRepository, ICompanyProfileRepository } from '../../../domain/interfaces/repositories';
+import { IJobPostingRepository } from '../../../domain/interfaces/repositories/job/IJobPostingRepository';
+import { ICompanyProfileRepository } from '../../../domain/interfaces/repositories/company/ICompanyProfileRepository';
 import { AppError } from '../../../domain/errors/errors';
 
 export class DeleteJobPostingUseCase {

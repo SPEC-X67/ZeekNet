@@ -1,33 +1,37 @@
-import { ICompanyContactRepository } from '../../../../domain/interfaces/repositories';
+import { ICompanyContactRepository } from '../../../../domain/interfaces/repositories/company/ICompanyContactRepository';
 import { CompanyContact } from '../../../../domain/entities/company-contact.entity';
-import { CompanyContactModel } from '../models/company-contact.model';
+import { CompanyContactModel, CompanyContactDocument } from '../models/company-contact.model';
 import { Types } from 'mongoose';
-import { CompanyContactMapper } from '../mappers';
+import { CompanyContactMapper } from '../mappers/company-contact.mapper';
+import { RepositoryBase } from './base-repository';
 
-export class CompanyContactRepository implements ICompanyContactRepository {
+export class CompanyContactRepository extends RepositoryBase<CompanyContact, CompanyContactDocument> implements ICompanyContactRepository {
+  constructor() {
+    super(CompanyContactModel);
+  }
+
+  protected mapToEntity(doc: CompanyContactDocument): CompanyContact {
+    return CompanyContactMapper.toEntity(doc);
+  }
+
+  protected convertToObjectIds(data: Partial<CompanyContact>): Partial<CompanyContact> {
+    const converted = { ...data };
+    if (converted.companyId && typeof converted.companyId === 'string') {
+      (converted as Record<string, unknown>).companyId = new Types.ObjectId(converted.companyId);
+    }
+    return converted;
+  }
+
   async createContact(contact: Omit<CompanyContact, 'id' | 'createdAt' | 'updatedAt'>): Promise<CompanyContact> {
-    const contactDoc = new CompanyContactModel({
-      companyId: new Types.ObjectId(contact.companyId),
-      twitterLink: contact.twitterLink,
-      facebookLink: contact.facebookLink,
-      linkedin: contact.linkedin,
-      email: contact.email,
-      phone: contact.phone,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    });
-
-    const savedContact = await contactDoc.save();
-    return CompanyContactMapper.toEntity(savedContact);
+    return await this.create(contact);
   }
 
   async getContactByCompanyId(companyId: string): Promise<CompanyContact | null> {
-    const doc = await CompanyContactModel.findOne({ companyId: new Types.ObjectId(companyId) });
-    return doc ? CompanyContactMapper.toEntity(doc) : null;
+    return await this.findOne({ companyId: new Types.ObjectId(companyId) });
   }
 
   async updateContact(companyId: string, updates: Partial<CompanyContact>): Promise<CompanyContact> {
-    const updated = await CompanyContactModel.findOneAndUpdate(
+    const updated = await this.model.findOneAndUpdate(
       { companyId: new Types.ObjectId(companyId) },
       {
         ...updates,
@@ -36,54 +40,19 @@ export class CompanyContactRepository implements ICompanyContactRepository {
       { new: true },
     );
     if (!updated) throw new Error('Contact not found');
-    return CompanyContactMapper.toEntity(updated);
+    return this.mapToEntity(updated);
   }
 
   async deleteContact(companyId: string): Promise<void> {
-    await CompanyContactModel.findOneAndDelete({ companyId: new Types.ObjectId(companyId) });
+    await this.model.findOneAndDelete({ companyId: new Types.ObjectId(companyId) });
   }
 
   async existsByCompanyId(companyId: string): Promise<boolean> {
-    const count = await CompanyContactModel.countDocuments({ companyId: new Types.ObjectId(companyId) });
-    return count > 0;
+    return await this.exists({ companyId: new Types.ObjectId(companyId) });
   }
 
   async findByCompanyId(companyId: string): Promise<CompanyContact | null> {
     return this.getContactByCompanyId(companyId);
   }
 
-  async create(data: Omit<CompanyContact, 'id' | 'createdAt' | 'updatedAt'>): Promise<CompanyContact> {
-    return this.createContact(data);
-  }
-
-  async findById(id: string): Promise<CompanyContact | null> {
-    const doc = await CompanyContactModel.findById(new Types.ObjectId(id));
-    return doc ? CompanyContactMapper.toEntity(doc) : null;
-  }
-
-  async findAll(): Promise<CompanyContact[]> {
-    const docs = await CompanyContactModel.find();
-    return docs.map((doc) => CompanyContactMapper.toEntity(doc));
-  }
-
-  async update(id: string, updates: Partial<CompanyContact>): Promise<CompanyContact | null> {
-    const updated = await CompanyContactModel.findByIdAndUpdate(
-      new Types.ObjectId(id),
-      {
-        ...updates,
-        updatedAt: new Date(),
-      },
-      { new: true },
-    );
-    return updated ? CompanyContactMapper.toEntity(updated) : null;
-  }
-
-  async delete(id: string): Promise<boolean> {
-    const result = await CompanyContactModel.findByIdAndDelete(new Types.ObjectId(id));
-    return !!result;
-  }
-
-  async count(): Promise<number> {
-    return CompanyContactModel.countDocuments();
-  }
 }

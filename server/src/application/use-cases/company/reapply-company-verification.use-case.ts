@@ -1,5 +1,6 @@
-import { ICompanyProfileRepository, ICompanyVerificationRepository } from '../../../domain/interfaces/repositories';
-import { IReapplyCompanyVerificationUseCase, CompanyVerificationData } from '../../../domain/interfaces/use-cases';
+import { ICompanyProfileRepository } from '../../../domain/interfaces/repositories/company/ICompanyProfileRepository';
+import { ICompanyVerificationRepository } from '../../../domain/interfaces/repositories/company/ICompanyVerificationRepository';
+import { CompanyVerificationData, IReapplyCompanyVerificationUseCase } from '../../../domain/interfaces/use-cases/ICompanyUseCases';
 import { CompanyProfile } from '../../../domain/entities/company-profile.entity';
 
 export class ReapplyCompanyVerificationUseCase implements IReapplyCompanyVerificationUseCase {

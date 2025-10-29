@@ -1,7 +1,8 @@
 import { Response, NextFunction } from 'express';
 import { User } from '../../domain/entities/user.entity';
-import { createSuccessResponse, createErrorResponse, ErrorHandler } from './';
-import { AuthenticatedRequest } from '../types';
+import { createSuccessResponse, createErrorResponse } from './response.utils';
+import { ErrorHandler } from './error.utils';
+import { AuthenticatedRequest } from '../types/authenticated-request';
 
 export function extractUserId(req: AuthenticatedRequest): string | null {
   return req.user?.id || null;

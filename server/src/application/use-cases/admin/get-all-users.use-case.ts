@@ -1,5 +1,5 @@
-import { IUserManagementRepository } from '../../../domain/interfaces/repositories';
-import { IGetAllUsersUseCase, UserQueryOptions, PaginatedUsers } from '../../../domain/interfaces/use-cases';
+import { IUserManagementRepository } from '../../../domain/interfaces/repositories/user/IUserRepository';
+import { UserQueryOptions, PaginatedUsers, IGetAllUsersUseCase } from '../../../domain/interfaces/use-cases/IAdminUseCases';
 import { UserRole } from '../../../domain/enums/user-role.enum';
 
 export class GetAllUsersUseCase implements IGetAllUsersUseCase {

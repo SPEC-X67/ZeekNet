@@ -2,7 +2,7 @@ import { ICompanyWorkplacePicturesRepository } from '../../../../domain/interfac
 import { CompanyWorkplacePictures } from '../../../../domain/entities/company-workplace-pictures.entity';
 import { CompanyWorkplacePicturesModel, CompanyWorkplacePicturesDocument } from '../models/company-workplace-pictures.model';
 import { Types } from 'mongoose';
-import { CompanyWorkplacePicturesMapper } from '../mappers';
+import { CompanyWorkplacePicturesMapper } from '../mappers/company-workplace-pictures.mapper';
 import { RepositoryBase } from './base-repository';
 
 export class CompanyWorkplacePicturesRepository extends RepositoryBase<CompanyWorkplacePictures, CompanyWorkplacePicturesDocument> implements ICompanyWorkplacePicturesRepository {
@@ -14,38 +14,15 @@ export class CompanyWorkplacePicturesRepository extends RepositoryBase<CompanyWo
     return CompanyWorkplacePicturesMapper.toEntity(doc);
   }
 
-  async create(picture: Omit<CompanyWorkplacePictures, 'id' | 'createdAt' | 'updatedAt'>): Promise<CompanyWorkplacePictures> {
-    const pictureDoc = new CompanyWorkplacePicturesModel({
-      companyId: new Types.ObjectId(picture.companyId),
-      pictureUrl: picture.pictureUrl,
-      caption: picture.caption,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    });
-
-    const savedPicture = await pictureDoc.save();
-    return this.mapToEntity(savedPicture);
+  protected convertToObjectIds(data: Partial<CompanyWorkplacePictures>): Partial<CompanyWorkplacePictures> {
+    const converted = { ...data };
+    if (converted.companyId && typeof converted.companyId === 'string') {
+      (converted as Record<string, unknown>).companyId = new Types.ObjectId(converted.companyId);
+    }
+    return converted;
   }
 
   async findByCompanyId(companyId: string): Promise<CompanyWorkplacePictures[]> {
-    const pictures = await CompanyWorkplacePicturesModel.find({ companyId: new Types.ObjectId(companyId) });
-    return pictures.map((picture) => this.mapToEntity(picture));
-  }
-
-  async update(id: string, data: Partial<CompanyWorkplacePictures>): Promise<CompanyWorkplacePictures | null> {
-    if (!Types.ObjectId.isValid(id)) {
-      return null;
-    }
-
-    const updatedPicture = await CompanyWorkplacePicturesModel.findByIdAndUpdate(
-      id,
-      {
-        ...data,
-        updatedAt: new Date(),
-      },
-      { new: true },
-    );
-
-    return updatedPicture ? this.mapToEntity(updatedPicture) : null;
+    return await this.findMany({ companyId: new Types.ObjectId(companyId) });
   }
 }

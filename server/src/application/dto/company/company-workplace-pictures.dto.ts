@@ -1,12 +1,15 @@
 import { z } from 'zod';
 
-export const CreateCompanyWorkplacePicturesDto = z.object({
+export const CreateCompanyWorkplacePicturesDtoSchema = z.object({
   companyId: z.string().optional(),
   pictureUrl: z.string().url('Must be a valid URL'),
   caption: z.string().optional(),
 });
 
-export const UpdateCompanyWorkplacePicturesDto = CreateCompanyWorkplacePicturesDto.partial();
+export const UpdateCompanyWorkplacePicturesDtoSchema = CreateCompanyWorkplacePicturesDtoSchema.partial();
 
-export type CreateCompanyWorkplacePicturesDto = z.infer<typeof CreateCompanyWorkplacePicturesDto>;
-export type UpdateCompanyWorkplacePicturesDto = z.infer<typeof UpdateCompanyWorkplacePicturesDto>;
+export const CreateCompanyWorkplacePicturesDto = CreateCompanyWorkplacePicturesDtoSchema;
+export const UpdateCompanyWorkplacePicturesDto = UpdateCompanyWorkplacePicturesDtoSchema;
+
+export type CreateCompanyWorkplacePicturesRequestDto = z.infer<typeof CreateCompanyWorkplacePicturesDto>;
+export type UpdateCompanyWorkplacePicturesRequestDto = z.infer<typeof UpdateCompanyWorkplacePicturesDto>;

@@ -1,4 +1,5 @@
 import { User } from '../../../domain/entities/user.entity';
+import { UserResponseDto } from './user-response.dto';
 
 export interface AuthResponseDto {
   accessToken: string;
@@ -11,10 +12,10 @@ export interface AuthTokens {
 }
 
 export interface RegisterResult {
-  user: User;
+  user: UserResponseDto;
 }
 
 export interface LoginResult {
-  tokens: AuthTokens;
-  user: User;
+  tokens?: AuthTokens;
+  user: UserResponseDto;
 }

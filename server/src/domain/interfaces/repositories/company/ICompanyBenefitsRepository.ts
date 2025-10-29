@@ -1,5 +1,5 @@
 import { CompanyBenefits } from '../../../entities/company-benefits.entity';
-import { IBaseRepository } from '../base.repository';
+import { IBaseRepository } from '../IBaseRepository';
 
 export interface ICompanyBenefitsRepository extends IBaseRepository<CompanyBenefits> {
   findByCompanyId(companyId: string): Promise<CompanyBenefits[]>;

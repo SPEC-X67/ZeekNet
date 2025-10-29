@@ -1,4 +1,5 @@
 import { RegisterResult, LoginResult } from '../../../application/dto/auth/auth-response.dto';
+import { UserResponseDto } from '../../../application/dto/auth/user-response.dto';
 import { User } from '../../entities/user.entity';
 import { CompanyProfile } from '../../entities/company-profile.entity';
 
@@ -27,7 +28,7 @@ export interface IResetPasswordUseCase {
 }
 
 export interface IVerifyOtpUseCase {
-  execute(email: string, code: string): Promise<void>;
+  execute(email: string, code: string): Promise<UserResponseDto>;
 }
 
 export interface IRefreshTokenUseCase {
@@ -39,11 +40,11 @@ export interface ILogoutUseCase {
 }
 
 export interface IAuthGetUserByIdUseCase {
-  execute(userId: string): Promise<User | null>;
+  execute(userId: string): Promise<UserResponseDto | null>;
 }
 
 export interface IGetUserByEmailUseCase {
-  execute(email: string): Promise<User | null>;
+  execute(email: string): Promise<UserResponseDto | null>;
 }
 
 export interface IUpdateUserVerificationStatusUseCase {

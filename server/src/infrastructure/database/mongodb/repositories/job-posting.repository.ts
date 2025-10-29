@@ -1,8 +1,8 @@
-import { IJobPostingRepository, IJobPostingSearchRepository, IJobPostingAnalyticsRepository, IJobPostingManagementRepository } from '../../../../domain/interfaces/repositories';
+import { IJobPostingSearchRepository, IJobPostingAnalyticsRepository, IJobPostingManagementRepository, IJobPostingRepository } from '../../../../domain/interfaces/repositories/job/IJobPostingRepository';
 import { JobPosting, CreateJobPostingRequest, UpdateJobPostingRequest, JobPostingFilters, PaginatedJobPostings } from '../../../../domain/entities/job-posting.entity';
 import { JobPostingModel, JobPostingDocument } from '../models/job-posting.model';
 import { Types } from 'mongoose';
-import { JobPostingMapper } from '../mappers';
+import { JobPostingMapper } from '../mappers/job-posting.mapper';
 import { JobPostingResponseDto } from '../../../../application/dto/job-posting/job-posting-response.dto';
 import { RepositoryBase } from './base-repository';
 
@@ -79,20 +79,20 @@ export class JobPostingRepository extends RepositoryBase<JobPosting, JobPostingD
 
       const jobPosting = new JobPostingModel(jobPostingData);
 
-      // const startOfDay = new Date();
-      // startOfDay.setHours(0, 0, 0, 0);
+      
+      
 
-      // const endOfDay = new Date();
-      // endOfDay.setHours(23, 59, 59, 999);
+      
+      
 
-      // const jobsToday = await JobPostingModel.countDocuments({
-      //   comapany_id: data.company_id,
-      //   createdAt: { $gte: startOfDay, $lte: endOfDay },
-      // });
+      
+      
+      
+      
 
-      // if (jobsToday >= 2) {
-      //   throw new Error('You can only create up to 2 jobs per day.');
-      // }
+      
+      
+      
 
       const savedJobPosting = await jobPosting.save();
 

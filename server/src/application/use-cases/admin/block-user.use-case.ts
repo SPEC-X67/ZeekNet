@@ -1,4 +1,4 @@
-import { IUserManagementRepository } from '../../../domain/interfaces/repositories';
+import { IUserManagementRepository } from '../../../domain/interfaces/repositories/user/IUserRepository';
 
 export class BlockUserUseCase {
   constructor(private readonly _userRepository: IUserManagementRepository) {}

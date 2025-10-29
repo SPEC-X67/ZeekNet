@@ -1,9 +1,15 @@
 import { Request, Response } from 'express';
-import { AuthenticatedRequest } from '../../../shared/types';
-import { handleValidationError, handleAsyncError, sendSuccessResponse, sendNotFoundResponse, badRequest, validateUserId, success, created, unauthorized, handleError } from '../../../shared/utils';
-import { ICreateJobPostingUseCase, IGetJobPostingUseCase, IGetCompanyJobPostingsUseCase, IUpdateJobPostingUseCase, IDeleteJobPostingUseCase, IIncrementJobViewCountUseCase, IUpdateJobStatusUseCase } from '../../../domain/interfaces/use-cases';
+import { AuthenticatedRequest } from '../../../shared/types/authenticated-request';
+import { success, created, unauthorized, badRequest, handleError } from '../../../shared/utils/controller.utils';
+import { ICreateJobPostingUseCase } from '../../../domain/interfaces/use-cases/ICompanyUseCases';
+import { IGetJobPostingUseCase } from '../../../domain/interfaces/use-cases/ICompanyUseCases';
+import { IGetCompanyJobPostingsUseCase } from '../../../domain/interfaces/use-cases/ICompanyUseCases';
+import { IUpdateJobPostingUseCase } from '../../../domain/interfaces/use-cases/ICompanyUseCases';
+import { IDeleteJobPostingUseCase } from '../../../domain/interfaces/use-cases/ICompanyUseCases';
+import { IIncrementJobViewCountUseCase } from '../../../domain/interfaces/use-cases/ICompanyUseCases';
+import { IUpdateJobStatusUseCase } from '../../../domain/interfaces/use-cases/ICompanyUseCases';
 import { CreateJobPostingRequestDto, UpdateJobPostingRequestDto, JobPostingQueryRequestDto } from '../../../application/dto/job-posting/job-posting.dto';
-import { ICompanyProfileRepository } from 'src/domain/interfaces';
+import { ICompanyProfileRepository } from '../../../domain/interfaces/repositories/company/ICompanyProfileRepository';
 
 export class CompanyJobPostingController {
   constructor(
@@ -63,18 +69,8 @@ export class CompanyJobPostingController {
         return;
       }
 
-      const query: JobPostingQueryRequestDto = {
-        page: parseInt(req.query.page as string) || 1,
-        limit: parseInt(req.query.limit as string) || 10,
-        is_active: req.query.is_active !== undefined ? req.query.is_active === 'true' : undefined,
-        category_ids: req.query.category_ids ? (req.query.category_ids as string).split(',') : undefined,
-        employment_types: req.query.employment_types ? ((req.query.employment_types as string).split(',') as ('full-time' | 'part-time' | 'contract' | 'internship' | 'remote')[]) : undefined,
-        salary_min: req.query.salary_min ? parseInt(req.query.salary_min as string) : undefined,
-        salary_max: req.query.salary_max ? parseInt(req.query.salary_max as string) : undefined,
-        location: req.query.location as string,
-        search: req.query.search as string,
-      };
-
+      
+      const query = req.query as unknown as JobPostingQueryRequestDto;
       const result = await this._getCompanyJobPostingsUseCase.execute(companyId!, query);
 
       const responseData = {
