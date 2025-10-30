@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAppSelector } from '@/hooks/useRedux';
 import { UserRole } from '@/constants/enums';
 import { companyApi } from '@/api/company.api';
 import CompanyProfileStatus from '../company/CompanyProfileStatus';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
 
 interface CompanyVerificationGuardProps {
   children: React.ReactNode;
@@ -13,6 +15,7 @@ type ProfileStatus = 'not_created' | 'pending' | 'verified' | 'rejected';
 
 const CompanyVerificationGuard: React.FC<CompanyVerificationGuardProps> = ({ children }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { role, isAuthenticated } = useAppSelector((state) => state.auth);
   const [profileStatus, setProfileStatus] = useState<ProfileStatus | null>(null);
   const [loading, setLoading] = useState(true);
@@ -84,7 +87,36 @@ const CompanyVerificationGuard: React.FC<CompanyVerificationGuardProps> = ({ chi
   }
 
   if (profileStatus !== 'verified') {
-    return <CompanyProfileStatus onStatusChange={setProfileStatus} />;
+    // Allow dashboard to render with mini-banner
+    if (location.pathname.startsWith('/company/dashboard')) {
+      return <>{children}</>;
+    }
+
+    // For other company pages, block with dialog
+    return (
+      <>
+        <Dialog open>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Access Restricted</DialogTitle>
+              <DialogDescription>
+                Your company profile is currently {profileStatus}. Please complete or reverify your profile to access this section.
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => navigate('/company/dashboard', { replace: true })}>
+                Go to Dashboard
+              </Button>
+              {profileStatus === 'rejected' && (
+                <Button onClick={() => navigate('/company/dashboard', { replace: true })} className="bg-cyan-600 hover:bg-cyan-700">
+                  Reverify
+                </Button>
+              )}
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </>
+    );
   }
 
   return <>{children}</>;

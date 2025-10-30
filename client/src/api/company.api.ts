@@ -42,7 +42,6 @@ export interface CompanyProfileResponse {
   tax_id?: string
   email?: string
   is_verified: 'pending' | 'rejected' | 'verified'
-  isVerified?: 'pending' | 'rejected' | 'verified'
   is_blocked: boolean
   created_at: string
   updated_at: string
