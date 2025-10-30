@@ -13,6 +13,7 @@ import {
   Globe,
   LogOut,
   Menu,
+  Tag,
 } from 'lucide-react'
 import { useAppDispatch } from '@/hooks/useRedux'
 import { logoutThunk } from '@/store/slices/auth.slice'
@@ -55,6 +56,11 @@ const AdminSidebar = () => {
       path: '/admin/job-categories',
       label: 'Job Category',
       icon: Grid3X3,
+    },
+    {
+      path: '/admin/skills',
+      label: 'Skills',
+      icon: Tag,
     },
     {
       path: '/admin/job-roles',

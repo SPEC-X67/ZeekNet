@@ -33,6 +33,7 @@
     "next-themes": "^0.4.6",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
+    "react-easy-crop": "^5.5.3",
     "react-hook-form": "^7.63.0",
     "react-redux": "^9.0.4",
     "react-router-dom": "^7.8.2",

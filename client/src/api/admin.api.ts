@@ -177,7 +177,7 @@ export const adminApi = {
       }
     },
 
-  getAllCompanies: async (query: GetAllCompaniesParams = {} as GetAllCompaniesParams): Promise<{
+  getAllCompanies: async (query: GetAllCompaniesParams ): Promise<{
       success: boolean;
       data?: {
         companies: Company[];
@@ -190,7 +190,7 @@ export const adminApi = {
     }> => {
       try {
         const params = new URLSearchParams();
-        
+
         if (query.page) params.append('page', query.page.toString());
         if (query.limit) params.append('limit', query.limit.toString());
         if (query.search) params.append('search', query.search);
@@ -324,4 +324,20 @@ export interface GetAllCompaniesParams {
   industry?: string;
   isVerified?: 'pending' | 'rejected' | 'verified';
   isBlocked?: boolean | string;
+}
+
+export interface JobCategory {
+  id: string;
+  name: string;
+  icon?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Skill {
+  id: string;
+  name: string;
+  icon?: string;
+  createdAt: string;
+  updatedAt: string;
 }

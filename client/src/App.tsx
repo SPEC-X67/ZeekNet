@@ -10,17 +10,23 @@ import AdminDashboard from './pages/admin/AdminDashboard'
 import CompanyDashboard from './pages/company/CompanyDashboard'
 import CompanyProfileSetup from './pages/company/CompanyProfileSetup'
 import PostJob from './pages/company/PostJob'
-import UserDashboard from './pages/seeker/UserDashboard'
-import UserProfile from './pages/seeker/UserProfile'
+import SeekerDashboard from './pages/seeker/SeekerDashboard'
+import SeekerProfile from './pages/seeker/SeekerProfile'
+import SeekerSettings from './pages/seeker/SeekerSettings'
+import SeekerLayout from './components/layouts/SeekerLayout'
 import JobListing from './pages/JobListing'
 import JobDetail from './pages/JobDetail'
 import NotFound from './pages/NotFound'
 import AdminLogin from './pages/admin/AdminLogin'
-import UserManagement from './pages/admin/UserManagement'
+import UserManagement from './pages/admin/SeekerManagement'
 import CompanyManagement from './pages/admin/CompanyManagement'
 import PendingCompanies from './pages/admin/PendingCompanies'
 import JobManagement from './pages/admin/JobManagement'
 import JobView from './pages/admin/JobView'
+  import CategoryManagement from './pages/admin/CategoryManagement'
+  import SkillManagement from './pages/admin/SkillManagement'
+  import CompanyProfileView from './pages/admin/CompanyProfileView'
+  import SeekerProfileView from './pages/admin/SeekerProfileView'
 import ProtectedRoute from './components/common/ProtectedRoute'
 import AuthRedirect from './components/common/AuthRedirect'
 import { UserRole } from './constants/enums'
@@ -97,6 +103,26 @@ function App() {
               <JobView />
             </ProtectedRoute>
           } />
+          <Route path="/admin/job-categories" element={
+            <ProtectedRoute allowedRoles={[UserRole.ADMIN]}>
+              <CategoryManagement />
+            </ProtectedRoute>
+          } />
+            <Route path="/admin/skills" element={
+            <ProtectedRoute allowedRoles={[UserRole.ADMIN]}>
+              <SkillManagement />
+            </ProtectedRoute>
+          } />
+            <Route path="/admin/company-profile-view" element={
+              <ProtectedRoute allowedRoles={[UserRole.ADMIN]}>
+                <CompanyProfileView />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/seeker-profile-view" element={
+              <ProtectedRoute allowedRoles={[UserRole.ADMIN]}>
+                <SeekerProfileView />
+              </ProtectedRoute>
+            } />
           
           <Route path="/company/dashboard" element={
             <ProtectedRoute allowedRoles={[UserRole.COMPANY]}>
@@ -147,12 +173,30 @@ function App() {
           
           <Route path="/seeker/dashboard" element={
             <ProtectedRoute allowedRoles={[UserRole.SEEKER]}>
-              <UserDashboard />
+              <SeekerLayout>
+                <SeekerDashboard />
+              </SeekerLayout>
             </ProtectedRoute>
           } />
           <Route path="/seeker/profile" element={
             <ProtectedRoute allowedRoles={[UserRole.SEEKER]}>
-              <UserProfile />
+              <SeekerLayout>
+                <SeekerProfile />
+              </SeekerLayout>
+            </ProtectedRoute>
+          } />
+          <Route path="/seeker/applications" element={
+            <ProtectedRoute allowedRoles={[UserRole.SEEKER]}>
+              <SeekerLayout>
+                <SeekerDashboard />
+              </SeekerLayout>
+            </ProtectedRoute>
+          } />
+          <Route path="/seeker/settings" element={
+            <ProtectedRoute allowedRoles={[UserRole.SEEKER]}>
+              <SeekerLayout>
+                <SeekerSettings />
+              </SeekerLayout>
             </ProtectedRoute>
           } />
           
