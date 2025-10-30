@@ -74,15 +74,6 @@ const JobListing = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleApplyJob = () => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      navigate('/auth/login?redirect=/jobs');
-      return;
-    }
-    
-    alert('Application feature coming soon!');
-  };
 
   const handleViewDetails = (jobId: string) => {
     navigate(`/jobs/${jobId}`);

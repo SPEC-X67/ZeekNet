@@ -4,20 +4,17 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
 import { toast } from 'sonner'
 import { useAppDispatch, useAppSelector } from '@/hooks/useRedux'
 import { adminLoginThunk, clearError } from '@/store/slices/auth.slice'
 import { UserRole } from '@/constants/enums'
 import { 
   ArrowLeft, 
-  Briefcase, 
-  Sparkles, 
   Mail, 
   Lock, 
   Shield, 
   Eye, 
-  EyeOff,
+  EyeOff, 
   AlertCircle,
   Loader2
 } from 'lucide-react'
@@ -124,7 +121,7 @@ const AdminLogin = () => {
                   <Shield className="h-6 w-6 text-primary" />
                 </div> */}
               </div>
-              <CardTitle className="text-2xl font-bold text-center">Admin Login</CardTitle>
+              <CardTitle className="text-2xl !font-bold text-center">Admin Login</CardTitle>
               <CardDescription className="text-center">
                 Access the administrative dashboard
               </CardDescription>
@@ -180,7 +177,7 @@ const AdminLogin = () => {
                   </div>
                 </div>
                 
-                <Button type="submit" disabled={loading} className="w-full" variant="admin">
+                <Button type="submit" disabled={loading} className="w-full" variant="default">
                   {loading ? (
                     <div className="flex items-center space-x-2">
                       <Loader2 className="h-4 w-4 animate-spin" />
