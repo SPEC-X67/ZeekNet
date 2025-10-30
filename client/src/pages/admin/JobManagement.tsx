@@ -36,11 +36,23 @@ import { ConfirmationDialog } from '@/components/ui/confirmation-dialog'
 import { toast } from 'sonner'
 import { adminApi } from '@/api/admin.api'
 import type { JobPostingResponse } from '@/types/job'
+import ReasonActionDialog from '@/components/common/ReasonActionDialog'
+
+const unpublishReasons = [
+  { value: 'expired', label: 'Position is filled or job expired' },
+  { value: 'incomplete', label: 'Job information is incomplete or inaccurate' },
+  { value: 'violation', label: 'Posting violates terms or guidelines' },
+  { value: 'request', label: 'Company requested removal' },
+  { value: 'spam', label: 'Suspected spam or fraudulent posting' },
+  { value: 'other', label: 'Other (please specify)' }
+];
 
 const JobManagement = () => {
-  const navigate = useNavigate()
+  const [reasonDialogOpen, setReasonDialogOpen] = useState(false);
+  const [reasonJob, setReasonJob] = useState<JobPostingResponse|null>(null);
   const [jobs, setJobs] = useState<JobPostingResponse[]>([])
   const [loading, setLoading] = useState(true)
+  const navigate = useNavigate()
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 10,
@@ -321,6 +333,15 @@ const JobManagement = () => {
                                 )}
                               </DropdownMenuItem>
                               <DropdownMenuItem 
+                                onClick={() => {
+                                  setReasonJob(job);
+                                  setReasonDialogOpen(true);
+                                }}
+                              >
+                                <XCircle className="h-4 w-4 mr-2" />
+                                Unpublish
+                              </DropdownMenuItem>
+                              <DropdownMenuItem 
                                 onClick={() => setDeleteDialog({
                                   isOpen: true,
                                   jobId: job.id || job._id,
@@ -392,6 +413,21 @@ const JobManagement = () => {
         confirmText="Delete"
         cancelText="Cancel"
         variant="danger"
+      />
+      <ReasonActionDialog
+        open={reasonDialogOpen}
+        onOpenChange={setReasonDialogOpen}
+        title="Unpublish Job"
+        description={reasonJob ? `Please select a reason for unpublishing '${reasonJob.title}'.` : ''}
+        reasonOptions={unpublishReasons}
+        onConfirm={reason => {
+          toast.success(`Unpublished ${reasonJob?.title} for: ${reason}`);
+          setReasonDialogOpen(false);
+          setReasonJob(null);
+          // (You could add real unpublish logic here)
+        }}
+        actionLabel="Unpublish"
+        confirmVariant="destructive"
       />
     </AdminLayout>
   )

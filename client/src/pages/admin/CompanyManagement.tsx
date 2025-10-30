@@ -22,6 +22,7 @@ import {
 } from 'lucide-react'
 import { adminApi, type Company, type GetAllCompaniesParams } from '@/api/admin.api'
 import { toast } from 'sonner'
+import ReasonActionDialog from '@/components/common/ReasonActionDialog'
 
 const CompanyManagement = () => {
   const [companies, setCompanies] = useState<Company[]>([])
@@ -153,6 +154,30 @@ const CompanyManagement = () => {
         break
     }
     setCurrentPage(1)
+  }
+
+  const blockReasons = [
+    { value: 'fraudulent', label: 'Posting fraudulent jobs or misleading company information' },
+    { value: 'violation', label: 'Repeated violation of platform rules, guidelines or TOS' },
+    { value: 'offensive', label: 'Inappropriate or offensive behavior' },
+    { value: 'duplicate', label: 'Duplicate posting or spam' },
+    { value: 'abuse', label: 'Suspected scam, abuse, or exploitation' },
+    { value: 'other', label: 'Other (please specify)' },
+  ];
+  const [reasonDialogOpen, setReasonDialogOpen] = useState(false);
+  const [reasonCompany, setReasonCompany] = useState<Company|null>(null);
+  const [blockedCompanyIds, setBlockedCompanyIds] = useState<string[]>([]);
+  const handleBlockAction = (company: Company) => {
+    setReasonCompany(company)
+    setReasonDialogOpen(true)
+  };
+  function handleBlockReasonConfirm(reason: string) {
+    if (reasonCompany) {
+      setBlockedCompanyIds(ids => [...ids, reasonCompany.id])
+      toast.success(`Blocked ${reasonCompany.companyName} for: ${reason}`)
+      setReasonDialogOpen(false);
+      setReasonCompany(null);
+    }
   }
 
   return (
@@ -339,7 +364,7 @@ const CompanyManagement = () => {
                             variant="ghost" 
                             size="sm" 
                             className="text-orange-600 hover:text-orange-700 hover:bg-orange-50"
-                            onClick={() => handleBlockClick(company)}
+                            onClick={() => handleBlockAction(company)}
                           >
                             <UserX className="h-4 w-4" />
                           </Button>
@@ -452,6 +477,17 @@ const CompanyManagement = () => {
             </DialogFooter>
           </DialogContent>
         </Dialog>
+
+        <ReasonActionDialog
+          open={reasonDialogOpen}
+          onOpenChange={setReasonDialogOpen}
+          title="Block Company"
+          description={`Please select a reason for blocking${reasonCompany ? ` ${reasonCompany.companyName}` : ''}.`}
+          reasonOptions={blockReasons}
+          onConfirm={handleBlockReasonConfirm}
+          actionLabel="Block"
+          confirmVariant="destructive"
+        />
       </div>
     </AdminLayout>
   )

@@ -17,13 +17,12 @@ import {
   ArrowLeft, 
   Eye, 
   EyeOff,
-  Briefcase,
   Users,
-  Sparkles,
   CheckCircle,
   TrendingUp,
   Target,
-  AlertCircle
+  AlertCircle,
+  Sparkles
 } from 'lucide-react'
 
 const Login = () => {

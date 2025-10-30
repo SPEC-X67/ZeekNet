@@ -9,8 +9,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { 
   ArrowLeft, 
-  Briefcase, 
-  Sparkles, 
   Lock, 
   CheckCircle, 
   AlertCircle,

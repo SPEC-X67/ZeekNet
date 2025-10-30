@@ -23,7 +23,8 @@ export class AdminRouter {
     this.router.patch('/users/block', adminController.blockUser);
     this.router.get('/users/:id', adminController.getUserById);
 
-    this.router.get('/companies', validateQuery(GetAllCompaniesDto), adminController.getAllCompanies);
+    // this.router.get('/companies', validateQuery(GetAllCompaniesDto), adminController.getAllCompanies);
+    this.router.get('/companies', adminController.getAllCompanies);
     this.router.get('/companies/verification', adminController.getPendingCompanies);
     this.router.patch('/companies/verify', adminController.verifyCompany);
     this.router.patch('/companies/block', adminController.blockCompany);

@@ -27,6 +27,7 @@ import { ConfirmationDialog } from '@/components/ui/confirmation-dialog'
 import { toast } from 'sonner'
 import { adminApi } from '@/api/admin.api'
 import type { JobPostingResponse } from '@/types/job'
+import ReasonActionDialog from '@/components/common/ReasonActionDialog'
 
 const JobView = () => {
   const { jobId } = useParams<{ jobId: string }>()
@@ -34,6 +35,15 @@ const JobView = () => {
   const [job, setJob] = useState<JobPostingResponse | null>(null)
   const [loading, setLoading] = useState(true)
   const [deleteDialog, setDeleteDialog] = useState(false)
+  const unpublishReasons = [
+    { value: 'expired', label: 'Position is filled or job expired' },
+    { value: 'incomplete', label: 'Job information is incomplete or inaccurate' },
+    { value: 'violation', label: 'Posting violates terms or guidelines' },
+    { value: 'request', label: 'Company requested removal' },
+    { value: 'spam', label: 'Suspected spam or fraudulent posting' },
+    { value: 'other', label: 'Other (please specify)' }
+  ];
+  const [reasonDialogOpen, setReasonDialogOpen] = useState(false);
 
   useEffect(() => {
     fetchJob()
@@ -163,7 +173,7 @@ const JobView = () => {
           <div className="flex items-center space-x-2">
             <Button
               variant="outline"
-              onClick={handleToggleStatus}
+              onClick={job.is_active ? () => setReasonDialogOpen(true) : handleToggleStatus}
               className={job.is_active ? "text-red-600 border-red-200" : "text-green-600 border-green-200"}
             >
               {job.is_active ? (
@@ -398,6 +408,21 @@ const JobView = () => {
         confirmText="Delete"
         cancelText="Cancel"
         variant="danger"
+      />
+
+      <ReasonActionDialog
+        open={reasonDialogOpen}
+        onOpenChange={setReasonDialogOpen}
+        title="Unpublish Job"
+        description={job ? `Please select a reason for unpublishing '${job.title}'.` : ''}
+        reasonOptions={unpublishReasons}
+        onConfirm={reason => {
+          toast.success(`Unpublished ${job?.title} for: ${reason}`);
+          setReasonDialogOpen(false);
+          // (No real API call, just demo)
+        }}
+        actionLabel="Unpublish"
+        confirmVariant="destructive"
       />
     </AdminLayout>
   )

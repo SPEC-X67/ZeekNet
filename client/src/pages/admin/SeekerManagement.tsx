@@ -22,6 +22,7 @@ import {
 } from 'lucide-react'
 import { adminApi, type User, type GetAllUsersParams } from '@/api/admin.api'
 import { toast } from 'sonner'
+import ReasonActionDialog from '@/components/common/ReasonActionDialog'
 
 interface UserWithDisplayData extends User {
   name: string
@@ -33,7 +34,16 @@ interface UserWithDisplayData extends User {
 }
 
 const UserManagement = () => {
-  const [blockDialogOpen, setBlockDialogOpen] = useState(false)
+  const seekerBlockReasons = [
+    { value: 'fraudulent', label: 'Submitting fake or misleading profile information' },
+    { value: 'violation', label: 'Repeated violation of platform rules or guidelines' },
+    { value: 'offensive', label: 'Inappropriate or offensive behavior' },
+    { value: 'spam', label: 'Engaging in spam or unsolicited contact' },
+    { value: 'abuse', label: 'Suspected scam, abuse, or exploitation' },
+    { value: 'other', label: 'Other (please specify)' }
+  ]
+  const [reasonDialogOpen, setReasonDialogOpen] = useState(false);
+  const [reasonUser, setReasonUser] = useState<UserWithDisplayData | null>(null);
   const [emailDialogOpen, setEmailDialogOpen] = useState(false)
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const [users, setUsers] = useState<UserWithDisplayData[]>([])
@@ -102,43 +112,9 @@ const UserManagement = () => {
   const filteredUsers = users
 
 
-  const handleBlockClick = (user: User) => {
-    setSelectedUser(user)
-    setBlockDialogOpen(true)
-  }
-
   const handleEmailClick = (user: User) => {
     setSelectedUser(user)
     setEmailDialogOpen(true)
-  }
-
-  const handleBlockConfirm = async () => {
-    if (!selectedUser) return
-    
-    try {
-      const response = await adminApi.blockUser(selectedUser.id, !selectedUser.isBlocked)  // Changed from is_blocked
-      
-      if (response && response.message) {
-        toast.success(response.message)
-        
-        setUsers(prevUsers => 
-          prevUsers.map(user => 
-            user.id === selectedUser.id 
-              ? { 
-                  ...user, 
-                  isBlocked: !selectedUser.isBlocked,  
-                  accountStatus: !selectedUser.isBlocked ? 'Blocked' : 'Active'
-                }
-              : user
-          )
-        )
-      }
-    } catch {
-      toast.error('Failed to update user status')
-    } finally {
-      setBlockDialogOpen(false)
-      setSelectedUser(null)
-    }
   }
 
   const handleEmailConfirm = () => {
@@ -301,7 +277,7 @@ const UserManagement = () => {
                               variant="ghost" 
                               size="sm" 
                               className="text-orange-600 hover:text-orange-700 hover:bg-orange-50"
-                              onClick={() => handleBlockClick(user)}
+                              onClick={() => { setReasonUser(user); setReasonDialogOpen(true); }}
                             >
                               <UserX className="h-4 w-4" />
                             </Button>
@@ -347,34 +323,6 @@ const UserManagement = () => {
         )}
 
         {}
-        <Dialog open={blockDialogOpen} onOpenChange={setBlockDialogOpen}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Block User</DialogTitle>
-              <DialogDescription>
-                Are you sure you want to {selectedUser?.isBlocked ? 'unblock' : 'block'} {selectedUser?.email}? 
-                {selectedUser?.isBlocked 
-                  ? ' This will restore their account access.' 
-                  : ' This will prevent them from accessing their account.'
-                }
-              </DialogDescription>
-            </DialogHeader>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setBlockDialogOpen(false)}>
-                Cancel
-              </Button>
-              <Button 
-                variant="destructive" 
-                onClick={handleBlockConfirm}
-                className="bg-orange-600 hover:bg-orange-700"
-              >
-                {selectedUser?.isBlocked ? 'Unblock' : 'Block'} User
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-
-        {}
         <Dialog open={emailDialogOpen} onOpenChange={setEmailDialogOpen}>
           <DialogContent>
             <DialogHeader>
@@ -400,6 +348,21 @@ const UserManagement = () => {
             </DialogFooter>
           </DialogContent>
         </Dialog>
+
+        <ReasonActionDialog
+          open={reasonDialogOpen}
+          onOpenChange={setReasonDialogOpen}
+          title="Block Job Seeker"
+          description={reasonUser ? `Please select a reason for blocking ${reasonUser.name}.` : ''}
+          reasonOptions={seekerBlockReasons}
+          onConfirm={reason => {
+            toast.success(`Blocked ${reasonUser?.name} for: ${reason}`);
+            setReasonDialogOpen(false);
+            setReasonUser(null);
+          }}
+          actionLabel="Block"
+          confirmVariant="destructive"
+        />
       </div>
     </AdminLayout>
   )

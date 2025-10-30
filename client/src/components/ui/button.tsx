@@ -27,6 +27,10 @@ const buttonVariants = cva(
         adminOutline: "border border-[#CCCCF5] rounded-lg text-[#4640DE] hover:bg-[#CCCCF5] text-sm font-semibold",
         adminDisabled: "bg-[#CCCCF5] text-[#4640DE] hover:bg-[#CCCCF5] text-sm font-semibold",
         adminDisabledOutline: "border border-[#CCCCF5] rounded-lg text-[#4640DE] hover:bg-[#CCCCF5] text-sm font-semibold",
+        seeker: "bg-[#4640DE] text-white text-sm font-bold rounded-lg",
+        seekerOutline: "border border-[#CCCCF5] rounded-lg text-[#4640de] cursor-pointer hover:bg-[#f8f9ff] hover:border-[#4640de]/90 text-sm font-black",
+        seekerDisabled: "bg-[#CCCCF5] text-[#4640DE] hover:bg-[#CCCCF5] text-sm font-semibold",
+        seekerDisabledOutline: "border border-[#CCCCF5] rounded-lg text-[#4640DE] hover:bg-[#CCCCF5] text-sm font-semibold",
       },
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",

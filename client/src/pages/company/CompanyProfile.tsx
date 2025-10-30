@@ -1,7 +1,6 @@
 import CompanyLayout from '../../components/layouts/CompanyLayout'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Loading } from '@/components/ui/loading'
 import { 
   Building2, 
@@ -17,7 +16,6 @@ import {
   Linkedin,
   Twitter,
   Facebook,
-  Instagram,
   Phone,
   Briefcase
 } from 'lucide-react'
