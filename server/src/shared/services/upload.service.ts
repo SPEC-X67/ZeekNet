@@ -25,7 +25,6 @@ export class UploadService {
     }
   }
 
-  
   static validateFileSize(fileSize: number, maxSizeInMB: number = 5): void {
     const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
 
@@ -34,7 +33,6 @@ export class UploadService {
     }
   }
 
-  
   static extractFileInfo(
     req: Request,
     fieldName: string = 'file',
@@ -58,7 +56,6 @@ export class UploadService {
     };
   }
 
-  
   static extractMultipleFileInfo(
     req: Request,
     fieldName: string = 'files',
@@ -82,7 +79,6 @@ export class UploadService {
     }));
   }
 
-  
   static async handleFileUpload(req: Request, s3Service: IS3Service, fieldName: string = 'file'): Promise<{ url: string; filename: string }> {
     const file = req.file;
 
@@ -102,7 +98,6 @@ export class UploadService {
     };
   }
 
-  
   static async handleMultipleFileUpload(req: Request, s3Service: IS3Service, fieldName: string = 'files'): Promise<Array<{ url: string; filename: string }>> {
     const files = req.files as Express.Multer.File[];
 
@@ -126,7 +121,6 @@ export class UploadService {
     return Promise.all(uploadPromises);
   }
 
-  
   static async handleFileDeletion(imageUrl: string, s3Service: IS3Service): Promise<void> {
     if (!imageUrl) {
       throw new ValidationError('Image URL is required');

@@ -61,7 +61,6 @@ const JobDetail = () => {
     fetchJobDetails();
   }, [id]);
 
-
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">

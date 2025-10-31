@@ -1,11 +1,13 @@
 import { ICompanyListingRepository } from '../../../domain/interfaces/repositories/company/ICompanyListingRepository';
 import { ICompanyVerificationRepository } from '../../../domain/interfaces/repositories/company/ICompanyVerificationRepository';
 import { CompanyQueryOptions, PaginatedCompaniesWithVerification, IGetCompaniesWithVerificationUseCase } from '../../../domain/interfaces/use-cases/IAdminUseCases';
+import { IS3Service } from '../../../domain/interfaces/services/IS3Service';
 
 export class GetCompaniesWithVerificationUseCase implements IGetCompaniesWithVerificationUseCase {
   constructor(
     private readonly _companyListingRepository: ICompanyListingRepository,
     private readonly _companyVerificationRepository: ICompanyVerificationRepository,
+    private readonly _s3Service: IS3Service,
   ) {}
 
   async execute(options: CompanyQueryOptions): Promise<PaginatedCompaniesWithVerification> {
@@ -29,6 +31,18 @@ export class GetCompaniesWithVerificationUseCase implements IGetCompaniesWithVer
         const verification = await this._companyVerificationRepository.getVerificationByCompanyId(company.id);
 
         const companyData = company.toJSON();
+
+        let businessLicenseUrl: string | undefined;
+        if (verification?.businessLicenseUrl) {
+          try {
+            const key = this._s3Service.extractKeyFromUrl(verification.businessLicenseUrl);
+            businessLicenseUrl = await this._s3Service.getSignedUrl(key);
+          } catch (error) {
+            console.error('Failed to generate signed URL for business license:', error);
+            businessLicenseUrl = verification.businessLicenseUrl;
+          }
+        }
+
         return {
           id: companyData.id as string,
           userId: companyData.userId as string,
@@ -46,7 +60,7 @@ export class GetCompaniesWithVerificationUseCase implements IGetCompaniesWithVer
           ...(verification && {
             verification: {
               taxId: verification.taxId,
-              businessLicenseUrl: verification.businessLicenseUrl,
+              businessLicenseUrl: businessLicenseUrl || verification.businessLicenseUrl,
             },
           }),
         };

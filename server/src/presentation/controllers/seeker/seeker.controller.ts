@@ -47,7 +47,6 @@ export class SeekerController {
     }
   };
 
-  // Profile methods - delegate to profile controller
   createSeekerProfile = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
     return this.profileController.createSeekerProfile(req, res, next);
   };

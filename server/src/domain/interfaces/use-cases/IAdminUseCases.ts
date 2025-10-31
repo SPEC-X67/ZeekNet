@@ -1,6 +1,8 @@
 import { User } from '../../entities/user.entity';
 import { CompanyProfile } from '../../entities/company-profile.entity';
 import { JobPosting, PaginatedJobPostings, JobPostingFilters } from '../../entities/job-posting.entity';
+import { Skill } from '../../entities/skill.entity';
+import { PaginatedSkills, SkillQueryFilters } from '../repositories/skill/ISkillRepository';
 
 export interface AuthResponse {
   accessToken: string;
@@ -102,7 +104,7 @@ export interface IGetCompaniesWithVerificationUseCase {
 }
 
 export interface IVerifyCompanyUseCase {
-  execute(companyId: string, isVerified: 'pending' | 'rejected' | 'verified'): Promise<void>;
+  execute(companyId: string, isVerified: 'pending' | 'rejected' | 'verified', rejectionReason?: string): Promise<void>;
 }
 
 export interface IBlockCompanyUseCase {
@@ -118,7 +120,7 @@ export interface IAdminGetJobByIdUseCase {
 }
 
 export interface IAdminUpdateJobStatusUseCase {
-  execute(jobId: string, isActive: boolean): Promise<JobPosting>;
+  execute(jobId: string, isActive: boolean, unpublishReason?: string): Promise<JobPosting>;
 }
 
 export interface IAdminDeleteJobUseCase {
@@ -137,7 +139,6 @@ export interface IAdminGetJobStatsUseCase {
   execute(): Promise<AdminJobStats>;
 }
 
-// Additional interfaces that were missing
 export interface IGetJobByIdUseCase {
   execute(jobId: string): Promise<JobPosting>;
 }
@@ -152,4 +153,24 @@ export interface IUpdateJobStatusUseCase {
 
 export interface IDeleteJobUseCase {
   execute(jobId: string): Promise<boolean>;
+}
+
+export interface ICreateSkillUseCase {
+  execute(name: string): Promise<Skill>;
+}
+
+export interface IGetAllSkillsUseCase {
+  execute(filters: SkillQueryFilters): Promise<PaginatedSkills>;
+}
+
+export interface IGetSkillByIdUseCase {
+  execute(skillId: string): Promise<Skill>;
+}
+
+export interface IUpdateSkillUseCase {
+  execute(skillId: string, name: string): Promise<Skill>;
+}
+
+export interface IDeleteSkillUseCase {
+  execute(skillId: string): Promise<boolean>;
 }

@@ -23,8 +23,7 @@ export class VerifyOtpUseCase implements IVerifyOtpUseCase {
       throw new ValidationError('Invalid or expired OTP code');
     }
     await this._userAuthRepository.updateVerificationStatus(email, true);
-    
-    
+
     const updatedUser = await this._userRepository.findByEmail(email);
     if (!updatedUser) {
       throw new NotFoundError('User not found after verification');

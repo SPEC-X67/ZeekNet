@@ -55,7 +55,7 @@ export function SeekerDashboard() {
 
   return (
     <div className="px-8 xl:px-11 py-9 space-y-6 bg-[#f8f9ff] min-h-screen">
-      {/* Header Section */}
+      
       <div className="flex items-center justify-between">
         <div className="space-y-1">
           <h1 className="text-[26px] font-bold text-[#1f2937]">
@@ -75,7 +75,6 @@ export function SeekerDashboard() {
         </div>
       </div>
 
-      {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         {stats.map((stat) => {
           const Icon = stat.icon;
@@ -99,9 +98,8 @@ export function SeekerDashboard() {
         })}
       </div>
 
-      {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
-        {/* Recent Applications */}
+        
         <Card className="lg:col-span-2 bg-white border border-[#e5e7eb] rounded-lg shadow-sm !p-0 !gap-0 overflow-hidden">
           <div className="p-5 border-b border-[#e5e7eb] bg-gradient-to-r from-[#f8f9ff] to-white">
             <div className="flex items-center justify-between">
@@ -218,7 +216,6 @@ export function SeekerDashboard() {
           </div>
         </Card>
 
-        {/* Upcoming Interviews */}
         <Card className="p-5 bg-white border border-[#e5e7eb] rounded-lg shadow-sm">
           <div className="flex items-center justify-between mb-5">
             <h3 className="text-[16px] font-bold text-[#1f2937]">Today's Schedule</h3>
@@ -254,7 +251,6 @@ export function SeekerDashboard() {
         </Card>
       </div>
 
-      {/* Recommended Jobs */}
       <Card className="bg-white border border-[#e5e7eb] rounded-lg shadow-sm !p-0 !gap-0">
         <div className="p-6 border-b border-[#e5e7eb] bg-gradient-to-r from-[#f8f9ff] to-white">
           <div className="flex items-center justify-between">

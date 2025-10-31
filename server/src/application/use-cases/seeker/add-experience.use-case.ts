@@ -12,18 +12,16 @@ export class AddExperienceUseCase implements IAddExperienceUseCase {
   ) {}
 
   async execute(userId: string, data: AddExperienceData): Promise<ExperienceResponseDto> {
-    // Verify profile exists
+    
     const profile = await this._seekerProfileRepository.getProfileByUserId(userId);
     if (!profile) {
       throw new NotFoundError('Seeker profile not found');
     }
 
-    // Validate dates
     if (data.endDate && data.endDate < data.startDate) {
       throw new ValidationError('End date must be after start date');
     }
 
-    // Validate isCurrent flag
     if (data.isCurrent && data.endDate) {
       throw new ValidationError('Current experience cannot have an end date');
     }

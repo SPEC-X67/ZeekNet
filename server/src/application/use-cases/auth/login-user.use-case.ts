@@ -26,15 +26,15 @@ export class LoginUserUseCase implements ILoginUserUseCase {
       throw new AuthenticationError('Invalid credentials');
     }
 
+    if (user.isBlocked) {
+      throw new AuthorizationError('User is blocked. Contact support for assistance.');
+    }
+
     if (!user.isVerified) {
       const code = await this._otpService.generateAndStoreOtp(user.email);
       const htmlContent = otpVerificationTemplate.html(code);
       await this._mailerService.sendMail(user.email, otpVerificationTemplate.subject, htmlContent);
       return { user: UserMapper.toDto(user) };
-    }
-
-    if (user.isBlocked) {
-      throw new AuthorizationError('User is blocked. Contact support for assistance.');
     }
 
     if (user.role === UserRole.ADMIN) {

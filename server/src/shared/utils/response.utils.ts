@@ -26,4 +26,3 @@ export const createErrorResponse = <T>(message: string, data: T = null as T): Ap
     data,
   };
 };
-

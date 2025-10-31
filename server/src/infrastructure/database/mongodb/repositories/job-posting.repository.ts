@@ -20,6 +20,8 @@ export interface JobPostingDetailResponseDto {
   skills_required: string[];
   category_ids: string[];
   is_active: boolean;
+  admin_blocked?: boolean;
+  unpublish_reason?: string;
   view_count: number;
   application_count: number;
   createdAt: string;
@@ -79,21 +81,6 @@ export class JobPostingRepository extends RepositoryBase<JobPosting, JobPostingD
 
       const jobPosting = new JobPostingModel(jobPostingData);
 
-      
-      
-
-      
-      
-
-      
-      
-      
-      
-
-      
-      
-      
-
       const savedJobPosting = await jobPosting.save();
 
       return this.mapToEntity(savedJobPosting);
@@ -114,10 +101,39 @@ export class JobPostingRepository extends RepositoryBase<JobPosting, JobPostingD
   }
 
   async findByIdForClient(id: string): Promise<JobPostingDetailResponseDto | null> {
+    const { CompanyProfileModel } = await import('../models/company-profile.model');
+    
     const jobPosting = await JobPostingModel.findById(id).populate('company_id', 'companyName logo');
 
     if (!jobPosting) {
       return null;
+    }
+
+    if (jobPosting.admin_blocked) {
+      return null;
+    }
+
+    if (!jobPosting.is_active) {
+      return null;
+    }
+
+    // Check if company is blocked
+    if (jobPosting.company_id) {
+      let companyId: Types.ObjectId;
+      const companyIdValue = jobPosting.company_id as Types.ObjectId | { _id: Types.ObjectId } | string;
+      
+      if (companyIdValue instanceof Types.ObjectId) {
+        companyId = companyIdValue;
+      } else if (typeof companyIdValue === 'object' && companyIdValue !== null && '_id' in companyIdValue) {
+        companyId = (companyIdValue as { _id: Types.ObjectId })._id;
+      } else {
+        companyId = new Types.ObjectId(companyIdValue as string);
+      }
+      
+      const companyProfile = await CompanyProfileModel.findById(companyId);
+      if (!companyProfile || companyProfile.isBlocked) {
+        return null;
+      }
     }
 
     const populatedDoc = jobPosting as unknown as { company_id?: { companyName?: string; logo?: string; _id?: unknown } };
@@ -164,6 +180,8 @@ export class JobPostingRepository extends RepositoryBase<JobPosting, JobPostingD
       skills_required: jobPosting.skills_required,
       category_ids: jobPosting.category_ids,
       is_active: jobPosting.is_active,
+      admin_blocked: jobPosting.admin_blocked,
+      unpublish_reason: jobPosting.unpublish_reason,
       view_count: jobPosting.view_count,
       application_count: jobPosting.application_count,
       createdAt: jobPosting.createdAt.toISOString(),
@@ -188,7 +206,7 @@ export class JobPostingRepository extends RepositoryBase<JobPosting, JobPostingD
     const skip = (page - 1) * limit;
 
     const [jobs, total] = await Promise.all([
-      JobPostingModel.find(query).select('_id title description location employment_types salary is_active application_count view_count createdAt updatedAt').populate('company_id', 'companyName logo').skip(skip).limit(limit).sort({ createdAt: -1 }),
+      JobPostingModel.find(query).populate('company_id', 'companyName logo').skip(skip).limit(limit).sort({ createdAt: -1 }),
       JobPostingModel.countDocuments(query),
     ]);
 
@@ -206,6 +224,8 @@ export class JobPostingRepository extends RepositoryBase<JobPosting, JobPostingD
   async findAll(filters?: JobPostingFilters): Promise<JobPosting[]>;
   async findAll(filters: JobPostingFilters): Promise<PaginatedJobPostings>;
   async findAll(filters?: JobPostingFilters): Promise<JobPosting[] | PaginatedJobPostings> {
+    const { CompanyProfileModel } = await import('../models/company-profile.model');
+    
     const query: MongoQuery = {};
 
     if (filters) {
@@ -216,7 +236,29 @@ export class JobPostingRepository extends RepositoryBase<JobPosting, JobPostingD
     const limit = filters?.limit || 10;
     const skip = (page - 1) * limit;
 
-    const [jobs, total] = await Promise.all([JobPostingModel.find(query).select('_id title company_id salary employment_types location category_ids createdAt').populate('company_id', 'companyName logo').skip(skip).limit(limit).sort({ createdAt: -1 }), JobPostingModel.countDocuments(query)]);
+    // First, get all blocked company IDs
+    const blockedCompanies = await CompanyProfileModel.find({ isBlocked: true }).select('_id').lean();
+    const blockedCompanyIds = blockedCompanies.map((c) => c._id);
+
+    // Exclude jobs from blocked companies
+    if (blockedCompanyIds.length > 0) {
+      if (query.company_id) {
+        // If company_id filter already exists, combine with $nin using $and
+        const existingCompanyFilter = query.company_id;
+        query.$and = [
+          { company_id: existingCompanyFilter },
+          { company_id: { $nin: blockedCompanyIds } },
+        ];
+        delete query.company_id;
+      } else {
+        query.company_id = { $nin: blockedCompanyIds };
+      }
+    }
+
+    const [jobs, total] = await Promise.all([
+      JobPostingModel.find(query).populate('company_id', 'companyName logo').skip(skip).limit(limit).sort({ createdAt: -1 }),
+      JobPostingModel.countDocuments(query),
+    ]);
 
     return {
       jobs: jobs.map((job) => this.mapToEntity(job)),
@@ -343,6 +385,15 @@ export class JobPostingRepository extends RepositoryBase<JobPosting, JobPostingD
   private applyFilters(query: MongoQuery, filters: JobPostingFilters): void {
     if (filters.is_active !== undefined) {
       query.is_active = filters.is_active;
+    }
+
+    if (filters.admin_blocked !== undefined) {
+      
+      if (filters.admin_blocked === false) {
+        query.admin_blocked = { $ne: true };
+      } else {
+        query.admin_blocked = filters.admin_blocked;
+      }
     }
 
     if (filters.category_ids && filters.category_ids.length > 0) {

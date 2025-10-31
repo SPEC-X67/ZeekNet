@@ -13,4 +13,3 @@ export class DeleteCompanyOfficeLocationUseCase implements IDeleteCompanyOfficeL
     await this._companyOfficeLocationRepository.delete(locationId);
   }
 }
-

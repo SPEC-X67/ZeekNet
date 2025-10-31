@@ -12,7 +12,7 @@ export class GetExperiencesUseCase implements IGetExperiencesUseCase {
   ) {}
 
   async execute(userId: string): Promise<ExperienceResponseDto[]> {
-    // Verify profile exists
+    
     const profile = await this._seekerProfileRepository.getProfileByUserId(userId);
     if (!profile) {
       throw new NotFoundError('Seeker profile not found');

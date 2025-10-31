@@ -38,7 +38,6 @@ const JobCard = ({ job, onViewDetails }: JobCardProps) => {
     }
   };
 
-
   const handleCardClick = () => {
     if (onViewDetails) {
       onViewDetails(job.id || job._id);

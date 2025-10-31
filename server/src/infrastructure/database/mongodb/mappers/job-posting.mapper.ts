@@ -40,6 +40,8 @@ export class JobPostingMapper {
       skills_required: doc.skills_required || [],
       category_ids: doc.category_ids || [],
       is_active: doc.is_active !== undefined ? doc.is_active : true,
+      admin_blocked: doc.admin_blocked,
+      unpublish_reason: doc.unpublish_reason,
       view_count: doc.view_count || 0,
       application_count: doc.application_count || 0,
       createdAt: doc.createdAt || new Date(),
@@ -89,6 +91,8 @@ export class JobPostingMapper {
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt || doc.createdAt,
       is_active: doc.is_active !== undefined ? doc.is_active : true,
+      admin_blocked: doc.admin_blocked,
+      unpublish_reason: doc.unpublish_reason,
       application_count: doc.application_count || 0,
       view_count: doc.view_count || 0,
     };

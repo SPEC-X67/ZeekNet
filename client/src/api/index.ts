@@ -18,7 +18,7 @@ export const clearAuthToken = () => {
 }
 
 export const api: AxiosInstance = axios.create({
-  baseURL: (import.meta as ImportMeta).env?.VITE_API_URL || '',
+  baseURL: import.meta.env.VITE_API_URL || '',
   withCredentials: true,
   headers: { 'Content-Type': 'application/json' },
 })
@@ -97,4 +97,5 @@ api.interceptors.response.use(
 export { authApi } from './auth.api'
 export { adminApi } from './admin.api'
 export { companyApi } from './company.api'
+export { seekerApi } from './seeker.api'
 export * from './base.api'

@@ -17,9 +17,11 @@ export class SeekerProfileRepository extends RepositoryBase<SeekerProfile, Model
       summary: doc.summary || undefined,
       location: doc.location || undefined,
       phone: doc.phone || undefined,
-      email: doc.email,
-      avatarUrl: doc.avatarUrl || undefined,
+      email: doc.email || null,
+      avatarFileName: doc.avatarFileName || null,
+      bannerFileName: doc.bannerFileName || null,
       skills: doc.skills || [],
+      languages: doc.languages || [],
       socialLinks: doc.socialLinks || [],
       resume: doc.resume ? {
         url: doc.resume.url,
@@ -37,9 +39,11 @@ export class SeekerProfileRepository extends RepositoryBase<SeekerProfile, Model
     summary?: string;
     location?: string;
     phone?: string;
-    email: string;
-    avatarUrl?: string;
+    email?: string;
+    avatarFileName?: string | null;
+    bannerFileName?: string | null;
     skills?: string[];
+    languages?: string[];
     socialLinks?: SocialLink[];
   }): Promise<SeekerProfile> {
     const created = await this.model.create({
@@ -48,9 +52,11 @@ export class SeekerProfileRepository extends RepositoryBase<SeekerProfile, Model
       summary: profile.summary,
       location: profile.location,
       phone: profile.phone,
-      email: profile.email,
-      avatarUrl: profile.avatarUrl,
+      email: profile.email || undefined, 
+      avatarFileName: profile.avatarFileName || undefined,
+      bannerFileName: profile.bannerFileName || undefined,
       skills: profile.skills || [],
+      languages: profile.languages || [],
       socialLinks: profile.socialLinks || [],
       resume: undefined,
       createdAt: new Date(),
@@ -71,8 +77,7 @@ export class SeekerProfileRepository extends RepositoryBase<SeekerProfile, Model
 
   async updateProfile(profileId: string, updates: Partial<SeekerProfile>): Promise<SeekerProfile> {
     const updateData: Record<string, unknown> = { ...updates, updatedAt: new Date() };
-    
-    // Remove undefined values and convert userId to ObjectId if present
+
     if (updateData.userId) {
       updateData.userId = new Types.ObjectId(updateData.userId as string);
     }
@@ -96,44 +101,54 @@ export class SeekerProfileRepository extends RepositoryBase<SeekerProfile, Model
     return await this.exists({ userId: new Types.ObjectId(userId) });
   }
 
-  // Skills management
   async updateSkills(userId: string, skills: string[]): Promise<string[]> {
     await this.model.updateOne(
       { userId: new Types.ObjectId(userId) },
-      { 
-        $set: { 
+      {
+        $set: {
           skills,
-          updatedAt: new Date()
-        }
-      }
+          updatedAt: new Date(),
+        },
+      },
     ).exec();
     return skills;
   }
 
-  // Social Links management
+  async updateLanguages(userId: string, languages: string[]): Promise<string[]> {
+    await this.model.updateOne(
+      { userId: new Types.ObjectId(userId) },
+      {
+        $set: {
+          languages,
+          updatedAt: new Date(),
+        },
+      },
+    ).exec();
+    return languages;
+  }
+
   async updateSocialLinks(userId: string, socialLinks: SocialLink[]): Promise<SocialLink[]> {
     await this.model.updateOne(
       { userId: new Types.ObjectId(userId) },
       { 
         $set: { 
           socialLinks,
-          updatedAt: new Date()
-        }
-      }
+          updatedAt: new Date(),
+        },
+      },
     ).exec();
     return socialLinks;
   }
 
-  // Resume management
   async updateResume(userId: string, resume: ResumeMeta): Promise<ResumeMeta> {
     await this.model.updateOne(
       { userId: new Types.ObjectId(userId) },
       { 
         $set: { 
           resume,
-          updatedAt: new Date()
-        }
-      }
+          updatedAt: new Date(),
+        },
+      },
     ).exec();
     return resume;
   }
@@ -143,8 +158,8 @@ export class SeekerProfileRepository extends RepositoryBase<SeekerProfile, Model
       { userId: new Types.ObjectId(userId) },
       { 
         $unset: { resume: 1 },
-        $set: { updatedAt: new Date() }
-      }
+        $set: { updatedAt: new Date() },
+      },
     ).exec();
   }
 }

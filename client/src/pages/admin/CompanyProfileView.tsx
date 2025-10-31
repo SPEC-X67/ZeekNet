@@ -40,7 +40,7 @@ const CompanyProfileView = () => {
     setBlocked(true);
     setBlockOpen(false);
   }
-  // Mocked data for read-only admin view
+  
   const data = useMemo(() => ({
     profile: {
       company_name: 'ZeekNet Technologies',
@@ -148,7 +148,6 @@ const CompanyProfileView = () => {
             </div>
           </div>
 
-          {/* Read-only: no actions */}
           <div>
             {!blocked && (
               <Button className="bg-red-100 text-red-700 border-red-300 hover:bg-red-200 mr-2" onClick={() => setBlockOpen(true)}>
@@ -159,7 +158,7 @@ const CompanyProfileView = () => {
         </div>
         {blocked && <div className="text-red-600 font-semibold p-1">Blocked: {blockReason}</div>}
       </div>
-      {/* Block Dialog */}
+      
       <FormDialog
         isOpen={blockOpen}
         onClose={() => setBlockOpen(false)}
@@ -367,5 +366,3 @@ const CompanyProfileView = () => {
 }
 
 export default CompanyProfileView
-
-

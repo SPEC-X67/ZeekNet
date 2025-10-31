@@ -37,6 +37,7 @@ import { toast } from 'sonner'
 import { adminApi } from '@/api/admin.api'
 import type { JobPostingResponse } from '@/types/job'
 import ReasonActionDialog from '@/components/common/ReasonActionDialog'
+import { useDebounce } from '@/hooks/useDebounce'
 
 const unpublishReasons = [
   { value: 'expired', label: 'Position is filled or job expired' },
@@ -59,6 +60,8 @@ const JobManagement = () => {
     total: 0,
     totalPages: 0
   })
+  const [searchInput, setSearchInput] = useState('')
+  const debouncedSearchTerm = useDebounce(searchInput, 500)
   const [filters, setFilters] = useState({
     search: '',
     status: 'all',
@@ -74,6 +77,11 @@ const JobManagement = () => {
     jobId: null,
     jobTitle: ''
   })
+
+  useEffect(() => {
+    setFilters(prev => ({ ...prev, search: debouncedSearchTerm }))
+    setPagination(prev => ({ ...prev, page: 1 }))
+  }, [debouncedSearchTerm])
 
   useEffect(() => {
     fetchJobs()
@@ -191,8 +199,8 @@ const JobManagement = () => {
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                   <Input
                     placeholder="Search jobs by title..."
-                    value={filters.search}
-                    onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
+                    value={searchInput}
+                    onChange={(e) => setSearchInput(e.target.value)}
                     className="pl-10"
                   />
                 </div>
@@ -283,15 +291,22 @@ const JobManagement = () => {
                           </div>
                         </TableCell>
                         <TableCell>
-                          <Badge 
-                            variant={job.is_active ? "default" : "secondary"}
-                            className={job.is_active 
-                              ? "bg-green-100 text-green-800 border-green-200" 
-                              : "bg-gray-100 text-gray-800 border-gray-200"
-                            }
-                          >
-                            {job.is_active ? 'Active' : 'Inactive'}
-                          </Badge>
+                          <div className="space-y-1">
+                            <Badge 
+                              variant={job.is_active ? "default" : "secondary"}
+                              className={job.is_active 
+                                ? "bg-green-100 text-green-800 border-green-200" 
+                                : "bg-gray-100 text-gray-800 border-gray-200"
+                              }
+                            >
+                              {job.is_active ? 'Active' : 'Inactive'}
+                            </Badge>
+                            {job.admin_blocked && (
+                              <Badge className="bg-red-500 text-white text-xs">
+                                Blocked
+                              </Badge>
+                            )}
+                          </div>
                         </TableCell>
                         <TableCell>
                           <div className="text-sm">
@@ -317,30 +332,24 @@ const JobManagement = () => {
                                 <Eye className="h-4 w-4 mr-2" />
                                 View Details
                               </DropdownMenuItem>
-                              <DropdownMenuItem 
-                                onClick={() => handleToggleStatus(job.id || job._id, job.is_active)}
-                              >
-                                {job.is_active ? (
-                                  <>
-                                    <XCircle className="h-4 w-4 mr-2" />
-                                    Unpublish
-                                  </>
-                                ) : (
-                                  <>
-                                    <CheckCircle className="h-4 w-4 mr-2" />
-                                    Publish
-                                  </>
-                                )}
-                              </DropdownMenuItem>
-                              <DropdownMenuItem 
-                                onClick={() => {
-                                  setReasonJob(job);
-                                  setReasonDialogOpen(true);
-                                }}
-                              >
-                                <XCircle className="h-4 w-4 mr-2" />
-                                Unpublish
-                              </DropdownMenuItem>
+                              {job.is_active ? (
+                                <DropdownMenuItem 
+                                  onClick={() => {
+                                    setReasonJob(job);
+                                    setReasonDialogOpen(true);
+                                  }}
+                                >
+                                  <XCircle className="h-4 w-4 mr-2" />
+                                  Unpublish
+                                </DropdownMenuItem>
+                              ) : (
+                                <DropdownMenuItem 
+                                  onClick={() => handleToggleStatus(job.id || job._id, job.is_active)}
+                                >
+                                  <CheckCircle className="h-4 w-4 mr-2" />
+                                  Publish
+                                </DropdownMenuItem>
+                              )}
                               <DropdownMenuItem 
                                 onClick={() => setDeleteDialog({
                                   isOpen: true,
@@ -420,11 +429,27 @@ const JobManagement = () => {
         title="Unpublish Job"
         description={reasonJob ? `Please select a reason for unpublishing '${reasonJob.title}'.` : ''}
         reasonOptions={unpublishReasons}
-        onConfirm={reason => {
-          toast.success(`Unpublished ${reasonJob?.title} for: ${reason}`);
+        onConfirm={async reason => {
+          if (!reasonJob) return;
+          
+          try {
+            const response = await adminApi.updateJobStatus(reasonJob.id || reasonJob._id, false, reason);
+            
+            if (response.success) {
+              setJobs(jobs.map(job => 
+                (job.id || job._id) === (reasonJob.id || reasonJob._id)
+                  ? { ...job, is_active: false, unpublish_reason: reason }
+                  : job
+              ));
+              toast.success(`Unpublished ${reasonJob?.title}`);
+            } else {
+              toast.error(response.message || 'Failed to unpublish job');
+            }
+          } catch {
+            toast.error('Failed to unpublish job');
+          }
           setReasonDialogOpen(false);
           setReasonJob(null);
-          // (You could add real unpublish logic here)
         }}
         actionLabel="Unpublish"
         confirmVariant="destructive"

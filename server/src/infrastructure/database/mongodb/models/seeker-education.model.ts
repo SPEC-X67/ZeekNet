@@ -27,7 +27,7 @@ const SeekerEducationSchema = new Schema<SeekerEducationDocument>(
     endDate: { type: Date },
     grade: { type: String },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 SeekerEducationSchema.index({ seekerProfileId: 1, createdAt: -1 });

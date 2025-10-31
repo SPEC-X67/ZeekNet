@@ -10,13 +10,12 @@ export class RemoveEducationUseCase implements IRemoveEducationUseCase {
   ) {}
 
   async execute(userId: string, educationId: string): Promise<void> {
-    // Verify profile exists
+    
     const profile = await this._seekerProfileRepository.getProfileByUserId(userId);
     if (!profile) {
       throw new NotFoundError('Seeker profile not found');
     }
 
-    // Verify education exists and belongs to this user
     const education = await this._seekerEducationRepository.findById(educationId);
     if (!education) {
       throw new NotFoundError('Education not found');

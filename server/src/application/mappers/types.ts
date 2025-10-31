@@ -61,7 +61,6 @@ export interface UserData {
   refreshToken: string | null;
 }
 
-
 export type { CompanyProfileResponseDto, CompanyContactResponseDto, CompanyLocationResponseDto, CompanyProfileWithDetailsResponseDto } from '../dto/company/company-response.dto';
 
 export type { JobPostingResponseDto, JobPostingDetailResponseDto, PaginatedJobPostingsResponse } from '../dto/job-posting/job-posting-response.dto';

@@ -11,7 +11,6 @@ export const commonValidations = {
 
   password: z.string().min(6, 'Password must be at least 6 characters'),
 
-
   phoneNumber: z.string().regex(/^\+?[\d\s\-\(\)]+$/, 'Please enter a valid phone number'),
 
   positiveInteger: z.number().int().positive('Must be a positive integer'),
@@ -25,7 +24,6 @@ export const commonValidations = {
   boolean: z.boolean(),
 
   optionalBoolean: z.boolean().optional(),
-
 
   pagination: z.object({
     page: z.string().regex(/^\d+$/, 'Page must be a number').transform(Number).default('1'),
@@ -60,5 +58,3 @@ export const fieldValidations = {
 
   taxId: z.string().min(1, 'Tax ID is required').min(3, 'Tax ID must be at least 3 characters').max(20, 'Tax ID must be less than 20 characters'),
 };
-
-

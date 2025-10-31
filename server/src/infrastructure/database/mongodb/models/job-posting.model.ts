@@ -21,6 +21,8 @@ export interface JobPostingDocument extends Document {
   skills_required: string[];
   category_ids: string[];
   is_active: boolean;
+  admin_blocked?: boolean;
+  unpublish_reason?: string;
   view_count: number;
   application_count: number;
   createdAt: Date;
@@ -133,6 +135,15 @@ const JobPostingSchema = new Schema<JobPostingDocument>(
       default: true,
       index: true,
     },
+    admin_blocked: {
+      type: Boolean,
+      default: false,
+      index: true,
+    },
+    unpublish_reason: {
+      type: String,
+      trim: true,
+    },
     view_count: {
       type: Number,
       default: 0,
@@ -154,6 +165,7 @@ JobPostingSchema.index({ company_id: 1, is_active: 1 });
 JobPostingSchema.index({ category_ids: 1, is_active: 1 });
 JobPostingSchema.index({ location: 1, is_active: 1 });
 JobPostingSchema.index({ employment_types: 1, is_active: 1 });
+JobPostingSchema.index({ admin_blocked: 1, is_active: 1 });
 JobPostingSchema.index({ 'salary.min': 1, 'salary.max': 1 });
 
 JobPostingSchema.index({

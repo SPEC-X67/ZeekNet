@@ -31,6 +31,7 @@ import { DeleteCompanyWorkplacePictureUseCase } from '../../application/use-case
 import { GetCompanyWorkplacePictureUseCase } from '../../application/use-cases/company/get-company-workplace-picture.use-case';
 import { CreateJobPostingUseCase } from '../../application/use-cases/company/create-job-posting.use-case';
 import { GetJobPostingUseCase } from '../../application/use-cases/company/get-job-posting.use-case';
+import { GetCompanyJobPostingUseCase } from '../../application/use-cases/company/get-company-job-posting.use-case';
 import { GetCompanyJobPostingsUseCase } from '../../application/use-cases/company/get-company-job-postings.use-case';
 import { UpdateJobPostingUseCase } from '../../application/use-cases/company/update-job-posting.use-case';
 import { DeleteJobPostingUseCase } from '../../application/use-cases/company/delete-job-posting.use-case';
@@ -55,30 +56,26 @@ const createCompanyProfileUseCase = new CreateCompanyProfileUseCase(companyProfi
 
 const updateCompanyProfileUseCase = new UpdateCompanyProfileUseCase(companyProfileRepository);
 
-const getCompanyProfileUseCase = new GetCompanyProfileUseCase(companyProfileRepository, companyContactRepository, companyTechStackRepository, companyOfficeLocationRepository, companyBenefitsRepository, companyWorkplacePicturesRepository);
+const getCompanyProfileUseCase = new GetCompanyProfileUseCase(companyProfileRepository, companyContactRepository, companyTechStackRepository, companyOfficeLocationRepository, companyBenefitsRepository, companyWorkplacePicturesRepository, companyVerificationRepository);
 
 const reapplyCompanyVerificationUseCase = new ReapplyCompanyVerificationUseCase(companyProfileRepository, companyVerificationRepository);
 
 const companyContactUseCase = new CompanyContactUseCase(companyContactRepository);
-
 
 const createCompanyTechStackUseCase = new CreateCompanyTechStackUseCase(companyTechStackRepository);
 const updateCompanyTechStackUseCase = new UpdateCompanyTechStackUseCase(companyTechStackRepository);
 const deleteCompanyTechStackUseCase = new DeleteCompanyTechStackUseCase(companyTechStackRepository);
 const getCompanyTechStackUseCase = new GetCompanyTechStackUseCase(companyTechStackRepository);
 
-
 const createCompanyOfficeLocationUseCase = new CreateCompanyOfficeLocationUseCase(companyOfficeLocationRepository);
 const updateCompanyOfficeLocationUseCase = new UpdateCompanyOfficeLocationUseCase(companyOfficeLocationRepository);
 const deleteCompanyOfficeLocationUseCase = new DeleteCompanyOfficeLocationUseCase(companyOfficeLocationRepository);
 const getCompanyOfficeLocationUseCase = new GetCompanyOfficeLocationUseCase(companyOfficeLocationRepository);
 
-
 const createCompanyBenefitUseCase = new CreateCompanyBenefitUseCase(companyBenefitsRepository);
 const updateCompanyBenefitUseCase = new UpdateCompanyBenefitUseCase(companyBenefitsRepository);
 const deleteCompanyBenefitUseCase = new DeleteCompanyBenefitUseCase(companyBenefitsRepository);
 const getCompanyBenefitUseCase = new GetCompanyBenefitUseCase(companyBenefitsRepository);
-
 
 const createCompanyWorkplacePictureUseCase = new CreateCompanyWorkplacePictureUseCase(companyWorkplacePicturesRepository);
 const updateCompanyWorkplacePictureUseCase = new UpdateCompanyWorkplacePictureUseCase(companyWorkplacePicturesRepository);
@@ -88,6 +85,8 @@ const getCompanyWorkplacePictureUseCase = new GetCompanyWorkplacePictureUseCase(
 const createJobPostingUseCase = new CreateJobPostingUseCase(jobPostingRepository);
 
 const getJobPostingUseCase = new GetJobPostingUseCase(jobPostingRepository);
+
+const getCompanyJobPostingUseCase = new GetCompanyJobPostingUseCase(jobPostingRepository);
 
 const getCompanyJobPostingsUseCase = new GetCompanyJobPostingsUseCase(jobPostingRepository, companyProfileRepository);
 
@@ -129,6 +128,6 @@ const companyController = new CompanyController(
   getCompanyJobPostingsUseCase,
 );
 
-const companyJobPostingController = new CompanyJobPostingController(createJobPostingUseCase, getJobPostingUseCase, getCompanyJobPostingsUseCase, updateJobPostingUseCase, deleteJobPostingUseCase, incrementJobViewCountUseCase, updateJobStatusUseCase, companyProfileRepository);
+const companyJobPostingController = new CompanyJobPostingController(createJobPostingUseCase, getJobPostingUseCase, getCompanyJobPostingsUseCase, updateJobPostingUseCase, deleteJobPostingUseCase, incrementJobViewCountUseCase, updateJobStatusUseCase, companyProfileRepository, getCompanyJobPostingUseCase);
 
 export { companyController, companyJobPostingController, companyProfileRepository, companyProfileRepository as companyRepository, companyListingRepository, companyVerificationRepository };

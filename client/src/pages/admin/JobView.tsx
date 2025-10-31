@@ -164,6 +164,11 @@ const JobView = () => {
                 >
                   {job.is_active ? 'Active' : 'Inactive'}
                 </Badge>
+                {job.admin_blocked && (
+                  <Badge className="bg-red-500 text-white">
+                    Admin Blocked
+                  </Badge>
+                )}
                 <span className="text-sm text-gray-500">
                   Posted {formatDate(job.createdAt)}
                 </span>
@@ -351,6 +356,15 @@ const JobView = () => {
                   </div>
                   <span className="font-medium text-sm">{formatDate(job.updatedAt)}</span>
                 </div>
+                {job.admin_blocked && job.unpublish_reason && (
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <XCircle className="h-4 w-4 text-red-400" />
+                      <span className="text-sm">Block Reason</span>
+                    </div>
+                    <span className="font-medium text-sm text-red-600">{job.unpublish_reason}</span>
+                  </div>
+                )}
               </CardContent>
             </Card>
 
@@ -390,7 +404,7 @@ const JobView = () => {
                   )}
                   <div>
                     <h3 className="font-medium">{job.company_name || job.company?.companyName || 'Unknown Company'}</h3>
-                    {/* <p className="text-sm text-gray-500">Company ID: {job.company_id}</p> */}
+                    
                   </div>
                 </div>
               </CardContent>
@@ -416,10 +430,20 @@ const JobView = () => {
         title="Unpublish Job"
         description={job ? `Please select a reason for unpublishing '${job.title}'.` : ''}
         reasonOptions={unpublishReasons}
-        onConfirm={reason => {
-          toast.success(`Unpublished ${job?.title} for: ${reason}`);
+        onConfirm={async reason => {
+          try {
+            const response = await adminApi.updateJobStatus(job?.id || job?._id || '', false, reason);
+            
+            if (response.success) {
+              setJob({ ...job, is_active: false, unpublish_reason: reason } as JobPostingResponse);
+              toast.success(`Unpublished ${job?.title}`);
+            } else {
+              toast.error(response.message || 'Failed to unpublish job');
+            }
+          } catch {
+            toast.error('Failed to unpublish job');
+          }
           setReasonDialogOpen(false);
-          // (No real API call, just demo)
         }}
         actionLabel="Unpublish"
         confirmVariant="destructive"

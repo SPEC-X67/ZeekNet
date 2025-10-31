@@ -22,6 +22,7 @@ export const AdminGetAllJobsDto = z.object({
 
 export const AdminUpdateJobStatusDto = z.object({
   is_active: z.boolean(),
+  unpublish_reason: z.string().optional(),
 });
 
 export type AdminGetAllJobsDtoType = z.infer<typeof AdminGetAllJobsDto>;

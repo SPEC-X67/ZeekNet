@@ -7,9 +7,11 @@ export interface ISeekerProfileRepository {
     summary?: string;
     location?: string;
     phone?: string;
-    email: string;
-    avatarUrl?: string;
+    email?: string;
+    avatarFileName?: string | null;
+    bannerFileName?: string | null;
     skills?: string[];
+    languages?: string[];
     socialLinks?: SocialLink[];
   }): Promise<SeekerProfile>;
 
@@ -19,13 +21,12 @@ export interface ISeekerProfileRepository {
   deleteProfile(profileId: string): Promise<void>;
   existsByUserId(userId: string): Promise<boolean>;
 
-  // Skills management
-  updateSkills(userId: string, skills: string[]): Promise<string[]>;
+          updateSkills(userId: string, skills: string[]): Promise<string[]>;
 
-  // Social Links management
-  updateSocialLinks(userId: string, socialLinks: SocialLink[]): Promise<SocialLink[]>;
+          updateLanguages(userId: string, languages: string[]): Promise<string[]>;
 
-  // Resume management
+          updateSocialLinks(userId: string, socialLinks: SocialLink[]): Promise<SocialLink[]>;
+
   updateResume(userId: string, resume: ResumeMeta): Promise<ResumeMeta>;
   removeResume(userId: string): Promise<void>;
 }

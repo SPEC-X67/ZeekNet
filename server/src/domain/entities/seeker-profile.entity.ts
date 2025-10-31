@@ -40,9 +40,11 @@ export class SeekerProfile {
     public readonly summary: string | null,
     public readonly location: string | null,
     public readonly phone: string | null,
-    public readonly email: string,
-    public readonly avatarUrl: string | null,
+    public readonly email: string | null, 
+    public readonly avatarFileName: string | null, 
+    public readonly bannerFileName: string | null, 
     public readonly skills: string[],
+    public readonly languages: string[],
     public readonly socialLinks: SocialLink[],
     public readonly resume: ResumeMeta | null,
     public readonly createdAt: Date,
@@ -56,9 +58,11 @@ export class SeekerProfile {
     summary?: string;
     location?: string;
     phone?: string;
-    email: string;
-    avatarUrl?: string;
+    email?: string | null; 
+    avatarFileName?: string | null; 
+    bannerFileName?: string | null; 
     skills?: string[];
+    languages?: string[];
     socialLinks?: SocialLink[];
     resume?: ResumeMeta;
     createdAt?: Date;
@@ -72,9 +76,11 @@ export class SeekerProfile {
       data.summary ?? null,
       data.location ?? null,
       data.phone ?? null,
-      data.email,
-      data.avatarUrl ?? null,
+      data.email ?? null,
+      data.avatarFileName ?? null,
+      data.bannerFileName ?? null,
       data.skills ?? [],
+      data.languages ?? [],
       data.socialLinks ?? [],
       data.resume ?? null,
       data.createdAt ?? now,
@@ -91,8 +97,10 @@ export class SeekerProfile {
       location: this.location,
       phone: this.phone,
       email: this.email,
-      avatarUrl: this.avatarUrl,
+      avatarFileName: this.avatarFileName,
+      bannerFileName: this.bannerFileName,
       skills: this.skills,
+      languages: this.languages,
       socialLinks: this.socialLinks,
       resume: this.resume,
       createdAt: this.createdAt.toISOString(),
@@ -108,9 +116,11 @@ export class SeekerProfile {
       (data.summary as string) ?? null,
       (data.location as string) ?? null,
       (data.phone as string) ?? null,
-      data.email as string,
-      (data.avatarUrl as string) ?? null,
+      (data.email as string) || null,
+      (data.avatarFileName as string) ?? null,
+      (data.bannerFileName as string) ?? null,
       (data.skills as string[]) ?? [],
+      (data.languages as string[]) ?? [],
       (data.socialLinks as SocialLink[]) ?? [],
       (data.resume as ResumeMeta) ?? null,
       new Date(data.createdAt as string),

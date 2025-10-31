@@ -23,6 +23,7 @@ import {
 import { adminApi, type Company, type GetAllCompaniesParams } from '@/api/admin.api'
 import { toast } from 'sonner'
 import ReasonActionDialog from '@/components/common/ReasonActionDialog'
+import { useDebounce } from '@/hooks/useDebounce'
 
 const CompanyManagement = () => {
   const [companies, setCompanies] = useState<Company[]>([])
@@ -34,7 +35,8 @@ const CompanyManagement = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const [totalCompanies, setTotalCompanies] = useState(0)
-  const [searchTerm, setSearchTerm] = useState('')
+  const [searchInput, setSearchInput] = useState('')
+  const debouncedSearchTerm = useDebounce(searchInput, 500)
   const [organizationFilter, setOrganizationFilter] = useState('')
   const [industryFilter, setIndustryFilter] = useState('')
   const [verificationFilter, setVerificationFilter] = useState('')
@@ -50,7 +52,7 @@ const CompanyManagement = () => {
       const params: GetAllCompaniesParams = {
         page: currentPage,
         limit: itemsPerPage,
-        search: searchTerm || undefined,
+        search: debouncedSearchTerm || undefined,
         industry: industryFilter || undefined,
         isVerified: verificationFilter as 'pending' | 'rejected' | 'verified' || undefined,
         isBlocked: blockedFilter === 'blocked' ? true : blockedFilter === 'active' ? false : undefined,
@@ -70,7 +72,11 @@ const CompanyManagement = () => {
     } finally {
       setLoading(false)
     }
-  }, [currentPage, searchTerm, industryFilter, verificationFilter, blockedFilter])
+  }, [currentPage, debouncedSearchTerm, industryFilter, verificationFilter, blockedFilter])
+
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [debouncedSearchTerm])
 
   useEffect(() => {
     fetchCompanies()
@@ -81,11 +87,6 @@ const CompanyManagement = () => {
   
   const handlePageChange = (page: number) => {
     setCurrentPage(page)
-  }
-
-  const handleBlockClick = (company: Company) => {
-    setSelectedCompany(company)
-    setBlockDialogOpen(true)
   }
 
 
@@ -131,7 +132,7 @@ const CompanyManagement = () => {
   }
 
   const handleSearch = (value: string) => {
-    setSearchTerm(value)
+    setSearchInput(value)
     setCurrentPage(1)
   }
 
@@ -166,17 +167,34 @@ const CompanyManagement = () => {
   ];
   const [reasonDialogOpen, setReasonDialogOpen] = useState(false);
   const [reasonCompany, setReasonCompany] = useState<Company|null>(null);
-  const [blockedCompanyIds, setBlockedCompanyIds] = useState<string[]>([]);
   const handleBlockAction = (company: Company) => {
     setReasonCompany(company)
     setReasonDialogOpen(true)
   };
-  function handleBlockReasonConfirm(reason: string) {
-    if (reasonCompany) {
-      setBlockedCompanyIds(ids => [...ids, reasonCompany.id])
-      toast.success(`Blocked ${reasonCompany.companyName} for: ${reason}`)
+  const handleBlockReasonConfirm = async (reason: string) => {
+    if (!reasonCompany) return;
+    
+    try {
+      const newBlockedStatus = !reasonCompany.isBlocked;
+      
+      await adminApi.blockCompany({
+        companyId: reasonCompany.id,
+        isBlocked: newBlockedStatus
+      });
+      
+      setCompanies(prevCompanies => 
+        prevCompanies.map(company => 
+          company.id === reasonCompany.id 
+            ? { ...company, isBlocked: newBlockedStatus }
+            : company
+        )
+      );
+      
+      toast.success(`${reasonCompany.companyName} ${newBlockedStatus ? 'blocked' : 'unblocked'} successfully${!newBlockedStatus ? '' : `. Reason: ${reason}`}`);
       setReasonDialogOpen(false);
       setReasonCompany(null);
+    } catch (error) {
+      toast.error(`Failed to ${reasonCompany.isBlocked ? 'unblock' : 'block'} ${reasonCompany.companyName}`);
     }
   }
 
@@ -185,10 +203,6 @@ const CompanyManagement = () => {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold text-foreground">Company List</h1>
-          <Button className="flex items-center space-x-2">
-            <Plus className="h-4 w-4" />
-            <span>Create</span>
-          </Button>
         </div>
 
         <div className="flex flex-col sm:flex-row gap-4">
@@ -197,7 +211,7 @@ const CompanyManagement = () => {
             <Input
               placeholder="Search companies..."
               className="pl-10"
-              value={searchTerm}
+              value={searchInput}
               onChange={(e) => handleSearch(e.target.value)}
             />
           </div>
@@ -481,11 +495,15 @@ const CompanyManagement = () => {
         <ReasonActionDialog
           open={reasonDialogOpen}
           onOpenChange={setReasonDialogOpen}
-          title="Block Company"
-          description={`Please select a reason for blocking${reasonCompany ? ` ${reasonCompany.companyName}` : ''}.`}
+          title={reasonCompany?.isBlocked ? 'Unblock Company' : 'Block Company'}
+          description={reasonCompany 
+            ? reasonCompany.isBlocked 
+              ? `Are you sure you want to unblock ${reasonCompany.companyName}?` 
+              : `Please select a reason for blocking ${reasonCompany.companyName}.`
+            : ''}
           reasonOptions={blockReasons}
           onConfirm={handleBlockReasonConfirm}
-          actionLabel="Block"
+          actionLabel={reasonCompany?.isBlocked ? 'Unblock' : 'Block'}
           confirmVariant="destructive"
         />
       </div>

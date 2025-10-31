@@ -29,7 +29,6 @@ export class CompanyWorkplacePictures {
     );
   }
 
-
   toJSON() {
     return {
       id: this.id,

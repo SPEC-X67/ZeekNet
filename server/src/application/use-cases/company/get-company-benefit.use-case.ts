@@ -13,4 +13,3 @@ export class GetCompanyBenefitUseCase implements IGetCompanyBenefitUseCase {
     return this._companyBenefitsRepository.findById(benefitId);
   }
 }
-

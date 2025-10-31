@@ -26,8 +26,19 @@ export class CompanyVerificationRepository extends RepositoryBase<CompanyVerific
     return await this.findOne({ companyId });
   }
 
-  async updateVerificationStatus(companyId: string, isVerified: 'pending' | 'rejected' | 'verified'): Promise<void> {
-    await CompanyProfileModel.findByIdAndUpdate(companyId, { isVerified, updatedAt: new Date() }).exec();
+  async updateVerificationStatus(companyId: string, isVerified: 'pending' | 'rejected' | 'verified', rejectionReason?: string): Promise<void> {
+    const updateData: { isVerified: 'pending' | 'rejected' | 'verified'; rejectionReason?: string; updatedAt: Date } = {
+      isVerified,
+      updatedAt: new Date(),
+    };
+    
+    if (isVerified === 'rejected' && rejectionReason) {
+      updateData.rejectionReason = rejectionReason;
+    } else if (isVerified !== 'rejected') {
+      updateData.rejectionReason = undefined;
+    }
+    
+    await CompanyProfileModel.findByIdAndUpdate(companyId, updateData).exec();
   }
 
   async updateVerification(companyId: string, updates: Partial<CompanyVerification>): Promise<CompanyVerification> {

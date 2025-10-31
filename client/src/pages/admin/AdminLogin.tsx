@@ -59,6 +59,13 @@ const AdminLogin = () => {
 
     if (adminLoginThunk.fulfilled.match(resultAction)) {
       const res = resultAction.payload
+      if (res?.data && res.data.isBlocked) {
+        toast.error('Account Blocked', { 
+          description: 'Your account has been blocked. Please contact support for assistance.',
+          duration: 5000,
+        })
+        return
+      }
       if (res?.data && !res.data.isVerified) {
         toast.info('Verification Required', { 
           description: 'Please verify your email to continue. A verification code has been sent to your email.',
@@ -88,7 +95,7 @@ const AdminLogin = () => {
           <nav className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-                {/* <Briefcase className="h-5 w-5 text-primary-foreground" /> */}
+                
                 <img src="/white.png" alt="ZeekNet Logo" className="h-6 w-6" />
               </div>
               <h1 className="text-xl font-bold text-foreground">ZeekNet</h1>
@@ -117,9 +124,7 @@ const AdminLogin = () => {
           <Card className="shadow-xl">
             <CardHeader className="space-y-1">
               <div className="flex items-center justify-center mb-4">
-                {/* <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                  <Shield className="h-6 w-6 text-primary" />
-                </div> */}
+                
               </div>
               <CardTitle className="text-2xl !font-bold text-center">Admin Login</CardTitle>
               <CardDescription className="text-center">

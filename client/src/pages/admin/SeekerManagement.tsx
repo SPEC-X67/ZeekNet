@@ -23,6 +23,7 @@ import {
 import { adminApi, type User, type GetAllUsersParams } from '@/api/admin.api'
 import { toast } from 'sonner'
 import ReasonActionDialog from '@/components/common/ReasonActionDialog'
+import { useDebounce } from '@/hooks/useDebounce'
 
 interface UserWithDisplayData extends User {
   name: string
@@ -56,6 +57,8 @@ const UserManagement = () => {
     hasNext: false,
     hasPrev: false
   })
+  const [searchInput, setSearchInput] = useState('')
+  const debouncedSearchTerm = useDebounce(searchInput, 500)
   const [filters, setFilters] = useState<GetAllUsersParams>({
     page: 1,
     limit: 10,
@@ -106,11 +109,14 @@ const UserManagement = () => {
   }
 
   useEffect(() => {
+    setFilters(prev => ({ ...prev, search: debouncedSearchTerm, page: 1 }))
+  }, [debouncedSearchTerm])
+
+  useEffect(() => {
     fetchUsers(filters)
   }, [filters])
 
   const filteredUsers = users
-
 
   const handleEmailClick = (user: User) => {
     setSelectedUser(user)
@@ -124,12 +130,7 @@ const UserManagement = () => {
   }
 
   const handleSearch = (searchTerm: string) => {
-    setFilters(prev => ({
-      ...prev,
-      search: searchTerm,
-      page: 1,
-      role: 'seeker' 
-    }))
+    setSearchInput(searchTerm)
   }
 
   const handleFilterChange = (key: keyof GetAllUsersParams, value: unknown) => {
@@ -171,7 +172,7 @@ const UserManagement = () => {
             <Input
               placeholder="Search by email"
               className="pl-10"
-              value={filters.search || ''}
+              value={searchInput}
               onChange={(e) => handleSearch(e.target.value)}
             />
           </div>
@@ -352,15 +353,37 @@ const UserManagement = () => {
         <ReasonActionDialog
           open={reasonDialogOpen}
           onOpenChange={setReasonDialogOpen}
-          title="Block Job Seeker"
-          description={reasonUser ? `Please select a reason for blocking ${reasonUser.name}.` : ''}
+          title={reasonUser?.isBlocked ? 'Unblock Job Seeker' : 'Block Job Seeker'}
+          description={reasonUser 
+            ? reasonUser.isBlocked 
+              ? `Are you sure you want to unblock ${reasonUser.name}?` 
+              : `Please select a reason for blocking ${reasonUser.name}.`
+            : ''}
           reasonOptions={seekerBlockReasons}
-          onConfirm={reason => {
-            toast.success(`Blocked ${reasonUser?.name} for: ${reason}`);
-            setReasonDialogOpen(false);
-            setReasonUser(null);
+          onConfirm={async (reason) => {
+            if (!reasonUser) return;
+            
+            try {
+              const newBlockedStatus = !reasonUser.isBlocked;
+              
+              await adminApi.blockUser(reasonUser.id, newBlockedStatus);
+              
+              setUsers(prevUsers => 
+                prevUsers.map(user => 
+                  user.id === reasonUser.id 
+                    ? { ...user, isBlocked: newBlockedStatus, accountStatus: newBlockedStatus ? 'Blocked' : 'Active' }
+                    : user
+                )
+              );
+              
+              toast.success(`${reasonUser.name} ${newBlockedStatus ? 'blocked' : 'unblocked'} successfully${!newBlockedStatus ? '' : `. Reason: ${reason}`}`);
+              setReasonDialogOpen(false);
+              setReasonUser(null);
+            } catch (error) {
+              toast.error(`Failed to ${reasonUser.isBlocked ? 'unblock' : 'block'} ${reasonUser.name}`);
+            }
           }}
-          actionLabel="Block"
+          actionLabel={reasonUser?.isBlocked ? 'Unblock' : 'Block'}
           confirmVariant="destructive"
         />
       </div>

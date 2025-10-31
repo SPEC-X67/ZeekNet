@@ -13,4 +13,3 @@ export class GetCompanyWorkplacePictureUseCase implements IGetCompanyWorkplacePi
     return this._companyWorkplacePicturesRepository.findById(pictureId);
   }
 }
-

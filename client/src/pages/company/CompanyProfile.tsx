@@ -30,7 +30,6 @@ import EditOfficeLocationDialog from '@/components/company/dialogs/EditOfficeLoc
 import EditAboutDialog from '@/components/company/dialogs/EditAboutDialog'
 import EditWorkplacePicturesDialog from '@/components/company/dialogs/EditWorkplacePicturesDialog'
 
-
 interface CompanyContact {
   id?: string;
   email: string;

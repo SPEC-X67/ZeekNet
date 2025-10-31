@@ -19,4 +19,3 @@ export class UpdateCompanyOfficeLocationUseCase implements IUpdateCompanyOfficeL
     return updatedLocation;
   }
 }
-

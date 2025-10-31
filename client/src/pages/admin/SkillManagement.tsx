@@ -10,13 +10,12 @@ import {
   Edit,
   Trash2,
   ChevronLeft,
-  ChevronRight,
-  ImageIcon
+  ChevronRight
 } from 'lucide-react'
 import type { Skill } from '@/api/admin.api'
+import { adminApi } from '@/api/admin.api'
 import { toast } from 'sonner'
 import { ConfirmationDialog } from '@/components/ui/confirmation-dialog'
-import ImageUpload from '@/components/common/ImageUpload'
 
 const SkillManagement = () => {
   const [skills, setSkills] = useState<Skill[]>([])
@@ -27,7 +26,6 @@ const SkillManagement = () => {
   const [createDialogOpen, setCreateDialogOpen] = useState(false)
   const [selectedSkill, setSelectedSkill] = useState<Skill | null>(null)
   const [skillName, setSkillName] = useState('')
-  const [skillImage, setSkillImage] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const [totalSkills, setTotalSkills] = useState(0)
@@ -39,35 +37,30 @@ const SkillManagement = () => {
       setLoading(true)
       setError(null)
       
-      // Mock response for now - replace with actual API call later
-      // const params = { page: currentPage, limit: itemsPerPage, search: searchTerm || undefined }
-       const mockData = {
-         success: true,
-         data: {
-           skills: [
-             { id: '1', name: 'Python', icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJMMTMuMDkgOC4yNkwyMCA5TDEzLjA5IDE1Ljc0TDEyIDIyTDEwLjkxIDE1Ljc0TDQgOUwxMC45MSA4LjI2TDEyIDJaIiBmaWxsPSIjRkY2QjIwIi8+Cjwvc3ZnPgo=', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
-             { id: '2', name: 'ReactJS', icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJMMTMuMDkgOC4yNkwyMCA5TDEzLjA5IDE1Ljc0TDEyIDIyTDEwLjkxIDE1Ljc0TDQgOUwxMC45MSA4LjI2TDEyIDJaIiBmaWxsPSIjNjFkYWY0Ii8+Cjwvc3ZnPgo=', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
-             { id: '3', name: 'Data Analysis', icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJMMTMuMDkgOC4yNkwyMCA5TDEzLjA5IDE1Ljc0TDEyIDIyTDEwLjkxIDE1Ljc0TDQgOUwxMC45MSA4LjI2TDEyIDJaIiBmaWxsPSIjRkY0NDQ0Ii8+Cjwvc3ZnPgo=', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
-           ],
-           total: 3,
-           page: 1,
-           limit: 10,
-           totalPages: 1,
-         }
-       }
-
-      // Uncomment when backend is ready:
-      // const response = await adminApi.getAllSkills(params)
-      
-      if (mockData.success && mockData.data) {
-        setSkills(mockData.data.skills)
-        setTotalPages(mockData.data.totalPages)
-        setTotalSkills(mockData.data.total)
-      } else {
-        setError('Failed to fetch skills')
+      const params = { 
+        page: currentPage, 
+        limit: itemsPerPage, 
+        search: searchTerm || undefined 
       }
-    } catch {
-      setError('Failed to fetch skills')
+      const response = await adminApi.getAllSkills(params)
+      
+      if (response.success && response.data) {
+        
+        const mappedSkills = response.data.skills.map(skill => ({
+          id: skill._id || skill.id,
+          _id: skill._id || skill.id,
+          name: skill.name,
+          createdAt: skill.createdAt,
+          updatedAt: skill.updatedAt,
+        }))
+        setSkills(mappedSkills)
+        setTotalPages(response.data.totalPages)
+        setTotalSkills(response.data.total)
+      } else {
+        setError(response.message || 'Failed to fetch skills')
+      }
+    } catch (err: any) {
+      setError(err.message || 'Failed to fetch skills')
     } finally {
       setLoading(false)
     }
@@ -79,7 +72,6 @@ const SkillManagement = () => {
 
   const handleCreate = () => {
     setSkillName('')
-    setSkillImage('')
     setSelectedSkill(null)
     setCreateDialogOpen(true)
   }
@@ -87,7 +79,6 @@ const SkillManagement = () => {
   const handleEdit = (skill: Skill) => {
     setSelectedSkill(skill)
     setSkillName(skill.name)
-    setSkillImage(skill.icon || '')
     setEditDialogOpen(true)
   }
 
@@ -103,16 +94,27 @@ const SkillManagement = () => {
     }
 
     try {
-      // Mock implementation - replace with actual API call later
-      // const response = await adminApi.createSkill({ name: skillName.trim(), icon: skillImage || undefined })
+      const response = await adminApi.createSkill({ name: skillName.trim() })
       
-      toast.success('Skill created successfully')
-      setCreateDialogOpen(false)
-      setSkillName('')
-      setSkillImage('')
-      fetchSkills()
-    } catch {
-      toast.error('Failed to create skill')
+      if (response.success && response.data) {
+        
+        const newSkill = {
+          id: response.data.id || response.data._id,
+          _id: response.data._id || response.data.id,
+          name: response.data.name,
+          createdAt: response.data.createdAt,
+          updatedAt: response.data.updatedAt,
+        }
+        setSkills(prev => [newSkill, ...prev])
+        setTotalSkills(prev => prev + 1)
+        toast.success('Skill created successfully')
+        setCreateDialogOpen(false)
+        setSkillName('')
+      } else {
+        toast.error(response.message || 'Failed to create skill')
+      }
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to create skill')
     }
   }
 
@@ -123,17 +125,24 @@ const SkillManagement = () => {
     }
 
     try {
-      // Mock implementation - replace with actual API call later
-      // const response = await adminApi.updateSkill(selectedSkill.id, { name: skillName.trim(), icon: skillImage || undefined })
+      const response = await adminApi.updateSkill(selectedSkill.id, { name: skillName.trim() })
       
-      toast.success('Skill updated successfully')
-      setEditDialogOpen(false)
-      setSkillName('')
-      setSkillImage('')
-      setSelectedSkill(null)
-      fetchSkills()
-    } catch {
-      toast.error('Failed to update skill')
+      if (response.success && response.data) {
+        
+        setSkills(prev => prev.map(skill => 
+          skill.id === selectedSkill.id 
+            ? { ...skill, name: response.data!.name, updatedAt: response.data!.updatedAt }
+            : skill
+        ))
+        toast.success('Skill updated successfully')
+        setEditDialogOpen(false)
+        setSkillName('')
+        setSelectedSkill(null)
+      } else {
+        toast.error(response.message || 'Failed to update skill')
+      }
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to update skill')
     }
   }
 
@@ -141,15 +150,20 @@ const SkillManagement = () => {
     if (!selectedSkill) return
 
     try {
-      // Mock implementation - replace with actual API call later
-      // const response = await adminApi.deleteSkill(selectedSkill.id)
+      const response = await adminApi.deleteSkill(selectedSkill.id)
       
-      toast.success('Skill deleted successfully')
-      setDeleteDialogOpen(false)
-      setSelectedSkill(null)
-      fetchSkills()
-    } catch {
-      toast.error('Failed to delete skill')
+      if (response.success) {
+        
+        setSkills(prev => prev.filter(skill => skill.id !== selectedSkill.id))
+        setTotalSkills(prev => Math.max(0, prev - 1))
+        toast.success('Skill deleted successfully')
+        setDeleteDialogOpen(false)
+        setSelectedSkill(null)
+      } else {
+        toast.error(response.message || 'Failed to delete skill')
+      }
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to delete skill')
     }
   }
 
@@ -217,7 +231,6 @@ const SkillManagement = () => {
                 <table className="w-full">
                   <thead>
                     <tr className="border-b border-border/50">
-                      <th className="text-left p-4 font-medium text-muted-foreground">Icon</th>
                       <th className="text-left p-4 font-medium text-muted-foreground">Name</th>
                       <th className="text-left p-4 font-medium text-muted-foreground">Created</th>
                       <th className="text-left p-4 font-medium text-muted-foreground">Actions</th>
@@ -226,24 +239,13 @@ const SkillManagement = () => {
                   <tbody>
                     {skills.length === 0 ? (
                       <tr>
-                        <td colSpan={4} className="p-8 text-center text-gray-500">
+                        <td colSpan={3} className="p-8 text-center text-gray-500">
                           No skills found
                         </td>
                       </tr>
                     ) : (
                       skills.map((skill) => (
                          <tr key={skill.id} className="border-b border-border/50 hover:bg-gray-50 transition-colors">
-                           <td className="p-4">
-                             {skill.icon ? (
-                               <img 
-                                 src={skill.icon} 
-                                 alt={skill.name}
-                                 className="h-8 w-8 rounded object-cover"
-                               />
-                             ) : (
-                               <ImageIcon className="h-6 w-6 text-gray-400" />
-                             )}
-                           </td>
                           <td className="p-4">
                             <p className="font-medium text-gray-800">{skill.name}</p>
                           </td>
@@ -329,13 +331,12 @@ const SkillManagement = () => {
           </div>
         )}
 
-        {/* Create Dialog */}
         <FormDialog
           isOpen={createDialogOpen}
           onClose={() => setCreateDialogOpen(false)}
           onConfirm={handleCreateConfirm}
           title="Create Skill"
-          description="Add a new skill to the system. You can optionally upload an image."
+          description="Add a new skill to the system."
           confirmText="Create"
         >
           <div>
@@ -347,20 +348,14 @@ const SkillManagement = () => {
               className="mt-1"
             />
           </div>
-          <ImageUpload
-            value={skillImage}
-            onChange={setSkillImage}
-            placeholder="Upload skill image"
-          />
         </FormDialog>
 
-        {/* Edit Dialog */}
         <FormDialog
           isOpen={editDialogOpen}
           onClose={() => setEditDialogOpen(false)}
           onConfirm={handleEditConfirm}
           title="Edit Skill"
-          description="Update the skill name and image."
+          description="Update the skill name."
           confirmText="Update"
         >
           <div>
@@ -372,14 +367,8 @@ const SkillManagement = () => {
               className="mt-1"
             />
           </div>
-          <ImageUpload
-            value={skillImage}
-            onChange={setSkillImage}
-            placeholder="Upload skill image"
-          />
         </FormDialog>
 
-        {/* Delete Confirmation Dialog */}
         <ConfirmationDialog
           isOpen={deleteDialogOpen}
           onClose={() => setDeleteDialogOpen(false)}

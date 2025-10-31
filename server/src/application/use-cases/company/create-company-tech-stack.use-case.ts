@@ -11,4 +11,3 @@ export class CreateCompanyTechStackUseCase implements ICreateCompanyTechStackUse
     return this._companyTechStackRepository.create(techStack);
   }
 }
-

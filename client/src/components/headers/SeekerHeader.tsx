@@ -1,6 +1,6 @@
 import { Bell } from 'lucide-react';
 import { Button } from '../ui/button';
-
+import { useNavigate } from 'react-router-dom';
 interface SeekerHeaderProps {
   currentPage: string;
 }
@@ -13,6 +13,7 @@ const pageTitles: Record<string, string> = {
 };
 
 export function SeekerHeader({ currentPage }: SeekerHeaderProps) {
+  const navigate = useNavigate()
   return (
     <div className="bg-white/80 backdrop-blur-sm h-[76px] border-b border-[#e5e7eb] flex items-center justify-between px-8 xl:px-11 py-4 shadow-sm">
       <div className="flex items-center gap-4">
@@ -27,6 +28,7 @@ export function SeekerHeader({ currentPage }: SeekerHeaderProps) {
         <Button
           variant="seekerOutline"
           style={{ fontWeight: '700' }}
+          onClick={() => navigate('/')}
         >
           Back to homepage
         </Button>

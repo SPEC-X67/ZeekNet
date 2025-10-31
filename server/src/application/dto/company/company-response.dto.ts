@@ -10,6 +10,9 @@ export interface CompanyProfileResponseDto {
   about_us: string;
   is_verified: 'pending' | 'rejected' | 'verified';
   is_blocked: boolean;
+  rejection_reason?: string;
+  tax_id?: string;
+  business_license?: string;
   created_at: Date;
   updated_at: Date;
 }

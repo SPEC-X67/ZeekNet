@@ -33,7 +33,7 @@ const SeekerExperienceSchema = new Schema<SeekerExperienceDocument>(
     technologies: [{ type: String }],
     isCurrent: { type: Boolean, default: false },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 SeekerExperienceSchema.index({ seekerProfileId: 1, createdAt: -1 });

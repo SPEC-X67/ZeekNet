@@ -19,4 +19,3 @@ export class UpdateCompanyBenefitUseCase implements IUpdateCompanyBenefitUseCase
     return updatedBenefit;
   }
 }
-

@@ -12,7 +12,7 @@ export class GetEducationUseCase implements IGetEducationUseCase {
   ) {}
 
   async execute(userId: string): Promise<EducationResponseDto[]> {
-    // Verify profile exists
+    
     const profile = await this._seekerProfileRepository.getProfileByUserId(userId);
     if (!profile) {
       throw new NotFoundError('Seeker profile not found');

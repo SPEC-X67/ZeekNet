@@ -2,6 +2,7 @@ import { JobPostingRepository } from '../database/mongodb/repositories/job-posti
 import { SeekerProfileRepository } from '../database/mongodb/repositories/seeker-profile.repository';
 import { SeekerExperienceRepository } from '../database/mongodb/repositories/seeker-experience.repository';
 import { SeekerEducationRepository } from '../database/mongodb/repositories/seeker-education.repository';
+import { UserRepository } from '../database/mongodb/repositories/user.repository';
 import { GetAllJobPostingsUseCase } from '../../application/use-cases/public/get-all-job-postings.use-case';
 import { GetJobPostingUseCase } from '../../application/use-cases/company/get-job-posting.use-case';
 import { IncrementJobViewCountUseCase } from '../../application/use-cases/company/increment-job-view-count.use-case';
@@ -19,23 +20,25 @@ import { GetEducationUseCase } from '../../application/use-cases/seeker/get-educ
 import { UpdateEducationUseCase } from '../../application/use-cases/seeker/update-education.use-case';
 import { RemoveEducationUseCase } from '../../application/use-cases/seeker/remove-education.use-case';
 import { UpdateSkillsUseCase } from '../../application/use-cases/seeker/update-skills.use-case';
+import { UpdateLanguagesUseCase } from '../../application/use-cases/seeker/update-languages.use-case';
 import { UploadResumeUseCase } from '../../application/use-cases/seeker/upload-resume.use-case';
 import { RemoveResumeUseCase } from '../../application/use-cases/seeker/remove-resume.use-case';
+import { S3Service } from '../external-services/s3/s3.service';
 
 const jobPostingRepository = new JobPostingRepository();
 const seekerProfileRepository = new SeekerProfileRepository();
 const seekerExperienceRepository = new SeekerExperienceRepository();
 const seekerEducationRepository = new SeekerEducationRepository();
+const userRepository = new UserRepository(); 
+const s3Service = new S3Service();
 
-// Job posting use cases
 const getAllJobPostingsUseCase = new GetAllJobPostingsUseCase(jobPostingRepository);
 const getJobPostingUseCase = new GetJobPostingUseCase(jobPostingRepository);
 const incrementJobViewCountUseCase = new IncrementJobViewCountUseCase(jobPostingRepository);
 
-// Seeker profile use cases
-const createSeekerProfileUseCase = new CreateSeekerProfileUseCase(seekerProfileRepository);
-const getSeekerProfileUseCase = new GetSeekerProfileUseCase(seekerProfileRepository);
-const updateSeekerProfileUseCase = new UpdateSeekerProfileUseCase(seekerProfileRepository);
+const createSeekerProfileUseCase = new CreateSeekerProfileUseCase(seekerProfileRepository, s3Service);
+const getSeekerProfileUseCase = new GetSeekerProfileUseCase(seekerProfileRepository, seekerExperienceRepository, seekerEducationRepository, userRepository, s3Service);
+const updateSeekerProfileUseCase = new UpdateSeekerProfileUseCase(seekerProfileRepository, s3Service);
 const addExperienceUseCase = new AddExperienceUseCase(seekerProfileRepository, seekerExperienceRepository);
 const getExperiencesUseCase = new GetExperiencesUseCase(seekerProfileRepository, seekerExperienceRepository);
 const updateExperienceUseCase = new UpdateExperienceUseCase(seekerProfileRepository, seekerExperienceRepository);
@@ -45,6 +48,7 @@ const getEducationUseCase = new GetEducationUseCase(seekerProfileRepository, see
 const updateEducationUseCase = new UpdateEducationUseCase(seekerProfileRepository, seekerEducationRepository);
 const removeEducationUseCase = new RemoveEducationUseCase(seekerProfileRepository, seekerEducationRepository);
 const updateSkillsUseCase = new UpdateSkillsUseCase(seekerProfileRepository);
+const updateLanguagesUseCase = new UpdateLanguagesUseCase(seekerProfileRepository);
 const uploadResumeUseCase = new UploadResumeUseCase(seekerProfileRepository);
 const removeResumeUseCase = new RemoveResumeUseCase(seekerProfileRepository);
 
@@ -61,15 +65,18 @@ const seekerProfileController = new SeekerProfileController(
   updateEducationUseCase,
   removeEducationUseCase,
   updateSkillsUseCase,
+  updateLanguagesUseCase,
   uploadResumeUseCase,
   removeResumeUseCase,
+  s3Service,
+  userRepository,
 );
 
 const seekerController = new SeekerController(
   getJobPostingUseCase,
   getAllJobPostingsUseCase,
   incrementJobViewCountUseCase,
-  seekerProfileController
+  seekerProfileController,
 );
 
 export { seekerController, seekerProfileRepository };

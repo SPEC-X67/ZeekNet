@@ -1,4 +1,5 @@
-import { S3Client, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
+import { S3Client, PutObjectCommand, DeleteObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { env } from '../../config/env';
 import { IS3Service } from '../../../domain/interfaces/services/IS3Service';
 
@@ -34,6 +35,29 @@ export class S3Service implements IS3Service {
     return `https://s3.${region}.amazonaws.com/${this._bucketName}/${key}`;
   }
 
+  async uploadImageToFolder(file: Buffer, fileName: string, contentType: string, folder: string): Promise<string> {
+    
+    const sanitizedFileName = fileName.replace(/[^a-zA-Z0-9._-]/g, '_');
+    const key = `${folder}/${Date.now()}-${sanitizedFileName}`;
+
+    const command = new PutObjectCommand({
+      Bucket: this._bucketName,
+      Key: key,
+      Body: file,
+      ContentType: contentType,
+      ACL: 'public-read',
+    });
+
+    await this._s3Client.send(command);
+    
+    return key;
+  }
+
+  getImageUrl(key: string): string {
+    const region = env.AWS_REGION!;
+    return `https://s3.${region}.amazonaws.com/${this._bucketName}/${key}`;
+  }
+
   async deleteImage(imageUrl: string): Promise<void> {
     let key: string;
 
@@ -47,11 +71,41 @@ export class S3Service implements IS3Service {
       throw new Error('Invalid S3 URL format');
     }
 
+    await this.deleteImageByKey(key);
+  }
+
+  async deleteImageByKey(key: string): Promise<void> {
     const command = new DeleteObjectCommand({
       Bucket: this._bucketName,
       Key: key,
     });
 
     await this._s3Client.send(command);
+  }
+
+  async getSignedUrl(key: string, expiresIn: number = 3600): Promise<string> {
+    const command = new GetObjectCommand({
+      Bucket: this._bucketName,
+      Key: key,
+    });
+
+    return await getSignedUrl(this._s3Client, command, { expiresIn });
+  }
+
+  extractKeyFromUrl(imageUrl: string): string {
+    if (imageUrl.includes(`/${this._bucketName}/`)) {
+      const urlParts = imageUrl.split(`/${this._bucketName}/`);
+      return urlParts[1];
+    } else if (imageUrl.includes(`${this._bucketName}.s3`)) {
+      const urlParts = imageUrl.split('/');
+      return urlParts.slice(3).join('/');
+    } else {
+
+      const urlMatch = imageUrl.match(/\/[^\/]+\/(.+)$/);
+      if (urlMatch && urlMatch[1]) {
+        return urlMatch[1];
+      }
+      throw new Error('Invalid S3 URL format');
+    }
   }
 }

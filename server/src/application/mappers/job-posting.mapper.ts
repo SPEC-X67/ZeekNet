@@ -36,6 +36,8 @@ export class JobPostingMapper {
       skills_required: domain.skills_required,
       category_ids: domain.category_ids,
       is_active: domain.is_active,
+      admin_blocked: domain.admin_blocked,
+      unpublish_reason: domain.unpublish_reason,
       view_count: domain.view_count,
       application_count: domain.application_count,
       createdAt: domain.createdAt,

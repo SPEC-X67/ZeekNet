@@ -112,7 +112,6 @@ const PostJob = () => {
         return;
       }
 
-     
       const jobPostingData: JobPostingRequest = {
         title: jobData.title,
         description: jobData.description,

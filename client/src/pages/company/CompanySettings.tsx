@@ -135,7 +135,6 @@ const CompanySettings = () => {
         logo: logo
       }
 
-
       const response = await companyApi.updateProfile(updateData)
       
       if (response.success) {
@@ -481,7 +480,6 @@ const CompanySettings = () => {
     </div>
   )
 
-
   if (loading) {
     return (
       <CompanyLayout>
@@ -545,4 +543,3 @@ const CompanySettings = () => {
 }
 
 export default CompanySettings
-

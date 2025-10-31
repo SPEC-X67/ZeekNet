@@ -11,13 +11,12 @@ export class UploadResumeUseCase implements IUploadResumeUseCase {
   ) {}
 
   async execute(userId: string, resume: ResumeMeta): Promise<ResumeMetaResponseDto> {
-    // Verify profile exists
+    
     const profile = await this._seekerProfileRepository.getProfileByUserId(userId);
     if (!profile) {
       throw new NotFoundError('Seeker profile not found');
     }
 
-    // Validate file type (should be PDF, DOC, or DOCX)
     const allowedExtensions = ['.pdf', '.doc', '.docx'];
     const fileExtension = resume.fileName.toLowerCase().substring(resume.fileName.lastIndexOf('.'));
     if (!allowedExtensions.includes(fileExtension)) {

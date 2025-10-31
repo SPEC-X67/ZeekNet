@@ -7,11 +7,9 @@ implements IBaseRepository<T>
 {
   constructor(protected model: Model<TDocument>) {}
 
-  
   protected convertToObjectIds(data: Record<string, unknown>): Record<string, unknown> {
     const converted = { ...data };
-    
-    
+
     for (const key in converted) {
       if (key.endsWith('Id') || key === 'companyId') {
         const value = converted[key];

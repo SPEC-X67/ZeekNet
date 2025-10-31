@@ -277,6 +277,7 @@ const CompanyReapplication = () => {
 
         {}
         {error && (
+          
           <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-sm text-destructive flex items-start space-x-2 mb-6">
             <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
             <span>{error}</span>

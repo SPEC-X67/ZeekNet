@@ -13,6 +13,10 @@ export class UpdateJobStatusUseCase implements IUpdateJobStatusUseCase {
       throw new AppError('Job posting not found', 404);
     }
 
+    if (existingJob.admin_blocked) {
+      throw new AppError('This job has been blocked by admin and cannot be modified', 403);
+    }
+
     try {
       const updatedJob = await this._jobPostingRepository.update(jobId, { is_active: isActive });
 

@@ -14,6 +14,7 @@ export interface CompanyProfileDocument extends Document {
   aboutUs: string;
   isVerified: 'pending' | 'rejected' | 'verified';
   isBlocked: boolean;
+  rejectionReason?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -33,6 +34,7 @@ export class CompanyProfileMapper {
       aboutUs: doc.aboutUs,
       isVerified: doc.isVerified,
       isBlocked: doc.isBlocked,
+      rejectionReason: doc.rejectionReason,
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,
     });

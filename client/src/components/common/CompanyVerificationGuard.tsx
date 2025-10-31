@@ -3,7 +3,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useAppSelector } from '@/hooks/useRedux';
 import { UserRole } from '@/constants/enums';
 import { companyApi } from '@/api/company.api';
-import CompanyProfileStatus from '../company/CompanyProfileStatus';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 
@@ -80,19 +79,17 @@ const CompanyVerificationGuard: React.FC<CompanyVerificationGuardProps> = ({ chi
       <div className="min-h-screen flex items-center justify-center">
         <div className="flex flex-col items-center space-y-4">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-          <p className="text-muted-foreground">Checking verification status...</p>
         </div>
       </div>
     );
   }
 
   if (profileStatus !== 'verified') {
-    // Allow dashboard to render with mini-banner
+    
     if (location.pathname.startsWith('/company/dashboard')) {
       return <>{children}</>;
     }
 
-    // For other company pages, block with dialog
     return (
       <>
         <Dialog open>

@@ -21,7 +21,6 @@ export class GetJobPostingForPublicUseCase implements IGetJobPostingForPublicUse
         throw new AppError('Job posting not found', 404);
       }
 
-      
       await this._analyticsRepository.incrementViewCount(jobId);
 
       return jobPosting;
@@ -33,4 +32,3 @@ export class GetJobPostingForPublicUseCase implements IGetJobPostingForPublicUse
     }
   }
 }
-

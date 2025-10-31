@@ -74,6 +74,10 @@ export class UserRepository implements IUserRepository, IUserAuthRepository, IUs
     await this.model.findByIdAndUpdate(id, { password: hashedPassword, updatedAt: new Date() }).exec();
   }
 
+  async updateName(userId: string, name: string): Promise<void> {
+    await this.model.findByIdAndUpdate(userId, { name, updatedAt: new Date() }).exec();
+  }
+
   async findAllUsers(options: { page?: number; limit?: number; search?: string; role?: UserRole; isBlocked?: boolean; sortBy?: string; sortOrder?: 'asc' | 'desc' }): Promise<{ users: User[]; total: number }> {
     const query: Record<string, unknown> = {};
 
