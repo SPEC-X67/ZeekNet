@@ -11,7 +11,7 @@ import CompanyDashboard from './pages/company/CompanyDashboard'
 import CompanyProfileSetup from './pages/company/CompanyProfileSetup'
 import PostJob from './pages/company/PostJob'
 import SeekerDashboard from './pages/seeker/SeekerDashboard'
-import SeekerProfile from './pages/seeker/SeekerProfile'
+import { SeekerProfile as SeekerProfileComponent } from './pages/seeker/SeekerProfile'
 import SeekerSettings from './pages/seeker/SeekerSettings'
 import SeekerLayout from './components/layouts/SeekerLayout'
 import JobListing from './pages/JobListing'
@@ -181,7 +181,7 @@ function App() {
           <Route path="/seeker/profile" element={
             <ProtectedRoute allowedRoles={[UserRole.SEEKER]}>
               <SeekerLayout>
-                <SeekerProfile />
+                <SeekerProfileComponent />
               </SeekerLayout>
             </ProtectedRoute>
           } />

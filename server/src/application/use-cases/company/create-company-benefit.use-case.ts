@@ -11,4 +11,3 @@ export class CreateCompanyBenefitUseCase implements ICreateCompanyBenefitUseCase
     return this._companyBenefitsRepository.create(benefit);
   }
 }
-

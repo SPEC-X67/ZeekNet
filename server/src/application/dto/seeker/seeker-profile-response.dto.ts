@@ -35,15 +35,20 @@ export interface SocialLinkResponseDto {
 export interface SeekerProfileResponseDto {
   id: string;
   userId: string;
+  name: string;
   headline: string | null;
   summary: string | null;
   location: string | null;
   phone: string | null;
-  email: string;
-  avatarUrl: string | null;
+  email: string | null; 
+  avatarUrl: string | null; 
+  bannerUrl: string | null; 
   skills: string[];
+  languages: string[];
   socialLinks: SocialLinkResponseDto[];
   resume: ResumeMetaResponseDto | null;
+  experiences: ExperienceResponseDto[];
+  education: EducationResponseDto[];
   createdAt: string;
   updatedAt: string;
 }

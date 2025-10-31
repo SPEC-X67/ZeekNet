@@ -15,7 +15,6 @@ export class CompanyBenefits {
     return new CompanyBenefits(data.id || uuidv4(), data.companyId, data.perk, data.createdAt ?? now, data.updatedAt ?? now, data.description);
   }
 
-
   toJSON() {
     return {
       id: this.id,

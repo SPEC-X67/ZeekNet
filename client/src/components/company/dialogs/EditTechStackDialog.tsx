@@ -112,4 +112,3 @@ const EditTechStackDialog: React.FC<EditTechStackDialogProps> = ({
 };
 
 export default EditTechStackDialog;
-

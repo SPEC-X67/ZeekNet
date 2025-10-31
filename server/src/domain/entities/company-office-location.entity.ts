@@ -35,7 +35,6 @@ export class CompanyOfficeLocation {
     );
   }
 
-
   toJSON() {
     return {
       id: this.id,

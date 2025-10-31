@@ -194,7 +194,7 @@ const Register = () => {
           {}
           <div className="flex items-center space-x-3 mb-8">
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary shadow-lg">
-              {/* <Briefcase className="h-7 w-7 text-primary-foreground" /> */}
+              
               <img src="/white.png" alt="ZeekNet Logo" className="h-8 w-8" />
             </div>
             <div>
@@ -318,8 +318,6 @@ const Register = () => {
                 </Button>
               </div>
             </div>
-
-
 
             {displayError && (
               <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-sm text-destructive flex items-start space-x-2">

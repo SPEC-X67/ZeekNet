@@ -13,4 +13,3 @@ export class DeleteCompanyBenefitUseCase implements IDeleteCompanyBenefitUseCase
     await this._companyBenefitsRepository.delete(benefitId);
   }
 }
-

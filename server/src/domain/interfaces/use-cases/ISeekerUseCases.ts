@@ -3,7 +3,7 @@ import {
   SeekerProfileResponseDto, 
   ExperienceResponseDto, 
   EducationResponseDto, 
-  ResumeMetaResponseDto 
+  ResumeMetaResponseDto, 
 } from '../../../application/dto/seeker/seeker-profile-response.dto';
 
 export interface CreateSeekerProfileData {
@@ -11,9 +11,11 @@ export interface CreateSeekerProfileData {
   summary?: string;
   location?: string;
   phone?: string;
-  email: string;
-  avatarUrl?: string;
+  email?: string; 
+  avatarFileName?: string | null; 
+  bannerFileName?: string | null; 
   skills?: string[];
+  languages?: string[];
   socialLinks?: SocialLink[];
 }
 
@@ -23,8 +25,10 @@ export interface UpdateSeekerProfileData {
   location?: string;
   phone?: string;
   email?: string;
-  avatarUrl?: string;
+  avatarFileName?: string | null; 
+  bannerFileName?: string | null; 
   skills?: string[];
+  languages?: string[];
   socialLinks?: SocialLink[];
 }
 
@@ -116,6 +120,10 @@ export interface IRemoveEducationUseCase {
 
 export interface IUpdateSkillsUseCase {
   execute(userId: string, skills: string[]): Promise<string[]>;
+}
+
+export interface IUpdateLanguagesUseCase {
+  execute(userId: string, languages: string[]): Promise<string[]>;
 }
 
 export interface IUploadResumeUseCase {

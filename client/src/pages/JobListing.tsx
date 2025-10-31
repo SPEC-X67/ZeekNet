@@ -74,7 +74,6 @@ const JobListing = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-
   const handleViewDetails = (jobId: string) => {
     navigate(`/jobs/${jobId}`);
   };

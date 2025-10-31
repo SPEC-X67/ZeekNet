@@ -11,4 +11,3 @@ export class CreateCompanyWorkplacePictureUseCase implements ICreateCompanyWorkp
     return this._companyWorkplacePicturesRepository.create(picture);
   }
 }
-

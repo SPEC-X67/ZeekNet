@@ -18,7 +18,8 @@ import {
   Users,
   GraduationCap,
   Mountain,
-  Globe
+  Globe,
+  AlertTriangle
 } from 'lucide-react'
 
 const JobDetails = () => {
@@ -198,6 +199,27 @@ const JobDetails = () => {
         </div>
 
         {}
+        {jobData.admin_blocked && (
+          <div className="px-7 py-4 bg-yellow-50 border-b border-yellow-200">
+            <div className="flex items-start gap-3">
+              <AlertTriangle className="w-5 h-5 text-yellow-600 mt-0.5 flex-shrink-0" />
+              <div>
+                <h3 className="text-sm font-semibold text-yellow-800 mb-1">
+                  This job has been blocked by admin
+                </h3>
+                {jobData.unpublish_reason && (
+                  <p className="text-sm text-yellow-700">
+                    Reason: {jobData.unpublish_reason}
+                  </p>
+                )}
+                <p className="text-xs text-yellow-600 mt-1">
+                  The job is not visible to job seekers. Please review and update the job details or contact admin for more information.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="px-7 py-7">
           {}
           <Card className="border border-[#D6DDEB] rounded-lg mb-7">
@@ -308,8 +330,23 @@ const JobDetails = () => {
                     </div>
                     <div className="flex justify-between">
                       <span className="text-sm text-[#515B6F]">Status</span>
-                      <span className="text-sm font-semibold text-[#25324B]">{jobData.is_active ? 'Active' : 'Inactive'}</span>
+                      <div className="flex flex-col items-end gap-1">
+                        <span className="text-sm font-semibold text-[#25324B]">{jobData.is_active ? 'Active' : 'Inactive'}</span>
+                        {jobData.admin_blocked && (
+                          <Badge className="bg-red-500 text-white text-xs px-2 py-0.5">
+                            Admin Blocked
+                          </Badge>
+                        )}
+                      </div>
                     </div>
+                    {jobData.admin_blocked && jobData.unpublish_reason && (
+                      <div className="flex justify-between pt-2 border-t border-[#D6DDEB]">
+                        <span className="text-sm text-[#515B6F]">Block Reason</span>
+                        <span className="text-sm font-semibold text-red-600 max-w-[60%] text-right">
+                          {jobData.unpublish_reason}
+                        </span>
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>

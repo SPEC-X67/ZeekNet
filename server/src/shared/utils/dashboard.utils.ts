@@ -13,4 +13,3 @@ export function getDashboardLink(role: string): string {
     return `${baseUrl}/seeker/dashboard`;
   }
 }
-

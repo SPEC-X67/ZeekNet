@@ -5,10 +5,10 @@ import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 import path from 'path';
 
-
 import { connectToDatabase } from '../../infrastructure/database/mongodb/connection/mongoose';
 import { connectRedis } from '../../infrastructure/database/redis/connection/redis';
 import { env } from '../../infrastructure/config/env';
+import { logger } from '../../infrastructure/config/logger';
 
 import { AuthRouter } from '../routes/auth-router';
 import { CompanyRouter } from '../routes/company-router';
@@ -54,42 +54,18 @@ export class AppServer {
   }
 
   private _setLoggingMiddleware(): void {
+    
+    const morganStream = {
+      write: (message: string) => {
+        logger.info(message.trim());
+      },
+    };
+
     if (env.NODE_ENV === 'development') {
-      this._app.use(morgan('dev'));
+      this._app.use(morgan('dev', { stream: morganStream }));
     } else if (env.NODE_ENV === 'production') {
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
 
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-
-      
-      
-      
-      
-      
-      
-      
-
-      
-      this._app.use(morgan('combined'));
+      this._app.use(morgan('combined', { stream: morganStream }));
     }
   }
 
@@ -118,17 +94,17 @@ export class AppServer {
   public async connectDatabase(): Promise<void> {
     try {
       await connectToDatabase(env.MONGO_URI as string);
-      console.log('Connected to MongoDB');
+      logger.info('Connected to MongoDB');
     } catch (error) {
-      console.error('MongoDB connection failed:', error);
+      logger.error('MongoDB connection failed:', error);
       throw error;
     }
 
     try {
       await connectRedis();
-      console.log('Connected to Redis');
+      logger.info('Connected to Redis');
     } catch (error) {
-      console.error('Redis connection failed:', error);
+      logger.error('Redis connection failed:', error);
       throw error;
     }
   }
@@ -139,11 +115,11 @@ export class AppServer {
       this.init();
 
       this._app.listen(this._port, () => {
-        console.log(`Server running on http://localhost:${this._port}`);
-        console.log(`Health check: http://localhost:${this._port}/health`);
+        logger.info(`Server running on http://localhost:${this._port}`);
+        logger.info(`Health check: http://localhost:${this._port}/health`);
       });
     } catch (error) {
-      console.error('Server startup failed:', error);
+      logger.error('Server startup failed:', error);
       throw error;
     }
   }

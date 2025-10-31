@@ -13,32 +13,28 @@ export class UpdateEducationUseCase implements IUpdateEducationUseCase {
   ) {}
 
   async execute(userId: string, educationId: string, data: UpdateEducationData): Promise<EducationResponseDto> {
-    // Verify profile exists
+    
     const profile = await this._seekerProfileRepository.getProfileByUserId(userId);
     if (!profile) {
       throw new NotFoundError('Seeker profile not found');
     }
 
-    // Get existing education to validate
     const existingEducation = await this._seekerEducationRepository.findById(educationId);
     
     if (!existingEducation) {
       throw new NotFoundError('Education not found');
     }
 
-    // Verify the education belongs to this user's profile
     const userEducation = await this._seekerEducationRepository.findBySeekerProfileId(profile.id);
     if (!userEducation.find(edu => edu.id === educationId)) {
       throw new NotFoundError('Education not found');
     }
 
-    // Merge with existing data for validation
     const mergedData: Partial<Education> = {
       ...existingEducation,
       ...data,
     };
 
-    // Validate dates if provided
     const startDate = mergedData.startDate || existingEducation.startDate;
     if (mergedData.endDate && mergedData.endDate < startDate) {
       throw new ValidationError('End date must be after start date');

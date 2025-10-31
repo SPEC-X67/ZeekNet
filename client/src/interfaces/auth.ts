@@ -33,5 +33,3 @@ export interface ApiEnvelope<T> {
   refreshToken?: string
   errors?: Array<{ field: string; message: string }>
 }
-
-

@@ -22,4 +22,6 @@ export const env = {
   AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY,
   AWS_REGION: process.env.AWS_REGION,
   AWS_S3_BUCKET_NAME: process.env.AWS_S3_BUCKET_NAME,
+  LOG_RETENTION_DAYS: process.env.LOG_RETENTION_DAYS,
+  LOG_LEVEL: process.env.LOG_LEVEL,
 };

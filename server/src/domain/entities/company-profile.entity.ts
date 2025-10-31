@@ -16,6 +16,7 @@ export class CompanyProfile {
     public readonly updatedAt: Date,
     public readonly foundedDate?: Date,
     public readonly phone?: string,
+    public readonly rejectionReason?: string,
   ) {}
 
   static create(data: {
@@ -35,6 +36,7 @@ export class CompanyProfile {
     isBlocked?: boolean;
     createdAt?: Date;
     updatedAt?: Date;
+    rejectionReason?: string;
   }): CompanyProfile {
     const now = new Date();
     return new CompanyProfile(
@@ -54,6 +56,7 @@ export class CompanyProfile {
       data.updatedAt ?? now,
       data.foundedDate,
       data.phone,
+      data.rejectionReason,
     );
   }
 
@@ -73,6 +76,7 @@ export class CompanyProfile {
       phone: this.phone,
       isVerified: this.isVerified,
       isBlocked: this.isBlocked,
+      rejectionReason: this.rejectionReason,
       createdAt: this.createdAt.toISOString(),
       updatedAt: this.updatedAt.toISOString(),
     };
@@ -96,6 +100,7 @@ export class CompanyProfile {
       new Date(data.updatedAt as string),
       data.foundedDate ? new Date(data.foundedDate as string) : undefined,
       data.phone as string,
+      data.rejectionReason as string | undefined,
     );
   }
 }

@@ -64,7 +64,7 @@ const AdminSidebar = () => {
     },
     {
       path: '/admin/job-roles',
-      label: 'Job Role',
+      label: 'Job Roles',
       icon: User,
     },
     {

@@ -38,7 +38,6 @@ export class CompanyContact {
     );
   }
 
-
   toJSON() {
     return {
       id: this.id,

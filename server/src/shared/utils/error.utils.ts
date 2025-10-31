@@ -5,7 +5,6 @@ export class ErrorHandler {
     return new ValidationError(message);
   }
 
-
   static handleAsyncError(error: unknown): Error {
     if (error instanceof Error) {
       return error;

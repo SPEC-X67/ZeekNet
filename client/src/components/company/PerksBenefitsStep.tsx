@@ -46,7 +46,6 @@ const PerksBenefitsStep: React.FC<JobPostingStepProps> = ({
     setShowAddForm(false);
   };
 
-
   const handleRemoveBenefit = (id: string) => {
     onDataChange({
       benefits: data.benefits.filter((benefit) => benefit.id !== id)

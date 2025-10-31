@@ -20,7 +20,7 @@ const quickActions = [
 export function SeekerSidebar({ currentPage, onNavigate }: SeekerSidebarProps) {
   return (
     <div className="bg-gradient-to-b from-white to-[#f8f9ff] w-[240px] h-full flex flex-col border-r border-[#e5e7eb] shadow-sm">
-      {/* Header */}
+      
       <div className="p-6 border-b border-[#e5e7eb]">
         <div className="flex items-center gap-3">
           <div className="w-7 h-7 rounded-xl flex items-center justify-center overflow-hidden">
@@ -34,7 +34,6 @@ export function SeekerSidebar({ currentPage, onNavigate }: SeekerSidebarProps) {
         </div>
       </div>
 
-      {/* Main Navigation */}
       <div className="flex-1 px-4 py-6">
         <nav className="space-y-2">
           <div className="mb-6">
@@ -74,7 +73,6 @@ export function SeekerSidebar({ currentPage, onNavigate }: SeekerSidebarProps) {
             </div>
           </div>
 
-          {/* Quick Actions */}
           <div className="mb-6">
             <h3 className="text-[11px] font-semibold text-[#6b7280] uppercase tracking-wider mb-3 px-3">
               Quick Actions
@@ -99,7 +97,6 @@ export function SeekerSidebar({ currentPage, onNavigate }: SeekerSidebarProps) {
             </div>
           </div>
 
-          {/* Settings Section */}
           <div className="mb-6">
             <h3 className="text-[11px] font-semibold text-[#6b7280] uppercase tracking-wider mb-3 px-3">
               Account
@@ -126,7 +123,6 @@ export function SeekerSidebar({ currentPage, onNavigate }: SeekerSidebarProps) {
         </nav>
       </div>
 
-      {/* User Profile Section */}
       <div className="p-4 border-t border-[#e5e7eb] bg-gradient-to-r from-[#f8f9ff] to-white flex items-center gap-3">
           <div className="relative">
             <div className="w-12 h-12 rounded-full flex items-center justify-center">

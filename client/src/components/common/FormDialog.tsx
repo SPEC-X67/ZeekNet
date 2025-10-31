@@ -12,7 +12,6 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 
-// Field definition interface
 interface FormField {
   id: string
   label: string
@@ -23,13 +22,11 @@ interface FormField {
   rows?: number
 }
 
-// Field group interface for grouped fields
 interface FieldGroup {
   fields: FormField[]
   gridCols?: 1 | 2 | 3 | 4
 }
 
-// Basic FormDialog props (for simple usage)
 interface BasicFormDialogProps {
   isOpen: boolean
   onClose: () => void
@@ -43,7 +40,6 @@ interface BasicFormDialogProps {
   children: ReactNode
 }
 
-// Advanced FormDialog props (for field-based usage)
 interface AdvancedFormDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
@@ -58,16 +54,14 @@ interface AdvancedFormDialogProps {
   children?: ReactNode
 }
 
-// Union type for all FormDialog variants
 type FormDialogProps = BasicFormDialogProps | AdvancedFormDialogProps
 
-// Type guard to check if it's the advanced version
 const isAdvancedFormDialog = (props: FormDialogProps): props is AdvancedFormDialogProps => {
   return 'open' in props && 'onOpenChange' in props
 }
 
 const FormDialog = (props: FormDialogProps) => {
-  // Advanced FormDialog (for SeekerProfile)
+  
   if (isAdvancedFormDialog(props)) {
     const {
       open,
@@ -133,10 +127,9 @@ const FormDialog = (props: FormDialogProps) => {
           </DialogHeader>
           
           <div className="space-y-4">
-            {/* Render individual fields */}
-            {fields.map(renderField)}
             
-            {/* Render field groups */}
+            {fields.map(renderField)}
+
             {fieldGroups.map((group, groupIndex) => (
               <div 
                 key={groupIndex} 
@@ -150,8 +143,7 @@ const FormDialog = (props: FormDialogProps) => {
                 {group.fields.map(renderField)}
               </div>
             ))}
-            
-            {/* Render custom children if provided */}
+
             {children}
           </div>
           
@@ -168,7 +160,6 @@ const FormDialog = (props: FormDialogProps) => {
     )
   }
 
-  // Basic FormDialog (for Category/Skill Management)
   const {
     isOpen,
     onClose,

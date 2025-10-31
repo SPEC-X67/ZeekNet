@@ -10,13 +10,12 @@ export class RemoveExperienceUseCase implements IRemoveExperienceUseCase {
   ) {}
 
   async execute(userId: string, experienceId: string): Promise<void> {
-    // Verify profile exists
+    
     const profile = await this._seekerProfileRepository.getProfileByUserId(userId);
     if (!profile) {
       throw new NotFoundError('Seeker profile not found');
     }
 
-    // Verify experience exists and belongs to this user
     const experience = await this._seekerExperienceRepository.findById(experienceId);
     if (!experience) {
       throw new NotFoundError('Experience not found');

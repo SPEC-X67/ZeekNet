@@ -35,7 +35,6 @@ const Login = () => {
   const dispatch = useAppDispatch()
   const { loading, error, role } = useAppSelector((s) => s.auth)
 
-
   useEffect(() => {
     dispatch(clearError())
   }, [dispatch])
@@ -45,6 +44,13 @@ const Login = () => {
     try {
       const res = await dispatch(loginThunk({ email: formData.email, password: formData.password })).unwrap()
       if (res?.success) {
+        if (res.data && res.data.isBlocked) {
+          toast.error('Account Blocked', { 
+            description: 'Your account has been blocked. Please contact support for assistance.',
+            duration: 5000,
+          })
+          return
+        }
         if (res.data && !res.data.isVerified) {
           toast.info('Verification Required', { 
             description: 'Please verify your email to continue. A verification code has been sent to your email.',
@@ -81,6 +87,21 @@ const Login = () => {
     try {
       const res = await dispatch(googleLoginThunk({ idToken: credentialResponse.credential })).unwrap()
       if (res?.success) {
+        if (res.data && res.data.isBlocked) {
+          toast.error('Account Blocked', { 
+            description: 'Your account has been blocked. Please contact support for assistance.',
+            duration: 5000,
+          })
+          return
+        }
+        if (res.data && !res.data.isVerified) {
+          toast.info('Verification Required', { 
+            description: 'Please verify your email to continue. A verification code has been sent to your email.',
+            duration: 5000,
+          })
+          navigate(`/verify-email?email=${encodeURIComponent(res.data.email || '')}`)
+          return
+        }
         toast.success('Welcome back!', { description: 'Logged in successfully with Google.' })
         const r = role
         if (r === UserRole.ADMIN) navigate('/admin/dashboard')
@@ -121,7 +142,7 @@ const Login = () => {
         <div className="relative z-10 flex flex-col justify-center px-12 py-12">
           <div className="flex items-center space-x-3 mb-8">
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary shadow-lg">
-              {/* <Briefcase className="h-7 w-7 text-primary-foreground" /> */}
+              
               <img src="/white.png" alt="ZeekNet Logo" className="h-8 w-8" />
             </div>
             <div>
@@ -198,7 +219,7 @@ const Login = () => {
           <div className="lg:hidden text-center">
             <div className="flex items-center justify-center space-x-3 mb-6">
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
-                {/* <Briefcase className="h-6 w-6 text-primary-foreground" /> */}
+                
                 <img src="/white.png" alt="ZeekNet Logo" className="h-6 w-6" />
               </div>
               <div>
@@ -225,8 +246,6 @@ const Login = () => {
                 <span>{displayError}</span>
               </div>
             )}
-
-
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
@@ -319,4 +338,3 @@ const Login = () => {
   )
 }
 export default Login
-

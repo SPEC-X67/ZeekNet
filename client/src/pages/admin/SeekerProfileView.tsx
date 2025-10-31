@@ -8,7 +8,7 @@ import FormDialog from '../../components/common/FormDialog'
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select'
 
 const SeekerProfileView = () => {
-  // Static mock data for read-only admin view
+  
   const profile = {
     name: 'Jake Gyll',
     position: 'Product Designer',
@@ -111,9 +111,9 @@ For 10 years, I've specialised in interface, experience & interaction design as 
         </div>
         {blocked && <div className="text-red-600 font-semibold p-1">Blocked: {blockReason}</div>}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-          {/* Main Content */}
+          
           <div className="lg:col-span-2 space-y-5">
-            {/* Profile Header */}
+            
             <Card className="!py-0 border border-[#d6ddeb] overflow-hidden">
               <div className="h-[140px] relative overflow-hidden">
                 <img 
@@ -156,7 +156,6 @@ For 10 years, I've specialised in interface, experience & interaction design as 
               </div>
             </Card>
 
-            {/* About Me */}
             <Card className="p-5 !gap-0 border border-[#d6ddeb]">
               <div className="flex items-center justify-between mb-3">
                 <p className="font-bold text-[16px] text-[#25324b]">About Me</p>
@@ -168,7 +167,6 @@ For 10 years, I've specialised in interface, experience & interaction design as 
               </div>
             </Card>
 
-            {/* Experience */}
             <Card className="!gap-0 !p-0 border border-[#d6ddeb]">
               <div className="p-5 flex items-center justify-between border-b border-[#d6ddeb]">
                 <p className="font-bold text-[16px] text-[#25324b]">Experiences</p>
@@ -205,7 +203,6 @@ For 10 years, I've specialised in interface, experience & interaction design as 
               </div>
             </Card>
 
-            {/* Education */}
             <Card className="!gap-0 !p-0 border border-[#d6ddeb]">
               <div className="p-5 flex items-center justify-between border-b border-[#d6ddeb]">
                 <p className="font-bold text-[16px] text-[#25324b]">Educations</p>
@@ -238,7 +235,6 @@ For 10 years, I've specialised in interface, experience & interaction design as 
               </div>
             </Card>
 
-            {/* Skills */}
             <Card className="p-5 !gap-0 border border-[#d6ddeb]">
               <div className="flex items-center justify-between mb-3">
                 <p className="font-bold text-[16px] text-[#25324b]">Skills</p>
@@ -256,9 +252,8 @@ For 10 years, I've specialised in interface, experience & interaction design as 
             </Card>
           </div>
 
-          {/* Sidebar */}
           <div className="space-y-5">
-            {/* Additional Details */}
+            
             <Card className="p-5 !gap-0 border border-[#d6ddeb]">
               <div className="flex items-center justify-between mb-5">
                 <p className="font-bold text-[16px] text-[#25324b]">Additional Details</p>
@@ -288,7 +283,6 @@ For 10 years, I've specialised in interface, experience & interaction design as 
               </div>
             </Card>
 
-            {/* Social Links */}
             <Card className="p-5 !gap-0 border border-[#d6ddeb]">
               <div className="flex items-center justify-between mb-5">
                 <p className="font-bold text-[16px] text-[#25324b]">Social Links</p>
@@ -328,7 +322,7 @@ For 10 years, I've specialised in interface, experience & interaction design as 
           </div>
         </div>
       </div>
-      {/* Block Dialog */}
+      
       <FormDialog
         isOpen={blockOpen}
         onClose={() => setBlockOpen(false)}
@@ -368,5 +362,3 @@ For 10 years, I've specialised in interface, experience & interaction design as 
 }
 
 export default SeekerProfileView
-
-

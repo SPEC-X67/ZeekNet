@@ -5,4 +5,3 @@ export const UploadWorkplacePictureDto = z.object({
 });
 
 export type UploadWorkplacePictureRequestDto = z.infer<typeof UploadWorkplacePictureDto>;
-

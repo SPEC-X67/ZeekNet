@@ -12,6 +12,7 @@ export class GetAllJobPostingsUseCase implements IGetAllJobPostingsUseCase {
       const filters = {
         ...query,
         is_active: query.is_active ?? true,
+        admin_blocked: false, 
       };
       
       const result = await this._jobPostingSearchRepository.findAll(filters);
@@ -21,4 +22,3 @@ export class GetAllJobPostingsUseCase implements IGetAllJobPostingsUseCase {
     }
   }
 }
-

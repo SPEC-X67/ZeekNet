@@ -29,4 +29,3 @@ export class CompanyContactUseCase implements ICompanyContactUseCase {
     if (!deleted) throw new Error('Contact not found');
   }
 }
-

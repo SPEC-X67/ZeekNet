@@ -31,6 +31,7 @@ const PendingCompanies = () => {
   const [acceptDialogOpen, setAcceptDialogOpen] = useState(false)
   const [rejectDialogOpen, setRejectDialogOpen] = useState(false)
   const [selectedCompany, setSelectedCompany] = useState<Company | null>(null)
+  const [rejectionReason, setRejectionReason] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
   const [industryFilter, setIndustryFilter] = useState('')
@@ -82,6 +83,7 @@ const PendingCompanies = () => {
 
   const handleReject = (company: Company) => {
     setSelectedCompany(company)
+    setRejectionReason('')
     setRejectDialogOpen(true)
   }
 
@@ -106,15 +108,22 @@ const PendingCompanies = () => {
   const handleRejectConfirm = async () => {
     if (!selectedCompany) return
     
+    if (!rejectionReason.trim()) {
+      toast.error('Please provide a rejection reason')
+      return
+    }
+    
     try {
       await adminApi.verifyCompany({
         companyId: selectedCompany.id,
-        isVerified: 'rejected'
+        isVerified: 'rejected',
+        rejection_reason: rejectionReason.trim()
       })
       
       toast.success(`Company ${selectedCompany.companyName || 'Unknown'} rejected successfully`)
       setRejectDialogOpen(false)
       setSelectedCompany(null)
+      setRejectionReason('')
       fetchPendingCompanies()
     } catch {
       toast.error('Failed to reject company')
@@ -435,14 +444,21 @@ const PendingCompanies = () => {
                             {selectedCompany.verification.businessLicenseUrl ? (
                               <>
                                 <span className="text-sm text-gray-900 truncate flex-1 mr-2">
-                                  {selectedCompany.verification.businessLicenseUrl.split('/').pop() || 'Business License Document'}
+                                  {(() => {
+                                    const url = selectedCompany.verification.businessLicenseUrl;
+                                    const urlWithoutQuery = url.split('?')[0];
+                                    return urlWithoutQuery.split('/').pop() || 'Business License Document';
+                                  })()}
                                 </span>
                                 <div className="flex gap-2">
                                   <Button
                                     variant="outline"
                                     size="sm"
                                     className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-                                    onClick={() => window.open(selectedCompany.verification?.businessLicenseUrl || '', '_blank')}
+                                    onClick={() => {
+                                      const url = selectedCompany.verification?.businessLicenseUrl || '';
+                                      window.open(url, '_blank');
+                                    }}
                                   >
                                     <ExternalLink className="h-4 w-4 mr-1" />
                                     View
@@ -452,9 +468,12 @@ const PendingCompanies = () => {
                                     size="sm"
                                     className="text-green-600 hover:text-green-700 hover:bg-green-50"
                                     onClick={() => {
+                                      const url = selectedCompany.verification?.businessLicenseUrl || '';
+                                      const urlWithoutQuery = url.split('?')[0];
+                                      const filename = urlWithoutQuery.split('/').pop() || 'business-license';
                                       const link = document.createElement('a');
-                                      link.href = selectedCompany.verification?.businessLicenseUrl || '';
-                                      link.download = selectedCompany.verification?.businessLicenseUrl?.split('/').pop() || 'business-license';
+                                      link.href = url;
+                                      link.download = filename;
                                       document.body.appendChild(link);
                                       link.click();
                                       document.body.removeChild(link);
@@ -561,13 +580,35 @@ const PendingCompanies = () => {
                 Are you sure you want to reject {selectedCompany?.companyName}? This will deny their registration and they will need to reapply.
               </DialogDescription>
             </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div>
+                <label htmlFor="rejection-reason" className="text-sm font-medium mb-2 block">
+                  Rejection Reason <span className="text-red-500">*</span>
+                </label>
+                <textarea
+                  id="rejection-reason"
+                  className="w-full min-h-[120px] px-3 py-2 border border-border rounded-md bg-background text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 resize-none"
+                  placeholder="Please provide a reason for rejecting this company..."
+                  value={rejectionReason}
+                  onChange={(e) => setRejectionReason(e.target.value)}
+                  required
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  This reason will be shown to the company when they view their verification status.
+                </p>
+              </div>
+            </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setRejectDialogOpen(false)}>
+              <Button variant="outline" onClick={() => {
+                setRejectDialogOpen(false)
+                setRejectionReason('')
+              }}>
                 Cancel
               </Button>
               <Button 
                 variant="destructive"
                 onClick={handleRejectConfirm}
+                disabled={!rejectionReason.trim()}
               >
                 Reject Company
               </Button>

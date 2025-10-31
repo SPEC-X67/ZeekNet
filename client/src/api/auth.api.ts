@@ -49,5 +49,3 @@ export const authApi = {
     return baseApi.post<void>('/api/auth/logout')();
   }
 }
-
-

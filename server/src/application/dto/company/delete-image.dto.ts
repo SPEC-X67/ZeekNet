@@ -5,4 +5,3 @@ export const DeleteImageDto = z.object({
 });
 
 export type DeleteImageRequestDto = z.infer<typeof DeleteImageDto>;
-

@@ -18,6 +18,7 @@ export interface IUserRepository {
   findById(id: string): Promise<User | null>;
   findByEmail(email: string): Promise<User | null>;
   updateVerificationStatus(userId: string, isVerified: boolean): Promise<void>;
+  updateName(userId: string, name: string): Promise<void>;
 }
 
 export interface IUserAuthRepository {

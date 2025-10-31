@@ -13,4 +13,3 @@ export class GetCompanyOfficeLocationUseCase implements IGetCompanyOfficeLocatio
     return this._companyOfficeLocationRepository.findById(locationId);
   }
 }
-

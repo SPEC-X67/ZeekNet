@@ -12,4 +12,3 @@ export class DeleteCompanyWorkplacePictureUseCase implements IDeleteCompanyWorkp
     }
   }
 }
-

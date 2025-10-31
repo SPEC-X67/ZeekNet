@@ -109,7 +109,11 @@ export class AdminController {
     }
 
     try {
-      await this._verifyCompanyUseCase.execute(parsed.data.companyId, parsed.data.isVerified);
+      await this._verifyCompanyUseCase.execute(
+        parsed.data.companyId,
+        parsed.data.isVerified,
+        parsed.data.rejection_reason,
+      );
 
       const message = `Company ${parsed.data.isVerified} successfully`;
       sendSuccessResponse(res, message, null);

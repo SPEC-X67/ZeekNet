@@ -51,7 +51,7 @@ export class SeekerExperienceRepository implements ISeekerExperienceRepository {
 
   async update(experienceId: string, updates: Partial<Experience>): Promise<Experience> {
     const updateData: Record<string, unknown> = { ...updates, updatedAt: new Date() };
-    delete updateData.id; // Don't update the id
+    delete updateData.id; 
     
     Object.keys(updateData).forEach(key => {
       if (updateData[key] === undefined) {

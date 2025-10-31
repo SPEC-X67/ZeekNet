@@ -12,13 +12,12 @@ export class AddEducationUseCase implements IAddEducationUseCase {
   ) {}
 
   async execute(userId: string, data: AddEducationData): Promise<EducationResponseDto> {
-    // Verify profile exists
+    
     const profile = await this._seekerProfileRepository.getProfileByUserId(userId);
     if (!profile) {
       throw new NotFoundError('Seeker profile not found');
     }
 
-    // Validate dates
     if (data.endDate && data.endDate < data.startDate) {
       throw new ValidationError('End date must be after start date');
     }

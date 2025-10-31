@@ -13,4 +13,3 @@ export class GetCompanyTechStackUseCase implements IGetCompanyTechStackUseCase {
     return this._companyTechStackRepository.findById(techStackId);
   }
 }
-

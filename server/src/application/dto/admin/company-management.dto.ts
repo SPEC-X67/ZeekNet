@@ -23,4 +23,3 @@ export const VerifyCompanyDto = z.object({
 });
 
 export type VerifyCompanyRequestDto = z.infer<typeof VerifyCompanyDto>;
-

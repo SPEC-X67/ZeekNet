@@ -1,97 +1,113 @@
 import { z } from 'zod';
-import { commonValidations, fieldValidations } from '../../../shared/validation/common';
+import { commonValidations } from '../../../shared/validation/common';
 
-export const ExperienceDto = z.object({
-  id: z.string().uuid().optional(),
-  title: z.string().min(2, 'Title must be at least 2 characters'),
-  company: z.string().min(2, 'Company must be at least 2 characters'),
-  startDate: z.string().datetime('Invalid start date format'),
-  endDate: z.string().datetime('Invalid end date format').optional(),
-  employmentType: z.string().min(2, 'Employment type is required'),
-  location: z.string().optional(),
-  description: z.string().optional(),
-  technologies: z.array(z.string()).default([]),
-  isCurrent: z.boolean().default(false),
-});
+const EmploymentTypeSchema = z.enum(['full-time', 'part-time', 'contract', 'internship', 'remote', 'freelance']);
 
-export const EducationDto = z.object({
-  id: z.string().uuid().optional(),
-  school: z.string().min(2, 'School must be at least 2 characters'),
-  degree: z.string().optional(),
-  fieldOfStudy: z.string().optional(),
-  startDate: z.string().datetime('Invalid start date format'),
-  endDate: z.string().datetime('Invalid end date format').optional(),
-  grade: z.string().optional(),
-});
-
-export const ResumeMetaDto = z.object({
-  url: z.string().url('Invalid resume URL'),
-  fileName: z.string().min(1, 'File name is required'),
-  uploadedAt: z.string().datetime('Invalid upload date format'),
-});
-
-export const SocialLinkDto = z.object({
+const SocialLinkSchema = z.object({
   name: z.string().min(1, 'Social link name is required'),
-  link: z.string().url('Invalid social link URL'),
+  link: z.string().url('Please enter a valid URL'),
 });
 
+// Create Seeker Profile DTO
 export const CreateSeekerProfileDto = z.object({
-  headline: z.string().optional(),
-  summary: z.string().optional(),
-  location: z.string().optional(),
-  phone: z.string().optional(),
-  email: commonValidations.email,
-  avatarUrl: commonValidations.optionalUrl,
+  headline: z.string().max(100, 'Headline must not exceed 100 characters').optional(),
+  summary: z.string().max(2000, 'Summary must not exceed 2000 characters').optional(),
+  location: z.string().max(100, 'Location must not exceed 100 characters').optional(),
+  phone: commonValidations.phoneNumber.optional(),
+  email: commonValidations.email.optional(),
   skills: z.array(z.string()).default([]),
-  socialLinks: z.array(SocialLinkDto).default([]),
+  languages: z.array(z.string()).default([]),
+  socialLinks: z.array(SocialLinkSchema).default([]),
 });
 
-export const UpdateSeekerProfileDto = CreateSeekerProfileDto.partial();
+export type CreateSeekerProfileRequestDto = z.infer<typeof CreateSeekerProfileDto>;
 
+// Update Seeker Profile DTO
+export const UpdateSeekerProfileDto = z.object({
+  headline: z.string().max(100, 'Headline must not exceed 100 characters').optional(),
+  summary: z.string().max(2000, 'Summary must not exceed 2000 characters').optional(),
+  location: z.string().max(100, 'Location must not exceed 100 characters').optional(),
+  phone: commonValidations.phoneNumber.optional(),
+  email: commonValidations.email.optional(),
+  skills: z.array(z.string()).optional(),
+  languages: z.array(z.string()).optional(),
+  socialLinks: z.array(SocialLinkSchema).optional(),
+});
+
+export type UpdateSeekerProfileRequestDto = z.infer<typeof UpdateSeekerProfileDto>;
+
+// Add Experience DTO
 export const AddExperienceDto = z.object({
-  title: z.string().min(2, 'Title must be at least 2 characters'),
-  company: z.string().min(2, 'Company must be at least 2 characters'),
-  startDate: z.string().datetime('Invalid start date format'),
-  endDate: z.string().datetime('Invalid end date format').optional(),
-  employmentType: z.string().min(2, 'Employment type is required'),
-  location: z.string().optional(),
-  description: z.string().optional(),
+  title: z.string().min(1, 'Title is required').max(100, 'Title must not exceed 100 characters'),
+  company: z.string().min(1, 'Company is required').max(100, 'Company must not exceed 100 characters'),
+  startDate: z.string().datetime('Please enter a valid start date'),
+  endDate: z.string().datetime('Please enter a valid end date').optional(),
+  employmentType: EmploymentTypeSchema,
+  location: z.string().max(100, 'Location must not exceed 100 characters').optional(),
+  description: z.string().max(2000, 'Description must not exceed 2000 characters').optional(),
   technologies: z.array(z.string()).default([]),
   isCurrent: z.boolean().default(false),
 });
 
-export const UpdateExperienceDto = AddExperienceDto.partial();
+export type AddExperienceRequestDto = z.infer<typeof AddExperienceDto>;
 
-export const AddEducationDto = z.object({
-  school: z.string().min(2, 'School must be at least 2 characters'),
-  degree: z.string().optional(),
-  fieldOfStudy: z.string().optional(),
-  startDate: z.string().datetime('Invalid start date format'),
-  endDate: z.string().datetime('Invalid end date format').optional(),
-  grade: z.string().optional(),
+// Update Experience DTO
+export const UpdateExperienceDto = z.object({
+  title: z.string().min(1, 'Title is required').max(100, 'Title must not exceed 100 characters').optional(),
+  company: z.string().min(1, 'Company is required').max(100, 'Company must not exceed 100 characters').optional(),
+  startDate: z.string().datetime('Please enter a valid start date').optional(),
+  endDate: z.string().datetime('Please enter a valid end date').optional(),
+  employmentType: EmploymentTypeSchema.optional(),
+  location: z.string().max(100, 'Location must not exceed 100 characters').optional(),
+  description: z.string().max(2000, 'Description must not exceed 2000 characters').optional(),
+  technologies: z.array(z.string()).optional(),
+  isCurrent: z.boolean().optional(),
 });
 
-export const UpdateEducationDto = AddEducationDto.partial();
+export type UpdateExperienceRequestDto = z.infer<typeof UpdateExperienceDto>;
 
+// Add Education DTO
+export const AddEducationDto = z.object({
+  school: z.string().min(1, 'School is required').max(200, 'School must not exceed 200 characters'),
+  degree: z.string().max(100, 'Degree must not exceed 100 characters').optional(),
+  fieldOfStudy: z.string().max(100, 'Field of study must not exceed 100 characters').optional(),
+  startDate: z.string().datetime('Please enter a valid start date'),
+  endDate: z.string().datetime('Please enter a valid end date').optional(),
+  grade: z.string().max(20, 'Grade must not exceed 20 characters').optional(),
+});
+
+export type AddEducationRequestDto = z.infer<typeof AddEducationDto>;
+
+// Update Education DTO
+export const UpdateEducationDto = z.object({
+  school: z.string().min(1, 'School is required').max(200, 'School must not exceed 200 characters').optional(),
+  degree: z.string().max(100, 'Degree must not exceed 100 characters').optional(),
+  fieldOfStudy: z.string().max(100, 'Field of study must not exceed 100 characters').optional(),
+  startDate: z.string().datetime('Please enter a valid start date').optional(),
+  endDate: z.string().datetime('Please enter a valid end date').optional(),
+  grade: z.string().max(20, 'Grade must not exceed 20 characters').optional(),
+});
+
+export type UpdateEducationRequestDto = z.infer<typeof UpdateEducationDto>;
+
+// Update Skills DTO
 export const UpdateSkillsDto = z.object({
   skills: z.array(z.string()).min(0, 'Skills must be an array'),
 });
 
+export type UpdateSkillsRequestDto = z.infer<typeof UpdateSkillsDto>;
+
+// Update Languages DTO
+export const UpdateLanguagesDto = z.object({
+  languages: z.array(z.string()).min(0, 'Languages must be an array'),
+});
+
+export type UpdateLanguagesRequestDto = z.infer<typeof UpdateLanguagesDto>;
+
+// Upload Resume DTO
 export const UploadResumeDto = z.object({
-  url: z.string().url('Invalid resume URL'),
+  url: z.string().url('Please enter a valid resume URL'),
   fileName: z.string().min(1, 'File name is required'),
 });
 
-// Type exports
-export type ExperienceRequestDto = z.infer<typeof ExperienceDto>;
-export type EducationRequestDto = z.infer<typeof EducationDto>;
-export type ResumeMetaRequestDto = z.infer<typeof ResumeMetaDto>;
-export type SocialLinkRequestDto = z.infer<typeof SocialLinkDto>;
-export type CreateSeekerProfileRequestDto = z.infer<typeof CreateSeekerProfileDto>;
-export type UpdateSeekerProfileRequestDto = z.infer<typeof UpdateSeekerProfileDto>;
-export type AddExperienceRequestDto = z.infer<typeof AddExperienceDto>;
-export type UpdateExperienceRequestDto = z.infer<typeof UpdateExperienceDto>;
-export type AddEducationRequestDto = z.infer<typeof AddEducationDto>;
-export type UpdateEducationRequestDto = z.infer<typeof UpdateEducationDto>;
-export type UpdateSkillsRequestDto = z.infer<typeof UpdateSkillsDto>;
 export type UploadResumeRequestDto = z.infer<typeof UploadResumeDto>;

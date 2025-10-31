@@ -1,5 +1,5 @@
 import { SimpleCompanyProfileRequestDto } from '../dto/company/create-company.dto';
-import { CompanyProfile } from '../../domain/entities/company-profile.entity';
+import { CompanyProfile, CompanyVerification } from '../../domain/entities/company-profile.entity';
 import { CompanyContact } from '../../domain/entities/company-contact.entity';
 import { CompanyTechStack } from '../../domain/entities/company-tech-stack.entity';
 import { CompanyOfficeLocation } from '../../domain/entities/company-office-location.entity';
@@ -16,6 +16,7 @@ interface CompanyProfileWithDetails {
   benefits: CompanyBenefits[];
   workplacePictures: CompanyWorkplacePictures[];
   jobPostings?: JobPosting[];
+  verification: CompanyVerification | null;
 }
 
 export class CompanyProfileMapper {
@@ -70,7 +71,7 @@ export class CompanyProfileMapper {
     return parseInt(range[0]) || 0;
   }
 
-  static toDto(domain: CompanyProfile): CompanyProfileResponseDto {
+  static toDto(domain: CompanyProfile, verification?: CompanyVerification | null): CompanyProfileResponseDto {
     return {
       id: domain.id,
       company_name: domain.companyName,
@@ -83,6 +84,9 @@ export class CompanyProfileMapper {
       about_us: domain.aboutUs,
       is_verified: domain.isVerified,
       is_blocked: domain.isBlocked,
+      rejection_reason: domain.rejectionReason,
+      tax_id: verification?.taxId,
+      business_license: verification?.businessLicenseUrl,
       created_at: domain.createdAt,
       updated_at: domain.updatedAt,
     };
@@ -90,7 +94,7 @@ export class CompanyProfileMapper {
 
   static toDetailedDto(domain: CompanyProfileWithDetails): CompanyProfileWithDetailsResponseDto {
     return {
-      profile: CompanyProfileMapper.toDto(domain.profile),
+      profile: CompanyProfileMapper.toDto(domain.profile, domain.verification),
       contact: domain.contact ? CompanyProfileMapper.mapContactToDto(domain.contact) : null,
       locations: domain.locations.map((location) => CompanyProfileMapper.mapLocationToDto(location)),
       techStack: domain.techStack.map((tech) => ({

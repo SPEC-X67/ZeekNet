@@ -17,9 +17,11 @@ export interface SeekerProfileDocument extends Document {
   summary?: string;
   location?: string;
   phone?: string;
-  email: string;
-  avatarUrl?: string;
+  email?: string; 
+  avatarFileName?: string; 
+  bannerFileName?: string; 
   skills: string[];
+  languages: string[];
   socialLinks: SocialLink[];
   resume?: ResumeMeta;
   createdAt: Date;
@@ -31,7 +33,7 @@ const SocialLinkSchema = new Schema<SocialLink>(
     name: { type: String, required: true },
     link: { type: String, required: true },
   },
-  { _id: false }
+  { _id: false },
 );
 
 const ResumeMetaSchema = new Schema<ResumeMeta>(
@@ -40,7 +42,7 @@ const ResumeMetaSchema = new Schema<ResumeMeta>(
     fileName: { type: String, required: true },
     uploadedAt: { type: Date, required: true },
   },
-  { _id: false }
+  { _id: false },
 );
 
 const SeekerProfileSchema = new Schema<SeekerProfileDocument>(
@@ -50,13 +52,15 @@ const SeekerProfileSchema = new Schema<SeekerProfileDocument>(
     summary: { type: String },
     location: { type: String },
     phone: { type: String },
-    email: { type: String, required: true },
-    avatarUrl: { type: String },
+    email: { type: String }, 
+    avatarFileName: { type: String }, 
+    bannerFileName: { type: String }, 
     skills: [{ type: String, default: [] }],
+    languages: [{ type: String, default: [] }],
     socialLinks: { type: [SocialLinkSchema], default: [] },
     resume: { type: ResumeMetaSchema },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export const SeekerProfileModel = model<SeekerProfileDocument>('SeekerProfile', SeekerProfileSchema);

@@ -8,13 +8,12 @@ export class RemoveResumeUseCase implements IRemoveResumeUseCase {
   ) {}
 
   async execute(userId: string): Promise<void> {
-    // Verify profile exists
+    
     const profile = await this._seekerProfileRepository.getProfileByUserId(userId);
     if (!profile) {
       throw new NotFoundError('Seeker profile not found');
     }
 
-    // Check if resume exists
     if (!profile.resume) {
       throw new NotFoundError('No resume found to remove');
     }

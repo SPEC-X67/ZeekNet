@@ -1,4 +1,4 @@
-import { CompanyProfile } from '../../entities/company-profile.entity';
+import { CompanyProfile, CompanyVerification } from '../../entities/company-profile.entity';
 import { CompanyContact } from '../../entities/company-contact.entity';
 import { CompanyTechStack } from '../../entities/company-tech-stack.entity';
 import { CompanyOfficeLocation } from '../../entities/company-office-location.entity';
@@ -122,6 +122,7 @@ export interface IGetCompanyProfileUseCase {
     techStack: CompanyTechStack[];
     benefits: CompanyBenefits[];
     workplacePictures: CompanyWorkplacePictures[];
+    verification: CompanyVerification | null;
   } | null>;
 }
 
@@ -135,7 +136,6 @@ export interface ICompanyContactUseCase {
   updateContact(contactId: string, data: CompanyContactData): Promise<CompanyContact>;
   deleteContact(contactId: string): Promise<void>;
 }
-
 
 export interface ICreateCompanyTechStackUseCase {
   execute(companyId: string, data: CompanyTechStackData): Promise<CompanyTechStack>;
@@ -154,7 +154,6 @@ export interface IGetCompanyTechStackUseCase {
   executeById(techStackId: string): Promise<CompanyTechStack | null>;
 }
 
-
 export interface ICreateCompanyOfficeLocationUseCase {
   execute(companyId: string, data: CompanyOfficeLocationData): Promise<CompanyOfficeLocation>;
 }
@@ -172,7 +171,6 @@ export interface IGetCompanyOfficeLocationUseCase {
   executeById(locationId: string): Promise<CompanyOfficeLocation | null>;
 }
 
-
 export interface ICreateCompanyBenefitUseCase {
   execute(companyId: string, data: CompanyBenefitsData): Promise<CompanyBenefits>;
 }
@@ -189,7 +187,6 @@ export interface IGetCompanyBenefitUseCase {
   executeByCompanyId(companyId: string): Promise<CompanyBenefits[]>;
   executeById(benefitId: string): Promise<CompanyBenefits | null>;
 }
-
 
 export interface ICreateCompanyWorkplacePictureUseCase {
   execute(companyId: string, data: CompanyWorkplacePicturesData): Promise<CompanyWorkplacePictures>;

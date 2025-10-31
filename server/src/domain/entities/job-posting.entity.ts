@@ -22,6 +22,8 @@ export interface JobPosting {
   category_ids: string[];
 
   is_active: boolean;
+  admin_blocked?: boolean;
+  unpublish_reason?: string;
   view_count: number;
   application_count: number;
   createdAt: Date;
@@ -56,10 +58,13 @@ export interface CreateJobPostingRequest {
 
 export interface UpdateJobPostingRequest extends Partial<CreateJobPostingRequest> {
   is_active?: boolean;
+  admin_blocked?: boolean;
+  unpublish_reason?: string;
 }
 
 export interface JobPostingFilters {
   is_active?: boolean;
+  admin_blocked?: boolean;
   category_ids?: string[];
   employment_types?: string[];
   salary_min?: number;

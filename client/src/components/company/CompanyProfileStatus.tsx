@@ -25,6 +25,7 @@ const CompanyProfileStatus = ({ onStatusChange }: CompanyProfileStatusProps) => 
   const [status, setStatus] = useState<ProfileStatus>('not_created')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [rejectionReason, setRejectionReason] = useState<string | null>(null)
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
 
   const checkProfileStatus = useCallback(async () => {
@@ -38,6 +39,15 @@ const CompanyProfileStatus = ({ onStatusChange }: CompanyProfileStatusProps) => 
         const profileStatus = (res.data.profileStatus || res.data.verificationStatus || 'not_created') as ProfileStatus
         setStatus(profileStatus)
         onStatusChange?.(profileStatus)
+
+        const data = res.data as any
+        if (data.profile?.rejection_reason) {
+          setRejectionReason(data.profile.rejection_reason)
+        } else if (data.rejection_reason) {
+          setRejectionReason(data.rejection_reason)
+        } else {
+          setRejectionReason(null)
+        }
       } else {
         if (res.message && res.data?.verificationStatus) {
           const profileStatus = res.data.verificationStatus as ProfileStatus
@@ -290,27 +300,36 @@ const CompanyProfileStatus = ({ onStatusChange }: CompanyProfileStatusProps) => 
           {}
           <div className="max-w-2xl mx-auto">
             {}
-            <div className="mb-8">
-              <h2 className="text-lg font-semibold text-gray-800 mb-6 text-center">Common Rejection Reasons</h2>
-              <div className="space-y-3">
-                <div className="flex items-start space-x-3">
-                  <div className="w-2 h-2 bg-red-600 rounded-full mt-2 flex-shrink-0"></div>
-                  <p className="text-gray-600 text-sm">Business license is unclear or expired</p>
-                </div>
-                <div className="flex items-start space-x-3">
-                  <div className="w-2 h-2 bg-red-600 rounded-full mt-2 flex-shrink-0"></div>
-                  <p className="text-gray-600 text-sm">Tax ID format is incorrect</p>
-                </div>
-                <div className="flex items-start space-x-3">
-                  <div className="w-2 h-2 bg-red-600 rounded-full mt-2 flex-shrink-0"></div>
-                  <p className="text-gray-600 text-sm">Company information doesn't match documents</p>
-                </div>
-                <div className="flex items-start space-x-3">
-                  <div className="w-2 h-2 bg-red-600 rounded-full mt-2 flex-shrink-0"></div>
-                  <p className="text-gray-600 text-sm">Missing required information</p>
+            {rejectionReason ? (
+              <div className="mb-8">
+                <h2 className="text-lg font-semibold text-gray-800 mb-4 text-center">Rejection Reason</h2>
+                <div className="bg-white border border-red-200 rounded-lg p-6 shadow-sm">
+                  <p className="text-gray-700 text-sm leading-relaxed">{rejectionReason}</p>
                 </div>
               </div>
-            </div>
+            ) : (
+              <div className="mb-8">
+                <h2 className="text-lg font-semibold text-gray-800 mb-6 text-center">Common Rejection Reasons</h2>
+                <div className="space-y-3">
+                  <div className="flex items-start space-x-3">
+                    <div className="w-2 h-2 bg-red-600 rounded-full mt-2 flex-shrink-0"></div>
+                    <p className="text-gray-600 text-sm">Business license is unclear or expired</p>
+                  </div>
+                  <div className="flex items-start space-x-3">
+                    <div className="w-2 h-2 bg-red-600 rounded-full mt-2 flex-shrink-0"></div>
+                    <p className="text-gray-600 text-sm">Tax ID format is incorrect</p>
+                  </div>
+                  <div className="flex items-start space-x-3">
+                    <div className="w-2 h-2 bg-red-600 rounded-full mt-2 flex-shrink-0"></div>
+                    <p className="text-gray-600 text-sm">Company information doesn't match documents</p>
+                  </div>
+                  <div className="flex items-start space-x-3">
+                    <div className="w-2 h-2 bg-red-600 rounded-full mt-2 flex-shrink-0"></div>
+                    <p className="text-gray-600 text-sm">Missing required information</p>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {}
             <div className="text-center space-y-4">

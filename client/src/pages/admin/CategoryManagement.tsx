@@ -10,13 +10,12 @@ import {
   Edit,
   Trash2,
   ChevronLeft,
-  ChevronRight,
-  ImageIcon
+  ChevronRight
 } from 'lucide-react'
 import type { JobCategory } from '@/api/admin.api'
+import { adminApi } from '@/api/admin.api'
 import { toast } from 'sonner'
 import { ConfirmationDialog } from '@/components/ui/confirmation-dialog'
-import ImageUpload from '@/components/common/ImageUpload'
 
 const CategoryManagement = () => {
   const [categories, setCategories] = useState<JobCategory[]>([])
@@ -27,7 +26,6 @@ const CategoryManagement = () => {
   const [createDialogOpen, setCreateDialogOpen] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState<JobCategory | null>(null)
   const [categoryName, setCategoryName] = useState('')
-  const [categoryImage, setCategoryImage] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const [totalCategories, setTotalCategories] = useState(0)
@@ -39,44 +37,29 @@ const CategoryManagement = () => {
       setLoading(true)
       setError(null)
       
-      // Mock data for frontend design - replace with actual API call when backend is ready
-      const mockData = {
-        success: true,
-        data: {
-          categories: [
-            { id: '1', name: 'IT', icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJMMTMuMDkgOC4yNkwyMCA5TDEzLjA5IDE1Ljc0TDEyIDIyTDEwLjkxIDE1Ljc0TDQgOUwxMC45MSA4LjI2TDEyIDJaIiBmaWxsPSIjMzM2NkZGIi8+Cjwvc3ZnPgo=', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
-            { id: '2', name: 'Finance', icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJMMTMuMDkgOC4yNkwyMCA5TDEzLjA5IDE1Ljc0TDEyIDIyTDEwLjkxIDE1Ljc0TDQgOUwxMC45MSA4LjI2TDEyIDJaIiBmaWxsPSIjMTBCOTgxIi8+Cjwvc3ZnPgo=', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
-            { id: '3', name: 'Healthcare', icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJMMTMuMDkgOC4yNkwyMCA5TDEzLjA5IDE1Ljc0TDEyIDIyTDEwLjkxIDE1Ljc0TDQgOUwxMC45MSA4LjI2TDEyIDJaIiBmaWxsPSIjRkY2QjIwIi8+Cjwvc3ZnPgo=', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
-            { id: '4', name: 'Marketing', icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJMMTMuMDkgOC4yNkwyMCA5TDEzLjA5IDE1Ljc0TDEyIDIyTDEwLjkxIDE1Ljc0TDQgOUwxMC45MSA4LjI2TDEyIDJaIiBmaWxsPSIjRkY0NDQ0Ii8+Cjwvc3ZnPgo=', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
-            { id: '5', name: 'Engineering', icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJMMTMuMDkgOC4yNkwyMCA5TDEzLjA5IDE1Ljc0TDEyIDIyTDEwLjkxIDE1Ljc0TDQgOUwxMC45MSA4LjI2TDEyIDJaIiBmaWxsPSIjOUI1Q0Y2Ii8+Cjwvc3ZnPgo=', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
-          ],
-          total: 5,
-          page: 1,
-          limit: 10,
-          totalPages: 1,
-        }
+      const params = { 
+        page: currentPage, 
+        limit: itemsPerPage, 
+        search: searchTerm || undefined 
       }
-
-      // Uncomment when backend is ready:
-      // const params = { page: currentPage, limit: itemsPerPage, search: searchTerm || undefined }
-      // const response = await adminApi.getAllJobCategories(params)
+      const response = await adminApi.getAllJobCategories(params)
       
-      if (mockData.success && mockData.data) {
-        // Filter by search term
-        let filtered = mockData.data.categories
-        if (searchTerm) {
-          filtered = filtered.filter(cat => 
-            cat.name.toLowerCase().includes(searchTerm.toLowerCase())
-          )
-        }
-        setCategories(filtered)
-        setTotalPages(mockData.data.totalPages)
-        setTotalCategories(filtered.length)
+      if (response.success && response.data) {
+        
+        const mappedCategories = response.data.categories.map(cat => ({
+          id: cat.id,
+          name: cat.name,
+          createdAt: cat.createdAt,
+          updatedAt: cat.updatedAt,
+        }))
+        setCategories(mappedCategories)
+        setTotalPages(response.data.totalPages)
+        setTotalCategories(response.data.total)
       } else {
-        setError('Failed to fetch categories')
+        setError(response.message || 'Failed to fetch categories')
       }
-    } catch {
-      setError('Failed to fetch categories')
+    } catch (err: any) {
+      setError(err.message || 'Failed to fetch categories')
     } finally {
       setLoading(false)
     }
@@ -88,7 +71,6 @@ const CategoryManagement = () => {
 
   const handleCreate = () => {
     setCategoryName('')
-    setCategoryImage('')
     setSelectedCategory(null)
     setCreateDialogOpen(true)
   }
@@ -96,7 +78,6 @@ const CategoryManagement = () => {
   const handleEdit = (category: JobCategory) => {
     setSelectedCategory(category)
     setCategoryName(category.name)
-    setCategoryImage((category as any).icon || '')
     setEditDialogOpen(true)
   }
 
@@ -112,16 +93,26 @@ const CategoryManagement = () => {
     }
 
     try {
-      // Mock implementation - replace with actual API call when backend is ready
-      // const response = await adminApi.createJobCategory({ name: categoryName.trim(), icon: categoryImage || undefined })
+      const response = await adminApi.createJobCategory({ name: categoryName.trim() })
       
-      toast.success('Category created successfully')
-      setCreateDialogOpen(false)
-      setCategoryName('')
-      setCategoryImage('')
-      fetchCategories()
-    } catch {
-      toast.error('Failed to create category')
+      if (response.success && response.data) {
+        
+        const newCategory = {
+          id: response.data.id,
+          name: response.data.name,
+          createdAt: response.data.createdAt,
+          updatedAt: response.data.updatedAt,
+        }
+        setCategories(prev => [newCategory, ...prev])
+        setTotalCategories(prev => prev + 1)
+        toast.success('Category created successfully')
+        setCreateDialogOpen(false)
+        setCategoryName('')
+      } else {
+        toast.error(response.message || 'Failed to create category')
+      }
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to create category')
     }
   }
 
@@ -132,17 +123,24 @@ const CategoryManagement = () => {
     }
 
     try {
-      // Mock implementation - replace with actual API call when backend is ready
-      // const response = await adminApi.updateJobCategory(selectedCategory.id, { name: categoryName.trim(), icon: categoryImage || undefined })
+      const response = await adminApi.updateJobCategory(selectedCategory.id, { name: categoryName.trim() })
       
-      toast.success('Category updated successfully')
-      setEditDialogOpen(false)
-      setCategoryName('')
-      setCategoryImage('')
-      setSelectedCategory(null)
-      fetchCategories()
-    } catch {
-      toast.error('Failed to update category')
+      if (response.success && response.data) {
+        
+        setCategories(prev => prev.map(cat => 
+          cat.id === selectedCategory.id 
+            ? { ...cat, name: response.data!.name, updatedAt: response.data!.updatedAt }
+            : cat
+        ))
+        toast.success('Category updated successfully')
+        setEditDialogOpen(false)
+        setCategoryName('')
+        setSelectedCategory(null)
+      } else {
+        toast.error(response.message || 'Failed to update category')
+      }
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to update category')
     }
   }
 
@@ -150,15 +148,20 @@ const CategoryManagement = () => {
     if (!selectedCategory) return
 
     try {
-      // Mock implementation - replace with actual API call when backend is ready
-      // const response = await adminApi.deleteJobCategory(selectedCategory.id)
+      const response = await adminApi.deleteJobCategory(selectedCategory.id)
       
-      toast.success('Category deleted successfully')
-      setDeleteDialogOpen(false)
-      setSelectedCategory(null)
-      fetchCategories()
-    } catch {
-      toast.error('Failed to delete category')
+      if (response.success) {
+        
+        setCategories(prev => prev.filter(cat => cat.id !== selectedCategory.id))
+        setTotalCategories(prev => Math.max(0, prev - 1))
+        toast.success('Category deleted successfully')
+        setDeleteDialogOpen(false)
+        setSelectedCategory(null)
+      } else {
+        toast.error(response.message || 'Failed to delete category')
+      }
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to delete category')
     }
   }
 
@@ -226,7 +229,6 @@ const CategoryManagement = () => {
                 <table className="w-full">
                   <thead>
                     <tr className="border-b border-border/50">
-                      <th className="text-left p-4 font-medium text-muted-foreground">Icon</th>
                       <th className="text-left p-4 font-medium text-muted-foreground">Name</th>
                       <th className="text-left p-4 font-medium text-muted-foreground">Created</th>
                       <th className="text-left p-4 font-medium text-muted-foreground">Actions</th>
@@ -235,24 +237,13 @@ const CategoryManagement = () => {
                   <tbody>
                     {categories.length === 0 ? (
                       <tr>
-                        <td colSpan={4} className="p-8 text-center text-gray-500">
+                        <td colSpan={3} className="p-8 text-center text-gray-500">
                           No categories found
                         </td>
                       </tr>
                     ) : (
                       categories.map((category) => (
                         <tr key={category.id} className="border-b border-border/50 hover:bg-gray-50 transition-colors">
-                          <td className="p-4">
-                            {(category as any).icon ? (
-                              <img 
-                                src={(category as any).icon} 
-                                alt={category.name}
-                                className="h-8 w-8 rounded object-cover"
-                              />
-                            ) : (
-                              <ImageIcon className="h-6 w-6 text-gray-400" />
-                            )}
-                          </td>
                           <td className="p-4">
                             <p className="font-medium text-gray-800">{category.name}</p>
                           </td>
@@ -338,13 +329,12 @@ const CategoryManagement = () => {
           </div>
         )}
 
-        {/* Create Dialog */}
         <FormDialog
           isOpen={createDialogOpen}
           onClose={() => setCreateDialogOpen(false)}
           onConfirm={handleCreateConfirm}
           title="Create Category"
-          description="Add a new job category to the system. You can optionally upload an image."
+          description="Add a new category to the system."
           confirmText="Create"
         >
           <div>
@@ -352,24 +342,18 @@ const CategoryManagement = () => {
             <Input
               value={categoryName}
               onChange={(e) => setCategoryName(e.target.value)}
-              placeholder="e.g., IT, Finance, Healthcare"
+              placeholder="e.g., Technology, Finance, Healthcare"
               className="mt-1"
             />
           </div>
-          <ImageUpload
-            value={categoryImage}
-            onChange={setCategoryImage}
-            placeholder="Upload category image"
-          />
         </FormDialog>
 
-        {/* Edit Dialog */}
         <FormDialog
           isOpen={editDialogOpen}
           onClose={() => setEditDialogOpen(false)}
           onConfirm={handleEditConfirm}
           title="Edit Category"
-          description="Update the category name and image."
+          description="Update the category name."
           confirmText="Update"
         >
           <div>
@@ -377,18 +361,12 @@ const CategoryManagement = () => {
             <Input
               value={categoryName}
               onChange={(e) => setCategoryName(e.target.value)}
-              placeholder="e.g., IT, Finance, Healthcare"
+              placeholder="e.g., Technology, Finance, Healthcare"
               className="mt-1"
             />
           </div>
-          <ImageUpload
-            value={categoryImage}
-            onChange={setCategoryImage}
-            placeholder="Upload category image"
-          />
         </FormDialog>
 
-        {/* Delete Confirmation Dialog */}
         <ConfirmationDialog
           isOpen={deleteDialogOpen}
           onClose={() => setDeleteDialogOpen(false)}

@@ -8,6 +8,7 @@ import { IOtpService } from '../../../domain/interfaces/services/IOtpService';
 import { IMailerService } from '../../../domain/interfaces/services/IMailerService';
 import { IGoogleLoginUseCase } from '../../../domain/interfaces/use-cases/IAuthUseCases';
 import { UserRole } from '../../../domain/enums/user-role.enum';
+import { AuthorizationError } from '../../../domain/errors/errors';
 import { otpVerificationTemplate } from '../../../infrastructure/messaging/templates/otp-verification.template';
 import { UserMapper } from '../../mappers/user.mapper';
 
@@ -35,6 +36,17 @@ export class GoogleLoginUseCase implements IGoogleLoginUseCase {
         isBlocked: false,
         refreshToken: null,
       });
+    }
+
+    if (user.isBlocked) {
+      throw new AuthorizationError('User is blocked. Contact support for assistance.');
+    }
+
+    if (!user.isVerified) {
+      const code = await this._otpService.generateAndStoreOtp(user.email);
+      const htmlContent = otpVerificationTemplate.html(code);
+      await this._mailerService.sendMail(user.email, otpVerificationTemplate.subject, htmlContent);
+      return { user: UserMapper.toDto(user) };
     }
 
     const accessToken = this._tokenService.signAccess({ sub: user.id, role: user.role });

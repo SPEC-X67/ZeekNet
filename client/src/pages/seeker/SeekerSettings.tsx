@@ -42,7 +42,7 @@ export function SeekerSettings() {
         <TabsContent value="profile" className="mt-0 p-6 space-y-5">
           <Card className="border border-[#d6ddeb]">
             <div className="p-6 space-y-5">
-              {/* Basic Information */}
+              
               <div>
                 <h3 className="font-['Epilogue',sans-serif] font-semibold text-[14px] text-[#202430] mb-1">
                   Basic Information
@@ -54,7 +54,6 @@ export function SeekerSettings() {
 
               <div className="h-px bg-[#d6ddeb]" />
 
-              {/* Profile Photo */}
               <div className="flex items-start justify-between">
                 <div className="flex-1 max-w-xs">
                   <h4 className="font-['Epilogue',sans-serif] font-semibold text-[13px] text-[#25324b] mb-2">
@@ -84,7 +83,6 @@ export function SeekerSettings() {
 
               <div className="h-px bg-[#d6ddeb]" />
 
-              {/* Personal Details */}
               <div>
                 <div className="flex items-start justify-between mb-5">
                   <h4 className="font-['Epilogue',sans-serif] font-semibold text-[13px] text-[#25324b]">

@@ -15,22 +15,29 @@ import {
   UpdateEducationRequestDto,
   UploadResumeRequestDto,
 } from '../dto/seeker/seeker-profile.dto';
+import { CreateSeekerProfileData, UpdateSeekerProfileData } from '../../domain/interfaces/use-cases/ISeekerUseCases';
+import { IS3Service } from '../../domain/interfaces/services/IS3Service';
 
 export class SeekerProfileMapper {
-  // Domain to DTO mappings
-  static toDto(profile: SeekerProfile): SeekerProfileResponseDto {
+  
+  static toDto(profile: SeekerProfile, s3Service: IS3Service): SeekerProfileResponseDto {
     return {
       id: profile.id,
       userId: profile.userId,
+      name: '', 
       headline: profile.headline,
       summary: profile.summary,
       location: profile.location,
       phone: profile.phone,
       email: profile.email,
-      avatarUrl: profile.avatarUrl,
+      avatarUrl: profile.avatarFileName ? s3Service.getImageUrl(profile.avatarFileName) : null,
+      bannerUrl: profile.bannerFileName ? s3Service.getImageUrl(profile.bannerFileName) : null,
       skills: profile.skills,
+      languages: profile.languages,
       socialLinks: profile.socialLinks.map(link => this.socialLinkToDto(link)),
       resume: profile.resume ? this.resumeMetaToDto(profile.resume) : null,
+      experiences: [], 
+      education: [], 
       createdAt: profile.createdAt.toISOString(),
       updatedAt: profile.updatedAt.toISOString(),
     };
@@ -78,25 +85,16 @@ export class SeekerProfileMapper {
     };
   }
 
-  // DTO to Domain mappings (for use cases)
-  static createProfileDataFromDto(dto: CreateSeekerProfileRequestDto): {
-    headline?: string;
-    summary?: string;
-    location?: string;
-    phone?: string;
-    email: string;
-    avatarUrl?: string;
-    skills?: string[];
-    socialLinks?: SocialLink[];
-  } {
+  static createProfileDataFromDto(dto: CreateSeekerProfileRequestDto): CreateSeekerProfileData {
     return {
       headline: dto.headline,
       summary: dto.summary,
       location: dto.location,
       phone: dto.phone,
       email: dto.email,
-      avatarUrl: dto.avatarUrl,
+
       skills: dto.skills,
+      languages: dto.languages,
       socialLinks: dto.socialLinks?.map(link => ({
         name: link.name,
         link: link.link,
@@ -104,24 +102,16 @@ export class SeekerProfileMapper {
     };
   }
 
-  static updateProfileDataFromDto(dto: UpdateSeekerProfileRequestDto): {
-    headline?: string;
-    summary?: string;
-    location?: string;
-    phone?: string;
-    email?: string;
-    avatarUrl?: string;
-    skills?: string[];
-    socialLinks?: SocialLink[];
-  } {
+  static updateProfileDataFromDto(dto: UpdateSeekerProfileRequestDto): UpdateSeekerProfileData {
     return {
       headline: dto.headline,
       summary: dto.summary,
       location: dto.location,
       phone: dto.phone,
       email: dto.email,
-      avatarUrl: dto.avatarUrl,
+
       skills: dto.skills,
+      languages: dto.languages,
       socialLinks: dto.socialLinks?.map(link => ({
         name: link.name,
         link: link.link,

@@ -22,6 +22,8 @@ export interface JobPostingDetailResponseDto {
   skills_required: string[];
   category_ids: string[];
   is_active: boolean;
+  admin_blocked?: boolean;
+  unpublish_reason?: string;
   view_count: number;
   application_count: number;
   createdAt: string;

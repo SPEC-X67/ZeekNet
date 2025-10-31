@@ -1,15 +1,26 @@
-import { useState } from 'react';
-import { MapPin, Pencil, Plus, Globe, Mail, Phone, Flag } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { MapPin, Pencil, Plus, Globe, Mail, Phone, Trash2, X } from 'lucide-react';
 import { Card } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
 import { Badge } from '../../components/ui/badge';
 import { Label } from '../../components/ui/label';
+import { Input } from '../../components/ui/input';
+import { Textarea } from '../../components/ui/textarea';
+import { Loading } from '../../components/ui/loading';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../../components/ui/dialog';
+import { Checkbox } from '../../components/ui/checkbox';
 import FormDialog from '../../components/common/FormDialog';
 import { ImageCropper } from '../../components/common/ImageCropper';
+import { toast } from 'sonner';
+import { seekerApi, type SeekerProfile as SeekerProfileType, type Experience, type Education } from '../../api/seeker.api';
 import type { Area } from 'react-easy-crop';
 
 export function SeekerProfile() {
-  // Dialog states
+  
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+
   const [editBannerOpen, setEditBannerOpen] = useState(false);
   const [bannerCropperOpen, setBannerCropperOpen] = useState(false);
   const [editProfileOpen, setEditProfileOpen] = useState(false);
@@ -17,114 +28,108 @@ export function SeekerProfile() {
   const [editAboutOpen, setEditAboutOpen] = useState(false);
   const [addExperienceOpen, setAddExperienceOpen] = useState(false);
   const [editExperienceOpen, setEditExperienceOpen] = useState(false);
+  const [editingExperienceId, setEditingExperienceId] = useState<string | null>(null);
   const [addEducationOpen, setAddEducationOpen] = useState(false);
   const [editEducationOpen, setEditEducationOpen] = useState(false);
+  const [editingEducationId, setEditingEducationId] = useState<string | null>(null);
   const [addSkillOpen, setAddSkillOpen] = useState(false);
   const [editDetailsOpen, setEditDetailsOpen] = useState(false);
   const [editSocialOpen, setEditSocialOpen] = useState(false);
 
-  // Temporary images for cropping
+  const [profile, setProfile] = useState<SeekerProfileType | null>(null);
+  const [experiences, setExperiences] = useState<Experience[]>([]);
+  const [education, setEducation] = useState<Education[]>([]);
+
   const [tempBannerImage, setTempBannerImage] = useState<string>('');
   const [tempProfileImage, setTempProfileImage] = useState<string>('');
 
-  // Form states
-  const [bannerImage, setBannerImage] = useState<string>(
-    'https://rerouting.ca/wp-content/uploads/2020/12/2.png'
-  );
+  const [bannerImage, setBannerImage] = useState<string>('');
   const [bannerImageFile, setBannerImageFile] = useState<File | null>(null);
-  
-  const [profilePhoto, setProfilePhoto] = useState<string>(
-    'https://img.freepik.com/premium-photo/3d-avatar-cartoon-character_113255-103130.jpg'
-  );
+  const [profilePhoto, setProfilePhoto] = useState<string>('');
   const [profilePhotoFile, setProfilePhotoFile] = useState<File | null>(null);
   
   const [profileData, setProfileData] = useState({
-    name: 'Jake Gyll',
-    position: 'Product Designer',
-    company: 'Twitter',
-    location: 'Manchester, UK',
-    openForOpportunities: true,
+    name: '',
+    headline: '',
+    location: '',
   });
 
-  const [aboutData, setAboutData] = useState(
-    "I'm a product designer + filmmaker currently working remotely at Twitter from beautiful Manchester, United Kingdom. I'm passionate about designing digital products that have a positive impact on the world.\n\nFor 10 years, I've specialised in interface, experience & interaction design as well as working in user research and product strategy for product agencies, big tech companies & start-ups."
-  );
+  const [aboutData, setAboutData] = useState('');
 
   const [experienceData, setExperienceData] = useState({
     title: '',
     company: '',
-    type: 'Full-Time',
+    employmentType: 'full-time',
     startDate: '',
     endDate: '',
     location: '',
     description: '',
+    technologies: [] as string[],
+    isCurrent: false,
   });
 
   const [educationData, setEducationData] = useState({
     school: '',
     degree: '',
+    fieldOfStudy: '',
     startDate: '',
     endDate: '',
-    description: '',
-  });
-
-  const [additionalDetails, setAdditionalDetails] = useState({
-    email: 'jakegyll@email.com',
-    phone: '+44 1245 572 135',
-    languages: 'English, French',
-  });
-
-  const [socialLinks, setSocialLinks] = useState({
-    instagram: 'instagram.com/jakegyll',
-    twitter: 'twitter.com/jakegyll',
-    website: 'www.jakegyll.com',
+    grade: '',
   });
 
   const [newSkill, setNewSkill] = useState('');
+  const [newLanguage, setNewLanguage] = useState('');
+  const [newTechnology, setNewTechnology] = useState(''); 
+  const [editingSocialLinks, setEditingSocialLinks] = useState<Array<{ name: string; link: string }>>([]);
+  const [editingLanguages, setEditingLanguages] = useState<string[]>([]);
+  const [editingPhone, setEditingPhone] = useState<string>('');
+  const [editingEmail, setEditingEmail] = useState<string>('');
 
-  const experiences = [
-    {
-      id: 1,
-      title: 'Product Designer',
-      company: 'Twitter',
-      type: 'Full-Time',
-      period: 'Jun 2019 - Present (1y 1m)',
-      location: 'Manchester, UK',
-      description:
-        'Created and executed social media plan for 10 brands utilizing multiple features and content types to increase brand outreach, engagement, and leads.',
-    },
-    {
-      id: 2,
-      title: 'Growth Marketing Designer',
-      company: 'GoDaddy',
-      type: 'Full-Time',
-      period: 'Jun 2011 - May 2019 (8y)',
-      location: 'Manchester, UK',
-      description:
-        'Developed digital marketing strategies, activation plans, proposals, contests and promotions for client initiatives',
-    },
+  const SOCIAL_PLATFORMS = [
+    { value: 'github', label: 'GitHub' },
+    { value: 'linkedin', label: 'LinkedIn' },
+    { value: 'twitter', label: 'Twitter' },
+    { value: 'portfolio', label: 'Portfolio' },
+    { value: 'behance', label: 'Behance' },
+    { value: 'dribbble', label: 'Dribbble' },
+    { value: 'medium', label: 'Medium' },
+    { value: 'custom', label: 'Custom' },
   ];
 
-  const education = [
-    {
-      id: 1,
-      school: 'Harvard University',
-      degree: 'Postgraduate degree, Applied Psychology',
-      period: '2010 - 2012',
-      description:
-        'As an Applied Psychologist in the field of Consumer and Society, I am specialized in creating business opportunities by observing, analysing, researching and changing behaviour.',
-    },
-    {
-      id: 2,
-      school: 'University of Toronto',
-      degree: 'Bachelor of Arts, Visual Communication',
-      period: '2005 - 2009',
-    },
-  ];
+  useEffect(() => {
+    fetchProfileData();
+  }, []);
 
-  const skills = ['Communication', 'Analytics', 'Facebook Ads', 'Content Planning', 'Community Manager'];
+  const fetchProfileData = async () => {
+    try {
+      setLoading(true);
+      const profileResponse = await seekerApi.getProfile();
 
-  // Handlers
+                  if (profileResponse.success && profileResponse.data) {
+                    const profileData = profileResponse.data;
+                    setProfile(profileData);
+                    setProfilePhoto(profileData.avatarUrl || '');
+                    setBannerImage(profileData.bannerUrl || '');
+                    setProfileData({
+                      name: profileData.name || '',
+                      headline: profileData.headline || '',
+                      location: profileData.location || '',
+                    });
+                    setAboutData(profileData.summary || '');
+                    setEditingPhone(profileData.phone || '');
+                    setEditingEmail(profileData.email || '');
+                    setEditingLanguages(profileData.languages || []);
+
+                    setExperiences(profileData.experiences || []);
+                    setEducation(profileData.education || []);
+                  }
+    } catch {
+      toast.error('Failed to load profile data');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleBannerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -133,23 +138,48 @@ export function SeekerProfile() {
       reader.onloadend = () => {
         const imageUrl = reader.result as string;
         setTempBannerImage(imageUrl);
-        setEditBannerOpen(false); // Close banner dialog
-        setBannerCropperOpen(true); // Open cropper
+        setEditBannerOpen(false);
+        setBannerCropperOpen(true);
       };
       reader.readAsDataURL(file);
     }
   };
 
+  const dataURLtoFile = (dataUrl: string, filename: string): File => {
+    const arr = dataUrl.split(',');
+    const mime = arr[0].match(/:(.*?);/)?.[1] || 'image/png';
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new File([u8arr], filename, { type: mime });
+  };
+
   const handleBannerCropComplete = async (_croppedAreaPixels: Area, croppedImage: string) => {
-    setBannerImage(croppedImage);
-    setBannerImageFile(null); // Reset file since we're using cropped image
-    setBannerCropperOpen(false);
+    try {
+      setSaving(true);
+      
+      const file = dataURLtoFile(croppedImage, `banner-${Date.now()}.png`);
+      const response = await seekerApi.uploadBanner(file);
+      if (response.success && response.data) {
+        setBannerImage(response.data.bannerUrl || croppedImage);
+        toast.success('Banner updated successfully');
+        fetchProfileData();
+      } else {
+        toast.error(response.message || 'Failed to update banner');
+      }
+    } catch {
+      toast.error('Failed to update banner');
+    } finally {
+      setBannerImageFile(null);
+      setBannerCropperOpen(false);
+      setSaving(false);
+    }
   };
 
   const handleEditBanner = () => {
-    console.log('Banner Updated:', {
-      bannerImageUrl: bannerImage,
-    });
     setEditBannerOpen(false);
   };
 
@@ -161,95 +191,487 @@ export function SeekerProfile() {
       reader.onloadend = () => {
         const imageUrl = reader.result as string;
         setTempProfileImage(imageUrl);
-        setEditProfileOpen(false); // Close profile dialog
-        setProfileCropperOpen(true); // Open cropper
+        setEditProfileOpen(false);
+        setProfileCropperOpen(true);
       };
       reader.readAsDataURL(file);
     }
   };
 
   const handleProfileCropComplete = async (_croppedAreaPixels: Area, croppedImage: string) => {
-    setProfilePhoto(croppedImage);
-    setProfilePhotoFile(null); // Reset file since we're using cropped image
-    setProfileCropperOpen(false);
+    try {
+      setSaving(true);
+      
+      const file = dataURLtoFile(croppedImage, `avatar-${Date.now()}.png`);
+      const response = await seekerApi.uploadAvatar(file);
+      if (response.success && response.data) {
+        setProfilePhoto(response.data.avatarUrl || croppedImage);
+        toast.success('Profile photo updated successfully');
+        fetchProfileData();
+      } else {
+        toast.error(response.message || 'Failed to update profile photo');
+      }
+    } catch {
+      toast.error('Failed to update profile photo');
+    } finally {
+      setProfilePhotoFile(null);
+      setProfileCropperOpen(false);
+      setSaving(false);
+    }
   };
 
-  const handleEditProfile = () => {
-    console.log('Profile Updated:', {
-      ...profileData,
-      profilePhoto: profilePhotoFile ? profilePhotoFile.name : 'No file selected',
-      profilePhotoUrl: profilePhoto,
+  const handleEditProfile = async () => {
+    try {
+      setSaving(true);
+
+      if (profileData.name.trim() && profileData.name !== profile?.name) {
+        const nameResponse = await seekerApi.updateName(profileData.name.trim());
+        if (!nameResponse.success) {
+          toast.error(nameResponse.message || 'Failed to update name');
+          return;
+        }
+      }
+
+      const response = await seekerApi.updateProfile({
+        headline: profileData.headline,
+        location: profileData.location,
+        
+      });
+      if (response.success) {
+        toast.success('Profile updated successfully');
+        setEditProfileOpen(false);
+        fetchProfileData();
+      } else {
+        toast.error(response.message || 'Failed to update profile');
+      }
+    } catch {
+      toast.error('Failed to update profile');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleEditAbout = async () => {
+    try {
+      setSaving(true);
+      const response = await seekerApi.updateProfile({
+        summary: aboutData,
+      });
+      if (response.success) {
+        toast.success('About section updated successfully');
+        setEditAboutOpen(false);
+        fetchProfileData();
+      } else {
+        toast.error(response.message || 'Failed to update about section');
+      }
+    } catch {
+      toast.error('Failed to update about section');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleAddExperience = async () => {
+    try {
+      setSaving(true);
+      const response = await seekerApi.addExperience({
+        title: experienceData.title,
+        company: experienceData.company,
+        startDate: experienceData.startDate,
+        endDate: experienceData.endDate || undefined,
+        employmentType: experienceData.employmentType,
+        location: experienceData.location || undefined,
+        description: experienceData.description || undefined,
+        technologies: experienceData.technologies,
+        isCurrent: experienceData.isCurrent,
+      });
+      if (response.success) {
+        toast.success('Experience added successfully');
+        setAddExperienceOpen(false);
+        setExperienceData({
+          title: '',
+          company: '',
+          employmentType: 'full-time',
+          startDate: '',
+          endDate: '',
+          location: '',
+          description: '',
+          technologies: [],
+          isCurrent: false,
+        });
+        setNewTechnology('');
+        fetchProfileData();
+      } else {
+        toast.error(response.message || 'Failed to add experience');
+      }
+    } catch {
+      toast.error('Failed to add experience');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleEditExperience = async () => {
+    if (!editingExperienceId) return;
+    try {
+      setSaving(true);
+      const response = await seekerApi.updateExperience(editingExperienceId, {
+        title: experienceData.title,
+        company: experienceData.company,
+        startDate: experienceData.startDate,
+        endDate: experienceData.endDate || undefined,
+        employmentType: experienceData.employmentType,
+        location: experienceData.location || undefined,
+        description: experienceData.description || undefined,
+        technologies: experienceData.technologies,
+        isCurrent: experienceData.isCurrent,
+      });
+      if (response.success) {
+        toast.success('Experience updated successfully');
+        setEditExperienceOpen(false);
+        setEditingExperienceId(null);
+        fetchProfileData();
+      } else {
+        toast.error(response.message || 'Failed to update experience');
+      }
+    } catch {
+      toast.error('Failed to update experience');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleRemoveExperience = async (experienceId: string) => {
+    if (!confirm('Are you sure you want to remove this experience?')) return;
+    try {
+      setSaving(true);
+      const response = await seekerApi.removeExperience(experienceId);
+      if (response.success) {
+        toast.success('Experience removed successfully');
+        fetchProfileData();
+      } else {
+        toast.error(response.message || 'Failed to remove experience');
+      }
+    } catch {
+      toast.error('Failed to remove experience');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleAddEducation = async () => {
+    try {
+      setSaving(true);
+      const response = await seekerApi.addEducation({
+        school: educationData.school,
+        degree: educationData.degree || undefined,
+        fieldOfStudy: educationData.fieldOfStudy || undefined,
+        startDate: educationData.startDate,
+        endDate: educationData.endDate || undefined,
+        grade: educationData.grade || undefined,
+      });
+      if (response.success) {
+        toast.success('Education added successfully');
+        setAddEducationOpen(false);
+        setEducationData({
+          school: '',
+          degree: '',
+          fieldOfStudy: '',
+          startDate: '',
+          endDate: '',
+          grade: '',
+        });
+        fetchProfileData();
+      } else {
+        toast.error(response.message || 'Failed to add education');
+      }
+    } catch {
+      toast.error('Failed to add education');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleEditEducation = async () => {
+    if (!editingEducationId) return;
+    try {
+      setSaving(true);
+      const response = await seekerApi.updateEducation(editingEducationId, {
+        school: educationData.school,
+        degree: educationData.degree || undefined,
+        fieldOfStudy: educationData.fieldOfStudy || undefined,
+        startDate: educationData.startDate,
+        endDate: educationData.endDate || undefined,
+        grade: educationData.grade || undefined,
+      });
+      if (response.success) {
+        toast.success('Education updated successfully');
+        setEditEducationOpen(false);
+        setEditingEducationId(null);
+        fetchProfileData();
+      } else {
+        toast.error(response.message || 'Failed to update education');
+      }
+    } catch {
+      toast.error('Failed to update education');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleRemoveEducation = async (educationId: string) => {
+    if (!confirm('Are you sure you want to remove this education?')) return;
+    try {
+      setSaving(true);
+      const response = await seekerApi.removeEducation(educationId);
+      if (response.success) {
+        toast.success('Education removed successfully');
+        fetchProfileData();
+      } else {
+        toast.error(response.message || 'Failed to remove education');
+      }
+    } catch {
+      toast.error('Failed to remove education');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleAddSkill = async () => {
+    if (!newSkill.trim()) {
+      toast.error('Please enter a skill name');
+      return;
+    }
+    if (!profile) {
+      toast.error('Profile not loaded');
+      return;
+    }
+    try {
+      setSaving(true);
+      const updatedSkills = [...(profile.skills || []), newSkill.trim()];
+      const response = await seekerApi.updateSkills(updatedSkills);
+      if (response.success) {
+        toast.success('Skill added successfully');
+        setAddSkillOpen(false);
+        setNewSkill('');
+        fetchProfileData();
+      } else {
+        toast.error(response.message || 'Failed to add skill');
+      }
+    } catch {
+      toast.error('Failed to add skill');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleRemoveSkill = async (skill: string) => {
+    if (!profile) return;
+    try {
+      setSaving(true);
+      const updatedSkills = profile.skills.filter((s: string) => s !== skill);
+      const response = await seekerApi.updateSkills(updatedSkills);
+      if (response.success) {
+        toast.success('Skill removed successfully');
+        fetchProfileData();
+      } else {
+        toast.error(response.message || 'Failed to remove skill');
+      }
+    } catch {
+      toast.error('Failed to remove skill');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleAddLanguage = () => {
+    if (!newLanguage.trim()) {
+      toast.error('Please enter a language name');
+      return;
+    }
+    const trimmed = newLanguage.trim();
+    if (editingLanguages.includes(trimmed)) {
+      toast.error('This language is already added');
+      return;
+    }
+    setEditingLanguages([...editingLanguages, trimmed]);
+    setNewLanguage('');
+  };
+
+  const handleRemoveLanguage = (language: string) => {
+    setEditingLanguages(editingLanguages.filter(lang => lang !== language));
+  };
+
+  const handleAddTechnology = () => {
+    if (!newTechnology.trim()) {
+      toast.error('Please enter a technology name');
+      return;
+    }
+    const trimmed = newTechnology.trim();
+    if (experienceData.technologies.includes(trimmed)) {
+      toast.error('This technology is already added');
+      return;
+    }
+    setExperienceData({ ...experienceData, technologies: [...experienceData.technologies, trimmed] });
+    setNewTechnology('');
+  };
+
+  const handleRemoveTechnology = (technology: string) => {
+    setExperienceData({ 
+      ...experienceData, 
+      technologies: experienceData.technologies.filter(tech => tech !== technology) 
     });
-    setEditProfileOpen(false);
   };
 
-  const handleEditAbout = () => {
-    console.log('About Me Updated:', aboutData);
-    setEditAboutOpen(false);
+  const handleEditDetails = async () => {
+    if (!profile) return;
+    try {
+      setSaving(true);
+      
+      const updateData: {
+        phone?: string;
+        email?: string;
+      } = {};
+
+      let hasChanges = false;
+      
+      if (editingPhone !== profile.phone) {
+        updateData.phone = editingPhone || undefined;
+        hasChanges = true;
+      }
+
+      if (editingEmail !== profile.email) {
+        if (!editingEmail.trim()) {
+          toast.error('Email is required');
+          setSaving(false);
+          return;
+        }
+        updateData.email = editingEmail.trim();
+        hasChanges = true;
+      }
+
+      const updatePromises = [];
+      
+      if (Object.keys(updateData).length > 0) {
+        updatePromises.push(seekerApi.updateProfile(updateData));
+      }
+
+      const currentLanguages = profile.languages || [];
+      const languagesChanged = JSON.stringify(editingLanguages.sort()) !== JSON.stringify(currentLanguages.sort());
+      
+      if (languagesChanged) {
+        updatePromises.push(seekerApi.updateLanguages(editingLanguages));
+        hasChanges = true;
+      }
+
+      if (hasChanges && updatePromises.length > 0) {
+        await Promise.all(updatePromises);
+        toast.success('Contact details updated successfully');
+        setEditDetailsOpen(false);
+        fetchProfileData();
+      } else {
+        setEditDetailsOpen(false);
+      }
+    } catch {
+      toast.error('Failed to update contact details');
+    } finally {
+      setSaving(false);
+    }
   };
 
-  const handleAddExperience = () => {
-    console.log('New Experience Added:', experienceData);
-    setAddExperienceOpen(false);
-    setExperienceData({
-      title: '',
-      company: '',
-      type: 'Full-Time',
-      startDate: '',
-      endDate: '',
-      location: '',
-      description: '',
-    });
+  const handleEditSocial = async () => {
+    if (!profile) return;
+    try {
+      setSaving(true);
+      
+      const validLinks = editingSocialLinks
+        .filter(link => link.name?.trim() && link.link?.trim())
+        .map(link => ({
+          name: SOCIAL_PLATFORMS.find(p => p.value === link.name?.toLowerCase()) 
+            ? link.name.toLowerCase() 
+            : link.name.trim(),
+          link: link.link.startsWith('http') ? link.link : `https://${link.link}`,
+        }));
+
+      const response = await seekerApi.updateProfile({
+        socialLinks: validLinks,
+      });
+      if (response.success) {
+        toast.success('Social links updated successfully');
+        setEditSocialOpen(false);
+        fetchProfileData();
+      } else {
+        toast.error(response.message || 'Failed to update social links');
+      }
+    } catch {
+      toast.error('Failed to update social links');
+    } finally {
+      setSaving(false);
+    }
   };
 
-  const handleEditExperience = (exp: typeof experiences[0]) => {
-    console.log('Experience Updated:', { id: exp.id, ...experienceData });
-    setEditExperienceOpen(false);
+  useEffect(() => {
+    if (editSocialOpen && profile) {
+      const links = profile.socialLinks || [];
+      
+      setEditingSocialLinks(links.length > 0 ? links : [{ name: '', link: '' }]);
+    }
+    if (editDetailsOpen && profile) {
+      setEditingPhone(profile.phone || '');
+      setEditingEmail(profile.email || '');
+      setEditingLanguages(profile.languages || []);
+    }
+  }, [editSocialOpen, editDetailsOpen, profile]);
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short' });
   };
 
-  const handleAddEducation = () => {
-    console.log('New Education Added:', educationData);
-    setAddEducationOpen(false);
-    setEducationData({
-      school: '',
-      degree: '',
-      startDate: '',
-      endDate: '',
-      description: '',
-    });
+  const formatPeriod = (startDate: string, endDate?: string, isCurrent?: boolean) => {
+    const start = formatDate(startDate);
+    if (isCurrent) {
+      return `${start} - Present`;
+    }
+    if (endDate) {
+      const end = formatDate(endDate);
+      return `${start} - ${end}`;
+    }
+    return start;
   };
 
-  const handleEditEducation = (edu: typeof education[0]) => {
-    console.log('Education Updated:', { id: edu.id, ...educationData });
-    setEditEducationOpen(false);
+  const isoToDateInput = (isoDate: string): string => {
+    if (!isoDate) return '';
+    try {
+      const date = new Date(isoDate);
+      if (isNaN(date.getTime())) return '';
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    } catch {
+      return '';
+    }
   };
 
-  const handleAddSkill = () => {
-    console.log('New Skill Added:', newSkill);
-    setAddSkillOpen(false);
-    setNewSkill('');
-  };
-
-  const handleEditDetails = () => {
-    console.log('Additional Details Updated:', additionalDetails);
-    setEditDetailsOpen(false);
-  };
-
-  const handleEditSocial = () => {
-    console.log('Social Links Updated:', socialLinks);
-    setEditSocialOpen(false);
-  };
+  if (loading) {
+    return (
+      <div className="p-10 max-w-7xl mx-auto flex items-center justify-center min-h-screen">
+        <Loading />
+      </div>
+    );
+  }
 
   return (
     <div className="p-10 max-w-7xl mx-auto">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-        {/* Main Content */}
+        
         <div className="lg:col-span-2 space-y-5">
-          {/* Profile Header */}
+          
           <Card className="!py-0 border border-[#d6ddeb] overflow-hidden">
             <div className="h-[140px] relative overflow-hidden">
               <img 
-                src={bannerImage} 
+                src={bannerImage || 'https://rerouting.ca/wp-content/uploads/2020/12/2.png'} 
                 alt="Profile Banner" 
                 className="w-full h-full object-cover"
               />
@@ -265,35 +687,42 @@ export function SeekerProfile() {
             </div>
             <div className="px-5 pb-5 relative">
               <div className="flex items-end gap-5 -mt-25 mb-3">
-                <div className="w-[112px] h-[112px] rounded-full border-[3px] border-white bg-gradient-to-br from-[#26a4ff] to-[#4640de] overflow-hidden">
-                  <div className="w-full h-full flex items-center justify-center text-white text-3xl font-bold">
-                    <img src={profilePhoto} alt="Profile Photo" className="w-full h-full object-cover rounded-full" />
+                <div className="w-[112px] h-[112px] rounded-full border-[3px] border-white bg-gradient-to-br from-[#26a4ff] to-[#4640de] overflow-hidden flex items-center justify-center">
+                  {profilePhoto ? (
+                    <img src={profilePhoto} alt="Profile Photo" className="w-full h-full object-cover rounded-full" onError={(e) => {
+                      
+                      const target = e.target as HTMLImageElement;
+                      target.style.display = 'none';
+                      target.parentElement?.querySelector('.fallback-avatar')?.classList.remove('hidden');
+                    }} />
+                  ) : null}
+                  <div className={`fallback-avatar w-full h-full flex items-center justify-center text-white text-3xl font-bold ${profilePhoto ? 'hidden' : ''}`}>
+                    {profile?.name?.[0]?.toUpperCase() || 'U'}
                   </div>
                 </div>
               </div>
               <div className="flex items-start justify-between">
                 <div className="space-y-2">
                   <h2 className="text-[19px] text-[#25324b] font-extrabold leading-[1.2]">
-                    Jake Gyll
+                    {profile?.name || 'Your Name'}
                   </h2>
-                  <p className="text-[14px] text-[#7c8493]">
-                    Product Designer at <span className="font-medium text-[#25324b]">Twitter</span>
-                  </p>
-                  <div className="flex items-center gap-2 font-medium text-[#7c8493]">
-                    <MapPin className="w-4 h-4" />
-                    <span className="text-[14px]">Manchester, UK</span>
-                  </div>
-                  <div className="inline-flex items-center gap-2 bg-[rgba(86,205,173,0.1)] px-5 py-2 rounded-lg mt-2">
-                    <Flag className="w-5 h-5 text-[#56cdad]" />
-                    <span className="font-semibold text-[13px] text-[#56cdad]">
-                      OPEN FOR OPPORTUNITIES
-                    </span>
-                  </div>
+                  {profile?.headline && (
+                    <p className="text-[14px] text-[#7c8493]">
+                      {profile.headline}
+                    </p>
+                  )}
+                  {profile?.location && (
+                    <div className="flex items-center gap-2 font-medium text-[#7c8493]">
+                      <MapPin className="w-4 h-4" />
+                      <span className="text-[14px]">{profile.location}</span>
+                    </div>
+                  )}
                 </div>
                 <Button 
                   variant="seekerOutline" 
                   className="border-[#ccccf5] text-[#4640de] text-[13px] px-4 py-2"
                   onClick={() => setEditProfileOpen(true)}
+                  disabled={saving}
                 >  
                   <Pencil className="w-3 h-3 mr-2" />
                   <p className="text-[13px] font-bold">
@@ -304,7 +733,6 @@ export function SeekerProfile() {
             </div>
           </Card>
 
-          {/* About Me */}
           <Card className="p-5 !gap-0 border border-[#d6ddeb]">
             <div className="flex items-center justify-between mb-3">
               <p className="font-bold text-[16px] text-[#25324b]">
@@ -320,20 +748,14 @@ export function SeekerProfile() {
               </Button>
             </div>
             <div className="space-y-3 text-[#515b6f] text-[13px] leading-[1.6]">
-              <p>
-                I'm a product designer + filmmaker currently working remotely at Twitter from beautiful
-                Manchester, United Kingdom. I'm passionate about designing digital products that have a
-                positive impact on the world.
-              </p>
-              <p>
-                For 10 years, I've specialised in interface, experience & interaction design as well as
-                working in user research and product strategy for product agencies, big tech companies &
-                start-ups.
-              </p>
+              {aboutData ? (
+                <p className="whitespace-pre-wrap">{aboutData}</p>
+              ) : (
+                <p className="text-[#7c8493] italic">No about information yet. Click edit to add your story.</p>
+              )}
             </div>
           </Card>
 
-          {/* Experience */}
           <Card className="!gap-0 !p-0 border border-[#d6ddeb]">
             <div className="p-5 flex items-center justify-between border-b border-[#d6ddeb]">
               <p className="font-bold text-[16px] text-[#25324b]">
@@ -349,65 +771,96 @@ export function SeekerProfile() {
               </Button>
             </div>
             <div className="divide-y divide-[#d6ddeb]">
-              {experiences.map((exp) => (
-                <div key={exp.id} className="p-6 flex gap-5">
-                  <div className="w-16 h-16 rounded-lg bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
-                    {exp.company[0]}
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-start justify-between mb-2">
-                      <div>
-                        <p className="font-bold text-[14px] text-[#25324b] mb-1">
-                          {exp.title}
-                        </p>
-                        <div className="flex items-center gap-2 text-[13px] text-[#7c8493] mb-1">
-                          <span className="font-medium text-[#25324b]">
-                            {exp.company}
-                          </span>
-                          <span>•</span>
-                          <span>{exp.type}</span>
-                          <span>•</span>
-                          <span>{exp.period}</span>
-                        </div>
-                        <p className="text-[13px] text-[#7c8493]">
-                          {exp.location}
-                        </p>
-                      </div>
-                      <Button 
-                        variant="seekerOutline" 
-                        size="sm" 
-                        className="h-8 w-8 !rounded-full"
-                        onClick={() => {
-                          setExperienceData({
-                            title: exp.title,
-                            company: exp.company,
-                            type: exp.type,
-                            startDate: '',
-                            endDate: '',
-                            location: exp.location,
-                            description: exp.description,
-                          });
-                          setEditExperienceOpen(true);
-                        }}
-                      >
-                        <Pencil className="w-3 h-3" />
-                      </Button>
-                    </div>
-                    <p className="text-[13px] text-[#25324b] mt-2">
-                      {exp.description}
-                    </p>
-                  </div>
+              {experiences.length === 0 ? (
+                <div className="p-6 text-center text-[#7c8493] text-[13px]">
+                  No experiences yet. Click the + button to add your first experience.
                 </div>
-              ))}
-            </div>
-            <div className="p-5 flex justify-center">
-              <Button variant="seekerOutline" size="sm" className="text-[13px] font-bold">
-                Show 3 more experiences
-              </Button>
+              ) : (
+                experiences.map((exp) => (
+                  <div key={exp.id} className="p-6 flex gap-5">
+                    <div className="w-16 h-16 rounded-lg bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
+                      {exp.company[0]?.toUpperCase() || 'E'}
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-start justify-between mb-2">
+                        <div className="flex-1">
+                          <p className="font-bold text-[14px] text-[#25324b] mb-1">
+                            {exp.title}
+                          </p>
+                          <div className="flex items-center gap-2 text-[13px] text-[#7c8493] mb-1">
+                            <span className="font-medium text-[#25324b]">
+                              {exp.company}
+                            </span>
+                            <span>•</span>
+                            <span>{exp.employmentType}</span>
+                            <span>•</span>
+                            <span>{formatPeriod(exp.startDate, exp.endDate, exp.isCurrent)}</span>
+                          </div>
+                          {exp.location && (
+                            <p className="text-[13px] text-[#7c8493]">
+                              {exp.location}
+                            </p>
+                          )}
+                        </div>
+                        <div className="flex gap-2">
+                          <Button 
+                            variant="seekerOutline" 
+                            size="sm" 
+                            className="h-8 w-8 !rounded-full"
+                            onClick={() => {
+                              const expData = experiences.find(e => e.id === exp.id);
+                              if (expData) {
+                                setExperienceData({
+                                  title: expData.title,
+                                  company: expData.company,
+                                  employmentType: expData.employmentType,
+                                  startDate: isoToDateInput(expData.startDate),
+                                  endDate: expData.endDate ? isoToDateInput(expData.endDate) : '',
+                                  location: expData.location || '',
+                                  description: expData.description || '',
+                                  technologies: expData.technologies || [],
+                                  isCurrent: expData.isCurrent,
+                                });
+                                setEditingExperienceId(exp.id);
+                                setEditExperienceOpen(true);
+                              }
+                            }}
+                            disabled={saving}
+                          >
+                            <Pencil className="w-3 h-3" />
+                          </Button>
+                          <Button 
+                            variant="seekerOutline" 
+                            size="sm" 
+                            className="h-8 w-8 !rounded-full text-red-600 hover:text-red-700 hover:bg-red-50"
+                            onClick={() => handleRemoveExperience(exp.id)}
+                            disabled={saving}
+                          >
+                            <Trash2 className="w-3 h-3" />
+                          </Button>
+                        </div>
+                      </div>
+                      {exp.description && (
+                        <p className="text-[13px] text-[#25324b] mt-2">
+                          {exp.description}
+                        </p>
+                      )}
+                      {exp.technologies && exp.technologies.length > 0 && (
+                        <div className="flex flex-wrap gap-2 mt-2">
+                          {exp.technologies.map((tech, idx) => (
+                            <Badge key={idx} variant="skill" className="text-[11px]">
+                              {tech}
+                            </Badge>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </Card>
 
-          {/* Education */}
           <Card className="!gap-0 !p-0 border border-[#d6ddeb]">
             <div className="p-5 flex items-center justify-between border-b border-[#d6ddeb]">
               <p className="font-bold text-[16px] text-[#25324b]">
@@ -423,59 +876,83 @@ export function SeekerProfile() {
               </Button>
             </div>
             <div className="divide-y divide-[#d6ddeb]">
-              {education.map((edu) => (
-                <div key={edu.id} className="p-6 flex gap-5">
-                  <div className="w-16 h-16 rounded-lg bg-gradient-to-br from-red-400 to-red-600 flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
-                    {edu.school[0]}
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-start justify-between mb-2">
-                      <div>
-                        <p className="font-bold text-[14px] text-[#25324b] mb-1">
-                          {edu.school}
-                        </p>
-                        <p className="text-[13px] font-medium text-[#7c8493] mb-1">
-                          {edu.degree}
-                        </p>
-                        <p className="text-[13px] text-[#7c8493]">
-                          {edu.period}
-                        </p>
-                      </div>
-                      <Button 
-                        variant="seekerOutline" 
-                        size="sm" 
-                        className="h-8 w-8 !rounded-full"
-                        onClick={() => {
-                          setEducationData({
-                            school: edu.school,
-                            degree: edu.degree,
-                            startDate: '',
-                            endDate: '',
-                            description: edu.description || '',
-                          });
-                          setEditEducationOpen(true);
-                        }}
-                      >
-                        <Pencil className="w-3 h-3" />
-                      </Button>
-                    </div>
-                    {edu.description && (
-                      <p className="text-[13px] text-[#25324b] mt-2">
-                        {edu.description}
-                      </p>
-                    )}
-                  </div>
+              {education.length === 0 ? (
+                <div className="p-6 text-center text-[#7c8493] text-[13px]">
+                  No education records yet. Click the + button to add your first education.
                 </div>
-              ))}
-            </div>
-            <div className="p-5 flex justify-center">
-              <Button variant="seekerOutline" size="sm" className="text-[13px] font-bold">
-                Show 2 more educations
-              </Button>
+              ) : (
+                education.map((edu) => (
+                  <div key={edu.id} className="p-6 flex gap-5">
+                    <div className="w-16 h-16 rounded-lg bg-gradient-to-br from-red-400 to-red-600 flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
+                      {edu.school[0]?.toUpperCase() || 'E'}
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-start justify-between mb-2">
+                        <div className="flex-1">
+                          <p className="font-bold text-[14px] text-[#25324b] mb-1">
+                            {edu.school}
+                          </p>
+                          {edu.degree && (
+                            <p className="text-[13px] font-medium text-[#7c8493] mb-1">
+                              {edu.degree}
+                            </p>
+                          )}
+                          {edu.fieldOfStudy && (
+                            <p className="text-[13px] text-[#7c8493] mb-1">
+                              {edu.fieldOfStudy}
+                            </p>
+                          )}
+                          <p className="text-[13px] text-[#7c8493]">
+                            {formatPeriod(edu.startDate, edu.endDate)}
+                          </p>
+                          {edu.grade && (
+                            <p className="text-[13px] text-[#7c8493] mt-1">
+                              Grade: {edu.grade}
+                            </p>
+                          )}
+                        </div>
+                        <div className="flex gap-2">
+                          <Button 
+                            variant="seekerOutline" 
+                            size="sm" 
+                            className="h-8 w-8 !rounded-full"
+                            onClick={() => {
+                              const eduData = education.find(e => e.id === edu.id);
+                              if (eduData) {
+                                setEducationData({
+                                  school: eduData.school,
+                                  degree: eduData.degree || '',
+                                  fieldOfStudy: eduData.fieldOfStudy || '',
+                                  startDate: isoToDateInput(eduData.startDate),
+                                  endDate: eduData.endDate ? isoToDateInput(eduData.endDate) : '',
+                                  grade: eduData.grade || '',
+                                });
+                                setEditingEducationId(edu.id);
+                                setEditEducationOpen(true);
+                              }
+                            }}
+                            disabled={saving}
+                          >
+                            <Pencil className="w-3 h-3" />
+                          </Button>
+                          <Button 
+                            variant="seekerOutline" 
+                            size="sm" 
+                            className="h-8 w-8 !rounded-full text-red-600 hover:text-red-700 hover:bg-red-50"
+                            onClick={() => handleRemoveEducation(edu.id)}
+                            disabled={saving}
+                          >
+                            <Trash2 className="w-3 h-3" />
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </Card>
 
-          {/* Skills */}
           <Card className="p-5 !gap-0 border border-[#d6ddeb]">
             <div className="flex items-center justify-between mb-3">
               <p className="font-bold text-[16px] text-[#25324b]">Skills</p>
@@ -491,21 +968,27 @@ export function SeekerProfile() {
               </div>
             </div>
             <div className="flex flex-wrap gap-2">
-              {skills.map((skill) => (
-                <Badge
-                  key={skill}
-                  variant="skill"
-                >
-                  {skill}
-                </Badge>
-              ))}
+              {profile?.skills && profile.skills.length > 0 ? (
+                profile.skills.map((skill: string, idx: number) => (
+                  <Badge
+                    key={`${skill}-${idx}`}
+                    variant="skill"
+                    className="cursor-pointer hover:bg-red-50 hover:text-red-600 transition-colors group relative"
+                    onClick={() => handleRemoveSkill(skill)}
+                    title="Click to remove"
+                  >
+                    {skill}
+                  </Badge>
+                ))
+              ) : (
+                <p className="text-[#7c8493] text-[13px] italic">No skills added yet. Click the + button to add skills.</p>
+              )}
             </div>
           </Card>
         </div>
 
-        {/* Sidebar */}
         <div className="space-y-5">
-          {/* Additional Details */}
+          
           <Card className="p-5 !gap-0 border border-[#d6ddeb]">
             <div className="flex items-center justify-between mb-5">
               <p className="font-bold text-[16px] text-[#25324b]">
@@ -521,39 +1004,45 @@ export function SeekerProfile() {
               </Button>
             </div>
             <div className="space-y-3">
-              <div className="flex items-start gap-3">
-                <Mail className="w-5 h-5 text-[#7c8493] flex-shrink-0" />
-                <div>
-                  <p className="text-[13px] font-medium text-[#7c8493] mb-1">Email</p>
-                  <p className="text-[13px] font-medium text-[#25324b]">
-                    jakegyll@email.com
-                  </p>
+              {profile?.email && (
+                <div className="flex items-start gap-3">
+                  <Mail className="w-5 h-5 text-[#7c8493] flex-shrink-0" />
+                  <div>
+                    <p className="text-[13px] font-medium text-[#7c8493] mb-1">Contact Email</p>
+                    <p className="text-[13px] font-medium text-[#25324b]">
+                      {profile.email}
+                    </p>
+                  </div>
                 </div>
-              </div>
-              <div className="flex items-start gap-3">
-                <Phone className="w-5 h-5 text-[#7c8493] flex-shrink-0" />
-                <div>
-                  <p className="text-[13px] font-medium text-[#7c8493] mb-1">Phone</p>
-                  <p className="text-[13px] font-medium text-[#25324b]">
-                    +44 1245 572 135
-                  </p>
+              )}
+              {profile?.phone && (
+                <div className="flex items-start gap-3">
+                  <Phone className="w-5 h-5 text-[#7c8493] flex-shrink-0" />
+                  <div>
+                    <p className="text-[13px] font-medium text-[#7c8493] mb-1">Phone</p>
+                    <p className="text-[13px] font-medium text-[#25324b]">
+                      {profile.phone}
+                    </p>
+                  </div>
                 </div>
-              </div>
-              <div className="flex items-start gap-3">
-                <Globe className="w-5 h-5 text-[#7c8493] flex-shrink-0" />
-                <div>
-                  <p className="text-[13px] font-medium text-[#7c8493] mb-1">
-                    Languages
-                  </p>
-                  <p className="text-[13px] font-medium text-[#25324b]">
-                    English, French
-                  </p>
+              )}
+              {profile?.languages && profile.languages.length > 0 && (
+                <div className="flex items-start gap-3">
+                  <Globe className="w-5 h-5 text-[#7c8493] flex-shrink-0" />
+                  <div>
+                    <p className="text-[13px] font-medium text-[#7c8493] mb-1">Languages</p>
+                    <p className="text-[13px] font-medium text-[#25324b]">
+                      {profile.languages.join(', ')}
+                    </p>
+                  </div>
                 </div>
-              </div>
+              )}
+              {(!profile?.email && !profile?.phone && (!profile?.languages || profile.languages.length === 0)) && (
+                <p className="text-[#7c8493] text-[13px] italic">No contact details added yet.</p>
+              )}
             </div>
           </Card>
 
-          {/* Social Links */}
           <Card className="p-5 !gap-0 border border-[#d6ddeb]">
             <div className="flex items-center justify-between mb-5">
               <p className="font-bold text-[16px] text-[#25324b]">
@@ -569,49 +1058,33 @@ export function SeekerProfile() {
               </Button>
             </div>
             <div className="space-y-3">
-              <div className="flex items-start gap-3">
-                <div className="w-5 h-5 text-[#7c8493] flex-shrink-0">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 2C6.48 2 2 6.48 2 12C2 16.84 5.44 20.87 10 21.8V15H8V12H10V9.5C10 7.57 11.57 6 13.5 6H16V9H14C13.45 9 13 9.45 13 10V12H16V15H13V21.95C18.05 21.45 22 17.19 22 12C22 6.48 17.52 2 12 2Z" />
-                  </svg>
-                </div>
-                <div>
-                  <p className="text-[13px] font-medium text-[#7c8493] mb-1">
-                    Instagram
-                  </p>
-                  <p className="text-[13px] text-[#4640de] font-medium hover:underline cursor-pointer">
-                    instagram.com/jakegyll
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-start gap-3">
-                <div className="w-5 h-5 text-[#7c8493] flex-shrink-0">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M22.46 6C21.69 6.35 20.86 6.58 20 6.69C20.88 6.16 21.56 5.32 21.88 4.31C21.05 4.81 20.13 5.16 19.16 5.36C18.37 4.5 17.26 4 16 4C13.65 4 11.73 5.92 11.73 8.29C11.73 8.63 11.77 8.96 11.84 9.27C8.28 9.09 5.11 7.38 3 4.79C2.63 5.42 2.42 6.16 2.42 6.94C2.42 8.43 3.17 9.75 4.33 10.5C3.62 10.5 2.96 10.3 2.38 10C2.38 10 2.38 10 2.38 10.03C2.38 12.11 3.86 13.85 5.82 14.24C5.46 14.34 5.08 14.39 4.69 14.39C4.42 14.39 4.15 14.36 3.89 14.31C4.43 16 6 17.26 7.89 17.29C6.43 18.45 4.58 19.13 2.56 19.13C2.22 19.13 1.88 19.11 1.54 19.07C3.44 20.29 5.70 21 8.12 21C16 21 20.33 14.46 20.33 8.79C20.33 8.6 20.33 8.42 20.32 8.23C21.16 7.63 21.88 6.87 22.46 6Z" />
-                  </svg>
-                </div>
-                <div>
-                  <p className="text-[13px] text-[#7c8493] font-medium mb-1">Twitter</p>
-                  <p className="text-[13px] text-[#4640de] font-medium hover:underline cursor-pointer">
-                    twitter.com/jakegyll
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-start gap-3">
-                <Globe className="w-5 h-5 text-[#7c8493] flex-shrink-0" />
-                <div>
-                  <p className="text-[13px] text-[#7c8493] font-medium mb-1">Website</p>
-                  <p className="text-[13px] text-[#4640de] font-medium hover:underline cursor-pointer">
-                    www.jakegyll.com
-                  </p>
-                </div>
-              </div>
+              {profile?.socialLinks && profile.socialLinks.length > 0 ? (
+                profile.socialLinks.map((link: { name: string; link: string }, idx: number) => (
+                  <div key={idx} className="flex items-start gap-3">
+                    <Globe className="w-5 h-5 text-[#7c8493] flex-shrink-0" />
+                    <div>
+                      <p className="text-[13px] font-medium text-[#7c8493] mb-1 capitalize">
+                        {link.name}
+                      </p>
+                      <a 
+                        href={link.link.startsWith('http') ? link.link : `https://${link.link}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[13px] text-[#4640de] font-medium hover:underline cursor-pointer"
+                      >
+                        {link.link}
+                      </a>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p className="text-[#7c8493] text-[13px] italic">No social links added yet.</p>
+              )}
             </div>
           </Card>
         </div>
       </div>
 
-      {/* Edit Banner Dialog */}
       <FormDialog
         open={editBannerOpen}
         onOpenChange={setEditBannerOpen}
@@ -619,7 +1092,7 @@ export function SeekerProfile() {
         onSubmit={handleEditBanner}
         maxWidth="2xl"
       >
-        {/* Banner Upload Section */}
+        
         <div className="flex flex-col items-center gap-4 pb-4 border-b border-[#e5e7eb]">
           <div className="w-full max-w-md">
             <div className="relative w-full h-48 rounded-lg overflow-hidden border-2 border-[#e5e7eb] bg-gradient-to-br from-[#f8f9ff] to-[#e5e7eb]">
@@ -652,7 +1125,6 @@ export function SeekerProfile() {
         </div>
       </FormDialog>
 
-      {/* Edit Profile Dialog */}
       <FormDialog
         open={editProfileOpen}
         onOpenChange={setEditProfileOpen}
@@ -663,38 +1135,44 @@ export function SeekerProfile() {
             label: 'Full Name',
             value: profileData.name,
             onChange: (value) => setProfileData({ ...profileData, name: value }),
+            placeholder: 'e.g., John Doe',
           },
           {
-            id: 'position',
-            label: 'Position',
-            value: profileData.position,
-            onChange: (value) => setProfileData({ ...profileData, position: value }),
-          },
-          {
-            id: 'company',
-            label: 'Company',
-            value: profileData.company,
-            onChange: (value) => setProfileData({ ...profileData, company: value }),
+            id: 'headline',
+            label: 'Headline',
+            value: profileData.headline,
+            onChange: (value) => setProfileData({ ...profileData, headline: value }),
+            placeholder: 'e.g., Senior Software Engineer',
           },
           {
             id: 'location',
             label: 'Location',
             value: profileData.location,
             onChange: (value) => setProfileData({ ...profileData, location: value }),
+            placeholder: 'e.g., New York, NY',
           },
         ]}
         onSubmit={handleEditProfile}
         maxWidth="2xl"
       >
-        {/* Profile Photo Upload Section */}
+        
         <div className="flex flex-col items-center gap-4 pb-4 border-b border-[#e5e7eb]">
           <div className="relative">
-            <div className="w-24 h-24 rounded-full border-4 border-white bg-gradient-to-br from-[#26a4ff] to-[#4640de] overflow-hidden shadow-lg">
-              <img 
-                src={profilePhoto} 
-                alt="Profile Photo" 
-                className="w-full h-full object-cover rounded-full" 
-              />
+            <div className="w-24 h-24 rounded-full border-4 border-white bg-gradient-to-br from-[#26a4ff] to-[#4640de] overflow-hidden shadow-lg flex items-center justify-center">
+              {profilePhoto ? (
+                <img 
+                  src={profilePhoto} 
+                  alt="Profile Photo" 
+                  className="w-full h-full object-cover rounded-full" 
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.style.display = 'none';
+                  }}
+                />
+              ) : null}
+              <div className={`w-full h-full flex items-center justify-center text-white text-2xl font-bold ${profilePhoto ? 'hidden' : ''}`}>
+                {profile?.name?.[0]?.toUpperCase() || profile?.headline?.[0]?.toUpperCase() || 'U'}
+              </div>
             </div>
             <label
               htmlFor="profile-photo-upload"
@@ -719,7 +1197,6 @@ export function SeekerProfile() {
         </div>
       </FormDialog>
 
-      {/* Edit About Me Dialog */}
       <FormDialog
         open={editAboutOpen}
         onOpenChange={setEditAboutOpen}
@@ -738,149 +1215,302 @@ export function SeekerProfile() {
         maxWidth="2xl"
       />
 
-      {/* Add Experience Dialog */}
-      <FormDialog
-        open={addExperienceOpen}
-        onOpenChange={setAddExperienceOpen}
-        title="Add Experience"
-        fields={[
-          {
-            id: 'exp-title',
-            label: 'Job Title',
-            value: experienceData.title,
-            onChange: (value) => setExperienceData({ ...experienceData, title: value }),
-          },
-          {
-            id: 'exp-company',
-            label: 'Company',
-            value: experienceData.company,
-            onChange: (value) => setExperienceData({ ...experienceData, company: value }),
-          },
-          {
-            id: 'exp-description',
-            label: 'Description',
-            type: 'textarea',
-            rows: 4,
-            value: experienceData.description,
-            onChange: (value) => setExperienceData({ ...experienceData, description: value }),
-          },
-        ]}
-        fieldGroups={[
-          {
-            fields: [
-              {
-                id: 'exp-type',
-                label: 'Employment Type',
-                value: experienceData.type,
-                onChange: (value) => setExperienceData({ ...experienceData, type: value }),
-              },
-              {
-                id: 'exp-location',
-                label: 'Location',
-                value: experienceData.location,
-                onChange: (value) => setExperienceData({ ...experienceData, location: value }),
-              },
-            ],
-            gridCols: 2,
-          },
-          {
-            fields: [
-              {
-                id: 'exp-start',
-                label: 'Start Date',
-                type: 'date',
-                value: experienceData.startDate,
-                onChange: (value) => setExperienceData({ ...experienceData, startDate: value }),
-              },
-              {
-                id: 'exp-end',
-                label: 'End Date',
-                type: 'date',
-                value: experienceData.endDate,
-                onChange: (value) => setExperienceData({ ...experienceData, endDate: value }),
-              },
-            ],
-            gridCols: 2,
-          },
-        ]}
-        onSubmit={handleAddExperience}
-        submitLabel="Add Experience"
-        maxWidth="2xl"
-      />
+      <Dialog open={addExperienceOpen} onOpenChange={setAddExperienceOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="!text-lg !font-bold">Add Experience</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="exp-title">Job Title</Label>
+              <Input
+                id="exp-title"
+                value={experienceData.title}
+                onChange={(e) => setExperienceData({ ...experienceData, title: e.target.value })}
+                placeholder="e.g., Software Engineer"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="exp-company">Company</Label>
+              <Input
+                id="exp-company"
+                value={experienceData.company}
+                onChange={(e) => setExperienceData({ ...experienceData, company: e.target.value })}
+                placeholder="e.g., Google"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="exp-description">Description</Label>
+              <Textarea
+                id="exp-description"
+                rows={4}
+                value={experienceData.description}
+                onChange={(e) => setExperienceData({ ...experienceData, description: e.target.value })}
+                placeholder="Describe your role and responsibilities..."
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="exp-type">Employment Type</Label>
+                <Input
+                  id="exp-type"
+                  value={experienceData.employmentType}
+                  onChange={(e) => setExperienceData({ ...experienceData, employmentType: e.target.value })}
+                  placeholder="e.g., full-time, part-time"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="exp-location">Location</Label>
+                <Input
+                  id="exp-location"
+                  value={experienceData.location}
+                  onChange={(e) => setExperienceData({ ...experienceData, location: e.target.value })}
+                  placeholder="e.g., Remote, New York, NY"
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="exp-start">Start Date</Label>
+                <Input
+                  id="exp-start"
+                  type="date"
+                  value={experienceData.startDate}
+                  onChange={(e) => setExperienceData({ ...experienceData, startDate: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="exp-end">End Date</Label>
+                <Input
+                  id="exp-end"
+                  type="date"
+                  value={experienceData.endDate}
+                  onChange={(e) => setExperienceData({ ...experienceData, endDate: e.target.value })}
+                  disabled={experienceData.isCurrent}
+                />
+              </div>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="exp-current"
+                checked={experienceData.isCurrent}
+                onCheckedChange={(checked) => {
+                  setExperienceData({ 
+                    ...experienceData, 
+                    isCurrent: checked === true,
+                    endDate: checked === true ? '' : experienceData.endDate
+                  });
+                }}
+              />
+              <Label htmlFor="exp-current" className="text-sm font-normal cursor-pointer">
+                I currently work here
+              </Label>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="exp-technologies">Technologies / Skills Learned</Label>
+              <div className="flex gap-2">
+                <Input
+                  id="exp-technologies"
+                  value={newTechnology}
+                  onChange={(e) => setNewTechnology(e.target.value)}
+                  placeholder="Enter a technology (e.g., React, Python)"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      handleAddTechnology();
+                    }
+                  }}
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleAddTechnology}
+                  disabled={!newTechnology.trim()}
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add
+                </Button>
+              </div>
+              {experienceData.technologies.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {experienceData.technologies.map((tech, idx) => (
+                    <Badge
+                      key={`${tech}-${idx}`}
+                      variant="skill"
+                      className="cursor-pointer hover:bg-red-50 hover:text-red-600 transition-colors"
+                      onClick={() => handleRemoveTechnology(tech)}
+                      title="Click to remove"
+                    >
+                      {tech}
+                      <X className="w-3 h-3 ml-1" />
+                    </Badge>
+                  ))}
+                </div>
+              )}
+              {experienceData.technologies.length === 0 && (
+                <p className="text-xs text-[#7c8493] italic">No technologies added yet. Enter a technology and click Add.</p>
+              )}
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setAddExperienceOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleAddExperience} className="bg-cyan-600 hover:bg-cyan-700" disabled={saving}>
+              {saving ? 'Adding...' : 'Add Experience'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
-      {/* Edit Experience Dialog */}
-      <FormDialog
-        open={editExperienceOpen}
-        onOpenChange={setEditExperienceOpen}
-        title="Edit Experience"
-        fields={[
-          {
-            id: 'edit-exp-title',
-            label: 'Job Title',
-            value: experienceData.title,
-            onChange: (value) => setExperienceData({ ...experienceData, title: value }),
-          },
-          {
-            id: 'edit-exp-company',
-            label: 'Company',
-            value: experienceData.company,
-            onChange: (value) => setExperienceData({ ...experienceData, company: value }),
-          },
-          {
-            id: 'edit-exp-description',
-            label: 'Description',
-            type: 'textarea',
-            rows: 4,
-            value: experienceData.description,
-            onChange: (value) => setExperienceData({ ...experienceData, description: value }),
-          },
-        ]}
-        fieldGroups={[
-          {
-            fields: [
-              {
-                id: 'edit-exp-type',
-                label: 'Employment Type',
-                value: experienceData.type,
-                onChange: (value) => setExperienceData({ ...experienceData, type: value }),
-              },
-              {
-                id: 'edit-exp-location',
-                label: 'Location',
-                value: experienceData.location,
-                onChange: (value) => setExperienceData({ ...experienceData, location: value }),
-              },
-            ],
-            gridCols: 2,
-          },
-          {
-            fields: [
-              {
-                id: 'edit-exp-start',
-                label: 'Start Date',
-                type: 'date',
-                value: experienceData.startDate,
-                onChange: (value) => setExperienceData({ ...experienceData, startDate: value }),
-              },
-              {
-                id: 'edit-exp-end',
-                label: 'End Date',
-                type: 'date',
-                value: experienceData.endDate,
-                onChange: (value) => setExperienceData({ ...experienceData, endDate: value }),
-              },
-            ],
-            gridCols: 2,
-          },
-        ]}
-        onSubmit={() => {
-          const exp = experiences.find(e => e.title === experienceData.title) || experiences[0];
-          handleEditExperience(exp);
-        }}
-        maxWidth="2xl"
-      />
+      <Dialog open={editExperienceOpen} onOpenChange={setEditExperienceOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="!text-lg !font-bold">Edit Experience</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="edit-exp-title">Job Title</Label>
+              <Input
+                id="edit-exp-title"
+                value={experienceData.title}
+                onChange={(e) => setExperienceData({ ...experienceData, title: e.target.value })}
+                placeholder="e.g., Software Engineer"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="edit-exp-company">Company</Label>
+              <Input
+                id="edit-exp-company"
+                value={experienceData.company}
+                onChange={(e) => setExperienceData({ ...experienceData, company: e.target.value })}
+                placeholder="e.g., Google"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="edit-exp-description">Description</Label>
+              <Textarea
+                id="edit-exp-description"
+                rows={4}
+                value={experienceData.description}
+                onChange={(e) => setExperienceData({ ...experienceData, description: e.target.value })}
+                placeholder="Describe your role and responsibilities..."
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="edit-exp-type">Employment Type</Label>
+                <Input
+                  id="edit-exp-type"
+                  value={experienceData.employmentType}
+                  onChange={(e) => setExperienceData({ ...experienceData, employmentType: e.target.value })}
+                  placeholder="e.g., full-time, part-time"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-exp-location">Location</Label>
+                <Input
+                  id="edit-exp-location"
+                  value={experienceData.location}
+                  onChange={(e) => setExperienceData({ ...experienceData, location: e.target.value })}
+                  placeholder="e.g., Remote, New York, NY"
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="edit-exp-start">Start Date</Label>
+                <Input
+                  id="edit-exp-start"
+                  type="date"
+                  value={experienceData.startDate}
+                  onChange={(e) => setExperienceData({ ...experienceData, startDate: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-exp-end">End Date</Label>
+                <Input
+                  id="edit-exp-end"
+                  type="date"
+                  value={experienceData.endDate}
+                  onChange={(e) => setExperienceData({ ...experienceData, endDate: e.target.value })}
+                  disabled={experienceData.isCurrent}
+                />
+              </div>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="edit-exp-current"
+                checked={experienceData.isCurrent}
+                onCheckedChange={(checked) => {
+                  setExperienceData({ 
+                    ...experienceData, 
+                    isCurrent: checked === true,
+                    endDate: checked === true ? '' : experienceData.endDate
+                  });
+                }}
+              />
+              <Label htmlFor="edit-exp-current" className="text-sm font-normal cursor-pointer">
+                I currently work here
+              </Label>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="edit-exp-technologies">Technologies / Skills Learned</Label>
+              <div className="flex gap-2">
+                <Input
+                  id="edit-exp-technologies"
+                  value={newTechnology}
+                  onChange={(e) => setNewTechnology(e.target.value)}
+                  placeholder="Enter a technology (e.g., React, Python)"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      handleAddTechnology();
+                    }
+                  }}
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleAddTechnology}
+                  disabled={!newTechnology.trim()}
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add
+                </Button>
+              </div>
+              {experienceData.technologies.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {experienceData.technologies.map((tech, idx) => (
+                    <Badge
+                      key={`${tech}-${idx}`}
+                      variant="skill"
+                      className="cursor-pointer hover:bg-red-50 hover:text-red-600 transition-colors"
+                      onClick={() => handleRemoveTechnology(tech)}
+                      title="Click to remove"
+                    >
+                      {tech}
+                      <X className="w-3 h-3 ml-1" />
+                    </Badge>
+                  ))}
+                </div>
+              )}
+              {experienceData.technologies.length === 0 && (
+                <p className="text-xs text-[#7c8493] italic">No technologies added yet. Enter a technology and click Add.</p>
+              )}
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditExperienceOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleEditExperience} className="bg-cyan-600 hover:bg-cyan-700" disabled={saving}>
+              {saving ? 'Saving...' : 'Save Changes'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
-      {/* Add Education Dialog */}
       <FormDialog
         open={addEducationOpen}
         onOpenChange={setAddEducationOpen}
@@ -899,12 +1529,16 @@ export function SeekerProfile() {
             onChange: (value) => setEducationData({ ...educationData, degree: value }),
           },
           {
-            id: 'edu-description',
-            label: 'Description (Optional)',
-            type: 'textarea',
-            rows: 4,
-            value: educationData.description,
-            onChange: (value) => setEducationData({ ...educationData, description: value }),
+            id: 'edu-field-of-study',
+            label: 'Field of Study (Optional)',
+            value: educationData.fieldOfStudy,
+            onChange: (value) => setEducationData({ ...educationData, fieldOfStudy: value }),
+          },
+          {
+            id: 'edu-grade',
+            label: 'Grade (Optional)',
+            value: educationData.grade,
+            onChange: (value) => setEducationData({ ...educationData, grade: value }),
           },
         ]}
         fieldGroups={[
@@ -933,7 +1567,6 @@ export function SeekerProfile() {
         maxWidth="2xl"
       />
 
-      {/* Edit Education Dialog */}
       <FormDialog
         open={editEducationOpen}
         onOpenChange={setEditEducationOpen}
@@ -952,12 +1585,16 @@ export function SeekerProfile() {
             onChange: (value) => setEducationData({ ...educationData, degree: value }),
           },
           {
-            id: 'edit-edu-description',
-            label: 'Description (Optional)',
-            type: 'textarea',
-            rows: 4,
-            value: educationData.description,
-            onChange: (value) => setEducationData({ ...educationData, description: value }),
+            id: 'edit-edu-field-of-study',
+            label: 'Field of Study (Optional)',
+            value: educationData.fieldOfStudy,
+            onChange: (value) => setEducationData({ ...educationData, fieldOfStudy: value }),
+          },
+          {
+            id: 'edit-edu-grade',
+            label: 'Grade (Optional)',
+            value: educationData.grade,
+            onChange: (value) => setEducationData({ ...educationData, grade: value }),
           },
         ]}
         fieldGroups={[
@@ -981,14 +1618,10 @@ export function SeekerProfile() {
             gridCols: 2,
           },
         ]}
-        onSubmit={() => {
-          const edu = education.find(e => e.school === educationData.school) || education[0];
-          handleEditEducation(edu);
-        }}
+        onSubmit={handleEditEducation}
         maxWidth="2xl"
       />
 
-      {/* Add Skill Dialog */}
       <FormDialog
         open={addSkillOpen}
         onOpenChange={setAddSkillOpen}
@@ -1006,85 +1639,212 @@ export function SeekerProfile() {
         submitLabel="Add Skill"
       />
 
-      {/* Edit Additional Details Dialog */}
-      <FormDialog
-        open={editDetailsOpen}
-        onOpenChange={setEditDetailsOpen}
-        title="Edit Additional Details"
-        fields={[
-          {
-            id: 'email',
-            label: 'Email',
-            type: 'email',
-            value: additionalDetails.email,
-            onChange: (value) => setAdditionalDetails({ ...additionalDetails, email: value }),
-          },
-          {
-            id: 'phone',
-            label: 'Phone',
-            type: 'tel',
-            value: additionalDetails.phone,
-            onChange: (value) => setAdditionalDetails({ ...additionalDetails, phone: value }),
-          },
-          {
-            id: 'languages',
-            label: 'Languages',
-            value: additionalDetails.languages,
-            onChange: (value) => setAdditionalDetails({ ...additionalDetails, languages: value }),
-            placeholder: 'e.g., English, French, Spanish',
-          },
-        ]}
-        onSubmit={handleEditDetails}
-      />
+      <Dialog open={editDetailsOpen} onOpenChange={setEditDetailsOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="!text-lg !font-bold">Edit Additional Details</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            
+            <div className="space-y-2">
+              <Label htmlFor="email">Contact Email</Label>
+              <Input
+                id="email"
+                type="email"
+                value={editingEmail}
+                onChange={(e) => setEditingEmail(e.target.value)}
+                placeholder="e.g., contact@example.com"
+              />
+              <p className="text-xs text-[#7c8493]">This is your contact email for job applications</p>
+            </div>
 
-      {/* Edit Social Links Dialog */}
-      <FormDialog
-        open={editSocialOpen}
-        onOpenChange={setEditSocialOpen}
-        title="Edit Social Links"
-        fields={[
-          {
-            id: 'instagram',
-            label: 'Instagram',
-            value: socialLinks.instagram,
-            onChange: (value) => setSocialLinks({ ...socialLinks, instagram: value }),
-            placeholder: 'instagram.com/username',
-          },
-          {
-            id: 'twitter',
-            label: 'Twitter',
-            value: socialLinks.twitter,
-            onChange: (value) => setSocialLinks({ ...socialLinks, twitter: value }),
-            placeholder: 'twitter.com/username',
-          },
-          {
-            id: 'website',
-            label: 'Website',
-            value: socialLinks.website,
-            onChange: (value) => setSocialLinks({ ...socialLinks, website: value }),
-            placeholder: 'www.example.com',
-          },
-        ]}
-        onSubmit={handleEditSocial}
-      />
+            <div className="space-y-2">
+              <Label htmlFor="phone">Phone</Label>
+              <Input
+                id="phone"
+                type="tel"
+                value={editingPhone}
+                onChange={(e) => setEditingPhone(e.target.value)}
+                placeholder="e.g., +1 234 567 8900"
+              />
+            </div>
 
-      {/* Banner Image Cropper */}
+            <div className="space-y-2">
+              <Label htmlFor="languages">Languages</Label>
+              <div className="flex gap-2">
+                <Input
+                  id="languages"
+                  value={newLanguage}
+                  onChange={(e) => setNewLanguage(e.target.value)}
+                  placeholder="Enter a language (e.g., English, French)"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      handleAddLanguage();
+                    }
+                  }}
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleAddLanguage}
+                  disabled={!newLanguage.trim()}
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add
+                </Button>
+              </div>
+              {editingLanguages.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {editingLanguages.map((lang, idx) => (
+                    <Badge
+                      key={`${lang}-${idx}`}
+                      variant="skill"
+                      className="cursor-pointer hover:bg-red-50 hover:text-red-600 transition-colors"
+                      onClick={() => handleRemoveLanguage(lang)}
+                      title="Click to remove"
+                    >
+                      {lang}
+                      <X className="w-3 h-3 ml-1" />
+                    </Badge>
+                  ))}
+                </div>
+              )}
+              {editingLanguages.length === 0 && (
+                <p className="text-xs text-[#7c8493] italic">No languages added yet. Enter a language and click Add.</p>
+              )}
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditDetailsOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleEditDetails} className="bg-cyan-600 hover:bg-cyan-700" disabled={saving}>
+              {saving ? 'Saving...' : 'Save Changes'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={editSocialOpen} onOpenChange={setEditSocialOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="!text-lg !font-bold">Edit Social Links</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            {editingSocialLinks.map((link, index) => (
+              <div key={index} className="flex gap-2 items-start p-3 border border-[#d6ddeb] rounded-lg">
+                <div className="flex-1 grid grid-cols-2 gap-2">
+                  <div className="space-y-2">
+                    <Label htmlFor={`link-platform-${index}`}>Platform</Label>
+                    <Select
+                      value={
+                        SOCIAL_PLATFORMS.find(p => p.value === link.name?.toLowerCase())?.value || 
+                        (link.name && !SOCIAL_PLATFORMS.find(p => p.value === link.name?.toLowerCase()) ? 'custom' : '') || 
+                        ''
+                      }
+                      onValueChange={(value) => {
+                        const newLinks = [...editingSocialLinks];
+                        if (value === 'custom') {
+                          newLinks[index].name = '';
+                        } else {
+                          newLinks[index].name = value;
+                        }
+                        setEditingSocialLinks(newLinks);
+                      }}
+                    >
+                      <SelectTrigger id={`link-platform-${index}`}>
+                        <SelectValue placeholder="Select platform" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {SOCIAL_PLATFORMS.map((platform) => (
+                          <SelectItem key={platform.value} value={platform.value}>
+                            {platform.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  {(!link.name || !SOCIAL_PLATFORMS.find(p => p.value === link.name?.toLowerCase())) && (
+                    <div className="space-y-2">
+                      <Label htmlFor={`link-custom-name-${index}`}>Custom Name</Label>
+                      <Input
+                        id={`link-custom-name-${index}`}
+                        value={SOCIAL_PLATFORMS.find(p => p.value === link.name?.toLowerCase()) ? '' : (link.name || '')}
+                        onChange={(e) => {
+                          const newLinks = [...editingSocialLinks];
+                          newLinks[index].name = e.target.value;
+                          setEditingSocialLinks(newLinks);
+                        }}
+                        placeholder="Enter custom platform name"
+                      />
+                    </div>
+                  )}
+                  <div className={`space-y-2 ${(!link.name || !SOCIAL_PLATFORMS.find(p => p.value === link.name?.toLowerCase())) ? 'col-span-2' : ''}`}>
+                    <Label htmlFor={`link-url-${index}`}>URL</Label>
+                    <Input
+                      id={`link-url-${index}`}
+                      type="url"
+                      value={link.link}
+                      onChange={(e) => {
+                        const newLinks = [...editingSocialLinks];
+                        newLinks[index].link = e.target.value;
+                        setEditingSocialLinks(newLinks);
+                      }}
+                      placeholder="https://example.com"
+                    />
+                  </div>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="mt-6 h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
+                  onClick={() => {
+                    const newLinks = editingSocialLinks.filter((_, i) => i !== index);
+                    setEditingSocialLinks(newLinks);
+                  }}
+                >
+                  <X className="w-4 h-4" />
+                </Button>
+              </div>
+            ))}
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => {
+                setEditingSocialLinks([...editingSocialLinks, { name: '', link: '' }]);
+              }}
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add Social Link
+            </Button>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditSocialOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleEditSocial} className="bg-cyan-600 hover:bg-cyan-700" disabled={saving}>
+              {saving ? 'Saving...' : 'Save Changes'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       <ImageCropper
         open={bannerCropperOpen}
         onOpenChange={setBannerCropperOpen}
         image={tempBannerImage}
-        aspect={4 / 1} // Banner aspect ratio (width/height)
+        aspect={4 / 1} 
         cropShape="rect"
         onCropComplete={handleBannerCropComplete}
         title="Crop Banner Image"
       />
 
-      {/* Profile Photo Cropper */}
       <ImageCropper
         open={profileCropperOpen}
         onOpenChange={setProfileCropperOpen}
         image={tempProfileImage}
-        aspect={1} // Square aspect ratio for profile photo
+        aspect={1} 
         cropShape="round"
         onCropComplete={handleProfileCropComplete}
         title="Crop Profile Photo"

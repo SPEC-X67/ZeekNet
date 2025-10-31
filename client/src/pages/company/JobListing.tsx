@@ -165,7 +165,7 @@ const CompanyJobListing = () => {
       toast.error('Failed to delete job', {
         description: 'An unexpected error occurred. Please try again.'
       })
-      await fetchJobs(pagination.page, pagination.limit) // Refetch to restore accurate state
+      await fetchJobs(pagination.page, pagination.limit) 
     } finally {
       setDeleteDialog(prev => ({ ...prev, isLoading: false }))
     }
@@ -207,14 +207,15 @@ const CompanyJobListing = () => {
           description: response.message || 'Please try again later.'
         })
       }
-    } catch {
+    } catch (error: any) {
       setJobs(prevJobs => 
         prevJobs.map(job => 
           job._id === jobId ? { ...job, is_active: currentStatus } : job
         )
       )
+      const errorMessage = error?.response?.data?.message || 'An unexpected error occurred. Please try again.'
       toast.error('Failed to update job status', {
-        description: 'An unexpected error occurred. Please try again.'
+        description: errorMessage
       })
     }
   }
@@ -300,22 +301,42 @@ const CompanyJobListing = () => {
                     </div>
 
                     <div className="w-[111px]">
-                      <Badge
-                        variant="outline"
-                        className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                          job.is_active 
-                            ? 'border-[#56CDAD] text-[#56CDAD] bg-transparent' 
-                            : 'border-[#FFB836] text-[#FFB836] bg-transparent'
-                        }`}
-                      >
-                        {getStatusBadge(job.is_active)}
-                      </Badge>
+                      {job.admin_blocked ? (
+                        <div className="space-y-1">
+                          <Badge
+                            variant="outline"
+                            className="px-2 py-1 rounded-full text-xs font-semibold border-red-500 text-red-500 bg-transparent"
+                          >
+                            Blocked
+                          </Badge>
+                          {job.unpublish_reason && (
+                            <div 
+                              className="text-[10px] text-red-600 truncate max-w-[100px]" 
+                              title={job.unpublish_reason}
+                            >
+                              {job.unpublish_reason.length > 20 
+                                ? `${job.unpublish_reason.substring(0, 20)}...` 
+                                : job.unpublish_reason}
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <Badge
+                          variant="outline"
+                          className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                            job.is_active 
+                              ? 'border-[#56CDAD] text-[#56CDAD] bg-transparent' 
+                              : 'border-[#FFB836] text-[#FFB836] bg-transparent'
+                          }`}
+                        >
+                          {getStatusBadge(job.is_active)}
+                        </Badge>
+                      )}
                     </div>
 
                     <div className="w-[149px]">
                       <span className="text-xs text-[#25324B]">{formatDate(job.createdAt)}</span>
                     </div>
-
 
                     <div className="w-[128px]">
                       <Badge
@@ -326,15 +347,12 @@ const CompanyJobListing = () => {
                       </Badge>
                     </div>
 
-
                     <div className="w-[114px]">
                       <span className="text-xs text-[#25324B]">{(job.application_count || 0).toLocaleString()}</span>
                     </div>
 
-
                     <div className="w-[98px] flex items-center justify-between">
                       <span className="text-xs text-[#25324B]">{(job.view_count || 0).toLocaleString()}</span>
-                      
 
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -353,6 +371,7 @@ const CompanyJobListing = () => {
                           </DropdownMenuItem>
                           <DropdownMenuItem 
                             onClick={() => handleToggleJobStatus(job._id, job.is_active)}
+                            disabled={job.admin_blocked}
                             className={job.is_active ? 'text-orange-600' : 'text-green-600'}
                           >
                             {job.is_active ? (
@@ -363,7 +382,7 @@ const CompanyJobListing = () => {
                             ) : (
                               <>
                                 <List className="w-4 h-4 mr-2" />
-                                List
+                                {job.admin_blocked ? 'List (Blocked)' : 'List'}
                               </>
                             )}
                           </DropdownMenuItem>
@@ -382,7 +401,6 @@ const CompanyJobListing = () => {
               )}
             </div>
 
-
             <div className="px-3 py-3 border-t border-[#D6DDEB]">
               <div className="flex items-center justify-between">
 
@@ -394,7 +412,6 @@ const CompanyJobListing = () => {
                   </div>
                   <span className="text-xs font-medium text-[#7C8493]">Applicants per page</span>
                 </div>
-
 
                 <div className="flex items-center gap-1">
                   <Button 

@@ -216,7 +216,6 @@ const CompanyProfileSetup = () => {
       let stepData: any = {}
       let stepSchema: any = null
 
-      // Step 1: Basic Information
       if (currentStep === 1) {
         stepData = {
           company_name: formData.company_name,
@@ -233,7 +232,7 @@ const CompanyProfileSetup = () => {
           organisation: true,
         })
       }
-      // Step 2: Company Details
+      
       else if (currentStep === 2) {
         stepData = {
           location: formData.location,
@@ -276,7 +275,7 @@ const CompanyProfileSetup = () => {
 
   return (
     <div className="min-h-screen flex">
-      {/* Back to Home Button - Top Corner */}
+      
       <div className="fixed top-4 left-4 z-50">
         <Button 
           variant="outline" 
@@ -288,14 +287,12 @@ const CompanyProfileSetup = () => {
         </Button>
       </div>
 
-      {/* Left Side - Branding */}
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary/10 via-primary/5 to-secondary/10 relative overflow-hidden">
-        {/* Background Pattern */}
-        <div className="absolute inset-0 bg-grid-slate-100 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))] dark:bg-grid-slate-700/25"></div>
         
-        {/* Content */}
+        <div className="absolute inset-0 bg-grid-slate-100 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))] dark:bg-grid-slate-700/25"></div>
+
         <div className="relative z-10 flex flex-col justify-center px-12 py-12">
-          {/* Logo */}
+          
           <div className="flex items-center space-x-3 mb-8">
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary shadow-lg">
               <Building2 className="h-7 w-7 text-primary-foreground" />
@@ -391,14 +388,14 @@ const CompanyProfileSetup = () => {
 
           <div className="space-y-6">
             <div className="text-center">
-              {/* <h2 className="text-2xl font-bold text-foreground">Complete Your Profile</h2> */}
+              
               <p className="text-muted-foreground mt-2">
                 Set up your company profile to start attracting top talent
               </p>
             </div>
 
             <div className="flex items-center justify-center space-x-4 mt-4">
-              {/* Step 1 */}
+              
               <div className="flex items-center space-x-2">
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
                   currentStep >= 1 
@@ -415,8 +412,7 @@ const CompanyProfileSetup = () => {
               <div className={`w-12 h-0.5 ${
                 currentStep >= 2 ? 'bg-primary' : 'bg-muted'
               }`}></div>
-              
-              {/* Step 2 */}
+
               <div className="flex items-center space-x-2">
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
                   currentStep >= 2 
@@ -433,8 +429,7 @@ const CompanyProfileSetup = () => {
               <div className={`w-12 h-0.5 ${
                 currentStep >= 3 ? 'bg-primary' : 'bg-muted'
               }`}></div>
-              
-              {/* Step 3 */}
+
               <div className="flex items-center space-x-2">
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
                   currentStep >= 3 
@@ -866,7 +861,6 @@ const CompanyProfileSetup = () => {
                 </Card>
               )}
 
-              {/* Navigation Buttons */}
               <div className="flex items-center justify-between pt-4">
                 <div>
                   {currentStep > 1 && (
@@ -916,7 +910,6 @@ const CompanyProfileSetup = () => {
               </div>
             </form>
 
-            {/* Help Section */}
             <div className="text-center">
               <div className="inline-flex items-center space-x-2 text-sm text-muted-foreground">
                 <span>Need help?</span>
@@ -933,4 +926,3 @@ const CompanyProfileSetup = () => {
 }
 
 export default CompanyProfileSetup
- 

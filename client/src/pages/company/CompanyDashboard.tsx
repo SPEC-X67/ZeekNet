@@ -16,6 +16,7 @@ import FormDialog from '@/components/common/FormDialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Upload, Loader2 } from 'lucide-react'
 
 const CompanyDashboard = () => {
@@ -39,6 +40,7 @@ const CompanyDashboard = () => {
     tax_id: ''
   })
   const [uploading, setUploading] = useState<{ logo: boolean; business_license: boolean }>({ logo: false, business_license: false })
+  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({})
 
   useEffect(() => {
     const load = async () => {
@@ -51,13 +53,13 @@ const CompanyDashboard = () => {
           setForm(prev => ({
             ...prev,
             company_name: p.company_name || '',
-            email: p.email || '',
+            email: data.contact?.email || '',
             website: p.website || p.website_link || '',
             website_link: p.website_link || '',
             industry: p.industry || '',
             organisation: p.organisation || '',
-            location: p.location || '',
-            employees: (p as any).employees || String(p.employee_count || ''),
+            location: data.locations[0]?.location || '',
+            employees: (p as any).employees || '',
             description: p.description || '',
             about_us: p.about_us || '',
             logo: p.logo || '',
@@ -102,7 +104,6 @@ const CompanyDashboard = () => {
             </div>
           </div>
 
-
           {!loading && profile && profile.is_verified !== 'verified' && (
             <div className={`mb-4 border rounded-lg p-4 ${profile.is_verified === 'rejected' ? 'border-red-200 bg-red-50' : 'border-yellow-200 bg-yellow-50'}`}>
               <div className="flex items-start justify-between">
@@ -112,12 +113,14 @@ const CompanyDashboard = () => {
                   </h3>
                   <p className="text-xs text-gray-600 mt-1">
                     {profile.is_verified === 'rejected'
-                      ? 'Reason: Your submission did not meet verification requirements. (demo reason — backend reason coming soon)'
+                      ? profile.rejection_reason 
+                        ? `Reason: ${profile.rejection_reason}`
+                        : 'Reason: Your submission did not meet verification requirements.'
                       : 'Your company verification is currently under review.'}
                   </p>
                 </div>
                 {profile.is_verified === 'rejected' && (
-                  <Button size="sm" variant="destructive" onClick={() => { setReverifyStep(1); setReverifyOpen(true) }}>
+                  <Button size="sm" variant="destructive" onClick={() => { setReverifyStep(1); setValidationErrors({}); setReverifyOpen(true) }}>
                     Reverify
                   </Button>
                 )}
@@ -417,10 +420,15 @@ const CompanyDashboard = () => {
         </div>
       </div>
 
-      {/* Reverify Dialog - prefilled using live API */}
       <FormDialog
         open={reverifyOpen}
-        onOpenChange={setReverifyOpen}
+        onOpenChange={(open) => { 
+          setReverifyOpen(open)
+          if (!open) {
+            setValidationErrors({})
+            setReverifyStep(1)
+          }
+        }}
         title="Reverify Company"
         description="Update required details and resubmit for verification."
         submitLabel={reverifyStep === 1 ? 'Next' : 'Submit'}
@@ -430,26 +438,36 @@ const CompanyDashboard = () => {
             return
           }
           try {
+            setValidationErrors({})
             const resp = await companyApi.reapplyVerification({
               company_name: form.company_name,
-              email: form.email || undefined,
-              website: form.website || form.website_link || undefined,
+              email: form.email,
+              website: form.website || form.website_link || '',
               industry: form.industry,
               organisation: form.organisation,
-              location: form.location || undefined,
-              employees: form.employees || undefined,
-              description: form.description || undefined,
-              about_us: form.about_us || undefined,
-              logo: form.logo || undefined,
-              business_license: form.business_license || undefined,
-              tax_id: form.tax_id || undefined,
+              location: form.location,
+              employees: form.employees,
+              description: form.description,
+              logo: form.logo || '',
+              business_license: form.business_license || '',
+              tax_id: form.tax_id,
             })
             if (resp.success) {
               toast.success('Reverification submitted. Status set to pending.')
               setProfile(prev => prev ? { ...prev, is_verified: 'pending' } : prev)
               setReverifyOpen(false)
+              setValidationErrors({})
             } else {
-              toast.error(resp.message || 'Failed to submit reverification')
+              if (resp.errors && resp.errors.length > 0) {
+                const errorMap: Record<string, string> = {}
+                resp.errors.forEach(err => {
+                  errorMap[err.field] = err.message
+                })
+                setValidationErrors(errorMap)
+                toast.error(resp.message || 'Validation failed')
+              } else {
+                toast.error(resp.message || 'Failed to submit reverification')
+              }
             }
           } catch {
             toast.error('Failed to submit reverification')
@@ -488,18 +506,40 @@ const CompanyDashboard = () => {
               </div>
               <div>
                 <Label htmlFor="employees" className="text-sm mb-3 font-semibold">Employees</Label>
-                <Input id="employees" value={form.employees} onChange={e => setForm(p => ({ ...p, employees: e.target.value }))} />
-              </div>
-              <div>
-                <Label htmlFor="tax_id" className="text-sm mb-3 font-semibold">Tax ID</Label>
-                <Input id="tax_id" value={form.tax_id} onChange={e => setForm(p => ({ ...p, tax_id: e.target.value }))} />
+                <Select value={form.employees} onValueChange={(value) => setForm(p => ({ ...p, employees: value }))}>
+                  <SelectTrigger className={`w-full ${validationErrors.employees ? 'border-red-500' : ''}`}>
+                    <SelectValue placeholder="Select Employee Count" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="1-10">1-10</SelectItem>
+                    <SelectItem value="11-50">11-50</SelectItem>
+                    <SelectItem value="51-200">51-200</SelectItem>
+                    <SelectItem value="201-500">201-500</SelectItem>
+                    <SelectItem value="501-1000">501-1000</SelectItem>
+                    <SelectItem value="1000+">1000+</SelectItem>
+                  </SelectContent>
+                </Select>
+                {validationErrors.employees && (
+                  <p className="text-sm text-red-500 mt-1">{validationErrors.employees}</p>
+                )}
               </div>
             </div>
           ) : (
             <>
               <div>
                 <Label htmlFor="description" className="text-sm mb-3 font-semibold">Company Description</Label>
-                <Textarea id="description" value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))} rows={4} />
+                <Textarea id="description" value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))} rows={4} className={validationErrors.description ? 'border-red-500' : ''} />
+                {validationErrors.description && (
+                  <p className="text-sm text-red-500 mt-1">{validationErrors.description}</p>
+                )}
+              </div>
+
+              <div>
+                <Label htmlFor="tax_id" className="text-sm mb-3 font-semibold">Tax ID</Label>
+                <Input id="tax_id" value={form.tax_id} onChange={e => setForm(p => ({ ...p, tax_id: e.target.value }))} className={validationErrors.tax_id ? 'border-red-500' : ''} />
+                {validationErrors.tax_id && (
+                  <p className="text-sm text-red-500 mt-1">{validationErrors.tax_id}</p>
+                )}
               </div>
 
               <div className="grid grid-cols-1   gap-4">

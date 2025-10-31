@@ -13,38 +13,33 @@ export class UpdateExperienceUseCase implements IUpdateExperienceUseCase {
   ) {}
 
   async execute(userId: string, experienceId: string, data: UpdateExperienceData): Promise<ExperienceResponseDto> {
-    // Verify profile exists
+    
     const profile = await this._seekerProfileRepository.getProfileByUserId(userId);
     if (!profile) {
       throw new NotFoundError('Seeker profile not found');
     }
 
-    // Get existing experience to validate
     const existingExperience = await this._seekerExperienceRepository.findById(experienceId);
     
     if (!existingExperience) {
       throw new NotFoundError('Experience not found');
     }
 
-    // Verify the experience belongs to this user's profile
     const userExperiences = await this._seekerExperienceRepository.findBySeekerProfileId(profile.id);
     if (!userExperiences.find(exp => exp.id === experienceId)) {
       throw new NotFoundError('Experience not found');
     }
 
-    // Merge with existing data
     const mergedData: Partial<Experience> = {
       ...existingExperience,
       ...data,
     };
 
-    // Validate dates if provided
     const startDate = mergedData.startDate || existingExperience.startDate;
     if (mergedData.endDate && mergedData.endDate < startDate) {
       throw new ValidationError('End date must be after start date');
     }
 
-    // Validate isCurrent flag
     if (mergedData.isCurrent && mergedData.endDate) {
       throw new ValidationError('Current experience cannot have an end date');
     }

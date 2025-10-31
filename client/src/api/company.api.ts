@@ -43,6 +43,7 @@ export interface CompanyProfileResponse {
   email?: string
   is_verified: 'pending' | 'rejected' | 'verified'
   is_blocked: boolean
+  rejection_reason?: string
   created_at: string
   updated_at: string
 }
@@ -63,7 +64,6 @@ export interface JobPostingRequest {
   skills_required?: string[]
   category_ids: string[]
 }
-
 
 interface CompanyDashboard {
   totalJobs: number;

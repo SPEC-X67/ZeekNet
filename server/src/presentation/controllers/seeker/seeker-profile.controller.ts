@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { AuthenticatedRequest } from '../../../shared/types/authenticated-request';
-import { handleValidationError, handleAsyncError, sendSuccessResponse, sendNotFoundResponse, validateUserId } from '../../../shared/utils/controller.utils';
+import { handleValidationError, handleAsyncError, sendSuccessResponse, sendNotFoundResponse, validateUserId, badRequest } from '../../../shared/utils/controller.utils';
 import {
   ICreateSeekerProfileUseCase,
   IGetSeekerProfileUseCase,
@@ -14,9 +14,12 @@ import {
   IUpdateEducationUseCase,
   IRemoveEducationUseCase,
   IUpdateSkillsUseCase,
+  IUpdateLanguagesUseCase,
   IUploadResumeUseCase,
   IRemoveResumeUseCase,
 } from '../../../domain/interfaces/use-cases/ISeekerUseCases';
+import { IS3Service } from '../../../domain/interfaces/services/IS3Service';
+import { IUserRepository } from '../../../domain/interfaces/repositories/user/IUserRepository';
 import { SeekerProfileMapper } from '../../../application/mappers/seeker-profile.mapper';
 import { 
   CreateSeekerProfileRequestDto, 
@@ -42,8 +45,11 @@ export class SeekerProfileController {
     private readonly _updateEducationUseCase: IUpdateEducationUseCase,
     private readonly _removeEducationUseCase: IRemoveEducationUseCase,
     private readonly _updateSkillsUseCase: IUpdateSkillsUseCase,
+    private readonly _updateLanguagesUseCase: IUpdateLanguagesUseCase,
     private readonly _uploadResumeUseCase: IUploadResumeUseCase,
     private readonly _removeResumeUseCase: IRemoveResumeUseCase,
+    private readonly _s3Service: IS3Service,
+    private readonly _userRepository: IUserRepository,
   ) {}
 
   createSeekerProfile = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
@@ -84,7 +90,6 @@ export class SeekerProfileController {
     }
   };
 
-  // Experience methods
   addExperience = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = validateUserId(req);
@@ -150,7 +155,6 @@ export class SeekerProfileController {
     }
   };
 
-  // Education methods
   addEducation = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = validateUserId(req);
@@ -213,7 +217,6 @@ export class SeekerProfileController {
     }
   };
 
-  // Skills methods
   updateSkills = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = validateUserId(req);
@@ -226,7 +229,18 @@ export class SeekerProfileController {
     }
   };
 
-  // Resume methods
+  updateLanguages = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const userId = validateUserId(req);
+      const { languages } = req.body;
+
+      const updatedLanguages = await this._updateLanguagesUseCase.execute(userId, languages);
+      sendSuccessResponse(res, 'Languages updated successfully', updatedLanguages);
+    } catch (error) {
+      handleAsyncError(error, next);
+    }
+  };
+
   uploadResume = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = validateUserId(req);
@@ -247,6 +261,74 @@ export class SeekerProfileController {
 
       await this._removeResumeUseCase.execute(userId);
       sendSuccessResponse(res, 'Resume removed successfully', null);
+    } catch (error) {
+      handleAsyncError(error, next);
+    }
+  };
+
+  uploadAvatar = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const userId = validateUserId(req);
+      
+      if (!req.file) {
+        return badRequest(res, 'No image file provided');
+      }
+
+      const avatarFileName = await this._s3Service.uploadImageToFolder(
+        req.file.buffer,
+        req.file.originalname,
+        req.file.mimetype,
+        'seeker-avatars',
+      );
+
+      const profile = await this._updateSeekerProfileUseCase.execute(userId, {
+        avatarFileName,
+      });
+
+      sendSuccessResponse(res, 'Avatar uploaded successfully', profile);
+    } catch (error) {
+      handleAsyncError(error, next);
+    }
+  };
+
+  uploadBanner = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const userId = validateUserId(req);
+      
+      if (!req.file) {
+        return badRequest(res, 'No image file provided');
+      }
+
+      const bannerFileName = await this._s3Service.uploadImageToFolder(
+        req.file.buffer,
+        req.file.originalname,
+        req.file.mimetype,
+        'seeker-banners',
+      );
+
+      const profile = await this._updateSeekerProfileUseCase.execute(userId, {
+        bannerFileName,
+      });
+
+      sendSuccessResponse(res, 'Banner uploaded successfully', profile);
+    } catch (error) {
+      handleAsyncError(error, next);
+    }
+  };
+
+  updateName = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const userId = validateUserId(req);
+      const { name } = req.body;
+
+      if (!name || typeof name !== 'string' || name.trim().length === 0) {
+        return badRequest(res, 'Name is required and must be a non-empty string');
+      }
+
+      await this._userRepository.updateName(userId, name.trim());
+
+      const profile = await this._getSeekerProfileUseCase.execute(userId);
+      sendSuccessResponse(res, 'Name updated successfully', profile);
     } catch (error) {
       handleAsyncError(error, next);
     }
