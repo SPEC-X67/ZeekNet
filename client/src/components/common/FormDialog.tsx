@@ -128,8 +128,8 @@ const FormDialog = (props: FormDialogProps) => {
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className={`${maxWidthClasses[maxWidth]}`}>
           <DialogHeader>
-            <DialogTitle>{title}</DialogTitle>
-            {description && <DialogDescription>{description}</DialogDescription>}
+            <DialogTitle className="!text-lg !font-bold">{title}</DialogTitle>
+            {description && <DialogDescription className="!mb-2">{description}</DialogDescription>}
           </DialogHeader>
           
           <div className="space-y-4">
