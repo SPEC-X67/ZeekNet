@@ -1,0 +1,24 @@
+import { ISeekerProfileRepository } from '../../../domain/interfaces/repositories/seeker/ISeekerProfileRepository';
+import { IRemoveResumeUseCase } from '../../../domain/interfaces/use-cases/ISeekerUseCases';
+import { NotFoundError } from '../../../domain/errors/errors';
+
+export class RemoveResumeUseCase implements IRemoveResumeUseCase {
+  constructor(
+    private readonly _seekerProfileRepository: ISeekerProfileRepository,
+  ) {}
+
+  async execute(userId: string): Promise<void> {
+    // Verify profile exists
+    const profile = await this._seekerProfileRepository.getProfileByUserId(userId);
+    if (!profile) {
+      throw new NotFoundError('Seeker profile not found');
+    }
+
+    // Check if resume exists
+    if (!profile.resume) {
+      throw new NotFoundError('No resume found to remove');
+    }
+
+    await this._seekerProfileRepository.removeResume(userId);
+  }
+}
