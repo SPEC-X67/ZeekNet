@@ -112,7 +112,7 @@ const ForgotPassword = () => {
                   
                   <div className="space-y-3">
                     <Button asChild className="w-full">
-                      <Link to="/auth">
+                      <Link to="/auth/login">
                         <ArrowRight className="mr-2 h-4 w-4" />
                         Back to Login
                       </Link>
@@ -215,7 +215,7 @@ const ForgotPassword = () => {
                     asChild
                     className="p-0 h-auto font-semibold"
                   >
-                    <Link to="/auth">Back to Login</Link>
+                    <Link to="/auth/login">Back to Login</Link>
                   </Button>
                 </p>
               </div>
