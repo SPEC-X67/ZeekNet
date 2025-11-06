@@ -32,6 +32,7 @@ export const UpdateSeekerProfileDto = z.object({
   skills: z.array(z.string()).optional(),
   languages: z.array(z.string()).optional(),
   socialLinks: z.array(SocialLinkSchema).optional(),
+  name: z.string().min(1, 'Name is required').max(100, 'Name must not exceed 100 characters').optional(),
 });
 
 export type UpdateSeekerProfileRequestDto = z.infer<typeof UpdateSeekerProfileDto>;
@@ -40,8 +41,8 @@ export type UpdateSeekerProfileRequestDto = z.infer<typeof UpdateSeekerProfileDt
 export const AddExperienceDto = z.object({
   title: z.string().min(1, 'Title is required').max(100, 'Title must not exceed 100 characters'),
   company: z.string().min(1, 'Company is required').max(100, 'Company must not exceed 100 characters'),
-  startDate: z.string().datetime('Please enter a valid start date'),
-  endDate: z.string().datetime('Please enter a valid end date').optional(),
+  startDate: z.string().date('Please enter a valid start date'),
+  endDate: z.string().date('Please enter a valid end date').optional(),
   employmentType: EmploymentTypeSchema,
   location: z.string().max(100, 'Location must not exceed 100 characters').optional(),
   description: z.string().max(2000, 'Description must not exceed 2000 characters').optional(),
@@ -55,8 +56,8 @@ export type AddExperienceRequestDto = z.infer<typeof AddExperienceDto>;
 export const UpdateExperienceDto = z.object({
   title: z.string().min(1, 'Title is required').max(100, 'Title must not exceed 100 characters').optional(),
   company: z.string().min(1, 'Company is required').max(100, 'Company must not exceed 100 characters').optional(),
-  startDate: z.string().datetime('Please enter a valid start date').optional(),
-  endDate: z.string().datetime('Please enter a valid end date').optional(),
+  startDate: z.string().date('Please enter a valid start date').optional(),
+  endDate: z.string().date('Please enter a valid end date').optional(),
   employmentType: EmploymentTypeSchema.optional(),
   location: z.string().max(100, 'Location must not exceed 100 characters').optional(),
   description: z.string().max(2000, 'Description must not exceed 2000 characters').optional(),
@@ -71,9 +72,9 @@ export const AddEducationDto = z.object({
   school: z.string().min(1, 'School is required').max(200, 'School must not exceed 200 characters'),
   degree: z.string().max(100, 'Degree must not exceed 100 characters').optional(),
   fieldOfStudy: z.string().max(100, 'Field of study must not exceed 100 characters').optional(),
-  startDate: z.string().datetime('Please enter a valid start date'),
-  endDate: z.string().datetime('Please enter a valid end date').optional(),
-  grade: z.string().max(20, 'Grade must not exceed 20 characters').optional(),
+  startDate: z.string().date('Please enter a valid start date'),
+  endDate: z.string().date('Please enter a valid end date').optional(),
+  grade: z.string().max(50, 'Grade must not exceed 20 characters').optional(),
 });
 
 export type AddEducationRequestDto = z.infer<typeof AddEducationDto>;
@@ -83,9 +84,9 @@ export const UpdateEducationDto = z.object({
   school: z.string().min(1, 'School is required').max(200, 'School must not exceed 200 characters').optional(),
   degree: z.string().max(100, 'Degree must not exceed 100 characters').optional(),
   fieldOfStudy: z.string().max(100, 'Field of study must not exceed 100 characters').optional(),
-  startDate: z.string().datetime('Please enter a valid start date').optional(),
-  endDate: z.string().datetime('Please enter a valid end date').optional(),
-  grade: z.string().max(20, 'Grade must not exceed 20 characters').optional(),
+  startDate: z.string().date('Please enter a valid start date').optional(),
+  endDate: z.string().date('Please enter a valid end date').optional(),
+  grade: z.string().max(50, 'Grade must not exceed 20 characters').optional(),
 });
 
 export type UpdateEducationRequestDto = z.infer<typeof UpdateEducationDto>;

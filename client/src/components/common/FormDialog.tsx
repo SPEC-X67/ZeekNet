@@ -127,6 +127,7 @@ const FormDialog = (props: FormDialogProps) => {
           </DialogHeader>
           
           <div className="space-y-4">
+            {children}
             
             {fields.map(renderField)}
 
@@ -143,8 +144,6 @@ const FormDialog = (props: FormDialogProps) => {
                 {group.fields.map(renderField)}
               </div>
             ))}
-
-            {children}
           </div>
           
           <DialogFooter>

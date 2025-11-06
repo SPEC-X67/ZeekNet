@@ -124,7 +124,7 @@ export function SeekerProfile() {
                     setEducation(profileData.education || []);
                   }
     } catch {
-      toast.error('Failed to load profile data');
+      toast.error('Failed to load profile data, please refresh the page.');
     } finally {
       setLoading(false);
     }
@@ -224,18 +224,10 @@ export function SeekerProfile() {
     try {
       setSaving(true);
 
-      if (profileData.name.trim() && profileData.name !== profile?.name) {
-        const nameResponse = await seekerApi.updateName(profileData.name.trim());
-        if (!nameResponse.success) {
-          toast.error(nameResponse.message || 'Failed to update name');
-          return;
-        }
-      }
-
       const response = await seekerApi.updateProfile({
+        name: profileData.name,
         headline: profileData.headline,
         location: profileData.location,
-        
       });
       if (response.success) {
         toast.success('Profile updated successfully');
@@ -335,7 +327,7 @@ export function SeekerProfile() {
         toast.error(response.message || 'Failed to update experience');
       }
     } catch {
-      toast.error('Failed to update experience');
+      toast.error('Failed to update experience, please refresh the page and try again');
     } finally {
       setSaving(false);
     }
@@ -1155,7 +1147,6 @@ export function SeekerProfile() {
         onSubmit={handleEditProfile}
         maxWidth="2xl"
       >
-        
         <div className="flex flex-col items-center gap-4 pb-4 border-b border-[#e5e7eb]">
           <div className="relative">
             <div className="w-24 h-24 rounded-full border-4 border-white bg-gradient-to-br from-[#26a4ff] to-[#4640de] overflow-hidden shadow-lg flex items-center justify-center">

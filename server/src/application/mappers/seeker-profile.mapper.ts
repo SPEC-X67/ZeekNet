@@ -109,7 +109,7 @@ export class SeekerProfileMapper {
       location: dto.location,
       phone: dto.phone,
       email: dto.email,
-
+      name : dto.name,
       skills: dto.skills,
       languages: dto.languages,
       socialLinks: dto.socialLinks?.map(link => ({
