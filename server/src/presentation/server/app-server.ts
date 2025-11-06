@@ -3,7 +3,6 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
-import path from 'path';
 
 import { connectToDatabase } from '../../infrastructure/database/mongodb/connection/mongoose';
 import { connectRedis } from '../../infrastructure/database/redis/connection/redis';
@@ -64,7 +63,6 @@ export class AppServer {
     if (env.NODE_ENV === 'development') {
       this._app.use(morgan('dev', { stream: morganStream }));
     } else if (env.NODE_ENV === 'production') {
-
       this._app.use(morgan('combined', { stream: morganStream }));
     }
   }

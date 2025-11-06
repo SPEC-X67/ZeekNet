@@ -38,7 +38,7 @@ const incrementJobViewCountUseCase = new IncrementJobViewCountUseCase(jobPosting
 
 const createSeekerProfileUseCase = new CreateSeekerProfileUseCase(seekerProfileRepository, s3Service);
 const getSeekerProfileUseCase = new GetSeekerProfileUseCase(seekerProfileRepository, seekerExperienceRepository, seekerEducationRepository, userRepository, s3Service);
-const updateSeekerProfileUseCase = new UpdateSeekerProfileUseCase(seekerProfileRepository, s3Service);
+const updateSeekerProfileUseCase = new UpdateSeekerProfileUseCase(seekerProfileRepository, s3Service, userRepository);
 const addExperienceUseCase = new AddExperienceUseCase(seekerProfileRepository, seekerExperienceRepository);
 const getExperiencesUseCase = new GetExperiencesUseCase(seekerProfileRepository, seekerExperienceRepository);
 const updateExperienceUseCase = new UpdateExperienceUseCase(seekerProfileRepository, seekerExperienceRepository);

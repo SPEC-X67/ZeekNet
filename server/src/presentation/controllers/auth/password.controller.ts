@@ -25,7 +25,7 @@ export class PasswordController {
       await this._forgotPasswordUseCase.execute(parsed.data.email);
       sendSuccessResponse(res, 'Password reset link has been sent to your email.', null);
     } catch (error) {
-      sendSuccessResponse(res, 'If the email exists, a password reset link has been sent.', null);
+      handleAsyncError(error, next);
     }
   };
 

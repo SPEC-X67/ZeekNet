@@ -62,7 +62,6 @@ export interface CreateSeekerProfileRequest {
   location?: string;
   phone?: string;
   email: string;
-  
   skills?: string[];
   socialLinks?: SocialLink[];
 }
@@ -73,7 +72,7 @@ export interface UpdateSeekerProfileRequest {
   location?: string;
   phone?: string;
   email?: string;
-  
+   name?: string;
   skills?: string[];
   languages?: string[];
   socialLinks?: SocialLink[];
@@ -194,9 +193,5 @@ export const seekerApi = {
 
   async uploadBanner(file: File): Promise<ApiEnvelope<SeekerProfile>> {
     return uploadFile<SeekerProfile>('/api/seeker/profile/banner', file, 'banner');
-  },
-
-  async updateName(name: string): Promise<ApiEnvelope<SeekerProfile>> {
-    return baseApi.put<SeekerProfile>('/api/seeker/profile/name')({ name });
-  },
+  }
 };

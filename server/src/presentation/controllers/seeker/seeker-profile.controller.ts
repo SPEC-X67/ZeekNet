@@ -315,22 +315,4 @@ export class SeekerProfileController {
       handleAsyncError(error, next);
     }
   };
-
-  updateName = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      const userId = validateUserId(req);
-      const { name } = req.body;
-
-      if (!name || typeof name !== 'string' || name.trim().length === 0) {
-        return badRequest(res, 'Name is required and must be a non-empty string');
-      }
-
-      await this._userRepository.updateName(userId, name.trim());
-
-      const profile = await this._getSeekerProfileUseCase.execute(userId);
-      sendSuccessResponse(res, 'Name updated successfully', profile);
-    } catch (error) {
-      handleAsyncError(error, next);
-    }
-  };
 }

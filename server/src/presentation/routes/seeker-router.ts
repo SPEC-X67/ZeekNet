@@ -53,7 +53,5 @@ export class SeekerRouter {
 
     this.router.post('/profile/avatar', uploadSingle('avatar'), seekerController.profileController.uploadAvatar);
     this.router.post('/profile/banner', uploadSingle('banner'), seekerController.profileController.uploadBanner);
-
-    this.router.put('/profile/name', seekerController.profileController.updateName);
   }
 }

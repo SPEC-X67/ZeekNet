@@ -25,6 +25,7 @@ export interface UpdateSeekerProfileData {
   location?: string;
   phone?: string;
   email?: string;
+  name?: string;
   avatarFileName?: string | null; 
   bannerFileName?: string | null; 
   skills?: string[];

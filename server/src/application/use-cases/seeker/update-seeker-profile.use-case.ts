@@ -5,11 +5,13 @@ import { SeekerProfile } from '../../../domain/entities/seeker-profile.entity';
 import { NotFoundError } from '../../../domain/errors/errors';
 import { SeekerProfileMapper } from '../../mappers/seeker-profile.mapper';
 import { SeekerProfileResponseDto } from '../../dto/seeker/seeker-profile-response.dto';
+import { IUserRepository } from 'src/domain/interfaces/repositories/user/IUserRepository';
 
 export class UpdateSeekerProfileUseCase implements IUpdateSeekerProfileUseCase {
   constructor(
     private readonly _seekerProfileRepository: ISeekerProfileRepository,
     private readonly _s3Service: IS3Service,
+    private readonly _userRepository: IUserRepository,
   ) {}
 
   async execute(userId: string, data: UpdateSeekerProfileData): Promise<SeekerProfileResponseDto> {
@@ -17,6 +19,10 @@ export class UpdateSeekerProfileUseCase implements IUpdateSeekerProfileUseCase {
     
     if (!existingProfile) {
       throw new NotFoundError('Seeker profile not found');
+    }
+
+    if(data.name !== undefined) {
+      this._userRepository.updateName(existingProfile.userId, data.name.trim());
     }
 
     const updateData: Record<string, unknown> = {};
