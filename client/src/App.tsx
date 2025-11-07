@@ -13,6 +13,7 @@ import PostJob from './pages/company/PostJob'
 import SeekerDashboard from './pages/seeker/SeekerDashboard'
 import { SeekerProfile as SeekerProfileComponent } from './pages/seeker/SeekerProfile'
 import SeekerSettings from './pages/seeker/SeekerSettings'
+import SeekerApplications from './pages/seeker/SeekerApplications'
 import SeekerLayout from './components/layouts/SeekerLayout'
 import JobListing from './pages/JobListing'
 import JobDetail from './pages/JobDetail'
@@ -36,6 +37,8 @@ import CompanyJobListing from './pages/company/JobListing'
 import CompanySettings from './pages/company/CompanySettings'
 import JobDetails from './pages/company/JobDetails'
 import EditJob from './pages/company/EditJob'
+import AllApplications from './pages/company/AllApplications'
+import ApplicationDetails from './pages/company/ApplicationDetails'
 
 function App() {
   return (
@@ -170,6 +173,16 @@ function App() {
               <EditJob />
             </ProtectedRoute>
           } />
+          <Route path="/company/applicants" element={
+            <ProtectedRoute allowedRoles={[UserRole.COMPANY]}>
+              <AllApplications />
+            </ProtectedRoute>
+          } />
+          <Route path="/company/applicants/:id" element={
+            <ProtectedRoute allowedRoles={[UserRole.COMPANY]}>
+              <ApplicationDetails />
+            </ProtectedRoute>
+          } />
           
           <Route path="/seeker/dashboard" element={
             <ProtectedRoute allowedRoles={[UserRole.SEEKER]}>
@@ -188,7 +201,7 @@ function App() {
           <Route path="/seeker/applications" element={
             <ProtectedRoute allowedRoles={[UserRole.SEEKER]}>
               <SeekerLayout>
-                <SeekerDashboard />
+                <SeekerApplications />
               </SeekerLayout>
             </ProtectedRoute>
           } />
