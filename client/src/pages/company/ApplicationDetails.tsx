@@ -151,7 +151,6 @@ const ApplicationDetails = () => {
   const [rejectApplicationOpen, setRejectApplicationOpen] = useState(false)
   const [sendMessageOpen, setSendMessageOpen] = useState(false)
   const [selectedInterviewId, setSelectedInterviewId] = useState<string | null>(null)
-  
   // Form states
   const [scheduleForm, setScheduleForm] = useState({
     date: '',

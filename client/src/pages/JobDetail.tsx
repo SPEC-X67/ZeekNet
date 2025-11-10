@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -31,10 +31,14 @@ import PublicFooter from "@/components/layouts/PublicFooter";
 import { jobApi } from "@/api/job.api";
 import type { JobPostingResponse } from "@/types/job";
 import { toast } from "sonner";
+import { useAppSelector } from "@/hooks/useRedux";
+import { UserRole } from "@/constants/enums";
 
 const JobDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
+  const { isAuthenticated, role, isInitialized } = useAppSelector((state) => state.auth);
   const [job, setJob] = useState<any>(null);
   const [similarJobs, setSimilarJobs] = useState<JobPostingResponse[]>([]);
   const [loading, setLoading] = useState(true);
@@ -44,6 +48,9 @@ const JobDetail = () => {
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [resumeFileName, setResumeFileName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Check if user is a seeker (only seekers can apply for jobs)
+  const canApply = isAuthenticated && role === UserRole.SEEKER;
 
   useEffect(() => {
     const fetchJobDetails = async () => {
@@ -80,6 +87,19 @@ const JobDetail = () => {
 
     fetchJobDetails();
   }, [id]);
+
+  // Check if user just returned from login and should open apply modal
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    if (searchParams.get('apply') === 'true' && canApply && isInitialized) {
+      // Small delay to ensure page is fully loaded
+      setTimeout(() => {
+        setIsApplyModalOpen(true);
+        // Clean up URL
+        navigate(location.pathname, { replace: true });
+      }, 100);
+    }
+  }, [canApply, isInitialized, location.search, location.pathname, navigate]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -130,6 +150,22 @@ const JobDetail = () => {
   };
 
   const handleOpenApplyModal = () => {
+    // If not authenticated, redirect to login with return URL
+    if (!isAuthenticated) {
+      navigate('/auth/login', { 
+        state: { from: `${location.pathname}?apply=true` },
+        replace: false 
+      });
+      toast.info('Please login to apply for this job');
+      return;
+    }
+
+    // If authenticated but not a seeker, show message
+    if (role !== UserRole.SEEKER) {
+      toast.error('Only job seekers can apply for jobs');
+      return;
+    }
+
     setIsApplyModalOpen(true);
   };
 
@@ -222,13 +258,16 @@ const JobDetail = () => {
               </div>
             </div>
 
-            <Button 
-              className="bg-[#4045DE] hover:bg-[#3338C0] text-white px-8 h-14 text-base font-semibold"
-              onClick={handleOpenApplyModal}
-            >
-              Apply now
-              <ArrowRight className="ml-2 w-5 h-5" />
-            </Button>
+            {/* Show Apply button if user is not authenticated (will redirect to login) or if authenticated seeker */}
+            {(!isAuthenticated || canApply) && isInitialized && (
+              <Button 
+                className="bg-[#4045DE] hover:bg-[#3338C0] text-white px-8 h-14 text-base font-semibold"
+                onClick={handleOpenApplyModal}
+              >
+                Apply now
+                <ArrowRight className="ml-2 w-5 h-5" />
+              </Button>
+            )}
           </div>
         </div>
 

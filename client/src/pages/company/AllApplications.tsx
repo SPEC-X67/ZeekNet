@@ -7,7 +7,6 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Loading } from '@/components/ui/loading'
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { companyApi } from '@/api/company.api'
 import { toast } from 'sonner'
 import { 
   Search,
@@ -37,13 +36,6 @@ interface Application {
   stage: 'applied' | 'shortlisted' | 'interview' | 'rejected' | 'hired'
   applied_date: string
   resume_url?: string
-}
-
-interface ApplicationsResponse {
-  applications: Application[]
-  total: number
-  page: number
-  limit: number
 }
 
 const AllApplications = () => {
