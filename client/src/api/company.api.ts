@@ -262,5 +262,24 @@ export const companyApi = {
 
   async uploadWorkplacePicture(file: File): Promise<ApiEnvelope<{ url: string; filename: string }>> {
     return uploadFile<{ url: string; filename: string }>('/api/company/workplace-pictures/upload', file, 'image');
+  },
+
+  async getApplications(query?: { page?: number; limit?: number; search?: string; job_id?: string; stage?: string }): Promise<ApiEnvelope<{ applications: any[], total: number, page: number, limit: number }>> {
+    const params = new URLSearchParams();
+    
+    if (query) {
+      if (query.page !== undefined) params.append('page', query.page.toString());
+      if (query.limit !== undefined) params.append('limit', query.limit.toString());
+      if (query.search) params.append('search', query.search);
+      if (query.job_id) params.append('job_id', query.job_id);
+      if (query.stage) params.append('stage', query.stage);
+    }
+    
+    const endpoint = params.toString() ? `/api/company/applications?${params.toString()}` : '/api/company/applications';
+    return baseApi.get<{ applications: any[], total: number, page: number, limit: number }>(endpoint)();
+  },
+
+  async getApplicationDetails(id: string): Promise<ApiEnvelope<any>> {
+    return baseApi.get<any>(`/api/company/applications/${id}`)();
   }
 }

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '@/hooks/useRedux'
 import { loginThunk, googleLoginThunk, clearError } from '@/store/slices/auth.slice'
 import { UserRole } from '@/constants/enums'
@@ -32,8 +32,12 @@ const Login = () => {
   })
   const [showPassword, setShowPassword] = useState(false)
   const navigate = useNavigate()
+  const location = useLocation()
   const dispatch = useAppDispatch()
   const { loading, error, role } = useAppSelector((s) => s.auth)
+
+  // Get the return URL from location state (where user came from)
+  const from = (location.state as { from?: string })?.from || null
 
   useEffect(() => {
     dispatch(clearError())
@@ -59,10 +63,17 @@ const Login = () => {
           navigate(`/verify-email?email=${encodeURIComponent(formData.email)}`)
         } else {
           toast.success('Welcome back!', { description: 'Logged in successfully.' })
-          const r = role
-          if (r === UserRole.ADMIN) navigate('/admin/dashboard')
-          else if (r === UserRole.COMPANY) navigate('/company/dashboard')
-          else navigate('/seeker/dashboard')
+          const userRole = res.data?.role || role
+          // If there's a return URL and user is a seeker, redirect there (e.g., job detail page)
+          if (from && userRole === UserRole.SEEKER) {
+            navigate(from, { replace: true })
+          } else if (userRole === UserRole.ADMIN) {
+            navigate('/admin/dashboard')
+          } else if (userRole === UserRole.COMPANY) {
+            navigate('/company/dashboard')
+          } else {
+            navigate('/seeker/dashboard')
+          }
         }
       } else {
         const msg = res?.message || 'Login failed. Please try again.'
@@ -103,10 +114,17 @@ const Login = () => {
           return
         }
         toast.success('Welcome back!', { description: 'Logged in successfully with Google.' })
-        const r = role
-        if (r === UserRole.ADMIN) navigate('/admin/dashboard')
-        else if (r === UserRole.COMPANY) navigate('/company/dashboard')
-        else navigate('/seeker/dashboard')
+        const userRole = res.data?.role || role
+        // If there's a return URL and user is a seeker, redirect there (e.g., job detail page)
+        if (from && userRole === UserRole.SEEKER) {
+          navigate(from, { replace: true })
+        } else if (userRole === UserRole.ADMIN) {
+          navigate('/admin/dashboard')
+        } else if (userRole === UserRole.COMPANY) {
+          navigate('/company/dashboard')
+        } else {
+          navigate('/seeker/dashboard')
+        }
       } else {
         const msg = res?.message || 'Google login failed. Please try again.'
         toast.error('Google Login Failed', { description: msg })
