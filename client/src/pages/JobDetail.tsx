@@ -29,6 +29,7 @@ import {
 import PublicHeader from "@/components/layouts/PublicHeader";
 import PublicFooter from "@/components/layouts/PublicFooter";
 import { jobApi } from "@/api/job.api";
+import { jobApplicationApi } from "@/api";
 import type { JobPostingResponse } from "@/types/job";
 import { toast } from "sonner";
 import { useAppSelector } from "@/hooks/useRedux";
@@ -136,17 +137,40 @@ const JobDetail = () => {
       return;
     }
 
-    setIsSubmitting(true);
-    
-    // Simulate API call (client-side only for now)
-    setTimeout(() => {
-      setIsSubmitting(false);
+    if (!id) {
+      toast.error('Invalid job');
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+
+      const formData = new FormData();
+      formData.append('job_id', id);
+      formData.append('cover_letter', coverLetter.trim());
+      formData.append('resume', resumeFile);
+
+      const res = await jobApplicationApi.createApplication(formData);
+      const appId = res?.data?.data?.id || res?.data?.id;
+
       setIsApplyModalOpen(false);
       setCoverLetter("");
       setResumeFile(null);
       setResumeFileName("");
-      toast.success('Application submitted successfully! We will review your application and get back to you soon.');
-    }, 1500);
+
+      toast.success('Application submitted successfully');
+
+      // Optional: navigate to My Applications or stay on page
+      // navigate('/seeker/applications');
+    } catch (error: any) {
+      const message =
+        error?.response?.data?.message ||
+        (Array.isArray(error?.response?.data?.errors) && error.response.data.errors[0]?.message) ||
+        'Failed to submit application';
+      toast.error(message);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleOpenApplyModal = () => {

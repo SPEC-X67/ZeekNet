@@ -7,7 +7,7 @@ import { Loading } from '@/components/ui/loading'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
-import { companyApi } from '@/api/company.api'
+import { jobApplicationApi } from '@/api'
 import { toast } from 'sonner'
 import { 
   ArrowLeft,
@@ -147,6 +147,7 @@ const ApplicationDetails = () => {
   const [addNotesOpen, setAddNotesOpen] = useState(false)
   const [addScheduleOpen, setAddScheduleOpen] = useState(false)
   const [addFeedbackOpen, setAddFeedbackOpen] = useState(false)
+  const [editScheduleOpen, setEditScheduleOpen] = useState(false)
   const [moveToNextStepOpen, setMoveToNextStepOpen] = useState(false)
   const [rejectApplicationOpen, setRejectApplicationOpen] = useState(false)
   const [sendMessageOpen, setSendMessageOpen] = useState(false)
@@ -186,158 +187,40 @@ const ApplicationDetails = () => {
 
       try {
         setLoading(true)
-        
-        // TODO: Replace with actual API call when backend endpoint is ready
-        // const response = await companyApi.getApplicationDetails(id)
-        
-        // Mock data for now - replace with actual API response
-        const mockApplication: ApplicationDetails = {
-          _id: id,
-          seeker_id: 's1',
-          seeker_name: 'Jerome Bell',
-          seeker_avatar: undefined,
-          seeker_headline: 'Product Designer',
-          job_id: 'j1',
-          job_title: 'Product Development',
-          job_company: 'Marketing',
-          job_location: 'Manchester, UK',
-          job_type: 'Full-Time',
-          score: 4.0,
-          stage: 'interview',
-          applied_date: '2021-07-11',
-          full_name: 'Jerome Bell',
-          date_of_birth: '1995-03-23',
-          gender: 'Male',
-          languages: ['English', 'French', 'Bahasa'],
-          address: '4517 Washington Ave. Manchester, Kentucky 39495',
-          about_me: `I'm a product designer + filmmaker currently working remotely at Twitter from beautiful Manchester, United Kingdom. I'm passionate about designing digital products that have a positive impact on the world.\n\nFor 10 years, I've specialised in interface, experience & interaction design as well as working in user research and product strategy for product agencies, big tech companies & start-ups.`,
-          current_job: 'Product Designer',
-          highest_qualification: 'Bachelors in Engineering',
-          experience_years: 4,
-          skills: ['Project Management', 'Copywriting', 'English'],
-          email: 'jeromeBell45@email.com',
-          phone: '+44 1245 572 135',
-          instagram: 'instagram.com/jeromebell',
-          twitter: 'twitter.com/jeromebell',
-          website: 'www.jeromebell.com',
-          resume_data: {
-            experience: [
-              {
-                title: 'Senior UI/UX Product Designer',
-                company: 'Enterprise name',
-                period: 'Aug 2018 - Present - 1 year',
-                location: 'Paris',
-                description: 'Directly collaborated with CEO and Product team to prototype, design and deliver the UI and UX experience with a lean design process: research, design, test, and iterate.'
-              },
-              {
-                title: 'UI/UX Product Designer',
-                company: 'Enterprise name',
-                period: 'Aug 2013 - Aug 2018 - 5 years',
-                location: 'Paris',
-                description: 'Lead the UI design with the accountability of the design system, collaborated with product and development teams on core projects to improve product interfaces and experiences.'
-              },
-              {
-                title: 'UI Designer',
-                company: 'Enterprise name',
-                period: 'Aug 2012 - jul 2013 - 1 year',
-                location: 'Paris',
-                description: 'Designed mobile UI applications for Orange R&D departement, BNP Paribas, La Poste, Le Cned...'
-              },
-              {
-                title: 'Graphic Designer',
-                company: 'Enterprise name',
-                period: 'Sept 2010 - jul 2012 - 2 years',
-                location: 'Paris',
-                description: 'Designed print and web applications for Pau Brasil, Renault, Le théatre du Mantois, La mairie de Mantes la Ville...'
-              }
-            ],
-            education: [
-              {
-                degree: 'Bachelor European in Graphic Design',
-                school: 'School name',
-                period: '2009 - 2010',
-                location: 'Bagnolet'
-              },
-              {
-                degree: 'BTS Communication Visuelle option Multimédia',
-                school: 'School name',
-                period: '2007 - 2009',
-                location: 'Bagnolet'
-              }
-            ],
-            industry_knowledge: ['Product Design', 'User Interface', 'User Experience', 'Interaction Design', 'Wireframing', 'Rapid Prototyping', 'Design Research'],
-            tools_technologies: ['Figma', 'Sketch', 'Protopie', 'Framer', 'Invision', 'Abstract', 'Zeplin', 'Google Analytics', 'Amplitude', 'Fullstory'],
-            other_skills: ['HTML', 'CSS', 'jQuery']
-          },
-          hiring_progress: {
-            interview_date: '10 - 13 July 2021',
-            interview_location: 'Silver Crysta Room, Nomad Office 3517 W. Gray St. Utica, Pennsylvania 57867',
-            interview_status: 'On Progress',
-            assigned_to: {
-              name: 'Maria Kelly',
-              avatar: undefined
-            },
-            notes: [
-              {
-                id: '1',
-                author: 'Maria Kelly',
-                author_avatar: undefined,
-                date: '10 July, 2021',
-                time: '11:30 AM',
-                content: 'Please, do an interview stage immediately. The design division needs more new employee now',
-                replies: 2
-              },
-              {
-                id: '2',
-                author: 'Maria Kelly',
-                author_avatar: undefined,
-                date: '10 July, 2021',
-                time: '10:30 AM',
-                content: 'Please, do an interview stage immediately.'
-              }
-            ]
-          },
-          interview_schedule: [
-            {
-              id: '1',
-              date: '2021-07-10',
-              interviewer_name: 'Kathryn Murphy',
-              interviewer_avatar: undefined,
-              interview_type: 'Written Test',
-              time: '10:00 AM - 11:30 AM',
-              location: 'Silver Crysta Room, Nomad'
-            },
-            {
-              id: '2',
-              date: '2021-07-11',
-              interviewer_name: 'Jenny Wilson',
-              interviewer_avatar: undefined,
-              interview_type: 'Written Test 2',
-              time: '10:00 AM - 11:00 AM',
-              location: 'Silver Crysta Room, Nomad'
-            },
-            {
-              id: '3',
-              date: '2021-07-12',
-              interviewer_name: 'Thad Eddings',
-              interviewer_avatar: undefined,
-              interview_type: 'Skill Test',
-              time: '10:00 AM - 11:00 AM',
-              location: 'Silver Crysta Room, Nomad'
-            },
-            {
-              id: '4',
-              date: '2021-07-13',
-              interviewer_name: 'Thad Eddings',
-              interviewer_avatar: undefined,
-              interview_type: 'Final Test',
-              time: '10:00 AM - 11:00 AM',
-              location: 'Silver Crysta Room, Nomad'
-            }
-          ]
+
+        const res = await jobApplicationApi.getCompanyApplicationById(id)
+        const a = res?.data?.data || res?.data
+
+        const mapped: ApplicationDetails = {
+          _id: a.id,
+          seeker_id: a.seeker_id,
+          seeker_name: a.seeker_name || 'Candidate',
+          seeker_avatar: a.seeker_avatar,
+          seeker_headline: a.seeker_headline,
+          job_id: a.job_id,
+          job_title: a.job_title,
+          job_company: a.company_name,
+          job_location: a.job_location,
+          job_type: a.job_type,
+          score: a.score,
+          stage: a.stage,
+          applied_date: a.applied_date,
+          email: a.seeker_email,
+          phone: a.seeker_phone,
+          website: a.seeker_website,
+          resume_data: undefined,
+          interview_schedule: (a.interviews || []).map((iv: any) => ({
+            id: iv.id,
+            date: iv.date,
+            interviewer_name: iv.interviewer_name || '',
+            interviewer_avatar: undefined,
+            interview_type: iv.interview_type,
+            time: iv.time,
+            location: iv.location,
+          })),
         }
 
-        setApplication(mockApplication)
+        setApplication(mapped)
       } catch (error) {
         toast.error('Failed to load application details')
         navigate('/company/applicants')
@@ -348,6 +231,45 @@ const ApplicationDetails = () => {
 
     fetchApplicationDetails()
   }, [id, navigate])
+
+  const reload = async () => {
+    if (!id) return
+    try {
+      const res = await jobApplicationApi.getCompanyApplicationById(id)
+      const a = res?.data?.data || res?.data
+      const mapped: ApplicationDetails = {
+        _id: a.id,
+        seeker_id: a.seeker_id,
+        seeker_name: a.seeker_name || 'Candidate',
+        seeker_avatar: a.seeker_avatar,
+        seeker_headline: a.seeker_headline,
+        job_id: a.job_id,
+        job_title: a.job_title,
+        job_company: a.company_name,
+        job_location: a.job_location,
+        job_type: a.job_type,
+        score: a.score,
+        stage: a.stage,
+        applied_date: a.applied_date,
+        email: a.seeker_email,
+        phone: a.seeker_phone,
+        website: a.seeker_website,
+        resume_data: undefined,
+        interview_schedule: (a.interviews || []).map((iv: any) => ({
+          id: iv.id,
+          date: iv.date,
+          interviewer_name: iv.interviewer_name || '',
+          interviewer_avatar: undefined,
+          interview_type: iv.interview_type,
+          time: iv.time,
+          location: iv.location,
+        })),
+      }
+      setApplication(mapped)
+    } catch {
+      // ignore
+    }
+  }
 
   const getInitials = (name: string) => {
     return name
@@ -409,9 +331,16 @@ const ApplicationDetails = () => {
     setScheduleForm({ date: '', time: '', location: '', interviewType: '', interviewer: '', notes: '' })
   }
 
-  const handleGiveRating = () => {
-    // TODO: Implement API call
-    toast.success('Rating submitted successfully')
+  const handleGiveRating = async () => {
+    if (!id) return
+    try {
+      const score = Number(ratingForm.rating)
+      await jobApplicationApi.updateApplicationScore(id, { score })
+      toast.success('Rating submitted successfully')
+      await reload()
+    } catch (e: any) {
+      toast.error(e?.response?.data?.message || 'Failed to update score')
+    }
     setGiveRatingOpen(false)
     setRatingForm({ rating: '', comment: '' })
   }
@@ -423,30 +352,114 @@ const ApplicationDetails = () => {
     setNoteForm({ content: '' })
   }
 
-  const handleAddSchedule = () => {
-    // TODO: Implement API call
-    toast.success('Interview schedule added successfully')
+  const handleAddSchedule = async () => {
+    if (!id) return
+    try {
+      await jobApplicationApi.addInterview(id, {
+        date: scheduleForm.date,
+        time: scheduleForm.time,
+        location: scheduleForm.location,
+        interview_type: scheduleForm.interviewType,
+        interviewer_name: scheduleForm.interviewer,
+      })
+      toast.success('Interview schedule added successfully')
+      await reload()
+    } catch (e: any) {
+      toast.error(e?.response?.data?.message || 'Failed to add interview')
+    }
     setAddScheduleOpen(false)
     setScheduleForm({ date: '', time: '', location: '', interviewType: '', interviewer: '', notes: '' })
   }
 
-  const handleAddFeedback = () => {
-    // TODO: Implement API call
-    toast.success('Feedback added successfully')
+  const handleOpenEditSchedule = (iv: any) => {
+    setSelectedInterviewId(iv.id)
+    setScheduleForm({
+      date: iv.date ? String(iv.date).slice(0, 10) : '',
+      time: iv.time || '',
+      location: iv.location || '',
+      interviewType: iv.interview_type || '',
+      interviewer: iv.interviewer_name || '',
+      notes: '',
+    })
+    setEditScheduleOpen(true)
+  }
+
+  const handleUpdateSchedule = async () => {
+    if (!id || !selectedInterviewId) return
+    try {
+      await jobApplicationApi.updateInterview(id, selectedInterviewId, {
+        date: scheduleForm.date,
+        time: scheduleForm.time,
+        location: scheduleForm.location,
+        interview_type: scheduleForm.interviewType,
+        interviewer_name: scheduleForm.interviewer,
+      })
+      toast.success('Interview updated successfully')
+      await reload()
+    } catch (e: any) {
+      toast.error(e?.response?.data?.message || 'Failed to update interview')
+    }
+    setEditScheduleOpen(false)
+    setSelectedInterviewId(null)
+  }
+
+  const handleCancelInterview = async (interviewId: string) => {
+    if (!id) return
+    try {
+      await jobApplicationApi.deleteInterview(id, interviewId)
+      toast.success('Interview cancelled')
+      await reload()
+    } catch (e: any) {
+      toast.error(e?.response?.data?.message || 'Failed to cancel interview')
+    }
+  }
+
+  const handleAddFeedback = async () => {
+    if (!id || !selectedInterviewId) return
+    try {
+      await jobApplicationApi.addInterviewFeedback(id, selectedInterviewId, {
+        reviewer_name: 'Reviewer', // could be current user name if available
+        comment: feedbackForm.feedback,
+      })
+      toast.success('Feedback added successfully')
+      await reload()
+    } catch (e: any) {
+      toast.error(e?.response?.data?.message || 'Failed to add feedback')
+    }
     setAddFeedbackOpen(false)
     setFeedbackForm({ feedback: '' })
     setSelectedInterviewId(null)
   }
 
-  const handleMoveToNextStep = () => {
-    // TODO: Implement API call
-    toast.success('Application moved to next step')
+  const handleMoveToNextStep = async () => {
+    if (!id || !application) return
+    const nextMap: Record<string, string> = {
+      applied: 'shortlisted',
+      shortlisted: 'interview',
+      interview: 'hired',
+      rejected: 'rejected',
+      hired: 'hired',
+    }
+    const next = nextMap[application.stage] || 'shortlisted'
+    try {
+      await jobApplicationApi.updateApplicationStage(id, { stage: next as any })
+      toast.success('Application moved to next step')
+      await reload()
+    } catch (e: any) {
+      toast.error(e?.response?.data?.message || 'Failed to update stage')
+    }
     setMoveToNextStepOpen(false)
   }
 
-  const handleRejectApplication = () => {
-    // TODO: Implement API call
-    toast.success('Application rejected')
+  const handleRejectApplication = async () => {
+    if (!id) return
+    try {
+      await jobApplicationApi.updateApplicationStage(id, { stage: 'rejected', rejection_reason: rejectReason })
+      toast.success('Application rejected')
+      await reload()
+    } catch (e: any) {
+      toast.error(e?.response?.data?.message || 'Failed to reject application')
+    }
     setRejectApplicationOpen(false)
     setRejectReason('')
   }
@@ -1220,8 +1233,8 @@ const ApplicationDetails = () => {
                                           </Button>
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent align="end">
-                                          <DropdownMenuItem>Edit Schedule</DropdownMenuItem>
-                                          <DropdownMenuItem>Cancel Interview</DropdownMenuItem>
+                                          <DropdownMenuItem onClick={() => handleOpenEditSchedule(interview)}>Edit Schedule</DropdownMenuItem>
+                                          <DropdownMenuItem onClick={() => handleCancelInterview(interview.id)}>Cancel Interview</DropdownMenuItem>
                                           <DropdownMenuItem>View Details</DropdownMenuItem>
                                         </DropdownMenuContent>
                                       </DropdownMenu>
@@ -1505,6 +1518,84 @@ const ApplicationDetails = () => {
             </Button>
             <Button onClick={handleAddSchedule} className="bg-[#4640DE] hover:bg-[#4640DE]/90">
               Add Schedule
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Schedule Interview Modal */}
+      <Dialog open={editScheduleOpen} onOpenChange={setEditScheduleOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Edit Interview Schedule</DialogTitle>
+            <DialogDescription>
+              Update interview details
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="editDate">Interview Date</Label>
+                <Input
+                  id="editDate"
+                  type="date"
+                  value={scheduleForm.date}
+                  onChange={(e) => setScheduleForm({ ...scheduleForm, date: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="editTime">Time</Label>
+                <Input
+                  id="editTime"
+                  type="time"
+                  value={scheduleForm.time}
+                  onChange={(e) => setScheduleForm({ ...scheduleForm, time: e.target.value })}
+                />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="editLocation">Location</Label>
+              <Input
+                id="editLocation"
+                value={scheduleForm.location}
+                onChange={(e) => setScheduleForm({ ...scheduleForm, location: e.target.value })}
+                placeholder="Enter interview location"
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="editType">Interview Type</Label>
+                <Select value={scheduleForm.interviewType} onValueChange={(value) => setScheduleForm({ ...scheduleForm, interviewType: value })}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="phone">Phone Interview</SelectItem>
+                    <SelectItem value="video">Video Interview</SelectItem>
+                    <SelectItem value="onsite">On-site Interview</SelectItem>
+                    <SelectItem value="written">Written Test</SelectItem>
+                    <SelectItem value="skill">Skill Test</SelectItem>
+                    <SelectItem value="final">Final Test</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="editInterviewer">Interviewer</Label>
+                <Input
+                  id="editInterviewer"
+                  value={scheduleForm.interviewer}
+                  onChange={(e) => setScheduleForm({ ...scheduleForm, interviewer: e.target.value })}
+                  placeholder="Interviewer name"
+                />
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditScheduleOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleUpdateSchedule} className="bg-[#4640DE] hover:bg-[#4640DE]/90">
+              Save Changes
             </Button>
           </DialogFooter>
         </DialogContent>
