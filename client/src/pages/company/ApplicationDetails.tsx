@@ -147,6 +147,7 @@ const ApplicationDetails = () => {
   const [addNotesOpen, setAddNotesOpen] = useState(false)
   const [addScheduleOpen, setAddScheduleOpen] = useState(false)
   const [addFeedbackOpen, setAddFeedbackOpen] = useState(false)
+  const [editScheduleOpen, setEditScheduleOpen] = useState(false)
   const [moveToNextStepOpen, setMoveToNextStepOpen] = useState(false)
   const [rejectApplicationOpen, setRejectApplicationOpen] = useState(false)
   const [sendMessageOpen, setSendMessageOpen] = useState(false)
@@ -231,6 +232,45 @@ const ApplicationDetails = () => {
     fetchApplicationDetails()
   }, [id, navigate])
 
+  const reload = async () => {
+    if (!id) return
+    try {
+      const res = await jobApplicationApi.getCompanyApplicationById(id)
+      const a = res?.data?.data || res?.data
+      const mapped: ApplicationDetails = {
+        _id: a.id,
+        seeker_id: a.seeker_id,
+        seeker_name: a.seeker_name || 'Candidate',
+        seeker_avatar: a.seeker_avatar,
+        seeker_headline: a.seeker_headline,
+        job_id: a.job_id,
+        job_title: a.job_title,
+        job_company: a.company_name,
+        job_location: a.job_location,
+        job_type: a.job_type,
+        score: a.score,
+        stage: a.stage,
+        applied_date: a.applied_date,
+        email: a.seeker_email,
+        phone: a.seeker_phone,
+        website: a.seeker_website,
+        resume_data: undefined,
+        interview_schedule: (a.interviews || []).map((iv: any) => ({
+          id: iv.id,
+          date: iv.date,
+          interviewer_name: iv.interviewer_name || '',
+          interviewer_avatar: undefined,
+          interview_type: iv.interview_type,
+          time: iv.time,
+          location: iv.location,
+        })),
+      }
+      setApplication(mapped)
+    } catch {
+      // ignore
+    }
+  }
+
   const getInitials = (name: string) => {
     return name
       .split(' ')
@@ -297,6 +337,7 @@ const ApplicationDetails = () => {
       const score = Number(ratingForm.rating)
       await jobApplicationApi.updateApplicationScore(id, { score })
       toast.success('Rating submitted successfully')
+      await reload()
     } catch (e: any) {
       toast.error(e?.response?.data?.message || 'Failed to update score')
     }
@@ -322,11 +363,55 @@ const ApplicationDetails = () => {
         interviewer_name: scheduleForm.interviewer,
       })
       toast.success('Interview schedule added successfully')
+      await reload()
     } catch (e: any) {
       toast.error(e?.response?.data?.message || 'Failed to add interview')
     }
     setAddScheduleOpen(false)
     setScheduleForm({ date: '', time: '', location: '', interviewType: '', interviewer: '', notes: '' })
+  }
+
+  const handleOpenEditSchedule = (iv: any) => {
+    setSelectedInterviewId(iv.id)
+    setScheduleForm({
+      date: iv.date ? String(iv.date).slice(0, 10) : '',
+      time: iv.time || '',
+      location: iv.location || '',
+      interviewType: iv.interview_type || '',
+      interviewer: iv.interviewer_name || '',
+      notes: '',
+    })
+    setEditScheduleOpen(true)
+  }
+
+  const handleUpdateSchedule = async () => {
+    if (!id || !selectedInterviewId) return
+    try {
+      await jobApplicationApi.updateInterview(id, selectedInterviewId, {
+        date: scheduleForm.date,
+        time: scheduleForm.time,
+        location: scheduleForm.location,
+        interview_type: scheduleForm.interviewType,
+        interviewer_name: scheduleForm.interviewer,
+      })
+      toast.success('Interview updated successfully')
+      await reload()
+    } catch (e: any) {
+      toast.error(e?.response?.data?.message || 'Failed to update interview')
+    }
+    setEditScheduleOpen(false)
+    setSelectedInterviewId(null)
+  }
+
+  const handleCancelInterview = async (interviewId: string) => {
+    if (!id) return
+    try {
+      await jobApplicationApi.deleteInterview(id, interviewId)
+      toast.success('Interview cancelled')
+      await reload()
+    } catch (e: any) {
+      toast.error(e?.response?.data?.message || 'Failed to cancel interview')
+    }
   }
 
   const handleAddFeedback = async () => {
@@ -337,6 +422,7 @@ const ApplicationDetails = () => {
         comment: feedbackForm.feedback,
       })
       toast.success('Feedback added successfully')
+      await reload()
     } catch (e: any) {
       toast.error(e?.response?.data?.message || 'Failed to add feedback')
     }
@@ -358,6 +444,7 @@ const ApplicationDetails = () => {
     try {
       await jobApplicationApi.updateApplicationStage(id, { stage: next as any })
       toast.success('Application moved to next step')
+      await reload()
     } catch (e: any) {
       toast.error(e?.response?.data?.message || 'Failed to update stage')
     }
@@ -369,6 +456,7 @@ const ApplicationDetails = () => {
     try {
       await jobApplicationApi.updateApplicationStage(id, { stage: 'rejected', rejection_reason: rejectReason })
       toast.success('Application rejected')
+      await reload()
     } catch (e: any) {
       toast.error(e?.response?.data?.message || 'Failed to reject application')
     }
@@ -1145,8 +1233,8 @@ const ApplicationDetails = () => {
                                           </Button>
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent align="end">
-                                          <DropdownMenuItem>Edit Schedule</DropdownMenuItem>
-                                          <DropdownMenuItem>Cancel Interview</DropdownMenuItem>
+                                          <DropdownMenuItem onClick={() => handleOpenEditSchedule(interview)}>Edit Schedule</DropdownMenuItem>
+                                          <DropdownMenuItem onClick={() => handleCancelInterview(interview.id)}>Cancel Interview</DropdownMenuItem>
                                           <DropdownMenuItem>View Details</DropdownMenuItem>
                                         </DropdownMenuContent>
                                       </DropdownMenu>
@@ -1430,6 +1518,84 @@ const ApplicationDetails = () => {
             </Button>
             <Button onClick={handleAddSchedule} className="bg-[#4640DE] hover:bg-[#4640DE]/90">
               Add Schedule
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Schedule Interview Modal */}
+      <Dialog open={editScheduleOpen} onOpenChange={setEditScheduleOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Edit Interview Schedule</DialogTitle>
+            <DialogDescription>
+              Update interview details
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="editDate">Interview Date</Label>
+                <Input
+                  id="editDate"
+                  type="date"
+                  value={scheduleForm.date}
+                  onChange={(e) => setScheduleForm({ ...scheduleForm, date: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="editTime">Time</Label>
+                <Input
+                  id="editTime"
+                  type="time"
+                  value={scheduleForm.time}
+                  onChange={(e) => setScheduleForm({ ...scheduleForm, time: e.target.value })}
+                />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="editLocation">Location</Label>
+              <Input
+                id="editLocation"
+                value={scheduleForm.location}
+                onChange={(e) => setScheduleForm({ ...scheduleForm, location: e.target.value })}
+                placeholder="Enter interview location"
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="editType">Interview Type</Label>
+                <Select value={scheduleForm.interviewType} onValueChange={(value) => setScheduleForm({ ...scheduleForm, interviewType: value })}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="phone">Phone Interview</SelectItem>
+                    <SelectItem value="video">Video Interview</SelectItem>
+                    <SelectItem value="onsite">On-site Interview</SelectItem>
+                    <SelectItem value="written">Written Test</SelectItem>
+                    <SelectItem value="skill">Skill Test</SelectItem>
+                    <SelectItem value="final">Final Test</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="editInterviewer">Interviewer</Label>
+                <Input
+                  id="editInterviewer"
+                  value={scheduleForm.interviewer}
+                  onChange={(e) => setScheduleForm({ ...scheduleForm, interviewer: e.target.value })}
+                  placeholder="Interviewer name"
+                />
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditScheduleOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleUpdateSchedule} className="bg-[#4640DE] hover:bg-[#4640DE]/90">
+              Save Changes
             </Button>
           </DialogFooter>
         </DialogContent>
