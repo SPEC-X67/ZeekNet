@@ -60,6 +60,5 @@ export class SeekerRouter {
     this.router.post('/applications', uploadResume('resume'), seekerJobApplicationController.createApplication);
     this.router.get('/applications', validateQuery(ApplicationFiltersDto), seekerJobApplicationController.getApplications);
     this.router.get('/applications/:id', seekerJobApplicationController.getApplicationDetails);
-    this.router.delete('/applications/:id', seekerJobApplicationController.deleteApplication);
   }
 }

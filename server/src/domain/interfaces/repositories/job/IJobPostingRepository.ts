@@ -44,6 +44,7 @@ export interface IJobPostingRepository {
   findByIdForClient(id: string): Promise<JobPostingDetailResponseDto | null>;
   update(id: string, data: unknown): Promise<JobPosting | null>;
   delete(id: string): Promise<boolean>;
+  incrementApplicationCount(jobId: string): Promise<void>;
 }
 
 export interface IJobPostingSearchRepository {
@@ -59,6 +60,4 @@ export interface IJobPostingAnalyticsRepository {
 
 export interface IJobPostingManagementRepository extends IJobPostingRepository {
   updateJobStatus(jobId: string, status: 'active' | 'inactive'): Promise<JobPosting | null>;
-  incrementViewCount(jobId: string): Promise<void>;
-  incrementApplicationCount(jobId: string): Promise<void>;
 }

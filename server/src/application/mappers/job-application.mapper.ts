@@ -11,18 +11,28 @@ import { UpdateInterviewRequestDto } from '../dto/job-application/update-intervi
 import { AddInterviewFeedbackRequestDto } from '../dto/job-application/add-interview-feedback.dto';
 
 export class JobApplicationMapper {
-  static toListDto(application: JobApplication, seekerName?: string, seekerAvatar?: string, jobTitle?: string): JobApplicationListResponseDto {
+  static toListDto(
+    application: JobApplication,
+    params?: {
+      seekerName?: string;
+      seekerAvatar?: string;
+      jobTitle?: string;
+      companyName?: string;
+      companyLogo?: string;
+    },
+  ): JobApplicationListResponseDto {
     return {
       id: application.id,
-      seeker_id: application.seeker_id,
-      seeker_name: seekerName || '',
-      seeker_avatar: seekerAvatar,
+      seeker_id: params?.seekerName ? application.seeker_id : undefined,
+      seeker_name: params?.seekerName,
+      seeker_avatar: params?.seekerAvatar,
       job_id: application.job_id,
-      job_title: jobTitle || '',
+      job_title: params?.jobTitle || '',
+      company_name: params?.companyName,
+      company_logo: params?.companyLogo,
       score: application.score,
       stage: application.stage,
       applied_date: application.applied_date.toISOString(),
-      resume_url: application.resume_url,
     };
   }
 
@@ -59,7 +69,7 @@ export class JobApplicationMapper {
       companyName?: string;
       location?: string;
       employmentTypes?: string[];
-    }
+    },
   ): JobApplicationDetailResponseDto {
     return {
       id: application.id,
@@ -91,20 +101,20 @@ export class JobApplicationMapper {
       // Resume data (from seeker profile)
       resume_data: seekerData?.experiences || seekerData?.education
         ? {
-            experience: seekerData.experiences?.map((exp) => ({
-              title: exp.title,
-              company: exp.company,
-              period: `${exp.startDate.toLocaleDateString()} - ${exp.endDate ? exp.endDate.toLocaleDateString() : 'Present'}`,
-              location: exp.location,
-              description: exp.description,
-            })),
-            education: seekerData.education?.map((edu) => ({
-              degree: edu.degree || '',
-              school: edu.school,
-              period: `${edu.startDate.toLocaleDateString()} - ${edu.endDate ? edu.endDate.toLocaleDateString() : 'Present'}`,
-              location: edu.location,
-            })),
-          }
+          experience: seekerData.experiences?.map((exp) => ({
+            title: exp.title,
+            company: exp.company,
+            period: `${exp.startDate.toLocaleDateString()} - ${exp.endDate ? exp.endDate.toLocaleDateString() : 'Present'}`,
+            location: exp.location,
+            description: exp.description,
+          })),
+          education: seekerData.education?.map((edu) => ({
+            degree: edu.degree || '',
+            school: edu.school,
+            period: `${edu.startDate.toLocaleDateString()} - ${edu.endDate ? edu.endDate.toLocaleDateString() : 'Present'}`,
+            location: edu.location,
+          })),
+        }
         : undefined,
     };
   }
@@ -120,11 +130,11 @@ export class JobApplicationMapper {
       status: interview.status || 'scheduled',
       feedback: interview.feedback
         ? {
-            reviewer_name: interview.feedback.reviewer_name,
-            rating: interview.feedback.rating,
-            comment: interview.feedback.comment,
-            reviewed_at: interview.feedback.reviewed_at.toISOString(),
-          }
+          reviewer_name: interview.feedback.reviewer_name,
+          rating: interview.feedback.rating,
+          comment: interview.feedback.comment,
+          reviewed_at: interview.feedback.reviewed_at.toISOString(),
+        }
         : undefined,
       created_at: interview.created_at?.toISOString(),
       updated_at: interview.updated_at?.toISOString(),

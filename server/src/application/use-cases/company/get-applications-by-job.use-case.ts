@@ -1,9 +1,10 @@
 import { IJobApplicationRepository } from '../../../domain/interfaces/repositories/job-application/IJobApplicationRepository';
 import { IJobPostingRepository } from '../../../domain/interfaces/repositories/job/IJobPostingRepository';
 import { ICompanyProfileRepository } from '../../../domain/interfaces/repositories/company/ICompanyProfileRepository';
-import { IGetApplicationsByJobUseCase, ApplicationFilters } from '../../../domain/interfaces/use-cases/IJobApplicationUseCases';
+import { IGetApplicationsByJobUseCase } from '../../../domain/interfaces/use-cases/IJobApplicationUseCases';
 import { NotFoundError, ValidationError } from '../../../domain/errors/errors';
 import { JobApplication } from '../../../domain/entities/job-application.entity';
+import type { ApplicationStage } from '../../../domain/entities/job-application.entity';
 
 export interface PaginatedApplications {
   applications: JobApplication[];
@@ -22,7 +23,11 @@ export class GetApplicationsByJobUseCase implements IGetApplicationsByJobUseCase
     private readonly _companyProfileRepository: ICompanyProfileRepository,
   ) {}
 
-  async execute(userId: string, jobId: string, filters: ApplicationFilters): Promise<PaginatedApplications> {
+  async execute(
+    userId: string,
+    jobId: string,
+    filters: { stage?: ApplicationStage; search?: string; page?: number; limit?: number },
+  ): Promise<PaginatedApplications> {
     // Get company profile
     const companyProfile = await this._companyProfileRepository.getProfileByUserId(userId);
     if (!companyProfile) {
@@ -53,8 +58,8 @@ export class GetApplicationsByJobUseCase implements IGetApplicationsByJobUseCase
       pagination: {
         page,
         limit,
-        total: result.total,
-        totalPages: Math.ceil(result.total / limit),
+        total: result.pagination.total,
+        totalPages: result.pagination.totalPages,
       },
     };
   }

@@ -31,7 +31,6 @@ export class SeekerJobApplicationController {
     private readonly _createJobApplicationUseCase: ICreateJobApplicationUseCase,
     private readonly _getApplicationsBySeekerUseCase: IGetApplicationsBySeekerUseCase,
     private readonly _getApplicationDetailsUseCase: IGetSeekerApplicationDetailsUseCase,
-    private readonly _deleteJobApplicationUseCase: IDeleteJobApplicationUseCase,
     private readonly _s3Service: IS3Service,
     private readonly _jobPostingRepository: IJobPostingRepository,
   ) {}
@@ -103,10 +102,21 @@ export class SeekerJobApplicationController {
         limit: filters.data.limit,
       });
 
-      // Map to response DTOs (would need to join with job posting data for job_title)
-      // For now, returning basic structure - can be enhanced with joins later
+      // Enrich with job/company info for user-facing list
+      const applications: JobApplicationListResponseDto[] = [];
+      for (const app of result.applications) {
+        const job = await this._jobPostingRepository.findById(app.job_id);
+        applications.push(
+          JobApplicationMapper.toListDto(app, {
+            jobTitle: job?.title,
+            companyName: job?.company_name,
+            companyLogo: job?.company_logo,
+          }),
+        );
+      }
+
       const response: PaginatedApplicationsResponseDto = {
-        applications: result.applications.map((app) => JobApplicationMapper.toListDto(app)),
+        applications,
         pagination: result.pagination,
       };
 
@@ -127,19 +137,6 @@ export class SeekerJobApplicationController {
       const response: JobApplicationDetailResponseDto = JobApplicationMapper.toDetailDto(application);
 
       sendSuccessResponse(res, 'Application details retrieved successfully', response);
-    } catch (error) {
-      handleAsyncError(error, next);
-    }
-  };
-
-  deleteApplication = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      const userId = validateUserId(req);
-      const { id } = req.params;
-
-      await this._deleteJobApplicationUseCase.execute(userId, id);
-
-      sendSuccessResponse(res, 'Application withdrawn successfully', null);
     } catch (error) {
       handleAsyncError(error, next);
     }
