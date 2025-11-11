@@ -24,6 +24,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { jobApplicationApi } from '@/api'
 
 interface Application {
   _id: string
@@ -54,65 +55,28 @@ const AllApplications = () => {
   const fetchApplications = async (page: number = 1, limit: number = 10, search: string = '') => {
     try {
       setLoading(true)
-      
-      // TODO: Replace with actual API call when backend endpoint is ready
-      // const response = await companyApi.getApplications({ page, limit, search })
-      
-      // Mock data for now - replace with actual API response
-      const mockApplications: Application[] = [
-        {
-          _id: '1',
-          seeker_id: 's1',
-          seeker_name: 'Jake Gyll',
-          seeker_avatar: undefined,
-          job_id: 'j1',
-          job_title: 'Designer',
-          score: 4.0,
-          stage: 'shortlisted',
-          applied_date: '2021-07-13',
-        },
-        {
-          _id: '2',
-          seeker_id: 's2',
-          seeker_name: 'Guy Hawkins',
-          seeker_avatar: undefined,
-          job_id: 'j2',
-          job_title: 'JavaScript Dev',
-          score: 0.0,
-          stage: 'shortlisted',
-          applied_date: '2021-07-13',
-        },
-        {
-          _id: '3',
-          seeker_id: 's3',
-          seeker_name: 'Cyndy Lillibridge',
-          seeker_avatar: undefined,
-          job_id: 'j3',
-          job_title: 'Golang Dev',
-          score: 4.5,
-          stage: 'shortlisted',
-          applied_date: '2021-07-12',
-        },
-      ]
 
-      // Filter by search query
-      const filtered = searchQuery 
-        ? mockApplications.filter(app => 
-            app.seeker_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            app.job_title.toLowerCase().includes(searchQuery.toLowerCase())
-          )
-        : mockApplications
+      const res = await jobApplicationApi.getCompanyApplications({ page, limit, search })
+      const data = res?.data?.data || res?.data
+      const list = (data?.applications || []).map((a: any) => ({
+        _id: a.id,
+        seeker_id: a.seeker_id,
+        seeker_name: a.seeker_name || a.seeker_full_name || 'Candidate',
+        seeker_avatar: a.seeker_avatar,
+        job_id: a.job_id,
+        job_title: a.job_title,
+        score: a.score,
+        stage: a.stage,
+        applied_date: a.applied_date,
+        resume_url: a.resume_url,
+      })) as Application[]
 
-      const total = filtered.length
-      const startIndex = (page - 1) * limit
-      const paginated = filtered.slice(startIndex, startIndex + limit)
-
-      setApplications(paginated)
+      setApplications(list)
       setPagination({
-        page,
-        limit,
-        total,
-        totalPages: Math.ceil(total / limit)
+        page: data?.pagination?.page || page,
+        limit: data?.pagination?.limit || limit,
+        total: data?.pagination?.total || list.length,
+        totalPages: data?.pagination?.totalPages || Math.ceil((data?.pagination?.total || list.length) / (data?.pagination?.limit || limit)),
       })
     } catch (error) {
       toast.error('Failed to fetch applications')
