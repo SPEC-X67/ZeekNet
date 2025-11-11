@@ -1,4 +1,5 @@
 import { JobPostingRepository } from '../database/mongodb/repositories/job-posting.repository';
+import { JobApplicationRepository } from '../database/mongodb/repositories/job-application.repository';
 import { SeekerProfileRepository } from '../database/mongodb/repositories/seeker-profile.repository';
 import { SeekerExperienceRepository } from '../database/mongodb/repositories/seeker-experience.repository';
 import { SeekerEducationRepository } from '../database/mongodb/repositories/seeker-education.repository';
@@ -8,6 +9,11 @@ import { GetJobPostingUseCase } from '../../application/use-cases/company/get-jo
 import { IncrementJobViewCountUseCase } from '../../application/use-cases/company/increment-job-view-count.use-case';
 import { SeekerController } from '../../presentation/controllers/seeker/seeker.controller';
 import { SeekerProfileController } from '../../presentation/controllers/seeker/seeker-profile.controller';
+import { SeekerJobApplicationController } from '../../presentation/controllers/seeker/job-application.controller';
+import { CreateJobApplicationUseCase } from '../../application/use-cases/seeker/create-job-application.use-case';
+import { GetApplicationsBySeekerUseCase } from '../../application/use-cases/seeker/get-applications-by-seeker.use-case';
+import { GetSeekerApplicationDetailsUseCase } from '../../application/use-cases/seeker/get-seeker-application-details.use-case';
+import { DeleteJobApplicationUseCase } from '../../application/use-cases/seeker/delete-job-application.use-case';
 import { CreateSeekerProfileUseCase } from '../../application/use-cases/seeker/create-seeker-profile.use-case';
 import { GetSeekerProfileUseCase } from '../../application/use-cases/seeker/get-seeker-profile.use-case';
 import { UpdateSeekerProfileUseCase } from '../../application/use-cases/seeker/update-seeker-profile.use-case';
@@ -26,6 +32,7 @@ import { RemoveResumeUseCase } from '../../application/use-cases/seeker/remove-r
 import { S3Service } from '../external-services/s3/s3.service';
 
 const jobPostingRepository = new JobPostingRepository();
+const jobApplicationRepository = new JobApplicationRepository();
 const seekerProfileRepository = new SeekerProfileRepository();
 const seekerExperienceRepository = new SeekerExperienceRepository();
 const seekerEducationRepository = new SeekerEducationRepository();
@@ -51,6 +58,12 @@ const updateSkillsUseCase = new UpdateSkillsUseCase(seekerProfileRepository);
 const updateLanguagesUseCase = new UpdateLanguagesUseCase(seekerProfileRepository);
 const uploadResumeUseCase = new UploadResumeUseCase(seekerProfileRepository);
 const removeResumeUseCase = new RemoveResumeUseCase(seekerProfileRepository);
+
+// Job Application Use Cases
+const createJobApplicationUseCase = new CreateJobApplicationUseCase(jobApplicationRepository, jobPostingRepository, userRepository);
+const getApplicationsBySeekerUseCase = new GetApplicationsBySeekerUseCase(jobApplicationRepository);
+const getSeekerApplicationDetailsUseCase = new GetSeekerApplicationDetailsUseCase(jobApplicationRepository);
+const deleteJobApplicationUseCase = new DeleteJobApplicationUseCase(jobApplicationRepository, jobPostingRepository);
 
 const seekerProfileController = new SeekerProfileController(
   createSeekerProfileUseCase,
@@ -79,4 +92,13 @@ const seekerController = new SeekerController(
   seekerProfileController,
 );
 
-export { seekerController, seekerProfileRepository };
+const seekerJobApplicationController = new SeekerJobApplicationController(
+  createJobApplicationUseCase,
+  getApplicationsBySeekerUseCase,
+  getSeekerApplicationDetailsUseCase,
+  deleteJobApplicationUseCase,
+  s3Service,
+  jobPostingRepository,
+);
+
+export { seekerController, seekerJobApplicationController, seekerProfileRepository };

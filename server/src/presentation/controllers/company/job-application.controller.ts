@@ -1,0 +1,230 @@
+import { Response, NextFunction } from 'express';
+import { AuthenticatedRequest } from '../../../shared/types/authenticated-request';
+import {
+  handleValidationError,
+  handleAsyncError,
+  sendSuccessResponse,
+  sendNotFoundResponse,
+  validateUserId,
+} from '../../../shared/utils/controller.utils';
+import {
+  IGetApplicationsByJobUseCase,
+  IGetApplicationsByCompanyUseCase,
+  IGetApplicationDetailsUseCase,
+  IUpdateApplicationStageUseCase,
+  IUpdateApplicationScoreUseCase,
+  IAddInterviewUseCase,
+  IUpdateInterviewUseCase,
+  IDeleteInterviewUseCase,
+  IAddInterviewFeedbackUseCase,
+} from '../../../domain/interfaces/use-cases/IJobApplicationUseCases';
+import { ApplicationFiltersDto } from '../../../application/dto/job-application/application-filters.dto';
+import { UpdateApplicationStageDto } from '../../../application/dto/job-application/update-application-stage.dto';
+import { UpdateScoreDto } from '../../../application/dto/job-application/update-score.dto';
+import { AddInterviewDto } from '../../../application/dto/job-application/add-interview.dto';
+import { UpdateInterviewDto } from '../../../application/dto/job-application/update-interview.dto';
+import { AddInterviewFeedbackDto } from '../../../application/dto/job-application/add-interview-feedback.dto';
+import { JobApplicationMapper } from '../../../application/mappers/job-application.mapper';
+import {
+  JobApplicationListResponseDto,
+  JobApplicationDetailResponseDto,
+  PaginatedApplicationsResponseDto,
+} from '../../../application/dto/job-application/job-application-response.dto';
+
+export class CompanyJobApplicationController {
+  constructor(
+    private readonly _getApplicationsByJobUseCase: IGetApplicationsByJobUseCase,
+    private readonly _getApplicationsByCompanyUseCase: IGetApplicationsByCompanyUseCase,
+    private readonly _getApplicationDetailsUseCase: IGetApplicationDetailsUseCase,
+    private readonly _updateApplicationStageUseCase: IUpdateApplicationStageUseCase,
+    private readonly _updateApplicationScoreUseCase: IUpdateApplicationScoreUseCase,
+    private readonly _addInterviewUseCase: IAddInterviewUseCase,
+    private readonly _updateInterviewUseCase: IUpdateInterviewUseCase,
+    private readonly _deleteInterviewUseCase: IDeleteInterviewUseCase,
+    private readonly _addInterviewFeedbackUseCase: IAddInterviewFeedbackUseCase,
+  ) {}
+
+  getApplications = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const userId = validateUserId(req);
+      const { job_id } = req.query;
+
+      // Parse query parameters
+      const filters = ApplicationFiltersDto.safeParse(req.query);
+      if (!filters.success) {
+        return handleValidationError(
+          `Validation error: ${filters.error.errors.map((e) => `${e.path.join('.')}: ${e.message}`).join(', ')}`,
+          next,
+        );
+      }
+
+      let result;
+      if (job_id) {
+        // Get applications for specific job
+        result = await this._getApplicationsByJobUseCase.execute(userId, job_id as string, filters.data);
+      } else {
+        // Get all applications for company
+        result = await this._getApplicationsByCompanyUseCase.execute(userId, filters.data);
+      }
+
+      // Map to response DTOs
+      const response: PaginatedApplicationsResponseDto = {
+        applications: result.applications.map((app) => JobApplicationMapper.toListDto(app)),
+        pagination: result.pagination,
+      };
+
+      sendSuccessResponse(res, 'Applications retrieved successfully', response);
+    } catch (error) {
+      handleAsyncError(error, next);
+    }
+  };
+
+  getApplicationDetails = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const userId = validateUserId(req);
+      const { id } = req.params;
+
+      const application = await this._getApplicationDetailsUseCase.execute(userId, id);
+
+      // Map to response DTO (would need to join with seeker profile and job posting data)
+      const response: JobApplicationDetailResponseDto = JobApplicationMapper.toDetailDto(application);
+
+      sendSuccessResponse(res, 'Application details retrieved successfully', response);
+    } catch (error) {
+      handleAsyncError(error, next);
+    }
+  };
+
+  updateStage = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const userId = validateUserId(req);
+      const { id } = req.params;
+
+      const dto = UpdateApplicationStageDto.safeParse(req.body);
+      if (!dto.success) {
+        return handleValidationError(
+          `Validation error: ${dto.error.errors.map((e) => `${e.path.join('.')}: ${e.message}`).join(', ')}`,
+          next,
+        );
+      }
+
+      const application = await this._updateApplicationStageUseCase.execute(
+        userId,
+        id,
+        dto.data.stage,
+        dto.data.rejection_reason,
+      );
+
+      sendSuccessResponse(res, 'Application stage updated successfully', JobApplicationMapper.toListDto(application));
+    } catch (error) {
+      handleAsyncError(error, next);
+    }
+  };
+
+  updateScore = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const userId = validateUserId(req);
+      const { id } = req.params;
+
+      const dto = UpdateScoreDto.safeParse(req.body);
+      if (!dto.success) {
+        return handleValidationError(
+          `Validation error: ${dto.error.errors.map((e) => `${e.path.join('.')}: ${e.message}`).join(', ')}`,
+          next,
+        );
+      }
+
+      const application = await this._updateApplicationScoreUseCase.execute(userId, id, dto.data.score);
+
+      sendSuccessResponse(res, 'Application score updated successfully', JobApplicationMapper.toListDto(application));
+    } catch (error) {
+      handleAsyncError(error, next);
+    }
+  };
+
+  addInterview = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const userId = validateUserId(req);
+      const { id } = req.params;
+
+      const dto = AddInterviewDto.safeParse(req.body);
+      if (!dto.success) {
+        return handleValidationError(
+          `Validation error: ${dto.error.errors.map((e) => `${e.path.join('.')}: ${e.message}`).join(', ')}`,
+          next,
+        );
+      }
+
+      const interviewData = JobApplicationMapper.interviewDataFromDto(dto.data);
+      const application = await this._addInterviewUseCase.execute(userId, id, interviewData);
+
+      sendSuccessResponse(res, 'Interview added successfully', JobApplicationMapper.toDetailDto(application));
+    } catch (error) {
+      handleAsyncError(error, next);
+    }
+  };
+
+  updateInterview = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const userId = validateUserId(req);
+      const { id, interviewId } = req.params;
+
+      const dto = UpdateInterviewDto.safeParse({
+        interview_id: interviewId,
+        ...req.body,
+      });
+      if (!dto.success) {
+        return handleValidationError(
+          `Validation error: ${dto.error.errors.map((e) => `${e.path.join('.')}: ${e.message}`).join(', ')}`,
+          next,
+        );
+      }
+
+      const interviewData = JobApplicationMapper.updateInterviewDataFromDto(dto.data);
+      const application = await this._updateInterviewUseCase.execute(userId, id, interviewId, interviewData);
+
+      sendSuccessResponse(res, 'Interview updated successfully', JobApplicationMapper.toDetailDto(application));
+    } catch (error) {
+      handleAsyncError(error, next);
+    }
+  };
+
+  deleteInterview = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const userId = validateUserId(req);
+      const { id, interviewId } = req.params;
+
+      const application = await this._deleteInterviewUseCase.execute(userId, id, interviewId);
+
+      sendSuccessResponse(res, 'Interview deleted successfully', JobApplicationMapper.toDetailDto(application));
+    } catch (error) {
+      handleAsyncError(error, next);
+    }
+  };
+
+  addInterviewFeedback = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const userId = validateUserId(req);
+      const { id, interviewId } = req.params;
+
+      const dto = AddInterviewFeedbackDto.safeParse({
+        interview_id: interviewId,
+        ...req.body,
+      });
+      if (!dto.success) {
+        return handleValidationError(
+          `Validation error: ${dto.error.errors.map((e) => `${e.path.join('.')}: ${e.message}`).join(', ')}`,
+          next,
+        );
+      }
+
+      const feedbackData = JobApplicationMapper.feedbackDataFromDto(dto.data);
+      const application = await this._addInterviewFeedbackUseCase.execute(userId, id, interviewId, feedbackData);
+
+      sendSuccessResponse(res, 'Interview feedback added successfully', JobApplicationMapper.toDetailDto(application));
+    } catch (error) {
+      handleAsyncError(error, next);
+    }
+  };
+}
+

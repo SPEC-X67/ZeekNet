@@ -7,6 +7,7 @@ import { CompanyOfficeLocationRepository } from '../database/mongodb/repositorie
 import { CompanyBenefitsRepository } from '../database/mongodb/repositories/company-benefits.repository';
 import { CompanyWorkplacePicturesRepository } from '../database/mongodb/repositories/company-workplace-pictures.repository';
 import { JobPostingRepository } from '../database/mongodb/repositories/job-posting.repository';
+import { JobApplicationRepository } from '../database/mongodb/repositories/job-application.repository';
 import { S3Service } from '../external-services/s3/s3.service';
 import { CreateCompanyProfileUseCase } from '../../application/use-cases/company/create-company-profile.use-case';
 import { UpdateCompanyProfileUseCase } from '../../application/use-cases/company/update-company-profile.use-case';
@@ -39,6 +40,16 @@ import { IncrementJobViewCountUseCase } from '../../application/use-cases/compan
 import { UpdateJobStatusUseCase } from '../../application/use-cases/company/update-job-status.use-case';
 import { CompanyController } from '../../presentation/controllers/company/company.controller';
 import { CompanyJobPostingController } from '../../presentation/controllers/company/company-job-posting.controller';
+import { CompanyJobApplicationController } from '../../presentation/controllers/company/job-application.controller';
+import { GetApplicationsByJobUseCase } from '../../application/use-cases/company/get-applications-by-job.use-case';
+import { GetApplicationsByCompanyUseCase } from '../../application/use-cases/company/get-applications-by-company.use-case';
+import { GetApplicationDetailsUseCase } from '../../application/use-cases/company/get-application-details.use-case';
+import { UpdateApplicationStageUseCase } from '../../application/use-cases/company/update-application-stage.use-case';
+import { UpdateApplicationScoreUseCase } from '../../application/use-cases/company/update-application-score.use-case';
+import { AddInterviewUseCase } from '../../application/use-cases/company/add-interview.use-case';
+import { UpdateInterviewUseCase } from '../../application/use-cases/company/update-interview.use-case';
+import { DeleteInterviewUseCase } from '../../application/use-cases/company/delete-interview.use-case';
+import { AddInterviewFeedbackUseCase } from '../../application/use-cases/company/add-interview-feedback.use-case';
 
 const companyProfileRepository = new CompanyProfileRepository();
 const companyContactRepository = new CompanyContactRepository();
@@ -49,6 +60,7 @@ const companyOfficeLocationRepository = new CompanyOfficeLocationRepository();
 const companyBenefitsRepository = new CompanyBenefitsRepository();
 const companyWorkplacePicturesRepository = new CompanyWorkplacePicturesRepository();
 const jobPostingRepository = new JobPostingRepository();
+const jobApplicationRepository = new JobApplicationRepository();
 
 const s3Service = new S3Service();
 
@@ -98,6 +110,17 @@ const incrementJobViewCountUseCase = new IncrementJobViewCountUseCase(jobPosting
 
 const updateJobStatusUseCase = new UpdateJobStatusUseCase(jobPostingRepository);
 
+// Job Application Use Cases
+const getApplicationsByJobUseCase = new GetApplicationsByJobUseCase(jobApplicationRepository, jobPostingRepository, companyProfileRepository);
+const getApplicationsByCompanyUseCase = new GetApplicationsByCompanyUseCase(jobApplicationRepository, companyProfileRepository);
+const getApplicationDetailsUseCase = new GetApplicationDetailsUseCase(jobApplicationRepository, jobPostingRepository, companyProfileRepository);
+const updateApplicationStageUseCase = new UpdateApplicationStageUseCase(jobApplicationRepository, jobPostingRepository, companyProfileRepository);
+const updateApplicationScoreUseCase = new UpdateApplicationScoreUseCase(jobApplicationRepository, jobPostingRepository, companyProfileRepository);
+const addInterviewUseCase = new AddInterviewUseCase(jobApplicationRepository, jobPostingRepository, companyProfileRepository);
+const updateInterviewUseCase = new UpdateInterviewUseCase(jobApplicationRepository, jobPostingRepository, companyProfileRepository);
+const deleteInterviewUseCase = new DeleteInterviewUseCase(jobApplicationRepository, jobPostingRepository, companyProfileRepository);
+const addInterviewFeedbackUseCase = new AddInterviewFeedbackUseCase(jobApplicationRepository, jobPostingRepository, companyProfileRepository);
+
 const companyController = new CompanyController(
   createCompanyProfileUseCase,
   reapplyCompanyVerificationUseCase,
@@ -130,4 +153,16 @@ const companyController = new CompanyController(
 
 const companyJobPostingController = new CompanyJobPostingController(createJobPostingUseCase, getJobPostingUseCase, getCompanyJobPostingsUseCase, updateJobPostingUseCase, deleteJobPostingUseCase, incrementJobViewCountUseCase, updateJobStatusUseCase, companyProfileRepository, getCompanyJobPostingUseCase);
 
-export { companyController, companyJobPostingController, companyProfileRepository, companyProfileRepository as companyRepository, companyListingRepository, companyVerificationRepository };
+const companyJobApplicationController = new CompanyJobApplicationController(
+  getApplicationsByJobUseCase,
+  getApplicationsByCompanyUseCase,
+  getApplicationDetailsUseCase,
+  updateApplicationStageUseCase,
+  updateApplicationScoreUseCase,
+  addInterviewUseCase,
+  updateInterviewUseCase,
+  deleteInterviewUseCase,
+  addInterviewFeedbackUseCase,
+);
+
+export { companyController, companyJobPostingController, companyJobApplicationController, companyProfileRepository, companyProfileRepository as companyRepository, companyListingRepository, companyVerificationRepository };

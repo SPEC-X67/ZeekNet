@@ -108,4 +108,21 @@ export class S3Service implements IS3Service {
       throw new Error('Invalid S3 URL format');
     }
   }
+
+  async uploadResume(file: Buffer, fileName: string, contentType: string): Promise<string> {
+    const sanitizedFileName = fileName.replace(/[^a-zA-Z0-9._-]/g, '_');
+    const key = `resumes/${Date.now()}-${sanitizedFileName}`;
+
+    const command = new PutObjectCommand({
+      Bucket: this._bucketName,
+      Key: key,
+      Body: file,
+      ContentType: contentType,
+      ACL: 'public-read',
+    });
+
+    await this._s3Client.send(command);
+    const region = env.AWS_REGION!;
+    return `https://s3.${region}.amazonaws.com/${this._bucketName}/${key}`;
+  }
 }
