@@ -62,11 +62,7 @@ export class JobPostingRepository extends RepositoryBase<JobPosting, JobPostingD
   protected mapToEntity(doc: JobPostingDocument): JobPosting {
     return JobPostingMapper.toEntity(doc);
   }
-
-  private mapDocumentToClientResponse(doc: JobPostingDocument): JobPostingResponseDto {
-    return JobPostingMapper.toClientResponse(doc);
-  }
-
+  
   async create(data: CreateJobPostingRequest): Promise<JobPosting> {
     try {
       const jobPostingData = {

@@ -23,11 +23,11 @@ export class JobApplicationMapper {
         status: i.status,
         feedback: i.feedback
           ? {
-              reviewer_name: i.feedback.reviewer_name,
-              rating: i.feedback.rating,
-              comment: i.feedback.comment,
-              reviewed_at: new Date(i.feedback.reviewed_at),
-            }
+            reviewer_name: i.feedback.reviewer_name,
+            rating: i.feedback.rating,
+            comment: i.feedback.comment,
+            reviewed_at: new Date(i.feedback.reviewed_at),
+          }
           : undefined,
         created_at: i.created_at ? new Date(i.created_at) : undefined,
         updated_at: i.updated_at ? new Date(i.updated_at) : undefined,

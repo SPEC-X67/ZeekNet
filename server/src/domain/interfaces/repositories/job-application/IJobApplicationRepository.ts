@@ -52,8 +52,6 @@ export interface IJobApplicationRepository {
 
   addInterviewFeedback(applicationId: string, interviewId: string, feedback: { reviewer_name: string; rating?: number; comment: string; reviewed_at: Date }): Promise<JobApplication | null>;
 
-  delete(id: string): Promise<boolean>;
-
   checkDuplicateApplication(seekerId: string, jobId: string): Promise<boolean>;
 }
 

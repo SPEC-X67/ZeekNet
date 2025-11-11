@@ -30,6 +30,11 @@ import {
   JobApplicationDetailResponseDto,
   PaginatedApplicationsResponseDto,
 } from '../../../application/dto/job-application/job-application-response.dto';
+import { IUserRepository } from '../../../domain/interfaces/repositories/user/IUserRepository';
+import { ISeekerProfileRepository } from '../../../domain/interfaces/repositories/seeker/ISeekerProfileRepository';
+import { IJobPostingRepository } from '../../../domain/interfaces/repositories/job/IJobPostingRepository';
+import { ISeekerExperienceRepository } from '../../../domain/interfaces/repositories/seeker/ISeekerExperienceRepository';
+import { ISeekerEducationRepository } from '../../../domain/interfaces/repositories/seeker/ISeekerEducationRepository';
 
 export class CompanyJobApplicationController {
   constructor(
@@ -42,6 +47,11 @@ export class CompanyJobApplicationController {
     private readonly _updateInterviewUseCase: IUpdateInterviewUseCase,
     private readonly _deleteInterviewUseCase: IDeleteInterviewUseCase,
     private readonly _addInterviewFeedbackUseCase: IAddInterviewFeedbackUseCase,
+    private readonly _userRepository: IUserRepository,
+    private readonly _seekerProfileRepository: ISeekerProfileRepository,
+    private readonly _jobPostingRepository: IJobPostingRepository,
+    private readonly _seekerExperienceRepository: ISeekerExperienceRepository,
+    private readonly _seekerEducationRepository: ISeekerEducationRepository,
   ) {}
 
   getApplications = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
@@ -67,9 +77,25 @@ export class CompanyJobApplicationController {
         result = await this._getApplicationsByCompanyUseCase.execute(userId, filters.data);
       }
 
-      // Map to response DTOs
+      // Map to response DTOs with enrichment: seeker name, job role; exclude resume url
+      const applications: JobApplicationListResponseDto[] = [];
+      for (const app of result.applications) {
+        const [user, job, profile] = await Promise.all([
+          this._userRepository.findById(app.seeker_id),
+          this._jobPostingRepository.findById(app.job_id),
+          this._seekerProfileRepository.getProfileByUserId(app.seeker_id),
+        ]);
+        applications.push(
+          JobApplicationMapper.toListDto(app, {
+            seekerName: user?.name,
+            seekerAvatar: profile?.avatarFileName || undefined,
+            jobTitle: job?.title,
+          }),
+        );
+      }
+
       const response: PaginatedApplicationsResponseDto = {
-        applications: result.applications.map((app) => JobApplicationMapper.toListDto(app)),
+        applications,
         pagination: result.pagination,
       };
 
@@ -86,8 +112,59 @@ export class CompanyJobApplicationController {
 
       const application = await this._getApplicationDetailsUseCase.execute(userId, id);
 
-      // Map to response DTO (would need to join with seeker profile and job posting data)
-      const response: JobApplicationDetailResponseDto = JobApplicationMapper.toDetailDto(application);
+      // Enrich with seeker profile and job details
+      const [user, profile, job] = await Promise.all([
+        this._userRepository.findById(application.seeker_id),
+        this._seekerProfileRepository.getProfileByUserId(application.seeker_id),
+        this._jobPostingRepository.findById(application.job_id),
+      ]);
+
+      let experiences: Array<{ title: string; company: string; startDate: Date; endDate?: Date; location?: string; description?: string; }> = [];
+      let education: Array<{ school: string; degree?: string; startDate: Date; endDate?: Date; location?: string; }> = [];
+      if (profile) {
+        const [exps, edus] = await Promise.all([
+          this._seekerExperienceRepository.findBySeekerProfileId(profile.id),
+          this._seekerEducationRepository.findBySeekerProfileId(profile.id),
+        ]);
+        experiences = exps.map((e) => ({
+          title: e.title,
+          company: e.company,
+          startDate: e.startDate,
+          endDate: e.endDate,
+          location: e.location,
+          description: e.description,
+        }));
+        education = edus.map((d) => ({
+          school: d.school,
+          degree: d.degree,
+          startDate: d.startDate,
+          endDate: d.endDate,
+          location: undefined,
+        }));
+      }
+
+      const response: JobApplicationDetailResponseDto = JobApplicationMapper.toDetailDto(
+        application,
+        {
+          name: user?.name,
+          avatar: profile?.avatarFileName || undefined,
+          headline: profile?.headline || undefined,
+          email: profile?.email || undefined,
+          phone: profile?.phone || undefined,
+          location: profile?.location || undefined,
+          summary: profile?.summary || undefined,
+          skills: profile?.skills || undefined,
+          languages: profile?.languages || undefined,
+          experiences,
+          education,
+        },
+        {
+          title: job?.title,
+          companyName: job?.company_name,
+          location: job?.location,
+          employmentTypes: job?.employment_types,
+        },
+      );
 
       sendSuccessResponse(res, 'Application details retrieved successfully', response);
     } catch (error) {

@@ -1,8 +1,8 @@
 import { IJobApplicationRepository } from '../../../domain/interfaces/repositories/job-application/IJobApplicationRepository';
 import { ICompanyProfileRepository } from '../../../domain/interfaces/repositories/company/ICompanyProfileRepository';
-import { IGetApplicationsByCompanyUseCase, ApplicationFilters } from '../../../domain/interfaces/use-cases/IJobApplicationUseCases';
+import { IGetApplicationsByCompanyUseCase } from '../../../domain/interfaces/use-cases/IJobApplicationUseCases';
 import { NotFoundError } from '../../../domain/errors/errors';
-import { JobApplication } from '../../../domain/entities/job-application.entity';
+import type { JobApplication, ApplicationStage } from '../../../domain/entities/job-application.entity';
 
 export interface PaginatedApplications {
   applications: JobApplication[];
@@ -20,8 +20,7 @@ export class GetApplicationsByCompanyUseCase implements IGetApplicationsByCompan
     private readonly _companyProfileRepository: ICompanyProfileRepository,
   ) {}
 
-  async execute(userId: string, filters: ApplicationFilters): Promise<PaginatedApplications> {
-    // Get company profile
+  async execute(userId: string, filters: { job_id?: string; stage?: ApplicationStage; search?: string; page?: number; limit?: number }): Promise<PaginatedApplications> {
     const companyProfile = await this._companyProfileRepository.getProfileByUserId(userId);
     if (!companyProfile) {
       throw new NotFoundError('Company profile not found');
@@ -31,7 +30,6 @@ export class GetApplicationsByCompanyUseCase implements IGetApplicationsByCompan
     const limit = filters.limit || 10;
 
     const result = await this._jobApplicationRepository.findByCompanyId(companyProfile.id, {
-      job_id: filters.job_id,
       stage: filters.stage,
       search: filters.search,
       page,
@@ -43,8 +41,8 @@ export class GetApplicationsByCompanyUseCase implements IGetApplicationsByCompan
       pagination: {
         page,
         limit,
-        total: result.total,
-        totalPages: Math.ceil(result.total / limit),
+        total: result.pagination.total,
+        totalPages: Math.ceil(result.pagination.total / limit),
       },
     };
   }

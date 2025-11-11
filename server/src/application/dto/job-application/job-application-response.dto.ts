@@ -18,15 +18,16 @@ export interface InterviewScheduleResponseDto {
 
 export interface JobApplicationListResponseDto {
   id: string;
-  seeker_id: string;
-  seeker_name: string;
+  seeker_id?: string;
+  seeker_name?: string;
   seeker_avatar?: string;
   job_id: string;
   job_title: string;
+  company_name?: string;
+  company_logo?: string;
   score?: number;
   stage: 'applied' | 'shortlisted' | 'interview' | 'rejected' | 'hired';
   applied_date: string;
-  resume_url?: string;
 }
 
 export interface JobApplicationDetailResponseDto {

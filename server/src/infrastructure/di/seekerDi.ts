@@ -13,7 +13,6 @@ import { SeekerJobApplicationController } from '../../presentation/controllers/s
 import { CreateJobApplicationUseCase } from '../../application/use-cases/seeker/create-job-application.use-case';
 import { GetApplicationsBySeekerUseCase } from '../../application/use-cases/seeker/get-applications-by-seeker.use-case';
 import { GetSeekerApplicationDetailsUseCase } from '../../application/use-cases/seeker/get-seeker-application-details.use-case';
-import { DeleteJobApplicationUseCase } from '../../application/use-cases/seeker/delete-job-application.use-case';
 import { CreateSeekerProfileUseCase } from '../../application/use-cases/seeker/create-seeker-profile.use-case';
 import { GetSeekerProfileUseCase } from '../../application/use-cases/seeker/get-seeker-profile.use-case';
 import { UpdateSeekerProfileUseCase } from '../../application/use-cases/seeker/update-seeker-profile.use-case';
@@ -63,7 +62,6 @@ const removeResumeUseCase = new RemoveResumeUseCase(seekerProfileRepository);
 const createJobApplicationUseCase = new CreateJobApplicationUseCase(jobApplicationRepository, jobPostingRepository, userRepository);
 const getApplicationsBySeekerUseCase = new GetApplicationsBySeekerUseCase(jobApplicationRepository);
 const getSeekerApplicationDetailsUseCase = new GetSeekerApplicationDetailsUseCase(jobApplicationRepository);
-const deleteJobApplicationUseCase = new DeleteJobApplicationUseCase(jobApplicationRepository, jobPostingRepository);
 
 const seekerProfileController = new SeekerProfileController(
   createSeekerProfileUseCase,
@@ -96,7 +94,6 @@ const seekerJobApplicationController = new SeekerJobApplicationController(
   createJobApplicationUseCase,
   getApplicationsBySeekerUseCase,
   getSeekerApplicationDetailsUseCase,
-  deleteJobApplicationUseCase,
   s3Service,
   jobPostingRepository,
 );

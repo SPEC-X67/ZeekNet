@@ -8,6 +8,10 @@ import { CompanyBenefitsRepository } from '../database/mongodb/repositories/comp
 import { CompanyWorkplacePicturesRepository } from '../database/mongodb/repositories/company-workplace-pictures.repository';
 import { JobPostingRepository } from '../database/mongodb/repositories/job-posting.repository';
 import { JobApplicationRepository } from '../database/mongodb/repositories/job-application.repository';
+import { UserRepository } from '../database/mongodb/repositories/user.repository';
+import { SeekerProfileRepository } from '../database/mongodb/repositories/seeker-profile.repository';
+import { SeekerExperienceRepository } from '../database/mongodb/repositories/seeker-experience.repository';
+import { SeekerEducationRepository } from '../database/mongodb/repositories/seeker-education.repository';
 import { S3Service } from '../external-services/s3/s3.service';
 import { CreateCompanyProfileUseCase } from '../../application/use-cases/company/create-company-profile.use-case';
 import { UpdateCompanyProfileUseCase } from '../../application/use-cases/company/update-company-profile.use-case';
@@ -61,6 +65,10 @@ const companyBenefitsRepository = new CompanyBenefitsRepository();
 const companyWorkplacePicturesRepository = new CompanyWorkplacePicturesRepository();
 const jobPostingRepository = new JobPostingRepository();
 const jobApplicationRepository = new JobApplicationRepository();
+const userRepository = new UserRepository();
+const seekerProfileRepository = new SeekerProfileRepository();
+const seekerExperienceRepository = new SeekerExperienceRepository();
+const seekerEducationRepository = new SeekerEducationRepository();
 
 const s3Service = new S3Service();
 
@@ -163,6 +171,11 @@ const companyJobApplicationController = new CompanyJobApplicationController(
   updateInterviewUseCase,
   deleteInterviewUseCase,
   addInterviewFeedbackUseCase,
+  userRepository,
+  seekerProfileRepository,
+  jobPostingRepository,
+  seekerExperienceRepository,
+  seekerEducationRepository,
 );
 
 export { companyController, companyJobPostingController, companyJobApplicationController, companyProfileRepository, companyProfileRepository as companyRepository, companyListingRepository, companyVerificationRepository };

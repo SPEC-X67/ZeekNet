@@ -48,15 +48,9 @@ export class CreateJobApplicationUseCase implements ICreateJobApplicationUseCase
       cover_letter: data.cover_letter,
       resume_url: data.resume_url,
       resume_filename: data.resume_filename,
-      stage: 'applied',
-      applied_date: new Date(),
     });
 
-    // Increment application count on job posting
-    const jobPostingManagementRepo = this._jobPostingRepository as any;
-    if (jobPostingManagementRepo.incrementApplicationCount) {
-      await jobPostingManagementRepo.incrementApplicationCount(data.job_id);
-    }
+    await this._jobPostingRepository.incrementApplicationCount(data.job_id);
 
     return application;
   }
