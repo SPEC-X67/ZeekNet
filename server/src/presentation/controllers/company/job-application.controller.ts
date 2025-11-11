@@ -35,6 +35,7 @@ import { ISeekerProfileRepository } from '../../../domain/interfaces/repositorie
 import { IJobPostingRepository } from '../../../domain/interfaces/repositories/job/IJobPostingRepository';
 import { ISeekerExperienceRepository } from '../../../domain/interfaces/repositories/seeker/ISeekerExperienceRepository';
 import { ISeekerEducationRepository } from '../../../domain/interfaces/repositories/seeker/ISeekerEducationRepository';
+import { IS3Service } from '../../../domain/interfaces/services/IS3Service';
 
 export class CompanyJobApplicationController {
   constructor(
@@ -52,6 +53,7 @@ export class CompanyJobApplicationController {
     private readonly _jobPostingRepository: IJobPostingRepository,
     private readonly _seekerExperienceRepository: ISeekerExperienceRepository,
     private readonly _seekerEducationRepository: ISeekerEducationRepository,
+    private readonly _s3Service: IS3Service,
   ) {}
 
   getApplications = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
@@ -88,7 +90,7 @@ export class CompanyJobApplicationController {
         applications.push(
           JobApplicationMapper.toListDto(app, {
             seekerName: user?.name,
-            seekerAvatar: profile?.avatarFileName || undefined,
+            seekerAvatar: profile?.avatarFileName ? this._s3Service.getImageUrl(profile.avatarFileName) : undefined,
             jobTitle: job?.title,
           }),
         );
@@ -147,7 +149,7 @@ export class CompanyJobApplicationController {
         application,
         {
           name: user?.name,
-          avatar: profile?.avatarFileName || undefined,
+          avatar: profile?.avatarFileName ? this._s3Service.getImageUrl(profile.avatarFileName) : undefined,
           headline: profile?.headline || undefined,
           email: profile?.email || undefined,
           phone: profile?.phone || undefined,
