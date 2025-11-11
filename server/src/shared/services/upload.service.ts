@@ -153,14 +153,16 @@ export class UploadService {
 
     const { buffer, originalname, mimetype } = file;
 
-    // Validate resume file type
     this.validateResumeFileType(mimetype, originalname);
-
-    // Validate file size (max 5MB)
     this.validateFileSize(file.size, 5);
 
-    // Upload to S3 using uploadResume method
-    const resumeUrl = await s3Service.uploadResume(buffer, originalname, mimetype);
+    let resumeUrl: string;
+    if (typeof s3Service.uploadResume === 'function') {
+      resumeUrl = await s3Service.uploadResume(buffer, originalname, mimetype);
+    } else {
+      const key = await s3Service.uploadImageToFolder(buffer, originalname, mimetype, 'resumes');
+      resumeUrl = s3Service.getImageUrl(key);
+    }
 
     return {
       url: resumeUrl,

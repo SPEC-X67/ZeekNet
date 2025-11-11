@@ -84,7 +84,6 @@ export class CompanyRouter {
     this.router.patch('/applications/:id/score', validateBody(UpdateScoreDto), companyJobApplicationController.updateScore);
     this.router.post('/applications/:id/interviews', validateBody(AddInterviewDto), companyJobApplicationController.addInterview);
     this.router.patch('/applications/:id/interviews/:interviewId', validateBody(UpdateInterviewDto), companyJobApplicationController.updateInterview);
-    this.router.delete('/applications/:id/interviews/:interviewId', companyJobApplicationController.deleteInterview);
     this.router.post('/applications/:id/interviews/:interviewId/feedback', validateBody(AddInterviewFeedbackDto), companyJobApplicationController.addInterviewFeedback);
   }
 }

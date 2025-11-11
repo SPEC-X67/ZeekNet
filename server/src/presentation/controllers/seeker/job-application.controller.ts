@@ -31,7 +31,6 @@ export class SeekerJobApplicationController {
     private readonly _createJobApplicationUseCase: ICreateJobApplicationUseCase,
     private readonly _getApplicationsBySeekerUseCase: IGetApplicationsBySeekerUseCase,
     private readonly _getApplicationDetailsUseCase: IGetSeekerApplicationDetailsUseCase,
-    private readonly _deleteJobApplicationUseCase: IDeleteJobApplicationUseCase,
     private readonly _s3Service: IS3Service,
     private readonly _jobPostingRepository: IJobPostingRepository,
   ) {}
@@ -127,19 +126,6 @@ export class SeekerJobApplicationController {
       const response: JobApplicationDetailResponseDto = JobApplicationMapper.toDetailDto(application);
 
       sendSuccessResponse(res, 'Application details retrieved successfully', response);
-    } catch (error) {
-      handleAsyncError(error, next);
-    }
-  };
-
-  deleteApplication = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      const userId = validateUserId(req);
-      const { id } = req.params;
-
-      await this._deleteJobApplicationUseCase.execute(userId, id);
-
-      sendSuccessResponse(res, 'Application withdrawn successfully', null);
     } catch (error) {
       handleAsyncError(error, next);
     }

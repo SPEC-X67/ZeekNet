@@ -27,7 +27,7 @@ export class JobApplicationRepository implements IJobApplicationRepository {
   async findById(id: string): Promise<JobApplication | null> {
     const doc = await JobApplicationModel.findById(id);
     return doc ? JobApplicationMapper.toDomain(doc) : null;
-    }
+  }
 
   private _paginateQuery(baseQuery: any, { page = 1, limit = 10 }: Pick<ApplicationFilters, 'page' | 'limit'>): Promise<PaginatedApplications> {
     const skip = Math.max(0, (page - 1) * limit);
@@ -60,7 +60,7 @@ export class JobApplicationRepository implements IJobApplicationRepository {
     return this._paginateQuery(query, { page: filters.page, limit: filters.limit });
   }
 
-  async findByCompanyId(companyId: string, filters: Omit<ApplicationFilters, 'company_id' | 'seeker_id' | 'job_id'>): Promise<PaginatedApplications> {
+  async findByCompanyId(companyId: string, filters: Omit<ApplicationFilters, 'company_id' | 'seeker_id'>): Promise<PaginatedApplications> {
     const query: any = { company_id: new Types.ObjectId(companyId) };
     if (filters.stage) query.stage = filters.stage;
     if (filters.job_id) query.job_id = new Types.ObjectId(filters.job_id);
@@ -161,11 +161,6 @@ export class JobApplicationRepository implements IJobApplicationRepository {
       { new: true },
     );
     return updated ? JobApplicationMapper.toDomain(updated) : null;
-  }
-
-  async delete(id: string): Promise<boolean> {
-    const res = await JobApplicationModel.findByIdAndDelete(id);
-    return !!res;
   }
 
   async checkDuplicateApplication(seekerId: string, jobId: string): Promise<boolean> {

@@ -12,7 +12,7 @@ export class UpdateApplicationScoreUseCase implements IUpdateApplicationScoreUse
     private readonly _companyProfileRepository: ICompanyProfileRepository,
   ) {}
 
-  async execute(userId: string, applicationId: string, score?: number): Promise<JobApplication> {
+  async execute(userId: string, applicationId: string, score: number): Promise<JobApplication> {
     // Get company profile
     const companyProfile = await this._companyProfileRepository.getProfileByUserId(userId);
     if (!companyProfile) {
@@ -35,7 +35,7 @@ export class UpdateApplicationScoreUseCase implements IUpdateApplicationScoreUse
     }
 
     // Validate score range
-    if (score !== undefined && (score < 0 || score > 5)) {
+    if (score < 0 || score > 5) {
       throw new ValidationError('Score must be between 0 and 5');
     }
 
