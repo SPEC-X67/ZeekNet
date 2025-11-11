@@ -1,0 +1,62 @@
+import { IJobApplicationRepository } from '../../../domain/interfaces/repositories/job-application/IJobApplicationRepository';
+import { IJobPostingRepository } from '../../../domain/interfaces/repositories/job/IJobPostingRepository';
+import { ICompanyProfileRepository } from '../../../domain/interfaces/repositories/company/ICompanyProfileRepository';
+import { IGetApplicationsByJobUseCase, ApplicationFilters } from '../../../domain/interfaces/use-cases/IJobApplicationUseCases';
+import { NotFoundError, ValidationError } from '../../../domain/errors/errors';
+import { JobApplication } from '../../../domain/entities/job-application.entity';
+
+export interface PaginatedApplications {
+  applications: JobApplication[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+}
+
+export class GetApplicationsByJobUseCase implements IGetApplicationsByJobUseCase {
+  constructor(
+    private readonly _jobApplicationRepository: IJobApplicationRepository,
+    private readonly _jobPostingRepository: IJobPostingRepository,
+    private readonly _companyProfileRepository: ICompanyProfileRepository,
+  ) {}
+
+  async execute(userId: string, jobId: string, filters: ApplicationFilters): Promise<PaginatedApplications> {
+    // Get company profile
+    const companyProfile = await this._companyProfileRepository.getProfileByUserId(userId);
+    if (!companyProfile) {
+      throw new NotFoundError('Company profile not found');
+    }
+
+    // Check if job exists and belongs to company
+    const job = await this._jobPostingRepository.findById(jobId);
+    if (!job) {
+      throw new NotFoundError('Job posting not found');
+    }
+    if (job.company_id !== companyProfile.id) {
+      throw new ValidationError('You can only view applications for your own job postings');
+    }
+
+    const page = filters.page || 1;
+    const limit = filters.limit || 10;
+
+    const result = await this._jobApplicationRepository.findByJobId(jobId, {
+      stage: filters.stage,
+      search: filters.search,
+      page,
+      limit,
+    });
+
+    return {
+      applications: result.applications,
+      pagination: {
+        page,
+        limit,
+        total: result.total,
+        totalPages: Math.ceil(result.total / limit),
+      },
+    };
+  }
+}
+

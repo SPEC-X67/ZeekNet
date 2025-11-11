@@ -128,4 +128,43 @@ export class UploadService {
 
     await s3Service.deleteImage(imageUrl);
   }
+
+  private static validateResumeFileType(mimetype: string, filename: string): void {
+    const allowedTypes = [
+      'application/pdf',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    ];
+
+    const allowedExtensions = ['.pdf', '.doc', '.docx'];
+    const fileExtension = filename.toLowerCase().substring(filename.lastIndexOf('.'));
+
+    if (!allowedTypes.includes(mimetype) && !allowedExtensions.includes(fileExtension)) {
+      throw new ValidationError('Only PDF, DOC, and DOCX files are allowed for resumes');
+    }
+  }
+
+  static async handleResumeUpload(req: Request, s3Service: IS3Service, fieldName: string = 'resume'): Promise<{ url: string; filename: string }> {
+    const file = req.file;
+
+    if (!file) {
+      throw new ValidationError(`No ${fieldName} uploaded`);
+    }
+
+    const { buffer, originalname, mimetype } = file;
+
+    // Validate resume file type
+    this.validateResumeFileType(mimetype, originalname);
+
+    // Validate file size (max 5MB)
+    this.validateFileSize(file.size, 5);
+
+    // Upload to S3 using uploadResume method
+    const resumeUrl = await s3Service.uploadResume(buffer, originalname, mimetype);
+
+    return {
+      url: resumeUrl,
+      filename: originalname,
+    };
+  }
 }
