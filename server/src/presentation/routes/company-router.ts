@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { companyController, companyJobPostingController } from '../../infrastructure/di/companyDi';
+import { companyController, companyJobPostingController, companyJobApplicationController } from '../../infrastructure/di/companyDi';
 import { authenticateToken, authorizeRoles } from '../middleware/auth.middleware';
 import { uploadSingle } from '../middleware/upload.middleware';
 import { validateBody, validateQuery } from '../middleware/validation.middleware';
@@ -7,6 +7,12 @@ import { UserBlockedMiddleware } from '../middleware/user-blocked.middleware';
 import { CompanyVerificationMiddleware } from '../middleware/company-verification.middleware';
 import { CreateJobPostingRequestDto, UpdateJobPostingDto, JobPostingQueryDto } from '../../application/dto/job-posting/job-posting.dto';
 import { SimpleCompanyProfileDto } from '../../application/dto/company/create-company.dto';
+import { ApplicationFiltersDto } from '../../application/dto/job-application/application-filters.dto';
+import { UpdateApplicationStageDto } from '../../application/dto/job-application/update-application-stage.dto';
+import { UpdateScoreDto } from '../../application/dto/job-application/update-score.dto';
+import { AddInterviewDto } from '../../application/dto/job-application/add-interview.dto';
+import { UpdateInterviewDto } from '../../application/dto/job-application/update-interview.dto';
+import { AddInterviewFeedbackDto } from '../../application/dto/job-application/add-interview-feedback.dto';
 
 export class CompanyRouter {
   public router: Router;
@@ -70,5 +76,15 @@ export class CompanyRouter {
     this.router.put('/jobs/:id', validateBody(UpdateJobPostingDto), companyJobPostingController.updateJobPosting);
     this.router.delete('/jobs/:id', companyJobPostingController.deleteJobPosting);
     this.router.patch('/jobs/:id/status', companyJobPostingController.updateJobStatus);
+
+    // Job Application Routes
+    this.router.get('/applications', validateQuery(ApplicationFiltersDto), companyJobApplicationController.getApplications);
+    this.router.get('/applications/:id', companyJobApplicationController.getApplicationDetails);
+    this.router.patch('/applications/:id/stage', validateBody(UpdateApplicationStageDto), companyJobApplicationController.updateStage);
+    this.router.patch('/applications/:id/score', validateBody(UpdateScoreDto), companyJobApplicationController.updateScore);
+    this.router.post('/applications/:id/interviews', validateBody(AddInterviewDto), companyJobApplicationController.addInterview);
+    this.router.patch('/applications/:id/interviews/:interviewId', validateBody(UpdateInterviewDto), companyJobApplicationController.updateInterview);
+    this.router.delete('/applications/:id/interviews/:interviewId', companyJobApplicationController.deleteInterview);
+    this.router.post('/applications/:id/interviews/:interviewId/feedback', validateBody(AddInterviewFeedbackDto), companyJobApplicationController.addInterviewFeedback);
   }
 }

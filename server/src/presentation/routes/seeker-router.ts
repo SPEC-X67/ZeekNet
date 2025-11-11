@@ -1,9 +1,11 @@
 import { Router } from 'express';
-import { seekerController } from '../../infrastructure/di/seekerDi';
+import { seekerController, seekerJobApplicationController } from '../../infrastructure/di/seekerDi';
 import { authenticateToken } from '../middleware/auth.middleware';
 import { validateQuery, validateBody } from '../middleware/validation.middleware';
 import { uploadSingle } from '../middleware/upload.middleware';
+import { uploadResume } from '../middleware/upload-resume.middleware';
 import { JobPostingQueryDto } from '../../application/dto/job-posting/job-posting.dto';
+import { ApplicationFiltersDto } from '../../application/dto/job-application/application-filters.dto';
 import { 
   CreateSeekerProfileDto, 
   UpdateSeekerProfileDto, 
@@ -53,5 +55,11 @@ export class SeekerRouter {
 
     this.router.post('/profile/avatar', uploadSingle('avatar'), seekerController.profileController.uploadAvatar);
     this.router.post('/profile/banner', uploadSingle('banner'), seekerController.profileController.uploadBanner);
+
+    // Job Application Routes
+    this.router.post('/applications', uploadResume('resume'), seekerJobApplicationController.createApplication);
+    this.router.get('/applications', validateQuery(ApplicationFiltersDto), seekerJobApplicationController.getApplications);
+    this.router.get('/applications/:id', seekerJobApplicationController.getApplicationDetails);
+    this.router.delete('/applications/:id', seekerJobApplicationController.deleteApplication);
   }
 }
