@@ -11,18 +11,28 @@ import { UpdateInterviewRequestDto } from '../dto/job-application/update-intervi
 import { AddInterviewFeedbackRequestDto } from '../dto/job-application/add-interview-feedback.dto';
 
 export class JobApplicationMapper {
-  static toListDto(application: JobApplication, seekerName?: string, seekerAvatar?: string, jobTitle?: string): JobApplicationListResponseDto {
+  static toListDto(
+    application: JobApplication,
+    params?: {
+      seekerName?: string;
+      seekerAvatar?: string;
+      jobTitle?: string;
+      companyName?: string;
+      companyLogo?: string;
+    },
+  ): JobApplicationListResponseDto {
     return {
       id: application.id,
-      seeker_id: application.seeker_id,
-      seeker_name: seekerName || '',
-      seeker_avatar: seekerAvatar,
+      seeker_id: params?.seekerName ? application.seeker_id : undefined,
+      seeker_name: params?.seekerName,
+      seeker_avatar: params?.seekerAvatar,
       job_id: application.job_id,
-      job_title: jobTitle || '',
+      job_title: params?.jobTitle || '',
+      company_name: params?.companyName,
+      company_logo: params?.companyLogo,
       score: application.score,
       stage: application.stage,
       applied_date: application.applied_date.toISOString(),
-      resume_url: application.resume_url,
     };
   }
 

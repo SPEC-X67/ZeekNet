@@ -102,10 +102,21 @@ export class SeekerJobApplicationController {
         limit: filters.data.limit,
       });
 
-      // Map to response DTOs (would need to join with job posting data for job_title)
-      // For now, returning basic structure - can be enhanced with joins later
+      // Enrich with job/company info for user-facing list
+      const applications: JobApplicationListResponseDto[] = [];
+      for (const app of result.applications) {
+        const job = await this._jobPostingRepository.findById(app.job_id);
+        applications.push(
+          JobApplicationMapper.toListDto(app, {
+            jobTitle: job?.title,
+            companyName: job?.company_name,
+            companyLogo: job?.company_logo,
+          }),
+        );
+      }
+
       const response: PaginatedApplicationsResponseDto = {
-        applications: result.applications.map((app) => JobApplicationMapper.toListDto(app)),
+        applications,
         pagination: result.pagination,
       };
 
