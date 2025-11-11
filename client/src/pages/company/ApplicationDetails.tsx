@@ -124,6 +124,7 @@ const ApplicationDetails = () => {
   const [moveToNextStepOpen, setMoveToNextStepOpen] = useState(false)
   const [rejectApplicationOpen, setRejectApplicationOpen] = useState(false)
   const [sendMessageOpen, setSendMessageOpen] = useState(false)
+  const [hireRejectDialogOpen, setHireRejectDialogOpen] = useState(false)
   const [selectedInterviewId, setSelectedInterviewId] = useState<string | null>(null)
   const [scheduleForm, setScheduleForm] = useState({
     date: '', time: '', location: '', interviewType: '', interviewer: '', notes: ''
@@ -266,7 +267,7 @@ const ApplicationDetails = () => {
     setNoteForm({ content: '' })
   }
 
-  const handleAddSchedule = async () => {
+  const handleAddSchedule = async (moveToInterview = false) => {
     if (!id) return
     try {
       await jobApplicationApi.addInterview(id, {
@@ -274,6 +275,17 @@ const ApplicationDetails = () => {
         interview_type: scheduleForm.interviewType, interviewer_name: scheduleForm.interviewer,
       })
       toast.success('Interview schedule added successfully')
+      
+      // If moving from shortlisted to interview stage
+      if (moveToInterview && application?.stage === 'shortlisted') {
+        try {
+          await jobApplicationApi.updateApplicationStage(id, { stage: 'interview' })
+          toast.success('Application moved to interview stage')
+        } catch (e: any) {
+          toast.error(e?.response?.data?.message || 'Failed to update stage')
+        }
+      }
+      
       await reload()
     } catch (e: any) {
       toast.error(e?.response?.data?.message || 'Failed to add interview')
@@ -335,7 +347,28 @@ const ApplicationDetails = () => {
     setSelectedInterviewId(null)
   }
 
-  const handleMoveToNextStep = async () => {
+  const handleMoveToNextStep = () => {
+    if (!application) return
+    
+    // If shortlisted, open schedule interview dialog first
+    if (application.stage === 'shortlisted') {
+      setMoveToNextStepOpen(false)
+      setAddScheduleOpen(true)
+      return
+    }
+    
+    // If interview stage, show hire/reject dialog
+    if (application.stage === 'interview') {
+      setMoveToNextStepOpen(false)
+      setHireRejectDialogOpen(true)
+      return
+    }
+    
+    // For other stages (applied), proceed normally
+    setMoveToNextStepOpen(true)
+  }
+
+  const handleMoveToNextStepConfirm = async () => {
     if (!id || !application) return
     const nextMap: Record<string, string> = {
       applied: 'shortlisted', shortlisted: 'interview', interview: 'hired',
@@ -350,6 +383,18 @@ const ApplicationDetails = () => {
       toast.error(e?.response?.data?.message || 'Failed to update stage')
     }
     setMoveToNextStepOpen(false)
+  }
+
+  const handleHire = async () => {
+    if (!id) return
+    try {
+      await jobApplicationApi.updateApplicationStage(id, { stage: 'hired' })
+      toast.success('Application moved to hired stage')
+      await reload()
+    } catch (e: any) {
+      toast.error(e?.response?.data?.message || 'Failed to update stage')
+    }
+    setHireRejectDialogOpen(false)
   }
 
   const handleRejectApplication = async () => {
@@ -468,13 +513,20 @@ const ApplicationDetails = () => {
 
                   <div className="flex items-center gap-2 mb-5">
                     {application.stage === 'shortlisted' ? (
-                      <Button variant="outline" className="flex-1 border-[#CCCCF5] text-[#4640DE] hover:bg-[#4640DE] hover:text-white"
-                        onClick={() => setScheduleInterviewOpen(true)}>
+                      <Button 
+                        variant="outline" 
+                        className="flex-1 border-[#CCCCF5] text-[#4640DE] hover:bg-[#4640DE] hover:text-white"
+                        onClick={() => setScheduleInterviewOpen(true)}
+                      >
                         Schedule Interview
                       </Button>
                     ) : (
-                      <Button variant="outline" className="flex-1 border-[#CCCCF5] text-[#4640DE] hover:bg-[#4640DE] hover:text-white"
-                        onClick={() => setMoveToNextStepOpen(true)}>
+                      <Button 
+                        variant="outline" 
+                        className="flex-1 border-[#CCCCF5] text-[#4640DE] hover:bg-[#4640DE] hover:text-white"
+                        onClick={handleMoveToNextStep}
+                        disabled={application.stage === 'rejected' || application.stage === 'hired'}
+                      >
                         Move To Next Stage
                       </Button>
                     )}
@@ -804,14 +856,16 @@ const ApplicationDetails = () => {
                       <div>
                         <div className="flex items-center justify-between mb-5">
                           <h3 className="text-lg font-semibold text-[#25324B]">Current Stage</h3>
-                          <Button
-                            variant="outline"
-                            className="border-[#CCCCF5] text-[#4640DE]"
-                            onClick={() => setGiveRatingOpen(true)}
-                          >
-                            <Plus className="w-4 h-4 mr-2" />
-                            Give Rating
-                          </Button>
+                          {application.stage === 'interview' && (
+                            <Button
+                              variant="outline"
+                              className="border-[#CCCCF5] text-[#4640DE]"
+                              onClick={() => setGiveRatingOpen(true)}
+                            >
+                              <Plus className="w-4 h-4 mr-2" />
+                              Give Rating
+                            </Button>
+                          )}
                         </div>
 
                         {/* Pipeline (dynamic) */}
@@ -841,61 +895,86 @@ const ApplicationDetails = () => {
                           )
                         })()}
 
-                        {/* Stage Info */}
-                        <div className="bg-white border border-[#D6DDEB] rounded-lg p-5">
-                          <h4 className="text-base font-semibold text-[#25324B] mb-4">Stage Info</h4>
-                          <div className="grid grid-cols-2 gap-6">
-                            <div className="space-y-4">
-                              <div>
-                                <p className="text-sm text-[#7C8493] mb-1">Interview Date</p>
-                                <p className="text-sm font-medium text-[#25324B]">
-                                  {application.hiring_progress?.interview_date || 'N/A'}
-                                </p>
-                              </div>
-                              <div>
-                                <p className="text-sm text-[#7C8493] mb-1">Interview Location</p>
-                                <p className="text-sm font-medium text-[#25324B]">
-                                  {application.hiring_progress?.interview_location || 'N/A'}
-                                </p>
-                              </div>
-                              <Button
-                                variant="outline"
-                                className="w-full border-[#CCCCF5] text-[#4640DE] bg-[#F8F8FD]"
-                                onClick={() => setMoveToNextStepOpen(true)}
-                              >
-                                Move To Next Step
-                              </Button>
-                            </div>
-                            <div className="space-y-4">
-                              <div>
-                                <p className="text-sm text-[#7C8493] mb-1">Interview Status</p>
-                                {application.hiring_progress?.interview_status && (
-                                  <Badge className="bg-[#FFB836]/10 text-[#FFB836] border-0 px-3 py-1 rounded-full text-xs font-semibold">
-                                    {application.hiring_progress.interview_status}
-                                  </Badge>
-                                )}
-                              </div>
-                              <div>
-                                <p className="text-sm text-[#7C8493] mb-2">Assigned to</p>
-                                {application.hiring_progress?.assigned_to && (
-                                  <div className="flex items-center gap-2">
-                                    <Avatar className="w-8 h-8">
-                                      {application.hiring_progress.assigned_to.avatar ? (
-                                        <AvatarImage src={application.hiring_progress.assigned_to.avatar} />
-                                      ) : null}
-                                      <AvatarFallback className="bg-[#4640DE]/10 text-[#4640DE] text-xs">
-                                        {getInitials(application.hiring_progress.assigned_to.name)}
-                                      </AvatarFallback>
-                                    </Avatar>
-                                    <span className="text-sm font-medium text-[#25324B]">
-                                      {application.hiring_progress.assigned_to.name}
-                                    </span>
+                        {/* Stage Info - Only show if not hired or rejected */}
+                        {application.stage !== 'hired' && application.stage !== 'rejected' && (
+                          <div className="bg-white border border-[#D6DDEB] rounded-lg p-5">
+                            <h4 className="text-base font-semibold text-[#25324B] mb-4">Stage Info</h4>
+                            {application.stage === 'interview' ? (
+                              <div className="grid grid-cols-2 gap-6">
+                                <div className="space-y-4">
+                                  <div>
+                                    <p className="text-sm text-[#7C8493] mb-1">Interview Date</p>
+                                    <p className="text-sm font-medium text-[#25324B]">
+                                      {application.hiring_progress?.interview_date || 'N/A'}
+                                    </p>
                                   </div>
+                                  <div>
+                                    <p className="text-sm text-[#7C8493] mb-1">Interview Location</p>
+                                    <p className="text-sm font-medium text-[#25324B]">
+                                      {application.hiring_progress?.interview_location || 'N/A'}
+                                    </p>
+                                  </div>
+                                  <Button
+                                    variant="outline"
+                                    className="w-full border-[#CCCCF5] text-[#4640DE] bg-[#F8F8FD]"
+                                    onClick={handleMoveToNextStep}
+                                  >
+                                    Move To Next Step
+                                  </Button>
+                                </div>
+                                <div className="space-y-4">
+                                  <div>
+                                    <p className="text-sm text-[#7C8493] mb-1">Interview Status</p>
+                                    {application.hiring_progress?.interview_status && (
+                                      <Badge className="bg-[#FFB836]/10 text-[#FFB836] border-0 px-3 py-1 rounded-full text-xs font-semibold">
+                                        {application.hiring_progress.interview_status}
+                                      </Badge>
+                                    )}
+                                  </div>
+                                  <div>
+                                    <p className="text-sm text-[#7C8493] mb-2">Assigned to</p>
+                                    {application.hiring_progress?.assigned_to && (
+                                      <div className="flex items-center gap-2">
+                                        <Avatar className="w-8 h-8">
+                                          {application.hiring_progress.assigned_to.avatar ? (
+                                            <AvatarImage src={application.hiring_progress.assigned_to.avatar} />
+                                          ) : null}
+                                          <AvatarFallback className="bg-[#4640DE]/10 text-[#4640DE] text-xs">
+                                            {getInitials(application.hiring_progress.assigned_to.name)}
+                                          </AvatarFallback>
+                                        </Avatar>
+                                        <span className="text-sm font-medium text-[#25324B]">
+                                          {application.hiring_progress.assigned_to.name}
+                                        </span>
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            ) : (
+                              <div className="space-y-4">
+                                {application.stage === 'shortlisted' && (
+                                  <Button
+                                    variant="outline"
+                                    className="w-full border-[#CCCCF5] text-[#4640DE] bg-[#F8F8FD]"
+                                    onClick={() => setAddScheduleOpen(true)}
+                                  >
+                                    Schedule Interview
+                                  </Button>
+                                )}
+                                {(application.stage === 'applied' || application.stage === 'shortlisted') && (
+                                  <Button
+                                    variant="outline"
+                                    className="w-full border-[#CCCCF5] text-[#4640DE] bg-[#F8F8FD]"
+                                    onClick={handleMoveToNextStep}
+                                  >
+                                    Move To Next Step
+                                  </Button>
                                 )}
                               </div>
-                            </div>
+                            )}
                           </div>
-                        </div>
+                        )}
                       </div>
 
                       <div className="h-px bg-[#D6DDEB]"></div>
@@ -904,14 +983,16 @@ const ApplicationDetails = () => {
                       <div>
                         <div className="flex items-center justify-between mb-4">
                           <h3 className="text-base font-semibold text-[#25324B]">Notes</h3>
-                          <Button
-                            variant="ghost"
-                            className="text-[#4640DE] hover:text-[#4640DE] hover:bg-[#F8F8FD]"
-                            onClick={() => setAddNotesOpen(true)}
-                          >
-                            <Plus className="w-4 h-4 mr-2" />
-                            Add Notes
-                          </Button>
+                          {application.stage === 'interview' && (
+                            <Button
+                              variant="ghost"
+                              className="text-[#4640DE] hover:text-[#4640DE] hover:bg-[#F8F8FD]"
+                              onClick={() => setAddNotesOpen(true)}
+                            >
+                              <Plus className="w-4 h-4 mr-2" />
+                              Add Notes
+                            </Button>
+                          )}
                         </div>
 
                         <div className="space-y-4">
@@ -961,14 +1042,17 @@ const ApplicationDetails = () => {
                       {/* Header */}
                       <div className="flex items-center justify-between">
                         <h3 className="text-base font-semibold text-[#25324B]">Interview List</h3>
-                        <Button
-                          variant="ghost"
-                          className="text-[#4640DE] hover:text-[#4640DE] hover:bg-[#F8F8FD]"
-                          onClick={() => setAddScheduleOpen(true)}
-                        >
-                          <Plus className="w-4 h-4 mr-2" />
-                          Add Schedule Interview
-                        </Button>
+                        {application.interview_schedule && application.interview_schedule.length > 0 && (
+                          <Button
+                            variant="ghost"
+                            className="text-[#4640DE] hover:text-[#4640DE] hover:bg-[#F8F8FD]"
+                            onClick={() => setAddScheduleOpen(true)}
+                            disabled={application.stage === 'rejected' || application.stage === 'hired'}
+                          >
+                            <Plus className="w-4 h-4 mr-2" />
+                            Add Schedule Interview
+                          </Button>
+                        )}
                       </div>
 
                       {/* Interview Schedule List */}
@@ -1098,9 +1182,8 @@ const ApplicationDetails = () => {
                             <Button
                               variant="outline"
                               className="border-[#CCCCF5] text-[#4640DE]"
-                              onClick={() => {
-                                // TODO: Open add schedule dialog
-                              }}
+                              onClick={() => setAddScheduleOpen(true)}
+                              disabled={application.stage === 'rejected' || application.stage === 'hired'}
                             >
                               <Plus className="w-4 h-4 mr-2" />
                               Add Schedule Interview
@@ -1364,8 +1447,11 @@ const ApplicationDetails = () => {
             <Button variant="outline" onClick={() => setAddScheduleOpen(false)}>
               Cancel
             </Button>
-            <Button onClick={handleAddSchedule} className="bg-[#4640DE] hover:bg-[#4640DE]/90">
-              Add Schedule
+            <Button 
+              onClick={() => handleAddSchedule(application?.stage === 'shortlisted')} 
+              className="bg-[#4640DE] hover:bg-[#4640DE]/90"
+            >
+              {application?.stage === 'shortlisted' ? 'Schedule & Move to Interview' : 'Add Schedule'}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -1485,12 +1571,46 @@ const ApplicationDetails = () => {
       <ConfirmationDialog
         isOpen={moveToNextStepOpen}
         onClose={() => setMoveToNextStepOpen(false)}
-        onConfirm={handleMoveToNextStep}
+        onConfirm={handleMoveToNextStepConfirm}
         title="Move To Next Step"
         description="Are you sure you want to move this application to the next stage?"
         confirmText="Move"
         cancelText="Cancel"
       />
+
+      {/* Hire/Reject Dialog */}
+      <Dialog open={hireRejectDialogOpen} onOpenChange={setHireRejectDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Final Decision</DialogTitle>
+            <DialogDescription>
+              Make your final decision for this application
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <p className="text-sm text-[#7C8493]">
+              Would you like to hire this candidate or reject the application?
+            </p>
+          </div>
+          <DialogFooter className="gap-2">
+            <Button 
+              variant="outline" 
+              onClick={() => {
+                setRejectApplicationOpen(true)
+                setHireRejectDialogOpen(false)
+              }}
+            >
+              Reject
+            </Button>
+            <Button 
+              onClick={handleHire} 
+              className="bg-[#56CDAD] hover:bg-[#56CDAD]/90 text-white"
+            >
+              Hire
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Reject Application Modal */}
       <Dialog open={rejectApplicationOpen} onOpenChange={setRejectApplicationOpen}>
