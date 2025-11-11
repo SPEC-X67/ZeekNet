@@ -1,105 +1,71 @@
 import { Calendar, ChevronLeft, ChevronRight, MoreHorizontal, Search, SlidersHorizontal } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
+import { useEffect, useMemo, useState } from 'react'
+import { jobApplicationApi } from '@/api'
+import { toast } from 'sonner'
 
-type ApplicationStatus =
-  | 'In Review'
-  | 'Shortlisted'
-  | 'Offered'
-  | 'Interviewing'
-  | 'Unsuitable'
+type Stage = 'applied' | 'shortlisted' | 'interview' | 'rejected' | 'hired'
 
-interface ApplicationRow {
-  id: number
-  company: string
-  position: string
-  appliedOn: string
-  status: ApplicationStatus
-  initials: string
-  accent: string
+const stageStyles: Record<Stage, string> = {
+  applied: 'border-[#d1d5db] text-[#374151] bg-[#f3f4f6]/70',
+  shortlisted: 'border-[#34d39933] text-[#047857] bg-[#dcfce7]/70',
+  interview: 'border-[#fb923c33] text-[#c2410c] bg-[#ffedd5]/70',
+  rejected: 'border-[#f8717133] text-[#b91c1c] bg-[#fee2e2]/70',
+  hired: 'border-[#4f46e533] text-[#4338ca] bg-[#e0e7ff]/70',
 }
-
-const statusStyles: Record<ApplicationStatus, string> = {
-  'In Review': 'border-[#facc1533] text-[#d97706] bg-[#fef3c7]/60',
-  Shortlisted: 'border-[#34d39933] text-[#047857] bg-[#dcfce7]/70',
-  Offered: 'border-[#4f46e533] text-[#4338ca] bg-[#e0e7ff]/70',
-  Interviewing: 'border-[#fb923c33] text-[#c2410c] bg-[#ffedd5]/70',
-  Unsuitable: 'border-[#f8717133] text-[#b91c1c] bg-[#fee2e2]/70',
-}
-
-const tabs = [
-  { label: 'All', count: 45, active: true },
-  { label: 'In Review', count: 34 },
-  { label: 'Interviewing', count: 18 },
-  { label: 'Assessment', count: 5 },
-  { label: 'Offered', count: 2 },
-  { label: 'Hired', count: 1 },
-]
-
-const applications: ApplicationRow[] = [
-  {
-    id: 1,
-    company: 'Nomad',
-    position: 'Social Media Assistant',
-    appliedOn: '24 July 2021',
-    status: 'In Review',
-    initials: 'NO',
-    accent: 'bg-[#f3f4ff] text-[#4f46e5]',
-  },
-  {
-    id: 2,
-    company: 'Udacity',
-    position: 'UX Designer',
-    appliedOn: '20 July 2021',
-    status: 'Shortlisted',
-    initials: 'UD',
-    accent: 'bg-[#ecfdf5] text-[#047857]',
-  },
-  {
-    id: 3,
-    company: 'Packer',
-    position: 'Content Strategist',
-    appliedOn: '16 July 2021',
-    status: 'Offered',
-    initials: 'PK',
-    accent: 'bg-[#eef2ff] text-[#4338ca]',
-  },
-  {
-    id: 4,
-    company: 'Divvy',
-    position: 'Lead Product Designer',
-    appliedOn: '14 July 2021',
-    status: 'Interviewing',
-    initials: 'DV',
-    accent: 'bg-[#fff7ed] text-[#ea580c]',
-  },
-  {
-    id: 5,
-    company: 'DigitalOcean',
-    position: 'Senior Frontend Engineer',
-    appliedOn: '10 July 2021',
-    status: 'Unsuitable',
-    initials: 'DO',
-    accent: 'bg-[#fee2e2] text-[#dc2626]',
-  },
-]
-
-const pagination = [1, 2, 3, 4]
 
 export function SeekerApplications() {
+  const [items, setItems] = useState<any[]>([])
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [stage, setStage] = useState<Stage | undefined>(undefined)
+  const [page, setPage] = useState(1)
+  const [limit, setLimit] = useState(10)
+  const [total, setTotal] = useState(0)
+
+  const totalPages = useMemo(() => Math.max(1, Math.ceil(total / limit)), [total, limit])
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true)
+        setError(null)
+        const res = await jobApplicationApi.getSeekerApplications({ stage, page, limit })
+        const data = res?.data?.data || res?.data
+        setItems(data?.applications || [])
+        setTotal(data?.pagination?.total || 0)
+      } catch (e: any) {
+        const message = e?.response?.data?.message || 'Failed to load applications'
+        setError(message)
+        toast.error(message)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchData()
+  }, [stage, page, limit])
+
+  const tabs = [
+    { label: 'All', key: undefined },
+    { label: 'Applied', key: 'applied' },
+    { label: 'Shortlisted', key: 'shortlisted' },
+    { label: 'Interview', key: 'interview' },
+    { label: 'Rejected', key: 'rejected' },
+    { label: 'Hired', key: 'hired' },
+  ] as { label: string; key: Stage | undefined }[]
+
   return (
     <div className="px-8 xl:px-11 py-9 space-y-6 bg-[#f8f9ff] min-h-screen">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div className="space-y-1">
-          <h1 className="text-[26px] font-bold text-[#1f2937]">Keep it up, Jake 🎯</h1>
-          <p className="text-[14px] text-[#6b7280]">
-            Here is job applications status from July 19 - July 25.
-          </p>
+          <h1 className="text-[26px] font-bold text-[#1f2937]">My Applications</h1>
+          <p className="text-[14px] text-[#6b7280]">Track your application progress</p>
         </div>
 
         <button className="inline-flex items-center gap-2 rounded-xl border border-[#e5e7eb] bg-white px-4 py-3 text-[13px] font-semibold text-[#374151] shadow-sm transition-all duration-200 hover:border-[#c7d2fe] hover:bg-[#f0f4ff]">
           <Calendar className="h-4 w-4 text-[#4640de]" />
-          Jul 19 - Jul 25
+          {new Date().toLocaleDateString()}
         </button>
       </div>
 
@@ -131,12 +97,13 @@ export function SeekerApplications() {
                 key={tab.label}
                 className={cn(
                   'relative pb-2 transition-all duration-200',
-                  tab.active
+                  tab.key === stage
                     ? 'text-[#1f2937] after:absolute after:-bottom-[1px] after:left-0 after:h-[3px] after:w-full after:rounded-full after:bg-[#4640de]'
                     : 'text-[#9ca3af] hover:text-[#4640de]'
                 )}
+                onClick={() => setStage(tab.key)}
               >
-                {tab.label} ({tab.count})
+                {tab.label}
               </button>
             ))}
           </div>
@@ -147,17 +114,17 @@ export function SeekerApplications() {
             <thead>
               <tr className="text-left text-[12px] font-semibold uppercase tracking-wide text-[#6b7280]">
                 <th className="px-6 py-4">#</th>
-                <th className="py-4 pr-6">Company Name</th>
-                <th className="py-4 pr-6">Role</th>
+                <th className="py-4 pr-6">Company</th>
+                <th className="py-4 pr-6">Job</th>
                 <th className="py-4 pr-6">Date Applied</th>
                 <th className="py-4 pr-6">Status</th>
                 <th className="px-6 py-4 text-right">Actions</th>
               </tr>
             </thead>
             <tbody>
-              {applications.map((application, index) => (
+              {(loading ? Array.from({ length: 5 }) : items).map((application: any, index: number) => (
                 <tr
-                  key={application.id}
+                  key={application?.id || index}
                   className={cn(
                     'align-middle text-[14px] text-[#1f2937] transition-colors duration-200',
                     index % 2 === 1 ? 'bg-[#f9fafc]' : 'bg-white',
@@ -165,31 +132,35 @@ export function SeekerApplications() {
                   )}
                 >
                   <td className="px-6 py-5 text-[13px] font-semibold text-[#6b7280]">
-                    {String(application.id).padStart(2, '0')}
+                    {String(index + 1 + (page - 1) * limit).padStart(2, '0')}
                   </td>
                   <td className="py-5 pr-6">
                     <div className="flex items-center gap-3">
-                      <div className={cn('flex h-11 w-11 items-center justify-center rounded-xl font-semibold', application.accent)}>
-                        {application.initials}
+                      <div className={cn('flex h-11 w-11 items-center justify-center rounded-xl font-semibold bg-[#eef2ff] text-[#4338ca]')}>
+                        {(application?.company_name || application?.companyName || 'C').slice(0, 2).toUpperCase()}
                       </div>
                       <div>
-                        <p className="text-[14px] font-semibold text-[#1f2937]">{application.company}</p>
+                        <p className="text-[14px] font-semibold text-[#1f2937]">{application?.company_name || application?.companyName || '-'}</p>
                       </div>
                     </div>
                   </td>
                   <td className="py-5 pr-6 text-[14px] font-medium text-[#1f2937]">
-                    {application.position}
+                    {application?.job_title || application?.jobTitle || '-'}
                   </td>
                   <td className="py-5 pr-6 text-[13px] font-medium text-[#6b7280]">
-                    {application.appliedOn}
+                    {application?.applied_date ? new Date(application.applied_date).toLocaleDateString() : '-'}
                   </td>
                   <td className="py-5 pr-6">
-                    <Badge
-                      variant="outline"
-                      className={cn('rounded-full border px-3 py-1 text-[12px] font-semibold', statusStyles[application.status])}
-                    >
-                      {application.status}
-                    </Badge>
+                    {application?.stage ? (
+                      <Badge
+                        variant="outline"
+                        className={cn('rounded-full border px-3 py-1 text-[12px] font-semibold', stageStyles[application.stage as Stage])}
+                      >
+                        {(application.stage as string).charAt(0).toUpperCase() + (application.stage as string).slice(1)}
+                      </Badge>
+                    ) : (
+                      '-'
+                    )}
                   </td>
                   <td className="px-6 py-5 text-right">
                     <button className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-[#6b7280] transition-all hover:bg-[#eef2ff] hover:text-[#4640de]">
@@ -198,33 +169,55 @@ export function SeekerApplications() {
                   </td>
                 </tr>
               ))}
+              {!loading && items.length === 0 && (
+                <tr>
+                  <td className="px-6 py-10 text-center text-[#6b7280]" colSpan={6}>
+                    {error ? error : 'No applications found'}
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
 
         <div className="flex flex-col gap-4 border-t border-[#e5e7eb] px-6 py-5 text-[12px] text-[#6b7280] md:flex-row md:items-center md:justify-between">
-          <p>Showing 1 to 5 of 45 applications</p>
+          <p>
+            Showing {(page - 1) * limit + (items.length > 0 ? 1 : 0)} to {(page - 1) * limit + items.length} of {total}{' '}
+            applications
+          </p>
 
           <div className="flex items-center gap-2">
-            <button className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-[#e5e7eb] bg-white text-[#6b7280] transition-all hover:border-[#4640de] hover:text-[#4640de]">
+            <button
+              className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-[#e5e7eb] bg-white text-[#6b7280] transition-all hover:border-[#4640de] hover:text-[#4640de]"
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              disabled={page <= 1}
+            >
               <ChevronLeft className="h-4 w-4" />
             </button>
 
-            {pagination.map((page) => (
-              <button
-                key={page}
-                className={cn(
-                  'inline-flex h-9 min-w-9 items-center justify-center rounded-lg border text-[13px] font-semibold transition-all',
-                  page === 1
-                    ? 'border-transparent bg-gradient-to-r from-[#4640de] to-[#6366f1] text-white shadow-[0_10px_30px_rgba(70,64,222,0.25)]'
-                    : 'border-[#e5e7eb] bg-white text-[#6b7280] hover:border-[#4640de] hover:text-[#4640de]'
-                )}
-              >
-                {page}
-              </button>
-            ))}
+            {Array.from({ length: totalPages }).map((_, i) => {
+              const pg = i + 1
+              return (
+                <button
+                  key={pg}
+                  onClick={() => setPage(pg)}
+                  className={cn(
+                    'inline-flex h-9 min-w-9 items-center justify-center rounded-lg border text-[13px] font-semibold transition-all',
+                    pg === page
+                      ? 'border-transparent bg-gradient-to-r from-[#4640de] to-[#6366f1] text-white shadow-[0_10px_30px_rgba(70,64,222,0.25)]'
+                      : 'border-[#e5e7eb] bg-white text-[#6b7280] hover:border-[#4640de] hover:text-[#4640de]'
+                  )}
+                >
+                  {pg}
+                </button>
+              )
+            })}
 
-            <button className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-[#e5e7eb] bg-white text-[#6b7280] transition-all hover:border-[#4640de] hover:text-[#4640de]">
+            <button
+              className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-[#e5e7eb] bg-white text-[#6b7280] transition-all hover:border-[#4640de] hover:text-[#4640de]"
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              disabled={page >= totalPages}
+            >
               <ChevronRight className="h-4 w-4" />
             </button>
           </div>
