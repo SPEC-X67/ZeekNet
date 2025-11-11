@@ -10,46 +10,19 @@ import { useState, useEffect } from 'react'
 import { jobApplicationApi } from '@/api'
 import { toast } from 'sonner'
 import { 
-  ArrowLeft,
-  ChevronDown,
-  Star,
-  Mail,
-  Phone,
-  Instagram,
-  Twitter,
-  Globe,
-  Calendar,
-  MoreVertical,
-  Download,
-  Plus,
-  MoreHorizontal,
-  Clock,
-  MapPin
+  ArrowLeft, ChevronDown, Star, Mail, Phone, Instagram, Twitter, Globe,
+  Download, Plus, MoreHorizontal, Clock, MapPin
 } from 'lucide-react'
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
+  Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle,
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { ConfirmationDialog } from '@/components/ui/confirmation-dialog'
 
 interface ApplicationDetails {
@@ -67,25 +40,22 @@ interface ApplicationDetails {
   stage: 'applied' | 'shortlisted' | 'interview' | 'rejected' | 'hired'
   applied_date: string
   resume_url?: string
-  // Personal Info
+  cover_letter?: string
   full_name?: string
   date_of_birth?: string
   gender?: string
   languages?: string[]
   address?: string
-  // Professional Info
   about_me?: string
   current_job?: string
   highest_qualification?: string
   experience_years?: number
   skills?: string[]
-  // Contact
   email?: string
   phone?: string
   instagram?: string
   twitter?: string
   website?: string
-  // Resume data
   resume_data?: {
     experience?: Array<{
       title: string
@@ -104,7 +74,6 @@ interface ApplicationDetails {
     tools_technologies?: string[]
     other_skills?: string[]
   }
-  // Hiring progress
   hiring_progress?: {
     interview_date?: string
     interview_location?: string
@@ -123,7 +92,6 @@ interface ApplicationDetails {
       replies?: number
     }>
   }
-  // Interview schedule
   interview_schedule?: Array<{
     id: string
     date: string
@@ -132,6 +100,13 @@ interface ApplicationDetails {
     interview_type: string
     time: string
     location: string
+    status?: 'scheduled' | 'completed' | 'cancelled' | 'rescheduled'
+    feedback?: {
+      reviewer_name: string
+      rating?: number
+      comment: string
+      reviewed_at: string
+    }
   }>
 }
 
@@ -140,8 +115,6 @@ const ApplicationDetails = () => {
   const navigate = useNavigate()
   const [application, setApplication] = useState<ApplicationDetails | null>(null)
   const [loading, setLoading] = useState(true)
-  
-  // Modal states
   const [scheduleInterviewOpen, setScheduleInterviewOpen] = useState(false)
   const [giveRatingOpen, setGiveRatingOpen] = useState(false)
   const [addNotesOpen, setAddNotesOpen] = useState(false)
@@ -152,29 +125,13 @@ const ApplicationDetails = () => {
   const [rejectApplicationOpen, setRejectApplicationOpen] = useState(false)
   const [sendMessageOpen, setSendMessageOpen] = useState(false)
   const [selectedInterviewId, setSelectedInterviewId] = useState<string | null>(null)
-  // Form states
   const [scheduleForm, setScheduleForm] = useState({
-    date: '',
-    time: '',
-    location: '',
-    interviewType: '',
-    interviewer: '',
-    notes: ''
+    date: '', time: '', location: '', interviewType: '', interviewer: '', notes: ''
   })
-  const [ratingForm, setRatingForm] = useState({
-    rating: '',
-    comment: ''
-  })
-  const [noteForm, setNoteForm] = useState({
-    content: ''
-  })
-  const [feedbackForm, setFeedbackForm] = useState({
-    feedback: ''
-  })
-  const [messageForm, setMessageForm] = useState({
-    subject: '',
-    message: ''
-  })
+  const [ratingForm, setRatingForm] = useState({ rating: '', comment: '' })
+  const [noteForm, setNoteForm] = useState({ content: '' })
+  const [feedbackForm, setFeedbackForm] = useState({ feedback: '' })
+  const [messageForm, setMessageForm] = useState({ subject: '', message: '' })
   const [rejectReason, setRejectReason] = useState('')
 
   useEffect(() => {
@@ -184,13 +141,10 @@ const ApplicationDetails = () => {
         navigate('/company/applicants')
         return
       }
-
       try {
         setLoading(true)
-
         const res = await jobApplicationApi.getCompanyApplicationById(id)
         const a = res?.data?.data || res?.data
-
         const mapped: ApplicationDetails = {
           _id: a.id,
           seeker_id: a.seeker_id,
@@ -199,27 +153,28 @@ const ApplicationDetails = () => {
           seeker_headline: a.seeker_headline,
           job_id: a.job_id,
           job_title: a.job_title,
-          job_company: a.company_name,
+          job_company: a.job_company,
           job_location: a.job_location,
           job_type: a.job_type,
           score: a.score,
           stage: a.stage,
           applied_date: a.applied_date,
-          email: a.seeker_email,
-          phone: a.seeker_phone,
-          website: a.seeker_website,
-          resume_data: undefined,
+          cover_letter: a.cover_letter,
+          resume_url: a.resume_url,
+          full_name: a.full_name,
+          email: a.email,
+          phone: a.phone,
+          address: a.address,
+          about_me: a.about_me,
+          languages: a.languages,
+          skills: a.skills,
+          resume_data: a.resume_data,
           interview_schedule: (a.interviews || []).map((iv: any) => ({
-            id: iv.id,
-            date: iv.date,
-            interviewer_name: iv.interviewer_name || '',
-            interviewer_avatar: undefined,
-            interview_type: iv.interview_type,
-            time: iv.time,
-            location: iv.location,
+            id: iv.id, date: iv.date, interviewer_name: iv.interviewer_name || '',
+            interviewer_avatar: undefined, interview_type: iv.interview_type,
+            time: iv.time, location: iv.location, status: iv.status, feedback: iv.feedback
           })),
         }
-
         setApplication(mapped)
       } catch (error) {
         toast.error('Failed to load application details')
@@ -228,7 +183,6 @@ const ApplicationDetails = () => {
         setLoading(false)
       }
     }
-
     fetchApplicationDetails()
   }, [id, navigate])
 
@@ -238,65 +192,31 @@ const ApplicationDetails = () => {
       const res = await jobApplicationApi.getCompanyApplicationById(id)
       const a = res?.data?.data || res?.data
       const mapped: ApplicationDetails = {
-        _id: a.id,
-        seeker_id: a.seeker_id,
-        seeker_name: a.seeker_name || 'Candidate',
-        seeker_avatar: a.seeker_avatar,
-        seeker_headline: a.seeker_headline,
-        job_id: a.job_id,
-        job_title: a.job_title,
-        job_company: a.company_name,
-        job_location: a.job_location,
-        job_type: a.job_type,
-        score: a.score,
-        stage: a.stage,
-        applied_date: a.applied_date,
-        email: a.seeker_email,
-        phone: a.seeker_phone,
-        website: a.seeker_website,
-        resume_data: undefined,
+        _id: a.id, seeker_id: a.seeker_id, seeker_name: a.seeker_name || 'Candidate',
+        seeker_avatar: a.seeker_avatar, seeker_headline: a.seeker_headline,
+        job_id: a.job_id, job_title: a.job_title, job_company: a.job_company,
+        job_location: a.job_location, job_type: a.job_type, score: a.score,
+        stage: a.stage, applied_date: a.applied_date, cover_letter: a.cover_letter,
+        resume_url: a.resume_url, full_name: a.full_name, email: a.email,
+        phone: a.phone, address: a.address, about_me: a.about_me,
+        languages: a.languages, skills: a.skills, resume_data: a.resume_data,
         interview_schedule: (a.interviews || []).map((iv: any) => ({
-          id: iv.id,
-          date: iv.date,
-          interviewer_name: iv.interviewer_name || '',
-          interviewer_avatar: undefined,
-          interview_type: iv.interview_type,
-          time: iv.time,
-          location: iv.location,
+          id: iv.id, date: iv.date, interviewer_name: iv.interviewer_name || '',
+          interviewer_avatar: undefined, interview_type: iv.interview_type,
+          time: iv.time, location: iv.location, status: iv.status, feedback: iv.feedback
         })),
       }
       setApplication(mapped)
-    } catch {
-      // ignore
-    }
+    } catch { }
   }
 
-  const getInitials = (name: string) => {
-    return name
-      .split(' ')
-      .map(n => n[0])
-      .join('')
-      .toUpperCase()
-      .slice(0, 2)
-  }
-
-  const formatDate = (dateString: string) => {
-    if (!dateString) return 'N/A'
-    const date = new Date(dateString)
-    const age = new Date().getFullYear() - date.getFullYear()
-    return date.toLocaleDateString('en-US', { 
-      month: 'long', 
-      day: 'numeric', 
-      year: 'numeric' 
-    }) + ` (${age} y.o)`
-  }
+  const getInitials = (name: string) => name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
 
   const getTimeAgo = (dateString: string) => {
     const date = new Date(dateString)
     const now = new Date()
     const diffTime = Math.abs(now.getTime() - date.getTime())
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-    
     if (diffDays === 1) return '1 day ago'
     if (diffDays < 7) return `${diffDays} days ago`
     if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`
@@ -311,21 +231,16 @@ const ApplicationDetails = () => {
       rejected: { label: 'Rejected', className: 'border-red-500 text-red-500' },
       hired: { label: 'Hired', className: 'border-[#56CDAD] text-[#56CDAD]' },
     }
-    
     const stageInfo = stageMap[stage] || stageMap.applied
     return (
       <div className="flex items-center gap-2">
         <div className="w-2 h-2 rounded-full bg-[#4640DE]"></div>
-        <span className={`text-sm font-medium ${stageInfo.className}`}>
-          {stageInfo.label}
-        </span>
+        <span className={`text-sm font-medium ${stageInfo.className}`}>{stageInfo.label}</span>
       </div>
     )
   }
 
-  // Handler functions
   const handleScheduleInterview = () => {
-    // TODO: Implement API call
     toast.success('Interview scheduled successfully')
     setScheduleInterviewOpen(false)
     setScheduleForm({ date: '', time: '', location: '', interviewType: '', interviewer: '', notes: '' })
@@ -346,7 +261,6 @@ const ApplicationDetails = () => {
   }
 
   const handleAddNote = () => {
-    // TODO: Implement API call
     toast.success('Note added successfully')
     setAddNotesOpen(false)
     setNoteForm({ content: '' })
@@ -356,11 +270,8 @@ const ApplicationDetails = () => {
     if (!id) return
     try {
       await jobApplicationApi.addInterview(id, {
-        date: scheduleForm.date,
-        time: scheduleForm.time,
-        location: scheduleForm.location,
-        interview_type: scheduleForm.interviewType,
-        interviewer_name: scheduleForm.interviewer,
+        date: scheduleForm.date, time: scheduleForm.time, location: scheduleForm.location,
+        interview_type: scheduleForm.interviewType, interviewer_name: scheduleForm.interviewer,
       })
       toast.success('Interview schedule added successfully')
       await reload()
@@ -375,11 +286,8 @@ const ApplicationDetails = () => {
     setSelectedInterviewId(iv.id)
     setScheduleForm({
       date: iv.date ? String(iv.date).slice(0, 10) : '',
-      time: iv.time || '',
-      location: iv.location || '',
-      interviewType: iv.interview_type || '',
-      interviewer: iv.interviewer_name || '',
-      notes: '',
+      time: iv.time || '', location: iv.location || '',
+      interviewType: iv.interview_type || '', interviewer: iv.interviewer_name || '', notes: '',
     })
     setEditScheduleOpen(true)
   }
@@ -388,11 +296,8 @@ const ApplicationDetails = () => {
     if (!id || !selectedInterviewId) return
     try {
       await jobApplicationApi.updateInterview(id, selectedInterviewId, {
-        date: scheduleForm.date,
-        time: scheduleForm.time,
-        location: scheduleForm.location,
-        interview_type: scheduleForm.interviewType,
-        interviewer_name: scheduleForm.interviewer,
+        date: scheduleForm.date, time: scheduleForm.time, location: scheduleForm.location,
+        interview_type: scheduleForm.interviewType, interviewer_name: scheduleForm.interviewer,
       })
       toast.success('Interview updated successfully')
       await reload()
@@ -418,8 +323,7 @@ const ApplicationDetails = () => {
     if (!id || !selectedInterviewId) return
     try {
       await jobApplicationApi.addInterviewFeedback(id, selectedInterviewId, {
-        reviewer_name: 'Reviewer', // could be current user name if available
-        comment: feedbackForm.feedback,
+        reviewer_name: 'Reviewer', comment: feedbackForm.feedback,
       })
       toast.success('Feedback added successfully')
       await reload()
@@ -434,11 +338,8 @@ const ApplicationDetails = () => {
   const handleMoveToNextStep = async () => {
     if (!id || !application) return
     const nextMap: Record<string, string> = {
-      applied: 'shortlisted',
-      shortlisted: 'interview',
-      interview: 'hired',
-      rejected: 'rejected',
-      hired: 'hired',
+      applied: 'shortlisted', shortlisted: 'interview', interview: 'hired',
+      rejected: 'rejected', hired: 'hired',
     }
     const next = nextMap[application.stage] || 'shortlisted'
     try {
@@ -465,7 +366,6 @@ const ApplicationDetails = () => {
   }
 
   const handleSendMessage = () => {
-    // TODO: Implement API call
     toast.success('Message sent successfully')
     setSendMessageOpen(false)
     setMessageForm({ subject: '', message: '' })
@@ -488,9 +388,7 @@ const ApplicationDetails = () => {
           <div className="text-center">
             <h2 className="text-xl font-semibold text-gray-900 mb-2">Application not found</h2>
             <p className="text-gray-600 mb-4">The application you're looking for doesn't exist.</p>
-            <Button onClick={() => navigate('/company/applicants')}>
-              Back to Applications
-            </Button>
+            <Button onClick={() => navigate('/company/applicants')}>Back to Applications</Button>
           </div>
         </div>
       </CompanyLayout>
@@ -505,20 +403,12 @@ const ApplicationDetails = () => {
           <div className="px-7 py-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="p-1.5"
-                  onClick={() => navigate('/company/applicants')}
-                >
+                <Button variant="ghost" size="sm" className="p-1.5" onClick={() => navigate('/company/applicants')}>
                   <ArrowLeft className="w-4 h-4 text-[#25324B]" />
                 </Button>
                 <h1 className="text-xl font-semibold text-[#25324B]">Applicant Details</h1>
               </div>
-              <Button
-                variant="outline"
-                className="border-[#CCCCF5] text-[#4640DE] text-sm px-3 py-1.5"
-              >
+              <Button variant="outline" className="border-[#CCCCF5] text-[#4640DE] text-sm px-3 py-1.5">
                 <ChevronDown className="w-4 h-4 mr-1.5" />
                 More Action
               </Button>
@@ -529,11 +419,10 @@ const ApplicationDetails = () => {
         {/* Main Content */}
         <div className="px-7 py-7">
           <div className="grid grid-cols-3 gap-7">
-            {/* Left Sidebar - Applicant Data */}
+            {/* Left Sidebar */}
             <div className="space-y-5">
               <Card className="border border-[#D6DDEB] rounded-lg">
                 <CardContent className="p-5">
-                  {/* Header with Avatar and Name */}
                   <div className="flex items-start gap-4 mb-5">
                     <Avatar className="w-16 h-16">
                       {application.seeker_avatar ? (
@@ -544,22 +433,15 @@ const ApplicationDetails = () => {
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex-1">
-                      <h2 className="text-lg font-semibold text-[#25324B] mb-1">
-                        {application.seeker_name}
-                      </h2>
-                      <p className="text-sm text-[#7C8493] mb-2">
-                        {application.seeker_headline || application.job_title}
-                      </p>
+                      <h2 className="text-lg font-semibold text-[#25324B] mb-1">{application.seeker_name}</h2>
+                      <p className="text-sm text-[#7C8493] mb-2">{application.seeker_headline || application.job_title}</p>
                       <div className="flex items-center gap-1.5">
                         <Star className="w-4 h-4 text-[#FFB836] fill-[#FFB836]" />
-                        <span className="text-sm font-medium text-[#25324B]">
-                          {application.score?.toFixed(1) || '0.0'}
-                        </span>
+                        <span className="text-sm font-medium text-[#25324B]">{application.score?.toFixed(1) || '0.0'}</span>
                       </div>
                     </div>
                   </div>
 
-                  {/* Applied Jobs */}
                   <div className="bg-[#F8F8FD] rounded-lg p-4 mb-5">
                     <div className="flex items-center justify-between mb-3">
                       <span className="text-sm font-medium text-[#25324B]">Applied Jobs</span>
@@ -567,9 +449,7 @@ const ApplicationDetails = () => {
                     </div>
                     <div className="h-px bg-[#D6DDEB] mb-3"></div>
                     <div>
-                      <p className="text-sm font-semibold text-[#25324B] mb-1">
-                        {application.job_title}
-                      </p>
+                      <p className="text-sm font-semibold text-[#25324B] mb-1">{application.job_title}</p>
                       <div className="flex items-center gap-2 text-xs text-[#7C8493]">
                         <span>{application.job_company}</span>
                         <span>•</span>
@@ -578,7 +458,6 @@ const ApplicationDetails = () => {
                     </div>
                   </div>
 
-                  {/* Stage */}
                   <div className="bg-[#F8F8FD] rounded-lg p-4 mb-5">
                     <div className="flex items-center justify-between mb-3">
                       <span className="text-sm font-medium text-[#25324B]">Stage</span>
@@ -587,36 +466,29 @@ const ApplicationDetails = () => {
                     {getStageBadge(application.stage)}
                   </div>
 
-                  {/* Action Buttons */}
                   <div className="flex items-center gap-2 mb-5">
-                    <Button
-                      variant="outline"
-                      className="flex-1 border-[#CCCCF5] text-[#4640DE] hover:bg-[#4640DE] hover:text-white"
-                      onClick={() => setScheduleInterviewOpen(true)}
-                    >
-                      Schedule Interview
-                    </Button>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="outline" className="border-[#CCCCF5] text-[#4640DE]">
-                          <MoreVertical className="w-4 h-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => application.resume_url && window.open(application.resume_url, '_blank')}>
-                          View Resume
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => setSendMessageOpen(true)}>Send Message</DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => setRejectApplicationOpen(true)} className="text-red-600">
-                          Reject Application
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                    {application.stage === 'shortlisted' ? (
+                      <Button variant="outline" className="flex-1 border-[#CCCCF5] text-[#4640DE] hover:bg-[#4640DE] hover:text-white"
+                        onClick={() => setScheduleInterviewOpen(true)}>
+                        Schedule Interview
+                      </Button>
+                    ) : (
+                      <Button variant="outline" className="flex-1 border-[#CCCCF5] text-[#4640DE] hover:bg-[#4640DE] hover:text-white"
+                        onClick={() => setMoveToNextStepOpen(true)}>
+                        Move To Next Stage
+                      </Button>
+                    )}
+                    {application.resume_url && (
+                      <Button variant="outline" className="border-[#CCCCF5] text-[#4640DE]"
+                        onClick={() => application.resume_url && window.open(application.resume_url, '_blank')}>
+                        <Download className="w-4 h-4 mr-2" />
+                        View Resume
+                      </Button>
+                    )}
                   </div>
 
                   <div className="h-px bg-[#D6DDEB] mb-5"></div>
 
-                  {/* Contact Section */}
                   <div>
                     <h3 className="text-lg font-semibold text-[#25324B] mb-4">Contact</h3>
                     <div className="space-y-4">
@@ -643,12 +515,8 @@ const ApplicationDetails = () => {
                           <Instagram className="w-5 h-5 text-[#7C8493] mt-0.5 flex-shrink-0" />
                           <div>
                             <p className="text-sm text-[#7C8493] mb-0.5">Instagram</p>
-                            <a 
-                              href={`https://${application.instagram}`} 
-                              target="_blank" 
-                              rel="noopener noreferrer"
-                              className="text-sm font-medium text-[#4640DE] hover:underline"
-                            >
+                            <a href={`https://${application.instagram}`} target="_blank" rel="noopener noreferrer"
+                              className="text-sm font-medium text-[#4640DE] hover:underline">
                               {application.instagram}
                             </a>
                           </div>
@@ -659,12 +527,8 @@ const ApplicationDetails = () => {
                           <Twitter className="w-5 h-5 text-[#7C8493] mt-0.5 flex-shrink-0" />
                           <div>
                             <p className="text-sm text-[#7C8493] mb-0.5">Twitter</p>
-                            <a 
-                              href={`https://${application.twitter}`} 
-                              target="_blank" 
-                              rel="noopener noreferrer"
-                              className="text-sm font-medium text-[#4640DE] hover:underline"
-                            >
+                            <a href={`https://${application.twitter}`} target="_blank" rel="noopener noreferrer"
+                              className="text-sm font-medium text-[#4640DE] hover:underline">
                               {application.twitter}
                             </a>
                           </div>
@@ -675,12 +539,8 @@ const ApplicationDetails = () => {
                           <Globe className="w-5 h-5 text-[#7C8493] mt-0.5 flex-shrink-0" />
                           <div>
                             <p className="text-sm text-[#7C8493] mb-0.5">Website</p>
-                            <a 
-                              href={`https://${application.website}`} 
-                              target="_blank" 
-                              rel="noopener noreferrer"
-                              className="text-sm font-medium text-[#4640DE] hover:underline"
-                            >
+                            <a href={`https://${application.website}`} target="_blank" rel="noopener noreferrer"
+                              className="text-sm font-medium text-[#4640DE] hover:underline">
                               {application.website}
                             </a>
                           </div>
@@ -698,127 +558,75 @@ const ApplicationDetails = () => {
                 <Tabs defaultValue="profile" className="w-full">
                   <div className="border-b border-[#D6DDEB] px-5">
                     <TabsList className="bg-transparent h-auto p-0">
-                      <TabsTrigger 
-                        value="profile" 
-                        className="data-[state=active]:border-b-2 data-[state=active]:border-[#4640DE] data-[state=active]:text-[#25324B] rounded-none"
-                      >
+                      <TabsTrigger value="profile" className="data-[state=active]:border-b-2 data-[state=active]:border-[#4640DE] data-[state=active]:text-[#25324B] rounded-none">
                         Applicant Profile
                       </TabsTrigger>
-                      <TabsTrigger 
-                        value="resume"
-                        className="data-[state=active]:border-b-2 data-[state=active]:border-[#4640DE] data-[state=active]:text-[#25324B] rounded-none"
-                      >
+                      <TabsTrigger value="resume" className="data-[state=active]:border-b-2 data-[state=active]:border-[#4640DE] data-[state=active]:text-[#25324B] rounded-none">
                         Resume
                       </TabsTrigger>
-                      <TabsTrigger 
-                        value="progress"
-                        className="data-[state=active]:border-b-2 data-[state=active]:border-[#4640DE] data-[state=active]:text-[#25324B] rounded-none"
-                      >
+                      <TabsTrigger value="progress" className="data-[state=active]:border-b-2 data-[state=active]:border-[#4640DE] data-[state=active]:text-[#25324B] rounded-none">
                         Hiring Progress
                       </TabsTrigger>
-                      <TabsTrigger 
-                        value="schedule"
-                        className="data-[state=active]:border-b-2 data-[state=active]:border-[#4640DE] data-[state=active]:text-[#25324B] rounded-none"
-                      >
+                      <TabsTrigger value="schedule" className="data-[state=active]:border-b-2 data-[state=active]:border-[#4640DE] data-[state=active]:text-[#25324B] rounded-none">
                         Interview Schedule
                       </TabsTrigger>
                     </TabsList>
                   </div>
 
                   <TabsContent value="profile" className="p-7 m-0">
-                    {/* Personal Info */}
                     <div className="mb-7">
                       <h3 className="text-lg font-semibold text-[#25324B] mb-5">Personal Info</h3>
                       <div className="grid grid-cols-2 gap-6 mb-5">
                         <div>
                           <p className="text-sm text-[#7C8493] mb-1">Full Name</p>
-                          <p className="text-sm font-medium text-[#25324B]">
-                            {application.full_name || application.seeker_name}
-                          </p>
+                          <p className="text-sm font-medium text-[#25324B]">{application.full_name || application.seeker_name}</p>
                         </div>
                         <div>
                           <p className="text-sm text-[#7C8493] mb-1">Date of Birth</p>
-                          <p className="text-sm font-medium text-[#25324B]">
-                            {formatDate(application.date_of_birth || '')}
-                          </p>
+                          <p className="text-sm font-medium text-[#25324B]">Coming soon</p>
                         </div>
                         <div>
                           <p className="text-sm text-[#7C8493] mb-1">Gender</p>
-                          <p className="text-sm font-medium text-[#25324B]">
-                            {application.gender || 'N/A'}
-                          </p>
+                          <p className="text-sm font-medium text-[#25324B]">Coming soon</p>
                         </div>
                         <div>
                           <p className="text-sm text-[#7C8493] mb-1">Language</p>
-                          <p className="text-sm font-medium text-[#25324B]">
-                            {application.languages?.join(', ') || 'N/A'}
-                          </p>
+                          <p className="text-sm font-medium text-[#25324B]">{application.languages?.join(', ') || 'N/A'}</p>
                         </div>
                       </div>
                       <div>
                         <p className="text-sm text-[#7C8493] mb-1">Address</p>
-                        <p className="text-sm font-medium text-[#25324B]">
-                          {application.address || 'N/A'}
-                        </p>
+                        <p className="text-sm font-medium text-[#25324B]">{application.address || 'N/A'}</p>
                       </div>
                     </div>
 
                     <div className="h-px bg-[#D6DDEB] mb-7"></div>
 
-                    {/* Professional Info */}
                     <div>
                       <h3 className="text-lg font-semibold text-[#25324B] mb-5">Professional Info</h3>
-                      
-                      {/* About Me */}
                       {application.about_me && (
                         <div className="mb-5">
                           <p className="text-sm text-[#7C8493] mb-2">About Me</p>
                           <div className="space-y-2">
                             {application.about_me.split('\n').map((paragraph, index) => (
-                              <p key={index} className="text-sm font-medium text-[#25324B]">
-                                {paragraph}
-                              </p>
+                              <p key={index} className="text-sm font-medium text-[#25324B]">{paragraph}</p>
                             ))}
                           </div>
                         </div>
                       )}
 
-                      <div className="grid grid-cols-2 gap-6">
-                        <div>
-                          <p className="text-sm text-[#7C8493] mb-1">Current Job</p>
-                          <p className="text-sm font-medium text-[#25324B]">
-                            {application.current_job || 'N/A'}
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-sm text-[#7C8493] mb-1">Experience in Years</p>
-                          <p className="text-sm font-medium text-[#25324B]">
-                            {application.experience_years ? `${application.experience_years} Years` : 'N/A'}
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-sm text-[#7C8493] mb-1">Highest Qualification Held</p>
-                          <p className="text-sm font-medium text-[#25324B]">
-                            {application.highest_qualification || 'N/A'}
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-sm text-[#7C8493] mb-2">Skill set</p>
-                          <div className="flex flex-wrap gap-2">
-                            {application.skills && application.skills.length > 0 ? (
-                              application.skills.map((skill, index) => (
-                                <Badge
-                                  key={index}
-                                  variant="outline"
-                                  className="bg-[#F8F8FD] text-[#4640DE] border-0 px-2.5 py-1 rounded-lg text-xs"
-                                >
-                                  {skill}
-                                </Badge>
-                              ))
-                            ) : (
-                              <span className="text-sm text-[#7C8493]">N/A</span>
-                            )}
-                          </div>
+                      <div>
+                        <p className="text-sm text-[#7C8493] mb-2">Skill set</p>
+                        <div className="flex flex-wrap gap-2">
+                          {application.skills && application.skills.length > 0 ? (
+                            application.skills.map((skill, index) => (
+                              <Badge key={index} variant="outline" className="bg-[#F8F8FD] text-[#4640DE] border-0 px-2.5 py-1 rounded-lg text-xs">
+                                {skill}
+                              </Badge>
+                            ))
+                          ) : (
+                            <span className="text-sm text-[#7C8493]">N/A</span>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -860,10 +668,18 @@ const ApplicationDetails = () => {
                             }}
                           >
                             <Download className="w-4 h-4 mr-2" />
-                            Download Resume
+                            View Resume
                           </Button>
                         )}
                       </div>
+
+                      {/* Cover Letter */}
+                      {application.cover_letter && (
+                        <div className="mb-6">
+                          <h4 className="text-base font-semibold text-[#25324B] mb-3">Cover Letter</h4>
+                          <p className="text-sm text-[#25324B] whitespace-pre-line">{application.cover_letter}</p>
+                        </div>
+                      )}
 
                       {/* Industry Knowledge */}
                       {application.resume_data?.industry_knowledge && application.resume_data.industry_knowledge.length > 0 && (
@@ -998,21 +814,32 @@ const ApplicationDetails = () => {
                           </Button>
                         </div>
 
-                        {/* Pipeline */}
-                        <div className="flex items-center gap-2 mb-6">
-                          <div className="flex-1 bg-[#E9EBFD] rounded-lg px-4 py-3 text-center">
-                            <p className="text-sm font-semibold text-[#4640DE]">In-Review</p>
-                          </div>
-                          <div className="flex-1 bg-[#E9EBFD] rounded-lg px-4 py-3 text-center">
-                            <p className="text-sm font-semibold text-[#4640DE]">Shortlisted</p>
-                          </div>
-                          <div className="flex-1 bg-[#4640DE] rounded-lg px-4 py-3 text-center">
-                            <p className="text-sm font-semibold text-white">Interview</p>
-                          </div>
-                          <div className="flex-1 bg-[#F8F8FD] rounded-lg px-4 py-3 text-center">
-                            <p className="text-sm font-semibold text-[#7C8493]">Hired / Declined</p>
-                          </div>
-                        </div>
+                        {/* Pipeline (dynamic) */}
+                        {(() => {
+                          const stageOrder = ['in-review', 'shortlisted', 'interview', 'hired/declined'] as const
+                          const mapStageToIndex: Record<string, number> = {
+                            'applied': 0,
+                            'shortlisted': 1,
+                            'interview': 2,
+                            'hired': 3,
+                            'rejected': 3,
+                          }
+                          const activeIndex = mapStageToIndex[application.stage] ?? 0
+                          return (
+                            <div className="flex items-center gap-2 mb-6">
+                              {stageOrder.map((label, idx) => (
+                                <div
+                                  key={label}
+                                  className={`flex-1 rounded-lg px-4 py-3 text-center ${
+                                    idx === activeIndex ? 'bg-[#4640DE] text-white' : idx < activeIndex ? 'bg-[#E9EBFD] text-[#4640DE]' : 'bg-[#F8F8FD] text-[#7C8493]'
+                                  }`}
+                                >
+                                  <p className="text-sm font-semibold capitalize">{label}</p>
+                                </div>
+                              ))}
+                            </div>
+                          )
+                        })()}
 
                         {/* Stage Info */}
                         <div className="bg-white border border-[#D6DDEB] rounded-lg p-5">
@@ -1200,7 +1027,14 @@ const ApplicationDetails = () => {
                                         <h4 className="text-base font-semibold text-[#25324B] mb-1">
                                           {interview.interviewer_name}
                                         </h4>
-                                        <p className="text-sm text-[#7C8493]">{interview.interview_type}</p>
+                                        <div className="flex items-center gap-2">
+                                          <p className="text-sm text-[#7C8493]">{interview.interview_type}</p>
+                                          {interview.status && (
+                                            <Badge className="bg-[#F8F8FD] text-[#4640DE] border-0 px-2 py-0.5 rounded-full text-xs">
+                                              {interview.status}
+                                            </Badge>
+                                          )}
+                                        </div>
                                       </div>
                                       <div className="flex-1">
                                         <div className="flex items-center gap-2 mb-1">
@@ -1211,21 +1045,35 @@ const ApplicationDetails = () => {
                                           <MapPin className="w-4 h-4 text-[#7C8493]" />
                                           <p className="text-sm text-[#7C8493]">{interview.location}</p>
                                         </div>
+                                        {interview.feedback && (
+                                          <div className="mt-2 rounded-md bg-[#F8F8FD] border border-[#E6EAF5] p-3">
+                                            <p className="text-xs text-[#7C8493] mb-1">Feedback</p>
+                                            <p className="text-sm text-[#25324B]">
+                                              <span className="font-semibold">{interview.feedback.reviewer_name}:</span>{' '}
+                                              {interview.feedback.comment}
+                                              {typeof interview.feedback.rating === 'number' && (
+                                                <span className="ml-2 text-[#FFB836]">({interview.feedback.rating}/5)</span>
+                                              )}
+                                            </p>
+                                          </div>
+                                        )}
                                       </div>
                                     </div>
                                     <div className="flex items-center gap-2">
-                                      <Button
-                                        variant="outline"
-                                        size="sm"
-                                        className="border-[#CCCCF5] text-[#4640DE]"
-                                        onClick={() => {
-                                          setSelectedInterviewId(interview.id)
-                                          setAddFeedbackOpen(true)
-                                        }}
-                                      >
-                                        <Plus className="w-4 h-4 mr-2" />
-                                        Add Feedback
-                                      </Button>
+                                      {!interview.feedback && interview.status === 'completed' && (
+                                        <Button
+                                          variant="outline"
+                                          size="sm"
+                                          className="border-[#CCCCF5] text-[#4640DE]"
+                                          onClick={() => {
+                                            setSelectedInterviewId(interview.id)
+                                            setAddFeedbackOpen(true)
+                                          }}
+                                        >
+                                          <Plus className="w-4 h-4 mr-2" />
+                                          Add Feedback
+                                        </Button>
+                                      )}
                                       <DropdownMenu>
                                         <DropdownMenuTrigger asChild>
                                           <Button variant="outline" size="sm" className="border-[#CCCCF5] text-[#4640DE]">
