@@ -14,7 +14,11 @@ export class JobCategoryRepository extends RepositoryBase<JobCategory, JobCatego
   }
 
   async findByName(name: string): Promise<JobCategory | null> {
-    const doc = await this.model.findOne({ name }).exec();
+    // Case-insensitive search - escape special regex characters
+    const escapedName = name.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const doc = await this.model.findOne({ 
+      name: { $regex: new RegExp(`^${escapedName}$`, 'i') } 
+    }).exec();
     return doc ? this.mapToEntity(doc) : null;
   }
 }

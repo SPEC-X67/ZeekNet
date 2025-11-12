@@ -427,6 +427,83 @@ export const adminApi = {
           message: error.response?.data?.message || 'Failed to delete job category',
         };
       }
+    },
+
+  getAllJobRoles: async (params: GetAllJobRolesParams = {}): Promise<{
+      success: boolean;
+      data?: {
+        jobRoles: JobRole[];
+        total: number;
+        page: number;
+        limit: number;
+        totalPages: number;
+      };
+      message?: string;
+    }> => {
+      try {
+        const queryParams = new URLSearchParams();
+        
+        if (params.page) queryParams.append('page', params.page.toString());
+        if (params.limit) queryParams.append('limit', params.limit.toString());
+        if (params.search) queryParams.append('search', params.search);
+        if (params.sortBy) queryParams.append('sortBy', params.sortBy);
+        if (params.sortOrder) queryParams.append('sortOrder', params.sortOrder);
+
+        const response = await api.get(`/api/admin/job-roles?${queryParams.toString()}`);
+        return response.data;
+      } catch (error: any) {
+        return {
+          success: false,
+          message: error.response?.data?.message || 'Failed to fetch job roles',
+        };
+      }
+    },
+
+  createJobRole: async (data: { name: string }): Promise<{
+      success: boolean;
+      data?: JobRole;
+      message?: string;
+    }> => {
+      try {
+        const response = await api.post('/api/admin/job-roles', data);
+        return response.data;
+      } catch (error: any) {
+        return {
+          success: false,
+          message: error.response?.data?.message || 'Failed to create job role',
+        };
+      }
+    },
+
+  updateJobRole: async (id: string, data: { name: string }): Promise<{
+      success: boolean;
+      data?: JobRole;
+      message?: string;
+    }> => {
+      try {
+        const response = await api.put(`/api/admin/job-roles/${id}`, data);
+        return response.data;
+      } catch (error: any) {
+        return {
+          success: false,
+          message: error.response?.data?.message || 'Failed to update job role',
+        };
+      }
+    },
+
+  deleteJobRole: async (id: string): Promise<{
+      success: boolean;
+      message?: string;
+    }> => {
+      try {
+        const response = await api.delete(`/api/admin/job-roles/${id}`);
+        return response.data;
+      } catch (error: any) {
+        return {
+          success: false,
+          message: error.response?.data?.message || 'Failed to delete job role',
+        };
+      }
     }
 };
 
@@ -507,4 +584,20 @@ export interface GetAllJobCategoriesParams {
   page?: number;
   limit?: number;
   search?: string;
+}
+
+export interface JobRole {
+  id: string;
+  _id: string;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface GetAllJobRolesParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
 }

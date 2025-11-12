@@ -14,8 +14,8 @@ export const jobApi = {
       if (query.limit) params.append('limit', query.limit.toString());
       if (query.category_ids?.length) params.append('category_ids', query.category_ids.join(','));
       if (query.employment_types?.length) params.append('employment_types', query.employment_types.join(','));
-      if (query.salary_min) params.append('salary_min', query.salary_min.toString());
-      if (query.salary_max) params.append('salary_max', query.salary_max.toString());
+      if (query.salary_min !== undefined) params.append('salary_min', query.salary_min.toString());
+      if (query.salary_max !== undefined) params.append('salary_max', query.salary_max.toString());
       if (query.location) params.append('location', query.location);
       if (query.search) params.append('search', query.search);
 

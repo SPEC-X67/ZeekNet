@@ -10,10 +10,12 @@ import { Loading } from '../../components/ui/loading';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../../components/ui/dialog';
 import { Checkbox } from '../../components/ui/checkbox';
+import { Combobox, type ComboboxOption } from '../../components/ui/combobox';
 import FormDialog from '../../components/common/FormDialog';
 import { ImageCropper } from '../../components/common/ImageCropper';
 import { toast } from 'sonner';
 import { seekerApi, type SeekerProfile as SeekerProfileType, type Experience, type Education } from '../../api/seeker.api';
+import { publicApi, type Skill } from '../../api/public.api';
 import type { Area } from 'react-easy-crop';
 
 export function SeekerProfile() {
@@ -78,6 +80,9 @@ export function SeekerProfile() {
   });
 
   const [newSkill, setNewSkill] = useState('');
+  const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
+  const [skillsOptions, setSkillsOptions] = useState<ComboboxOption[]>([]);
+  const [skillsLoading, setSkillsLoading] = useState(false);
   const [newLanguage, setNewLanguage] = useState('');
   const [newTechnology, setNewTechnology] = useState(''); 
   const [editingSocialLinks, setEditingSocialLinks] = useState<Array<{ name: string; link: string }>>([]);
@@ -429,9 +434,40 @@ export function SeekerProfile() {
     }
   };
 
+  const fetchSkills = async (searchTerm?: string) => {
+    try {
+      setSkillsLoading(true);
+      const response = await publicApi.getAllSkills({
+        limit: 20,
+        search: searchTerm,
+      });
+      if (response.success && response.data) {
+        const options: ComboboxOption[] = response.data.map((skillName: string) => ({
+          value: skillName,
+          label: skillName,
+        }));
+        setSkillsOptions(options);
+      }
+    } catch (error) {
+      console.error('Failed to fetch skills:', error);
+    } finally {
+      setSkillsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (addSkillOpen) {
+      fetchSkills();
+      // Set currently selected skills
+      if (profile?.skills) {
+        setSelectedSkills(profile.skills);
+      }
+    }
+  }, [addSkillOpen]);
+
   const handleAddSkill = async () => {
-    if (!newSkill.trim()) {
-      toast.error('Please enter a skill name');
+    if (selectedSkills.length === 0) {
+      toast.error('Please select at least one skill');
       return;
     }
     if (!profile) {
@@ -440,18 +476,17 @@ export function SeekerProfile() {
     }
     try {
       setSaving(true);
-      const updatedSkills = [...(profile.skills || []), newSkill.trim()];
-      const response = await seekerApi.updateSkills(updatedSkills);
+      const response = await seekerApi.updateSkills(selectedSkills);
       if (response.success) {
-        toast.success('Skill added successfully');
+        toast.success('Skills updated successfully');
         setAddSkillOpen(false);
-        setNewSkill('');
+        setSelectedSkills([]);
         fetchProfileData();
       } else {
-        toast.error(response.message || 'Failed to add skill');
+        toast.error(response.message || 'Failed to update skills');
       }
     } catch {
-      toast.error('Failed to add skill');
+      toast.error('Failed to update skills');
     } finally {
       setSaving(false);
     }
@@ -1613,22 +1648,43 @@ export function SeekerProfile() {
         maxWidth="2xl"
       />
 
-      <FormDialog
-        open={addSkillOpen}
-        onOpenChange={setAddSkillOpen}
-        title="Add Skill"
-        fields={[
-          {
-            id: 'skill',
-            label: 'Skill Name',
-            value: newSkill,
-            onChange: (value) => setNewSkill(value),
-            placeholder: 'Enter skill name',
-          },
-        ]}
-        onSubmit={handleAddSkill}
-        submitLabel="Add Skill"
-      />
+      <Dialog open={addSkillOpen} onOpenChange={setAddSkillOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="!text-lg !font-bold">Add Skills</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label>Select Skills</Label>
+              <Combobox
+                options={skillsOptions}
+                value={selectedSkills}
+                onChange={setSelectedSkills}
+                placeholder="Type to search skills..."
+                multiple={true}
+                loading={skillsLoading}
+                onSearch={(searchTerm) => {
+                  if (searchTerm.length >= 2 || searchTerm.length === 0) {
+                    fetchSkills(searchTerm);
+                  }
+                }}
+              />
+              <p className="text-xs text-[#7c8493]">Type to search and select skills from the list</p>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => {
+              setAddSkillOpen(false);
+              setSelectedSkills([]);
+            }}>
+              Cancel
+            </Button>
+            <Button onClick={handleAddSkill} disabled={saving || selectedSkills.length === 0}>
+              {saving ? 'Saving...' : 'Save Skills'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <Dialog open={editDetailsOpen} onOpenChange={setEditDetailsOpen}>
         <DialogContent className="max-w-2xl">

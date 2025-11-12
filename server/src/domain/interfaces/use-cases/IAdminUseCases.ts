@@ -3,6 +3,8 @@ import { CompanyProfile } from '../../entities/company-profile.entity';
 import { JobPosting, PaginatedJobPostings, JobPostingFilters } from '../../entities/job-posting.entity';
 import { Skill } from '../../entities/skill.entity';
 import { PaginatedSkills, SkillQueryFilters } from '../repositories/skill/ISkillRepository';
+import { JobRole } from '../../entities/job-role.entity';
+import { PaginatedJobRoles, JobRoleQueryFilters } from '../repositories/job-role/IJobRoleRepository';
 
 export interface AuthResponse {
   accessToken: string;
@@ -173,4 +175,24 @@ export interface IUpdateSkillUseCase {
 
 export interface IDeleteSkillUseCase {
   execute(skillId: string): Promise<boolean>;
+}
+
+export interface ICreateJobRoleUseCase {
+  execute(name: string): Promise<JobRole>;
+}
+
+export interface IGetAllJobRolesUseCase {
+  execute(filters: JobRoleQueryFilters): Promise<PaginatedJobRoles>;
+}
+
+export interface IGetJobRoleByIdUseCase {
+  execute(jobRoleId: string): Promise<JobRole>;
+}
+
+export interface IUpdateJobRoleUseCase {
+  execute(jobRoleId: string, name: string): Promise<JobRole>;
+}
+
+export interface IDeleteJobRoleUseCase {
+  execute(jobRoleId: string): Promise<boolean>;
 }
