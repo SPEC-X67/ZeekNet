@@ -12,6 +12,7 @@ import { UserRepository } from '../database/mongodb/repositories/user.repository
 import { SeekerProfileRepository } from '../database/mongodb/repositories/seeker-profile.repository';
 import { SeekerExperienceRepository } from '../database/mongodb/repositories/seeker-experience.repository';
 import { SeekerEducationRepository } from '../database/mongodb/repositories/seeker-education.repository';
+import { notificationRepository } from './notificationDi';
 import { S3Service } from '../external-services/s3/s3.service';
 import { CreateCompanyProfileUseCase } from '../../application/use-cases/company/create-company-profile.use-case';
 import { UpdateCompanyProfileUseCase } from '../../application/use-cases/company/update-company-profile.use-case';
@@ -122,10 +123,10 @@ const updateJobStatusUseCase = new UpdateJobStatusUseCase(jobPostingRepository);
 const getApplicationsByJobUseCase = new GetApplicationsByJobUseCase(jobApplicationRepository, jobPostingRepository, companyProfileRepository);
 const getApplicationsByCompanyUseCase = new GetApplicationsByCompanyUseCase(jobApplicationRepository, companyProfileRepository);
 const getApplicationDetailsUseCase = new GetApplicationDetailsUseCase(jobApplicationRepository, jobPostingRepository, companyProfileRepository);
-const updateApplicationStageUseCase = new UpdateApplicationStageUseCase(jobApplicationRepository, jobPostingRepository, companyProfileRepository);
+const updateApplicationStageUseCase = new UpdateApplicationStageUseCase(jobApplicationRepository, jobPostingRepository, companyProfileRepository, notificationRepository);
 const updateApplicationScoreUseCase = new UpdateApplicationScoreUseCase(jobApplicationRepository, jobPostingRepository, companyProfileRepository);
-const addInterviewUseCase = new AddInterviewUseCase(jobApplicationRepository, jobPostingRepository, companyProfileRepository);
-const updateInterviewUseCase = new UpdateInterviewUseCase(jobApplicationRepository, jobPostingRepository, companyProfileRepository);
+const addInterviewUseCase = new AddInterviewUseCase(jobApplicationRepository, jobPostingRepository, companyProfileRepository, notificationRepository);
+const updateInterviewUseCase = new UpdateInterviewUseCase(jobApplicationRepository, jobPostingRepository, companyProfileRepository, notificationRepository);
 const deleteInterviewUseCase = new DeleteInterviewUseCase(jobApplicationRepository, jobPostingRepository, companyProfileRepository);
 const addInterviewFeedbackUseCase = new AddInterviewFeedbackUseCase(jobApplicationRepository, jobPostingRepository, companyProfileRepository);
 

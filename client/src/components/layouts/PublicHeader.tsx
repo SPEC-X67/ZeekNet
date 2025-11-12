@@ -1,9 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { useAppSelector } from "@/hooks/useRedux";
+import { UserRole } from "@/constants/enums";
 import UserProfileDropdown from "@/components/common/UserProfileDropdown";
+import { NotificationBell } from "@/components/notifications/NotificationBell";
 
 const PublicHeader = () => {
-  const { isAuthenticated, isInitialized } = useAppSelector((state) => state.auth);
+  const { isAuthenticated, isInitialized, role } = useAppSelector((state) => state.auth);
 
   return (
     <header className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -51,7 +53,10 @@ const PublicHeader = () => {
           </nav>
           <div className="flex items-center space-x-4">
             {isInitialized && isAuthenticated ? (
-              <UserProfileDropdown />
+              <>
+                {role === UserRole.SEEKER && <NotificationBell />}
+                <UserProfileDropdown />
+              </>
             ) : (
               <>
                 <Button

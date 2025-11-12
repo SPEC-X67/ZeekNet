@@ -1,15 +1,19 @@
 import { IJobApplicationRepository } from '../../../domain/interfaces/repositories/job-application/IJobApplicationRepository';
 import { IJobPostingRepository } from '../../../domain/interfaces/repositories/job/IJobPostingRepository';
 import { ICompanyProfileRepository } from '../../../domain/interfaces/repositories/company/ICompanyProfileRepository';
+import { INotificationRepository } from '../../../domain/interfaces/repositories/notification/INotificationRepository';
 import { IUpdateInterviewUseCase, UpdateInterviewData } from '../../../domain/interfaces/use-cases/IJobApplicationUseCases';
 import { NotFoundError, ValidationError } from '../../../domain/errors/errors';
 import { JobApplication } from '../../../domain/entities/job-application.entity';
+import { notificationService } from '../../../infrastructure/services/notification.service';
+import { NotificationType } from '../../../infrastructure/database/mongodb/models/notification.model';
 
 export class UpdateInterviewUseCase implements IUpdateInterviewUseCase {
   constructor(
     private readonly _jobApplicationRepository: IJobApplicationRepository,
     private readonly _jobPostingRepository: IJobPostingRepository,
     private readonly _companyProfileRepository: ICompanyProfileRepository,
+    private readonly _notificationRepository: INotificationRepository,
   ) {}
 
   async execute(userId: string, applicationId: string, interviewId: string, interviewData: UpdateInterviewData): Promise<JobApplication> {
@@ -66,6 +70,34 @@ export class UpdateInterviewUseCase implements IUpdateInterviewUseCase {
 
     if (!updatedApplication) {
       throw new NotFoundError('Failed to update interview');
+    }
+
+    // Get the updated interview
+    const updatedInterview = updatedApplication.interviews.find((int) => int.id === interviewId);
+
+    // Send notification to seeker about interview update
+    if (updatedInterview) {
+      await notificationService.sendNotification(
+        this._notificationRepository,
+        {
+          user_id: application.seeker_id,
+          type: NotificationType.INTERVIEW_SCHEDULED,
+          title: 'Interview Updated',
+          message: `Interview details for ${job.title} have been updated`,
+          data: {
+            job_id: job._id,
+            application_id: application.id,
+            interview_id: interviewId,
+            interview_date: updatedInterview.date?.toISOString(),
+            interview_time: updatedInterview.time,
+            interview_type: updatedInterview.interview_type,
+            location: updatedInterview.location,
+            interviewer_name: updatedInterview.interviewer_name,
+            status: updatedInterview.status,
+            job_title: job.title,
+          },
+        }
+      );
     }
 
     return updatedApplication;

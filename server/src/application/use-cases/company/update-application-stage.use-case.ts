@@ -1,15 +1,19 @@
 import { IJobApplicationRepository } from '../../../domain/interfaces/repositories/job-application/IJobApplicationRepository';
 import { IJobPostingRepository } from '../../../domain/interfaces/repositories/job/IJobPostingRepository';
 import { ICompanyProfileRepository } from '../../../domain/interfaces/repositories/company/ICompanyProfileRepository';
+import { INotificationRepository } from '../../../domain/interfaces/repositories/notification/INotificationRepository';
 import { IUpdateApplicationStageUseCase } from '../../../domain/interfaces/use-cases/IJobApplicationUseCases';
 import { NotFoundError, ValidationError } from '../../../domain/errors/errors';
 import { JobApplication } from '../../../domain/entities/job-application.entity';
+import { notificationService } from '../../../infrastructure/services/notification.service';
+import { NotificationType } from '../../../infrastructure/database/mongodb/models/notification.model';
 
 export class UpdateApplicationStageUseCase implements IUpdateApplicationStageUseCase {
   constructor(
     private readonly _jobApplicationRepository: IJobApplicationRepository,
     private readonly _jobPostingRepository: IJobPostingRepository,
     private readonly _companyProfileRepository: ICompanyProfileRepository,
+    private readonly _notificationRepository: INotificationRepository,
   ) {}
 
   async execute(
@@ -44,6 +48,46 @@ export class UpdateApplicationStageUseCase implements IUpdateApplicationStageUse
 
     if (!updatedApplication) {
       throw new NotFoundError('Failed to update application stage');
+    }
+
+    // Send notification to seeker about status change
+    const stageMessages: Record<string, { title: string; message: string }> = {
+      shortlisted: {
+        title: 'Application Shortlisted',
+        message: `Congratulations! Your application for ${job.title} has been shortlisted`,
+      },
+      interview: {
+        title: 'Interview Stage',
+        message: `Your application for ${job.title} has moved to the interview stage`,
+      },
+      rejected: {
+        title: 'Application Status Updated',
+        message: `Your application status for ${job.title} has been updated`,
+      },
+      hired: {
+        title: 'Congratulations! You\'re Hired',
+        message: `Congratulations! You have been hired for ${job.title}`,
+      },
+    };
+
+    const notification = stageMessages[stage];
+    if (notification) {
+      await notificationService.sendNotification(
+        this._notificationRepository,
+        {
+          user_id: application.seeker_id,
+          type: NotificationType.APPLICATION_STATUS_CHANGED,
+          title: notification.title,
+          message: notification.message,
+          data: {
+            job_id: job._id,
+            application_id: application.id,
+            stage: stage,
+            job_title: job.title,
+            rejection_reason: rejectionReason,
+          },
+        }
+      );
     }
 
     return updatedApplication;
