@@ -117,7 +117,6 @@ const ApplicationDetails = () => {
   const [loading, setLoading] = useState(true)
   const [scheduleInterviewOpen, setScheduleInterviewOpen] = useState(false)
   const [giveRatingOpen, setGiveRatingOpen] = useState(false)
-  const [addNotesOpen, setAddNotesOpen] = useState(false)
   const [addScheduleOpen, setAddScheduleOpen] = useState(false)
   const [addFeedbackOpen, setAddFeedbackOpen] = useState(false)
   const [editScheduleOpen, setEditScheduleOpen] = useState(false)
@@ -129,8 +128,7 @@ const ApplicationDetails = () => {
   const [scheduleForm, setScheduleForm] = useState({
     date: '', time: '', location: '', interviewType: '', interviewer: '', notes: ''
   })
-  const [ratingForm, setRatingForm] = useState({ rating: '', comment: '' })
-  const [noteForm, setNoteForm] = useState({ content: '' })
+  const [ratingForm, setRatingForm] = useState({ rating: 0 })
   const [feedbackForm, setFeedbackForm] = useState({ feedback: '' })
   const [messageForm, setMessageForm] = useState({ subject: '', message: '' })
   const [rejectReason, setRejectReason] = useState('')
@@ -248,23 +246,19 @@ const ApplicationDetails = () => {
   }
 
   const handleGiveRating = async () => {
-    if (!id) return
+    if (!id || ratingForm.rating === 0) {
+      toast.error('Please select a rating')
+      return
+    }
     try {
-      const score = Number(ratingForm.rating)
-      await jobApplicationApi.updateApplicationScore(id, { score })
+      await jobApplicationApi.updateApplicationScore(id, { score: ratingForm.rating })
       toast.success('Rating submitted successfully')
       await reload()
     } catch (e: any) {
       toast.error(e?.response?.data?.message || 'Failed to update score')
     }
     setGiveRatingOpen(false)
-    setRatingForm({ rating: '', comment: '' })
-  }
-
-  const handleAddNote = () => {
-    toast.success('Note added successfully')
-    setAddNotesOpen(false)
-    setNoteForm({ content: '' })
+    setRatingForm({ rating: 0 })
   }
 
   const handleAddSchedule = async (moveToInterview = false) => {
@@ -328,6 +322,27 @@ const ApplicationDetails = () => {
       await reload()
     } catch (e: any) {
       toast.error(e?.response?.data?.message || 'Failed to cancel interview')
+    }
+  }
+
+  const handleMarkAsCompleted = async (interviewId: string) => {
+    if (!id) return
+    try {
+      const interview = application?.interview_schedule?.find((iv) => iv.id === interviewId)
+      if (!interview) return
+
+      await jobApplicationApi.updateInterview(id, interviewId, {
+        date: interview.date,
+        time: interview.time,
+        location: interview.location,
+        interview_type: interview.interview_type,
+        interviewer_name: interview.interviewer_name,
+        status: 'completed',
+      })
+      toast.success('Interview marked as completed')
+      await reload()
+    } catch (e: any) {
+      toast.error(e?.response?.data?.message || 'Failed to mark interview as completed')
     }
   }
 
@@ -453,10 +468,6 @@ const ApplicationDetails = () => {
                 </Button>
                 <h1 className="text-xl font-semibold text-[#25324B]">Applicant Details</h1>
               </div>
-              <Button variant="outline" className="border-[#CCCCF5] text-[#4640DE] text-sm px-3 py-1.5">
-                <ChevronDown className="w-4 h-4 mr-1.5" />
-                More Action
-              </Button>
             </div>
           </div>
         </div>
@@ -610,17 +621,17 @@ const ApplicationDetails = () => {
                 <Tabs defaultValue="profile" className="w-full">
                   <div className="border-b border-[#D6DDEB] px-5">
                     <TabsList className="bg-transparent h-auto p-0">
-                      <TabsTrigger value="profile" className="data-[state=active]:border-b-2 data-[state=active]:border-[#4640DE] data-[state=active]:text-[#25324B] rounded-none">
+                      <TabsTrigger value="profile" className="data-[state=active]:border-b-2 data-[state=active]:border-[#4640DE] data-[state=active]:text-[#25324B] !shadow-none rounded-none">
                         Applicant Profile
                       </TabsTrigger>
-                      <TabsTrigger value="resume" className="data-[state=active]:border-b-2 data-[state=active]:border-[#4640DE] data-[state=active]:text-[#25324B] rounded-none">
+                      <TabsTrigger value="resume" className="data-[state=active]:border-b-2 data-[state=active]:border-[#4640DE] data-[state=active]:text-[#25324B] !shadow-none rounded-none">
                         Resume
                       </TabsTrigger>
-                      <TabsTrigger value="progress" className="data-[state=active]:border-b-2 data-[state=active]:border-[#4640DE] data-[state=active]:text-[#25324B] rounded-none">
+                      <TabsTrigger value="progress" className="data-[state=active]:border-b-2 data-[state=active]:border-[#4640DE] data-[state=active]:text-[#25324B] !shadow-none rounded-none">
                         Hiring Progress
                       </TabsTrigger>
-                      <TabsTrigger value="schedule" className="data-[state=active]:border-b-2 data-[state=active]:border-[#4640DE] data-[state=active]:text-[#25324B] rounded-none">
-                        Interview Schedule
+                      <TabsTrigger value="schedule" className="data-[state=active]:border-b-2 data-[state=active]:border-[#4640DE] data-[state=active]:text-[#25324B] !shadow-none rounded-none">
+                        Interview Schedules
                       </TabsTrigger>
                     </TabsList>
                   </div>
@@ -900,60 +911,65 @@ const ApplicationDetails = () => {
                           <div className="bg-white border border-[#D6DDEB] rounded-lg p-5">
                             <h4 className="text-base font-semibold text-[#25324B] mb-4">Stage Info</h4>
                             {application.stage === 'interview' ? (
-                              <div className="grid grid-cols-2 gap-6">
-                                <div className="space-y-4">
-                                  <div>
-                                    <p className="text-sm text-[#7C8493] mb-1">Interview Date</p>
-                                    <p className="text-sm font-medium text-[#25324B]">
-                                      {application.hiring_progress?.interview_date || 'N/A'}
-                                    </p>
-                                  </div>
-                                  <div>
-                                    <p className="text-sm text-[#7C8493] mb-1">Interview Location</p>
-                                    <p className="text-sm font-medium text-[#25324B]">
-                                      {application.hiring_progress?.interview_location || 'N/A'}
-                                    </p>
-                                  </div>
-                                  <Button
-                                    variant="outline"
-                                    className="w-full border-[#CCCCF5] text-[#4640DE] bg-[#F8F8FD]"
-                                    onClick={handleMoveToNextStep}
-                                  >
-                                    Move To Next Step
-                                  </Button>
-                                </div>
-                                <div className="space-y-4">
-                                  <div>
-                                    <p className="text-sm text-[#7C8493] mb-1">Interview Status</p>
-                                    {application.hiring_progress?.interview_status && (
-                                      <Badge className="bg-[#FFB836]/10 text-[#FFB836] border-0 px-3 py-1 rounded-full text-xs font-semibold">
-                                        {application.hiring_progress.interview_status}
-                                      </Badge>
-                                    )}
-                                  </div>
-                                  <div>
-                                    <p className="text-sm text-[#7C8493] mb-2">Assigned to</p>
-                                    {application.hiring_progress?.assigned_to && (
-                                      <div className="flex items-center gap-2">
-                                        <Avatar className="w-8 h-8">
-                                          {application.hiring_progress.assigned_to.avatar ? (
-                                            <AvatarImage src={application.hiring_progress.assigned_to.avatar} />
-                                          ) : null}
-                                          <AvatarFallback className="bg-[#4640DE]/10 text-[#4640DE] text-xs">
-                                            {getInitials(application.hiring_progress.assigned_to.name)}
-                                          </AvatarFallback>
-                                        </Avatar>
-                                        <span className="text-sm font-medium text-[#25324B]">
-                                          {application.hiring_progress.assigned_to.name}
-                                        </span>
+                              <div className="space-y-4">
+                                {application.interview_schedule && application.interview_schedule.length > 0 ? (
+                                  <div className="space-y-3">
+                                    {application.interview_schedule.map((interview) => (
+                                      <div key={interview.id} className="border border-[#D6DDEB] rounded-lg p-4">
+                                        <div className="flex items-center justify-between mb-2">
+                                          <div>
+                                            <p className="text-sm font-semibold text-[#25324B] mb-1">
+                                              {interview.interview_type}
+                                            </p>
+                                            <p className="text-xs text-[#7C8493]">
+                                              {interview.interviewer_name} • {new Date(interview.date).toLocaleDateString()} • {interview.time}
+                                            </p>
+                                          </div>
+                                          {interview.status && (
+                                            <Badge 
+                                              className={`border-0 px-3 py-1 rounded-full text-xs font-semibold ${
+                                                interview.status === 'completed' 
+                                                  ? 'bg-[#56CDAD]/10 text-[#56CDAD]'
+                                                  : interview.status === 'scheduled'
+                                                  ? 'bg-[#4640DE]/10 text-[#4640DE]'
+                                                  : interview.status === 'cancelled'
+                                                  ? 'bg-red-100 text-red-600'
+                                                  : 'bg-[#FFB836]/10 text-[#FFB836]'
+                                              }`}
+                                            >
+                                              {interview.status.charAt(0).toUpperCase() + interview.status.slice(1)}
+                                            </Badge>
+                                          )}
+                                        </div>
+                                        {interview.feedback && (
+                                          <div className="mt-2 pt-2 border-t border-[#D6DDEB]">
+                                            <p className="text-xs text-[#7C8493] mb-1">Feedback</p>
+                                            <p className="text-sm text-[#25324B]">
+                                              <span className="font-semibold">{interview.feedback.reviewer_name}:</span>{' '}
+                                              {interview.feedback.comment}
+                                              {typeof interview.feedback.rating === 'number' && (
+                                                <span className="ml-2 text-[#FFB836]">({interview.feedback.rating}/5)</span>
+                                              )}
+                                            </p>
+                                          </div>
+                                        )}
                                       </div>
-                                    )}
+                                    ))}
                                   </div>
-                                </div>
+                                ) : (
+                                  <p className="text-sm text-[#7C8493] text-center py-4">No interviews scheduled</p>
+                                )}
+                                <Button
+                                  variant="outline"
+                                  className="w-full border-[#CCCCF5] text-[#4640DE] bg-[#F8F8FD]"
+                                  onClick={handleMoveToNextStep}
+                                >
+                                  Move To Next Step
+                                </Button>
                               </div>
                             ) : (
                               <div className="space-y-4">
-                                {application.stage === 'shortlisted' && (
+                                {application.stage === 'shortlisted' ? (
                                   <Button
                                     variant="outline"
                                     className="w-full border-[#CCCCF5] text-[#4640DE] bg-[#F8F8FD]"
@@ -961,15 +977,14 @@ const ApplicationDetails = () => {
                                   >
                                     Schedule Interview
                                   </Button>
-                                )}
-                                {(application.stage === 'applied' || application.stage === 'shortlisted') && (
+                                ) : (
                                   <Button
                                     variant="outline"
                                     className="w-full border-[#CCCCF5] text-[#4640DE] bg-[#F8F8FD]"
                                     onClick={handleMoveToNextStep}
                                   >
                                     Move To Next Step
-                                  </Button>
+                                  </Button> 
                                 )}
                               </div>
                             )}
@@ -981,20 +996,6 @@ const ApplicationDetails = () => {
 
                       {/* Notes */}
                       <div>
-                        <div className="flex items-center justify-between mb-4">
-                          <h3 className="text-base font-semibold text-[#25324B]">Notes</h3>
-                          {application.stage === 'interview' && (
-                            <Button
-                              variant="ghost"
-                              className="text-[#4640DE] hover:text-[#4640DE] hover:bg-[#F8F8FD]"
-                              onClick={() => setAddNotesOpen(true)}
-                            >
-                              <Plus className="w-4 h-4 mr-2" />
-                              Add Notes
-                            </Button>
-                          )}
-                        </div>
-
                         <div className="space-y-4">
                           {application.hiring_progress?.notes && application.hiring_progress.notes.length > 0 ? (
                             application.hiring_progress.notes.map((note) => (
@@ -1165,9 +1166,15 @@ const ApplicationDetails = () => {
                                           </Button>
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent align="end">
-                                          <DropdownMenuItem onClick={() => handleOpenEditSchedule(interview)}>Edit Schedule</DropdownMenuItem>
-                                          <DropdownMenuItem onClick={() => handleCancelInterview(interview.id)}>Cancel Interview</DropdownMenuItem>
-                                          <DropdownMenuItem>View Details</DropdownMenuItem>
+                                          {interview.status !== 'completed' && interview.status !== 'cancelled' ? (
+                                            <>
+                                              <DropdownMenuItem onClick={() => handleOpenEditSchedule(interview)}>Edit Schedule</DropdownMenuItem>
+                                              <DropdownMenuItem onClick={() => handleCancelInterview(interview.id)}>Cancel Interview</DropdownMenuItem>
+                                              <DropdownMenuItem onClick={() => handleMarkAsCompleted(interview.id)}>Mark as Completed</DropdownMenuItem>
+                                            </>
+                                          ) : (
+                                            <DropdownMenuItem>View Details</DropdownMenuItem>
+                                          )}
                                         </DropdownMenuContent>
                                       </DropdownMenu>
                                     </div>
@@ -1298,69 +1305,45 @@ const ApplicationDetails = () => {
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="rating">Rating</Label>
-              <Select value={ratingForm.rating} onValueChange={(value) => setRatingForm({ ...ratingForm, rating: value })}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select rating" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="1">1 - Poor</SelectItem>
-                  <SelectItem value="2">2 - Fair</SelectItem>
-                  <SelectItem value="3">3 - Good</SelectItem>
-                  <SelectItem value="4">4 - Very Good</SelectItem>
-                  <SelectItem value="5">5 - Excellent</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="comment">Comment</Label>
-              <Textarea
-                id="comment"
-                value={ratingForm.comment}
-                onChange={(e) => setRatingForm({ ...ratingForm, comment: e.target.value })}
-                placeholder="Add your comment..."
-                rows={4}
-              />
+              <Label htmlFor="rating" className="text-center block">Rating</Label>
+              <div className="flex items-center justify-center gap-2">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <button
+                    key={star}
+                    type="button"
+                    onClick={() => setRatingForm({ rating: star })}
+                    className="focus:outline-none transition-transform hover:scale-110"
+                  >
+                    <Star
+                      className={`w-10 h-10 ${
+                        star <= ratingForm.rating
+                          ? 'text-[#FFB836] fill-[#FFB836]'
+                          : 'text-gray-300'
+                      }`}
+                    />
+                  </button>
+                ))}
+              </div>
+              {ratingForm.rating > 0 && (
+                <p className="text-center text-sm text-[#7C8493] mt-2">
+                  {ratingForm.rating} out of 5 stars
+                </p>
+              )}
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setGiveRatingOpen(false)}>
+            <Button variant="outline" onClick={() => {
+              setGiveRatingOpen(false)
+              setRatingForm({ rating: 0 })
+            }}>
               Cancel
             </Button>
-            <Button onClick={handleGiveRating} className="bg-[#4640DE] hover:bg-[#4640DE]/90">
+            <Button 
+              onClick={handleGiveRating} 
+              className="bg-[#4640DE] hover:bg-[#4640DE]/90"
+              disabled={ratingForm.rating === 0}
+            >
               Submit Rating
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Add Notes Modal */}
-      <Dialog open={addNotesOpen} onOpenChange={setAddNotesOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Add Note</DialogTitle>
-            <DialogDescription>
-              Add a note about this applicant
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="noteContent">Note</Label>
-              <Textarea
-                id="noteContent"
-                value={noteForm.content}
-                onChange={(e) => setNoteForm({ content: e.target.value })}
-                placeholder="Enter your note..."
-                rows={5}
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setAddNotesOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleAddNote} className="bg-[#4640DE] hover:bg-[#4640DE]/90">
-              Add Note
             </Button>
           </DialogFooter>
         </DialogContent>

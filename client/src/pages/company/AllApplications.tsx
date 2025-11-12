@@ -46,6 +46,7 @@ const AllApplications = () => {
   const [applications, setApplications] = useState<Application[]>([])
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('')
   const [stage, setStage] = useState<string>('all')
   const [pagination, setPagination] = useState({
     page: 1,
@@ -58,7 +59,7 @@ const AllApplications = () => {
     try {
       setLoading(true)
 
-      const res = await jobApplicationApi.getCompanyApplications({ page, limit, search, stage: stageFilter && stageFilter !== 'all' ? stageFilter : undefined })
+      const res = await jobApplicationApi.getCompanyApplications({ page, limit, search, stage: stageFilter && stageFilter !== 'all' ? stageFilter as 'applied' | 'shortlisted' | 'interview' | 'rejected' | 'hired' : undefined })
       const data = res?.data?.data || res?.data
       const list = (data?.applications || []).map((a: any) => ({
         _id: a.id,
@@ -87,19 +88,31 @@ const AllApplications = () => {
     }
   }
 
+  // Debounce search query
   useEffect(() => {
-    fetchApplications(pagination.page, pagination.limit, searchQuery, stage)
-  }, [pagination.page, stage])
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery)
+    }, 400)
+
+    return () => {
+      clearTimeout(timer)
+    }
+  }, [searchQuery])
+
+  useEffect(() => {
+    fetchApplications(pagination.page, pagination.limit, debouncedSearchQuery, stage)
+  }, [pagination.page, stage, debouncedSearchQuery])
 
   const handleSearch = (query: string) => {
     setSearchQuery(query)
-    fetchApplications(1, pagination.limit, query, stage)
+    // Reset to page 1 when searching
+    setPagination((p) => ({ ...p, page: 1 }))
   }
 
   const handleLimitChange = (value: string) => {
     const nextLimit = Number(value) || 10
     setPagination((p) => ({ ...p, page: 1, limit: nextLimit }))
-    fetchApplications(1, nextLimit, searchQuery, stage)
+    fetchApplications(1, nextLimit, debouncedSearchQuery, stage)
   }
 
   const formatDate = (dateString: string) => {
@@ -142,7 +155,7 @@ const AllApplications = () => {
 
   const handlePageChange = (newPage: number) => {
     if (newPage >= 1 && newPage <= pagination.totalPages) {
-      fetchApplications(newPage, pagination.limit, searchQuery)
+      fetchApplications(newPage, pagination.limit, debouncedSearchQuery, stage)
     }
   }
 
