@@ -1,4 +1,4 @@
-<h1 align="center">🌐 ZeekNet – Modern Job Portal Platform</h1>
+<h1 align="center">ZeekNet – Job Portal Platform</h1>
 
 <p align="center">
   A full-stack, clean-architecture job portal built with <b>React, TypeScript, Node.js</b>, and <b>MongoDB</b>.
