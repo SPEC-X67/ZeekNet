@@ -5,6 +5,7 @@ import { CompanyVerificationRepository } from '../database/mongodb/repositories/
 import { JobPostingRepository } from '../database/mongodb/repositories/job-posting.repository';
 import { JobCategoryRepository } from '../database/mongodb/repositories/job-category.repository';
 import { SkillRepository } from '../database/mongodb/repositories/skill.repository';
+import { JobRoleRepository } from '../database/mongodb/repositories/job-role.repository';
 import { BcryptPasswordHasher } from '../security/bcrypt-password-hasher';
 import { JwtTokenService } from '../security/jwt-token-service';
 import { RedisOtpService } from '../database/redis/services/redis-otp-service';
@@ -33,10 +34,16 @@ import { GetAllSkillsUseCase } from '../../application/use-cases/admin/get-all-s
 import { GetSkillByIdUseCase } from '../../application/use-cases/admin/get-skill-by-id.use-case';
 import { UpdateSkillUseCase } from '../../application/use-cases/admin/update-skill.use-case';
 import { DeleteSkillUseCase } from '../../application/use-cases/admin/delete-skill.use-case';
+import { CreateJobRoleUseCase } from '../../application/use-cases/admin/create-job-role.use-case';
+import { GetAllJobRolesUseCase } from '../../application/use-cases/admin/get-all-job-roles.use-case';
+import { GetJobRoleByIdUseCase } from '../../application/use-cases/admin/get-job-role-by-id.use-case';
+import { UpdateJobRoleUseCase } from '../../application/use-cases/admin/update-job-role.use-case';
+import { DeleteJobRoleUseCase } from '../../application/use-cases/admin/delete-job-role.use-case';
 import { AdminController } from '../../presentation/controllers/admin/admin.controller';
 import { AdminJobController } from '../../presentation/controllers/admin/admin-job.controller';
 import { AdminJobCategoryController } from '../../presentation/controllers/admin/admin-job-category.controller';
 import { AdminSkillController } from '../../presentation/controllers/admin/admin-skill.controller';
+import { AdminJobRoleController } from '../../presentation/controllers/admin/admin-job-role.controller';
 
 const userRepository = new UserRepository();
 const companyProfileRepository = new CompanyProfileRepository();
@@ -45,6 +52,7 @@ const companyVerificationRepository = new CompanyVerificationRepository();
 const jobPostingRepository = new JobPostingRepository();
 const jobCategoryRepository = new JobCategoryRepository();
 const skillRepository = new SkillRepository();
+const jobRoleRepository = new JobRoleRepository();
 
 const passwordHasher = new BcryptPasswordHasher();
 const tokenService = new JwtTokenService();
@@ -98,4 +106,12 @@ const deleteSkillUseCase = new DeleteSkillUseCase(skillRepository);
 
 const adminSkillController = new AdminSkillController(createSkillUseCase, getAllSkillsUseCase, getSkillByIdUseCase, updateSkillUseCase, deleteSkillUseCase);
 
-export { adminController, adminJobController, adminJobCategoryController, adminSkillController };
+const createJobRoleUseCase = new CreateJobRoleUseCase(jobRoleRepository);
+const getAllJobRolesUseCase = new GetAllJobRolesUseCase(jobRoleRepository);
+const getJobRoleByIdUseCase = new GetJobRoleByIdUseCase(jobRoleRepository);
+const updateJobRoleUseCase = new UpdateJobRoleUseCase(jobRoleRepository);
+const deleteJobRoleUseCase = new DeleteJobRoleUseCase(jobRoleRepository);
+
+const adminJobRoleController = new AdminJobRoleController(createJobRoleUseCase, getAllJobRolesUseCase, getJobRoleByIdUseCase, updateJobRoleUseCase, deleteJobRoleUseCase);
+
+export { adminController, adminJobController, adminJobCategoryController, adminSkillController, adminJobRoleController };

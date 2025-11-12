@@ -26,8 +26,10 @@ import JobManagement from './pages/admin/JobManagement'
 import JobView from './pages/admin/JobView'
   import CategoryManagement from './pages/admin/CategoryManagement'
   import SkillManagement from './pages/admin/SkillManagement'
+  import JobRoleManagement from './pages/admin/JobRoleManagement'
   import CompanyProfileView from './pages/admin/CompanyProfileView'
   import SeekerProfileView from './pages/admin/SeekerProfileView'
+  import PricePlanManagement from './pages/admin/PricePlanManagement'
 import ProtectedRoute from './components/common/ProtectedRoute'
 import AuthRedirect from './components/common/AuthRedirect'
 import { UserRole } from './constants/enums'
@@ -116,6 +118,11 @@ function App() {
               <SkillManagement />
             </ProtectedRoute>
           } />
+            <Route path="/admin/job-roles" element={
+            <ProtectedRoute allowedRoles={[UserRole.ADMIN]}>
+              <JobRoleManagement />
+            </ProtectedRoute>
+          } />
             <Route path="/admin/company-profile-view" element={
               <ProtectedRoute allowedRoles={[UserRole.ADMIN]}>
                 <CompanyProfileView />
@@ -124,6 +131,11 @@ function App() {
             <Route path="/admin/seeker-profile-view" element={
               <ProtectedRoute allowedRoles={[UserRole.ADMIN]}>
                 <SeekerProfileView />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/price-plans" element={
+              <ProtectedRoute allowedRoles={[UserRole.ADMIN]}>
+                <PricePlanManagement />
               </ProtectedRoute>
             } />
           

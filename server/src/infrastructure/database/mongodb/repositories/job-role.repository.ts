@@ -1,12 +1,12 @@
-import { ISkillRepository, PaginatedSkills, SkillQueryFilters } from '../../../../domain/interfaces/repositories/skill/ISkillRepository';
-import { Skill } from '../../../../domain/entities/skill.entity';
-import { SkillModel, SkillDocument } from '../models/skill.model';
+import { IJobRoleRepository, PaginatedJobRoles, JobRoleQueryFilters } from '../../../../domain/interfaces/repositories/job-role/IJobRoleRepository';
+import { JobRole } from '../../../../domain/entities/job-role.entity';
+import { JobRoleModel, JobRoleDocument } from '../models/job-role.model';
 import { Types } from 'mongoose';
 
-export class SkillRepository implements ISkillRepository {
-  protected model = SkillModel;
+export class JobRoleRepository implements IJobRoleRepository {
+  protected model = JobRoleModel;
 
-  protected mapToEntity(document: SkillDocument): Skill {
+  protected mapToEntity(document: JobRoleDocument): JobRole {
     return {
       _id: String(document._id),
       name: document.name,
@@ -15,14 +15,14 @@ export class SkillRepository implements ISkillRepository {
     };
   }
 
-  async create(name: string): Promise<Skill> {
+  async create(name: string): Promise<JobRole> {
     const document = await this.model.create({
       name: name.trim(),
     });
     return this.mapToEntity(document);
   }
 
-  async findById(id: string): Promise<Skill | null> {
+  async findById(id: string): Promise<JobRole | null> {
     if (!Types.ObjectId.isValid(id)) {
       return null;
     }
@@ -34,7 +34,7 @@ export class SkillRepository implements ISkillRepository {
     return this.mapToEntity(document);
   }
 
-  async findByName(name: string): Promise<Skill | null> {
+  async findByName(name: string): Promise<JobRole | null> {
     // Case-insensitive search - escape special regex characters
     const escapedName = name.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     const document = await this.model.findOne({ 
@@ -46,7 +46,7 @@ export class SkillRepository implements ISkillRepository {
     return this.mapToEntity(document);
   }
 
-  async findAll(filters: SkillQueryFilters): Promise<PaginatedSkills> {
+  async findAll(filters: JobRoleQueryFilters): Promise<PaginatedJobRoles> {
     const page = filters.page || 1;
     const limit = filters.limit || 10;
     const skip = (page - 1) * limit;
@@ -66,11 +66,11 @@ export class SkillRepository implements ISkillRepository {
       this.model.countDocuments(query),
     ]);
 
-    const skills = documents.map((doc) => this.mapToEntity(doc));
+    const jobRoles = documents.map((doc) => this.mapToEntity(doc));
     const totalPages = Math.ceil(total / limit);
 
     return {
-      skills,
+      jobRoles,
       total,
       page,
       limit,
@@ -78,7 +78,7 @@ export class SkillRepository implements ISkillRepository {
     };
   }
 
-  async update(id: string, name: string): Promise<Skill | null> {
+  async update(id: string, name: string): Promise<JobRole | null> {
     if (!Types.ObjectId.isValid(id)) {
       return null;
     }
@@ -105,3 +105,4 @@ export class SkillRepository implements ISkillRepository {
     return result !== null;
   }
 }
+

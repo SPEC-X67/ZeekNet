@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { adminController, adminJobController, adminJobCategoryController, adminSkillController } from '../../infrastructure/di/adminDi';
+import { adminController, adminJobController, adminJobCategoryController, adminSkillController, adminJobRoleController } from '../../infrastructure/di/adminDi';
 import { requireAdmin } from '../middleware/admin.middleware';
 import { authenticateToken } from '../middleware/auth.middleware';
 import { validateQuery, validateBody } from '../middleware/validation.middleware';
@@ -8,6 +8,7 @@ import { GetAllCompaniesDto, BlockCompanyDto } from '../../application/dto/admin
 import { AdminGetAllJobsDto } from '../../application/dto/admin/admin-job.dto';
 import { GetAllJobCategoriesDto, CreateJobCategoryDto, UpdateJobCategoryDto } from '../../application/dto/admin/job-category.dto';
 import { GetAllSkillsDto, CreateSkillDto, UpdateSkillDto } from '../../application/dto/admin/skill-management.dto';
+import { GetAllJobRolesDto, CreateJobRoleDto, UpdateJobRoleDto } from '../../application/dto/admin/job-role-management.dto';
 
 export class AdminRouter {
   public router: Router;
@@ -47,5 +48,11 @@ export class AdminRouter {
     this.router.get('/skills/:id', adminSkillController.getSkillById);
     this.router.put('/skills/:id', validateBody(UpdateSkillDto), adminSkillController.updateSkill);
     this.router.delete('/skills/:id', adminSkillController.deleteSkill);
+
+    this.router.get('/job-roles', validateQuery(GetAllJobRolesDto), adminJobRoleController.getAllJobRoles);
+    this.router.post('/job-roles', validateBody(CreateJobRoleDto), adminJobRoleController.createJobRole);
+    this.router.get('/job-roles/:id', adminJobRoleController.getJobRoleById);
+    this.router.put('/job-roles/:id', validateBody(UpdateJobRoleDto), adminJobRoleController.updateJobRole);
+    this.router.delete('/job-roles/:id', adminJobRoleController.deleteJobRole);
   }
 }

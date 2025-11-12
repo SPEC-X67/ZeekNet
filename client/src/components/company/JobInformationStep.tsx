@@ -1,9 +1,11 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { X, Plus, IndianRupee } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Combobox, type ComboboxOption } from "@/components/ui/combobox";
+import { publicApi, type JobCategory, type Skill, type JobRole } from "@/api/public.api";
 import type { JobPostingStepProps } from "../../types/job-posting";
 
 const JobInformationStep: React.FC<JobPostingStepProps> = ({
@@ -14,6 +16,12 @@ const JobInformationStep: React.FC<JobPostingStepProps> = ({
   const [newSkill, setNewSkill] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [categoriesOptions, setCategoriesOptions] = useState<ComboboxOption[]>([]);
+  const [skillsOptions, setSkillsOptions] = useState<ComboboxOption[]>([]);
+  const [jobRolesOptions, setJobRolesOptions] = useState<ComboboxOption[]>([]);
+  const [categoriesLoading, setCategoriesLoading] = useState(false);
+  const [skillsLoading, setSkillsLoading] = useState(false);
+  const [showJobRoleSuggestions, setShowJobRoleSuggestions] = useState(false);
 
   const employmentTypes = [
     { value: "full-time", label: "Full-Time" },
@@ -23,17 +31,86 @@ const JobInformationStep: React.FC<JobPostingStepProps> = ({
     { value: "internship", label: "Internship" }
   ];
 
-  const categoryOptions = [
-    { value: "tech", label: "Technology" },
-    { value: "marketing", label: "Marketing" },
-    { value: "sales", label: "Sales" },
-    { value: "design", label: "Design" },
-    { value: "finance", label: "Finance" },
-    { value: "hr", label: "Human Resources" },
-    { value: "operations", label: "Operations" },
-    { value: "customer-service", label: "Customer Service" },
-    { value: "engineering", label: "Engineering" }
-  ];
+  const fetchCategories = async (searchTerm?: string) => {
+    try {
+      setCategoriesLoading(true);
+      const response = await publicApi.getAllJobCategories({
+        limit: 20,
+        search: searchTerm,
+      });
+      if (response.success && response.data) {
+        const options: ComboboxOption[] = response.data.map((categoryName: string) => ({
+          value: categoryName,
+          label: categoryName,
+        }));
+        setCategoriesOptions(options);
+      }
+    } catch (error) {
+      console.error('Failed to fetch categories:', error);
+    } finally {
+      setCategoriesLoading(false);
+    }
+  };
+
+  const fetchSkills = async (searchTerm?: string) => {
+    try {
+      setSkillsLoading(true);
+      const response = await publicApi.getAllSkills({
+        limit: 20,
+        search: searchTerm,
+      });
+      if (response.success && response.data) {
+        const options: ComboboxOption[] = response.data.map((skillName: string) => ({
+          value: skillName,
+          label: skillName,
+        }));
+        setSkillsOptions(options);
+      }
+    } catch (error) {
+      console.error('Failed to fetch skills:', error);
+    } finally {
+      setSkillsLoading(false);
+    }
+  };
+
+  const fetchJobRoles = async (searchTerm?: string) => {
+    try {
+      const response = await publicApi.getAllJobRoles({
+        limit: 20,
+        search: searchTerm,
+      });
+      if (response.success && response.data) {
+        const options: ComboboxOption[] = response.data.map((roleName: string) => ({
+          value: roleName,
+          label: roleName,
+        }));
+        setJobRolesOptions(options);
+      }
+    } catch (error) {
+      console.error('Failed to fetch job roles:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchCategories();
+    fetchSkills();
+    fetchJobRoles();
+  }, []);
+
+  const handleTitleChange = (value: string) => {
+    handleFieldChange('title', value);
+    if (value.length >= 2) {
+      fetchJobRoles(value);
+      setShowJobRoleSuggestions(true);
+    } else {
+      setShowJobRoleSuggestions(false);
+    }
+  };
+
+  const handleJobRoleSelect = (roleName: string) => {
+    handleFieldChange('title', roleName);
+    setShowJobRoleSuggestions(false);
+  };
 
   const handleEmploymentTypeToggle = (type: string) => {
     const updatedTypes = data.employmentTypes.includes(type)
@@ -43,13 +120,10 @@ const JobInformationStep: React.FC<JobPostingStepProps> = ({
     onDataChange({ employmentTypes: updatedTypes });
   };
 
-  const handleAddSkill = () => {
-    if (newSkill.trim() && !data.skillsRequired.includes(newSkill.trim())) {
-      onDataChange({
-        skillsRequired: [...data.skillsRequired, newSkill.trim()]
-      });
-      setNewSkill("");
-    }
+  const handleSkillsChange = (selectedSkills: string[]) => {
+    onDataChange({
+      skillsRequired: selectedSkills
+    });
   };
 
   const handleRemoveSkill = (skillToRemove: string) => {
@@ -67,22 +141,13 @@ const JobInformationStep: React.FC<JobPostingStepProps> = ({
     });
   };
 
-  const handleAddCategory = () => {
-    if (selectedCategory && !data.categoryIds.includes(selectedCategory)) {
-      onDataChange({
-        categoryIds: [...data.categoryIds, selectedCategory]
-      });
-      setSelectedCategory("");
-      if (errors.categoryIds) {
-        setErrors(prev => ({ ...prev, categoryIds: "" }));
-      }
-    }
-  };
-
-  const handleRemoveCategory = (categoryToRemove: string) => {
+  const handleCategoriesChange = (selectedCategoryIds: string[]) => {
     onDataChange({
-      categoryIds: data.categoryIds.filter(category => category !== categoryToRemove)
+      categoryIds: selectedCategoryIds
     });
+    if (errors.categoryIds && selectedCategoryIds.length > 0) {
+      setErrors(prev => ({ ...prev, categoryIds: "" }));
+    }
   };
 
   const validateFields = () => {
@@ -162,16 +227,38 @@ const JobInformationStep: React.FC<JobPostingStepProps> = ({
           </h3>
           <p className="text-sm text-[#7C8493]">Job titles must be describe one position</p>
         </div>
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-1 relative">
           <Input
             placeholder="e.g. Software Engineer"
             value={data.title}
-            onChange={(e) => handleFieldChange('title', e.target.value)}
+            onChange={(e) => handleTitleChange(e.target.value)}
+            onFocus={() => {
+              if (data.title.length >= 2) {
+                setShowJobRoleSuggestions(true);
+              }
+            }}
+            onBlur={() => {
+              // Delay to allow click on suggestion
+              setTimeout(() => setShowJobRoleSuggestions(false), 200);
+            }}
             className={`w-[387px] h-11 px-4 py-3 border rounded-[10px] ${errors.title ? 'border-red-500' : 'border-[#D6DDEB]'}`}
           />
           <p className="text-xs text-[#7C8493]">At least 5 characters</p>
           {errors.title && (
             <p className="text-xs text-red-500 mt-1">{errors.title}</p>
+          )}
+          {showJobRoleSuggestions && jobRolesOptions.length > 0 && (
+            <div className="absolute top-full left-0 z-50 w-[387px] mt-1 bg-white border border-[#D6DDEB] rounded-[10px] shadow-lg max-h-60 overflow-auto">
+              {jobRolesOptions.map((role) => (
+                <div
+                  key={role.value}
+                  onClick={() => handleJobRoleSelect(role.value)}
+                  className="px-4 py-2 hover:bg-[#F8F9FF] cursor-pointer text-sm text-[#25324B]"
+                >
+                  {role.label}
+                </div>
+              ))}
+            </div>
           )}
         </div>
       </div>
@@ -280,61 +367,24 @@ const JobInformationStep: React.FC<JobPostingStepProps> = ({
           <h3 className="text-sm font-semibold text-[#25324B]">
             Categories <span className="text-red-500">*</span>
           </h3>
-          <p className="text-sm text-[#7C8493]">Add job categories one by one</p>
+          <p className="text-sm text-[#7C8493]">Select job categories</p>
         </div>
         <div className="flex flex-col gap-3">
-          <Label className="text-sm font-semibold text-[#515B6F]">Add Job Categories</Label>
-          
-          {}
-          <div className="flex items-center gap-2">
-            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-              <SelectTrigger className="w-[200px] h-11 px-4 py-3 border border-[#D6DDEB] rounded-[10px]">
-                <SelectValue placeholder="Select category" />
-              </SelectTrigger>
-              <SelectContent>
-                {categoryOptions
-                  .filter(category => !data.categoryIds.includes(category.value))
-                  .map((category) => (
-                    <SelectItem key={category.value} value={category.value}>
-                      {category.label}
-                    </SelectItem>
-                  ))}
-              </SelectContent>
-            </Select>
-            <Button
-              type="button"
-              onClick={handleAddCategory}
-              disabled={!selectedCategory}
-              className="h-11 px-4 py-2 bg-[#4640DE] text-white rounded-[10px] hover:bg-[#3A35C7] disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <Plus className="h-4 w-4" />
-            </Button>
-          </div>
-
-          {}
-          {data.categoryIds.length > 0 && (
-            <div className="flex flex-wrap gap-2">
-              {data.categoryIds.map((categoryId) => {
-                const category = categoryOptions.find(cat => cat.value === categoryId);
-                return (
-                  <div
-                    key={categoryId}
-                    className="flex items-center gap-2 bg-[#F8F9FF] border border-[#D6DDEB] rounded-[10px] px-3 py-2"
-                  >
-                    <span className="text-sm text-[#25324B]">{category?.label}</span>
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveCategory(categoryId)}
-                      className="text-[#7C8493] hover:text-red-500"
-                    >
-                      <X className="h-4 w-4" />
-                    </button>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-
+          <Label className="text-sm font-semibold text-[#515B6F]">Job Categories</Label>
+          <Combobox
+            options={categoriesOptions}
+            value={data.categoryIds}
+            onChange={handleCategoriesChange}
+            placeholder="Type to search categories..."
+            multiple={true}
+            loading={categoriesLoading}
+            onSearch={(searchTerm) => {
+              if (searchTerm.length >= 2 || searchTerm.length === 0) {
+                fetchCategories(searchTerm);
+              }
+            }}
+            className="w-full"
+          />
           {errors.categoryIds && (
             <p className="text-xs text-red-500 mt-1">{errors.categoryIds}</p>
           )}
@@ -348,45 +398,23 @@ const JobInformationStep: React.FC<JobPostingStepProps> = ({
       <div className="flex gap-30 w-full">
         <div className="flex flex-col gap-1">
           <h3 className="text-sm font-semibold text-[#25324B]">Required Skills</h3>
-          <p className="text-sm text-[#7C8493]">Add required skills for the job</p>
+          <p className="text-sm text-[#7C8493]">Select required skills for the job</p>
         </div>
         <div className="flex flex-col gap-3">
-          <div className="flex items-center gap-2">
-            <Input
-              placeholder="Enter skill"
-              value={newSkill}
-              onChange={(e) => setNewSkill(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && handleAddSkill()}
-              className="w-[200px] h-9 px-3 py-2 border border-[#D6DDEB] rounded-[10px] text-sm"
-            />
-            <Button
-              type="button"
-              onClick={handleAddSkill}
-              variant="companyOutline"
-              className="w-[113px] h-9 border border-[#CCCCF5] rounded-[10px] text-[#4640DE] hover:bg-[#CCCCF5]"
-            >
-              <Plus className="h-3 w-3 mr-2" />
-              Add Skills
-            </Button>
-          </div>
-          
-          <div className="flex flex-wrap gap-3">
-            {data.skillsRequired.map((skill) => (
-              <div
-                key={skill}
-                className="flex items-center gap-2 px-3 py-1 bg-[#F8F8FD] rounded-lg"
-              >
-                <span className="text-sm text-[#4640DE]">{skill}</span>
-                <Button
-                  onClick={() => handleRemoveSkill(skill)}
-                  variant="ghost"
-                  className="hover:bg-gray-200 rounded-full p-0.5"
-                >
-                  <X className="h-4 w-4 text-[#4640DE]" />
-                </Button>
-              </div>
-            ))}
-          </div>
+          <Combobox
+            options={skillsOptions}
+            value={data.skillsRequired}
+            onChange={handleSkillsChange}
+            placeholder="Type to search skills..."
+            multiple={true}
+            loading={skillsLoading}
+            onSearch={(searchTerm) => {
+              if (searchTerm.length >= 2 || searchTerm.length === 0) {
+                fetchSkills(searchTerm);
+              }
+            }}
+            className="w-full"
+          />
         </div>
       </div>
 

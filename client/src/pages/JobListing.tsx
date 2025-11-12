@@ -1,17 +1,18 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { 
   ChevronLeft,
   ChevronRight,
   Loader2,
   AlertCircle,
   Briefcase,
-  Home
+  Search,
+  MapPin,
+  Crosshair
 } from "lucide-react";
 import JobCard from "@/components/jobs/JobCard";
-import JobSearchFilters from "@/components/jobs/JobSearchFilters";
+import SidebarFilters from "@/components/jobs/SidebarFilters";
 import { jobApi } from "@/api/job.api";
 import type { JobPostingResponse, JobPostingQuery } from "@/types/job";
 import PublicHeader from "@/components/layouts/PublicHeader";
@@ -21,7 +22,6 @@ const JobListing = () => {
   const navigate = useNavigate();
   const [jobs, setJobs] = useState<JobPostingResponse[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchLoading, setSearchLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [pagination, setPagination] = useState({
     page: 1,
@@ -30,7 +30,8 @@ const JobListing = () => {
     totalPages: 0,
   });
   const [currentQuery, setCurrentQuery] = useState<JobPostingQuery>({});
-  const [viewMode] = useState<'grid' | 'list'>('grid');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [location, setLocation] = useState("");
 
   useEffect(() => {
     fetchJobs();
@@ -41,20 +42,24 @@ const JobListing = () => {
       setLoading(true);
       setError(null);
       
-      const searchQuery = {
+      const response = await jobApi.getAllJobs({
         ...query,
         page,
         limit: pagination.limit,
-      };
-
-      const response = await jobApi.getAllJobs(searchQuery);
+      });
       
       if (response.success && response.data) {
-        setJobs(response.data.jobs);
-        setPagination(response.data.pagination);
+        setJobs(response.data.jobs || []);
+        setPagination({
+          page: response.data.pagination?.page || page,
+          limit: response.data.pagination?.limit || pagination.limit,
+          total: response.data.pagination?.total || 0,
+          totalPages: response.data.pagination?.totalPages || 0,
+        });
         setCurrentQuery(query);
       } else {
         setError(response.message || 'Failed to fetch jobs');
+        setJobs([]);
       }
     } catch {
       setError('An unexpected error occurred');
@@ -63,10 +68,20 @@ const JobListing = () => {
     }
   };
 
-  const handleSearch = async (query: JobPostingQuery) => {
-    setSearchLoading(true);
-    await fetchJobs(query, 1);
-    setSearchLoading(false);
+  const handleSearch = async (filterQuery: JobPostingQuery) => {
+    await fetchJobs({
+      ...filterQuery,
+      search: searchQuery.trim() || undefined,
+      location: location.trim() || undefined,
+    }, 1);
+  };
+
+  const handleTextSearch = async () => {
+    await fetchJobs({
+      ...currentQuery,
+      search: searchQuery.trim() || undefined,
+      location: location.trim() || undefined,
+    }, 1);
   };
 
   const handlePageChange = (page: number) => {
@@ -74,61 +89,57 @@ const JobListing = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleViewDetails = (jobId: string) => {
-    navigate(`/jobs/${jobId}`);
-  };
-
   const renderPagination = () => {
-    if (pagination.totalPages <= 1) return null;
-
-    const pages = [];
-    const currentPage = pagination.page;
-    const totalPages = pagination.totalPages;
-
-    pages.push(
-      <button
-        key="prev"
-        onClick={() => handlePageChange(currentPage - 1)}
-        disabled={currentPage === 1}
-        className="w-12 h-12 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        <ChevronLeft className="w-4 h-4 text-gray-400" />
-      </button>
-    );
-
-    const startPage = Math.max(1, currentPage - 2);
-    const endPage = Math.min(totalPages, currentPage + 2);
-
-    for (let i = startPage; i <= endPage; i++) {
-      pages.push(
-        <button
-          key={i}
-          onClick={() => handlePageChange(i)}
-          className={`w-12 h-12 rounded-full flex items-center justify-center text-sm font-medium transition-colors ${
-            i === currentPage
-              ? 'bg-primary text-white'
-              : 'text-gray-600 hover:bg-gray-50'
-          }`}
-        >
-          {i.toString().padStart(2, '0')}
-        </button>
-      );
+    if (!pagination.totalPages || pagination.totalPages <= 1 || jobs.length === 0) {
+      return null;
     }
 
-    pages.push(
-      <button
-        key="next"
-        onClick={() => handlePageChange(currentPage + 1)}
-        disabled={currentPage === totalPages}
-        className="w-12 h-12 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center hover:bg-primary/20 disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        <ChevronRight className="w-4 h-4 text-primary" />
-      </button>
-    );
+    const currentPage = pagination.page || 1;
+    const totalPages = pagination.totalPages || 1;
+    const startPage = Math.max(1, currentPage - 1);
+    const endPage = Math.min(totalPages, currentPage + 1);
+
+    const pageNumbers = [];
+    for (let i = startPage; i <= endPage; i++) {
+      pageNumbers.push(i);
+    }
 
     return (
-      <div className="flex items-center justify-center gap-2 mt-8">
-        {pages}
+      <div className="flex flex-col items-center gap-4 mt-8">
+        <div className="flex items-center justify-center gap-2">
+          <button
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            <ChevronLeft className="w-4 h-4 text-gray-400" />
+          </button>
+          
+          {pageNumbers.map((page) => (
+            <button
+              key={page}
+              onClick={() => handlePageChange(page)}
+              className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-colors ${
+                page === currentPage
+                  ? 'bg-[#3570E2] text-white'
+                  : 'text-[#394047] hover:bg-gray-50'
+              }`}
+            >
+              {page.toString().padStart(2, '0')}
+            </button>
+          ))}
+          
+          <button
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            <ChevronRight className="w-4 h-4 text-gray-400" />
+          </button>
+        </div>
+        <div className="text-sm text-[#394047]">
+          Page {currentPage} of {totalPages} ({pagination.total || 0} jobs)
+        </div>
       </div>
     );
   };
@@ -136,8 +147,8 @@ const JobListing = () => {
   const renderLoadingState = () => (
     <div className="flex items-center justify-center py-12">
       <div className="flex flex-col items-center space-y-4">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
-        <p className="text-gray-600">Loading jobs...</p>
+        <Loader2 className="w-8 h-8 animate-spin text-[#3570E2]" />
+        <p className="text-[#394047]">Loading jobs...</p>
       </div>
     </div>
   );
@@ -146,9 +157,9 @@ const JobListing = () => {
     <div className="flex items-center justify-center py-12">
       <div className="flex flex-col items-center space-y-4 text-center">
         <AlertCircle className="w-12 h-12 text-red-500" />
-        <h3 className="text-lg font-semibold text-gray-900">Oops! Something went wrong</h3>
-        <p className="text-gray-600 max-w-md">{error}</p>
-        <Button onClick={() => fetchJobs()} className="mt-4">
+        <h3 className="text-lg font-semibold text-[#141414]">Oops! Something went wrong</h3>
+        <p className="text-[#394047] max-w-md">{error}</p>
+        <Button onClick={() => fetchJobs()} className="mt-4 bg-[#3570E2] hover:bg-[#3570E2]/90">
           Try Again
         </Button>
       </div>
@@ -159,90 +170,122 @@ const JobListing = () => {
     <div className="flex items-center justify-center py-12">
       <div className="flex flex-col items-center space-y-4 text-center">
         <Briefcase className="w-12 h-12 text-gray-400" />
-        <h3 className="text-lg font-semibold text-gray-900">No jobs found</h3>
-        <p className="text-gray-600 max-w-md">
-          We couldn't find any jobs matching your criteria. Try adjusting your search or filters.
+        <h3 className="text-lg font-semibold text-[#141414]">No jobs found</h3>
+        <p className="text-[#394047] max-w-md">
+          We couldn't find any jobs matching your criteria. Try adjusting your filters.
         </p>
         <Button 
           variant="outline" 
           onClick={() => fetchJobs({})}
           className="mt-4"
         >
-          View All Jobs
+          Clear Filters
         </Button>
       </div>
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-white">
       <PublicHeader />
 
-      <div className="bg-muted/30 border-b border-border">
-        <div className="container mx-auto px-4 py-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <h1 className="text-lg font-medium text-foreground">Find Job</h1>
-            </div>
-            <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-              <Home className="w-4 h-4" />
-              <span>/</span>
-              <span className="text-foreground">Find job</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="container max-w-[1352px] mx-auto px-4 py-6">
-        <div className="mb-6">
-          <JobSearchFilters onSearch={handleSearch} loading={searchLoading} />
-        </div>
-
-        {!loading && !error && jobs.length > 0 && (
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-4">
-              <h2 className="text-xl font-semibold text-foreground">
-                {pagination.total} job{pagination.total !== 1 ? 's' : ''} found
+      <div className="container max-w-[1440px] mx-auto px-4 lg:px-16 py-8">
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Sidebar Filters */}
+          <aside className="w-full lg:w-[280px] flex-shrink-0">
+            <div className="bg-white border border-gray-100 rounded-lg p-6 lg:sticky lg:top-8">
+              {/* Filters Heading */}
+              <h2 className="text-[20px] font-bold text-[#141414] mb-6" style={{ fontFamily: 'DM Sans, sans-serif' }}>
+                Filters
               </h2>
-              {currentQuery.search && (
-                <Badge variant="secondary" className="bg-primary/10 text-primary">
-                  "{currentQuery.search}"
-                </Badge>
-              )}
-              {currentQuery.location && (
-                <Badge variant="secondary" className="bg-primary/10 text-primary">
-                  {currentQuery.location}
-                </Badge>
-              )}
+
+              <SidebarFilters onSearch={handleSearch} loading={loading} />
             </div>
-          </div>
-        )}
+          </aside>
 
-        {loading && renderLoadingState()}
-
-        {error && !loading && renderErrorState()}
-
-        {!loading && !error && jobs.length === 0 && renderEmptyState()}
-
-        {!loading && !error && jobs.length > 0 && (
-          <>
-            <div className={
-              viewMode === 'grid' 
-                ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4'
-                : 'space-y-4'
-            }>
-              {jobs.map((job) => (
-                <JobCard
-                  key={job.id || job._id}
-                  job={job}
-                  onViewDetails={handleViewDetails}
-                />
-              ))}
+          {/* Main Content */}
+          <main className="flex-1 min-w-0">
+            {/* Search Box */}
+            <div className="mb-6">
+              <div className="bg-white border border-gray-200 rounded-lg p-3">
+                <div className="flex flex-col md:flex-row items-center gap-3">
+                  {/* Search Input */}
+                  <div className="flex-1 w-full">
+                    <div className="flex items-center bg-white border border-gray-200 rounded-lg">
+                      <div className="flex items-center px-3 py-3 border-r border-gray-200">
+                        <Search className="w-5 h-5 text-gray-400" />
+                      </div>
+                      <input
+                        type="text"
+                        placeholder="Search by: Job title, Position, Keyword..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        onKeyPress={(e) => e.key === 'Enter' && handleTextSearch()}
+                        className="flex-1 px-3 py-3 text-sm placeholder-gray-400 focus:outline-none"
+                      />
+                    </div>
+                  </div>
+                  
+                  {/* Divider */}
+                  <div className="w-px h-12 bg-gray-200 hidden md:block"></div>
+                  
+                  {/* Location Input */}
+                  <div className="flex-1 w-full">
+                    <div className="flex items-center bg-white border border-gray-200 rounded-lg">
+                      <div className="flex items-center px-3 py-3 border-r border-gray-200">
+                        <Crosshair className="w-5 h-5 text-gray-400" />
+                      </div>
+                      <input
+                        type="text"
+                        placeholder="City, state or zip code"
+                        value={location}
+                        onChange={(e) => setLocation(e.target.value)}
+                        onKeyPress={(e) => e.key === 'Enter' && handleTextSearch()}
+                        className="flex-1 px-3 py-3 text-sm placeholder-gray-400 focus:outline-none"
+                      />
+                      <div className="px-3 py-3">
+                        <MapPin className="w-5 h-5 text-[#3570E2]" />
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <Button 
+                    onClick={handleTextSearch}
+                    disabled={loading}
+                    className="w-full md:w-auto bg-[#3570E2] hover:bg-[#3570E2]/90 text-white px-6"
+                  >
+                    {loading ? "Searching..." : "Search"}
+                  </Button>
+                </div>
+              </div>
             </div>
 
-            {renderPagination()}
-          </>
-        )}
+            <div className="mb-6">
+              <h1 className="text-[32px] font-bold text-[#141414]" style={{ fontFamily: 'DM Sans, sans-serif', lineHeight: '48px' }}>
+                {pagination.total || 0} Job{(pagination.total || 0) !== 1 ? 's' : ''}
+              </h1>
+            </div>
+
+            {loading && renderLoadingState()}
+            {error && !loading && renderErrorState()}
+            {!loading && !error && jobs.length === 0 && renderEmptyState()}
+            
+            {!loading && !error && jobs.length > 0 && (
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                  {jobs.map((job) => (
+                    <JobCard
+                      key={job.id || job._id}
+                      job={job}
+                      onViewDetails={(jobId) => navigate(`/jobs/${jobId}`)}
+                    />
+                  ))}
+                </div>
+                {renderPagination()}
+              </>
+            )}
+          </main>
+        </div>
       </div>
 
       <PublicFooter />
