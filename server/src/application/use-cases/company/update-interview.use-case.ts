@@ -17,19 +17,17 @@ export class UpdateInterviewUseCase implements IUpdateInterviewUseCase {
   ) {}
 
   async execute(userId: string, applicationId: string, interviewId: string, interviewData: UpdateInterviewData): Promise<JobApplication> {
-    // Get company profile
+
     const companyProfile = await this._companyProfileRepository.getProfileByUserId(userId);
     if (!companyProfile) {
       throw new NotFoundError('Company profile not found');
     }
 
-    // Get application
     const application = await this._jobApplicationRepository.findById(applicationId);
     if (!application) {
       throw new NotFoundError('Application not found');
     }
 
-    // Verify company owns the job
     const job = await this._jobPostingRepository.findById(application.job_id);
     if (!job) {
       throw new NotFoundError('Job posting not found');
@@ -38,13 +36,11 @@ export class UpdateInterviewUseCase implements IUpdateInterviewUseCase {
       throw new ValidationError('You can only manage interviews for your own job postings');
     }
 
-    // Check if interview exists
     const interview = application.interviews.find((int) => int.id === interviewId);
     if (!interview) {
       throw new NotFoundError('Interview not found');
     }
 
-    // Prepare update data
     const updateData: Partial<UpdateInterviewData> = {};
     if (interviewData.date !== undefined) {
       updateData.date = interviewData.date instanceof Date ? interviewData.date : new Date(interviewData.date);
@@ -65,17 +61,14 @@ export class UpdateInterviewUseCase implements IUpdateInterviewUseCase {
       updateData.status = interviewData.status;
     }
 
-    // Update interview
     const updatedApplication = await this._jobApplicationRepository.updateInterview(applicationId, interviewId, updateData);
 
     if (!updatedApplication) {
       throw new NotFoundError('Failed to update interview');
     }
 
-    // Get the updated interview
     const updatedInterview = updatedApplication.interviews.find((int) => int.id === interviewId);
 
-    // Send notification to seeker about interview update
     if (updatedInterview) {
       await notificationService.sendNotification(
         this._notificationRepository,
@@ -96,7 +89,7 @@ export class UpdateInterviewUseCase implements IUpdateInterviewUseCase {
             status: updatedInterview.status,
             job_title: job.title,
           },
-        }
+        },
       );
     }
 

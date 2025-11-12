@@ -28,13 +28,11 @@ export class GetApplicationsByJobUseCase implements IGetApplicationsByJobUseCase
     jobId: string,
     filters: { stage?: ApplicationStage; search?: string; page?: number; limit?: number },
   ): Promise<PaginatedApplications> {
-    // Get company profile
     const companyProfile = await this._companyProfileRepository.getProfileByUserId(userId);
     if (!companyProfile) {
       throw new NotFoundError('Company profile not found');
     }
 
-    // Check if job exists and belongs to company
     const job = await this._jobPostingRepository.findById(jobId);
     if (!job) {
       throw new NotFoundError('Job posting not found');

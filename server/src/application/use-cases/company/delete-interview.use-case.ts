@@ -13,19 +13,16 @@ export class DeleteInterviewUseCase implements IDeleteInterviewUseCase {
   ) {}
 
   async execute(userId: string, applicationId: string, interviewId: string): Promise<JobApplication> {
-    // Get company profile
     const companyProfile = await this._companyProfileRepository.getProfileByUserId(userId);
     if (!companyProfile) {
       throw new NotFoundError('Company profile not found');
     }
 
-    // Get application
     const application = await this._jobApplicationRepository.findById(applicationId);
     if (!application) {
       throw new NotFoundError('Application not found');
     }
 
-    // Verify company owns the job
     const job = await this._jobPostingRepository.findById(application.job_id);
     if (!job) {
       throw new NotFoundError('Job posting not found');
@@ -34,13 +31,11 @@ export class DeleteInterviewUseCase implements IDeleteInterviewUseCase {
       throw new ValidationError('You can only manage interviews for your own job postings');
     }
 
-    // Check if interview exists
     const interview = application.interviews.find((int) => int.id === interviewId);
     if (!interview) {
       throw new NotFoundError('Interview not found');
     }
 
-    // Delete interview
     const updatedApplication = await this._jobApplicationRepository.deleteInterview(applicationId, interviewId);
 
     if (!updatedApplication) {

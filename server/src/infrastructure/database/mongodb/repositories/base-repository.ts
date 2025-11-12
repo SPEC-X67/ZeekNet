@@ -2,9 +2,7 @@ import { Model, Document as MongooseDocument, FilterQuery } from 'mongoose';
 import { Types } from 'mongoose';
 import { IBaseRepository } from '../../../../domain/interfaces/repositories/IBaseRepository';
 
-export abstract class RepositoryBase<T, TDocument extends MongooseDocument> 
-implements IBaseRepository<T> 
-{
+export abstract class RepositoryBase<T, TDocument extends MongooseDocument> {
   constructor(protected model: Model<TDocument>) {}
 
   protected convertToObjectIds(data: Record<string, unknown>): Record<string, unknown> {
@@ -23,7 +21,7 @@ implements IBaseRepository<T>
     return converted;
   }
 
-  async create(data: Omit<T, 'id' | 'createdAt' | 'updatedAt'>): Promise<T> {
+  async create(data: Omit<T, '_id' | 'id' | 'createdAt' | 'updatedAt'>): Promise<T> {
     const convertedData = this.convertToObjectIds(data as Record<string, unknown>);
     
     const document = new this.model({
@@ -89,6 +87,51 @@ implements IBaseRepository<T>
 
   protected async countDocuments(filter: FilterQuery<TDocument> | Record<string, unknown>): Promise<number> {
     return await this.model.countDocuments(filter as FilterQuery<TDocument>);
+  }
+
+  
+  protected async paginate<R>(
+    options?: {
+      page?: number;
+      limit?: number;
+      search?: string;
+      searchField?: string;
+      sortBy?: string;
+      sortOrder?: 'asc' | 'desc';
+      resultKey?: string;
+    },
+  ): Promise<R> {
+    const page = options?.page || 1;
+    const limit = options?.limit || 10;
+    const search = options?.search || '';
+    const searchField = options?.searchField || 'name';
+    const sortBy = options?.sortBy || 'name';
+    const sortOrder = options?.sortOrder === 'desc' ? -1 : 1;
+    const resultKey = options?.resultKey || 'items';
+
+    const query: Record<string, unknown> = {};
+    if (search) {
+      query[searchField] = { $regex: search, $options: 'i' };
+    }
+
+    const skip = (page - 1) * limit;
+    const documents = await this.model
+      .find(query)
+      .sort({ [sortBy]: sortOrder })
+      .skip(skip)
+      .limit(limit)
+      .exec();
+
+    const total = await this.model.countDocuments(query);
+    const items = documents.map((doc) => this.mapToEntity(doc));
+
+    return {
+      [resultKey]: items,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    } as unknown as R;
   }
 
   protected async exists(filter: FilterQuery<TDocument> | Record<string, unknown>): Promise<boolean> {

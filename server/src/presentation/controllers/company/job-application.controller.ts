@@ -72,14 +72,12 @@ export class CompanyJobApplicationController {
 
       let result;
       if (job_id) {
-        // Get applications for specific job
         result = await this._getApplicationsByJobUseCase.execute(userId, job_id as string, filters.data);
       } else {
-        // Get all applications for company
+
         result = await this._getApplicationsByCompanyUseCase.execute(userId, filters.data);
       }
 
-      // Map to response DTOs with enrichment: seeker name, job role; exclude resume url
       const applications: JobApplicationListResponseDto[] = [];
       for (const app of result.applications) {
         const [user, job, profile] = await Promise.all([
@@ -114,7 +112,6 @@ export class CompanyJobApplicationController {
 
       const application = await this._getApplicationDetailsUseCase.execute(userId, id);
 
-      // Enrich with seeker profile and job details
       const [user, profile, job] = await Promise.all([
         this._userRepository.findById(application.seeker_id),
         this._seekerProfileRepository.getProfileByUserId(application.seeker_id),

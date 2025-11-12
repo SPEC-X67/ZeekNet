@@ -19,7 +19,6 @@ export class CreateJobApplicationUseCase implements ICreateJobApplicationUseCase
   ) {}
 
   async execute(seekerId: string, data: CreateJobApplicationData): Promise<JobApplication> {
-    // Check if user is verified
     const user = await this._userRepository.findById(seekerId);
     if (!user) {
       throw new NotFoundError('User not found');
@@ -28,7 +27,6 @@ export class CreateJobApplicationUseCase implements ICreateJobApplicationUseCase
       throw new ValidationError('Please verify your email before applying for jobs');
     }
 
-    // Check if job exists and is active
     const job = await this._jobPostingRepository.findById(data.job_id);
     if (!job) {
       throw new NotFoundError('Job posting not found');
@@ -40,13 +38,11 @@ export class CreateJobApplicationUseCase implements ICreateJobApplicationUseCase
       throw new ValidationError('This job posting has been blocked');
     }
 
-    // Check for duplicate application
     const existingApplication = await this._jobApplicationRepository.checkDuplicateApplication(seekerId, data.job_id);
     if (existingApplication) {
       throw new ValidationError('You have already applied for this job');
     }
 
-    // Create application
     const application = await this._jobApplicationRepository.create({
       seeker_id: seekerId,
       job_id: data.job_id,
@@ -58,7 +54,6 @@ export class CreateJobApplicationUseCase implements ICreateJobApplicationUseCase
 
     await this._jobPostingRepository.incrementApplicationCount(data.job_id);
 
-    // Get company profile to find the user ID
     const companyProfile = await this._companyProfileRepository.getProfileById(job.company_id);
     if (companyProfile) {
       // Send notification to company user
@@ -74,7 +69,7 @@ export class CreateJobApplicationUseCase implements ICreateJobApplicationUseCase
             application_id: application.id,
             job_title: job.title,
           },
-        }
+        },
       );
     }
 

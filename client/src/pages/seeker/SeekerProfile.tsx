@@ -458,7 +458,6 @@ export function SeekerProfile() {
   useEffect(() => {
     if (addSkillOpen) {
       fetchSkills();
-      // Set currently selected skills
       if (profile?.skills) {
         setSelectedSkills(profile.skills);
       }

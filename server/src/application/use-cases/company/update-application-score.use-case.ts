@@ -13,19 +13,16 @@ export class UpdateApplicationScoreUseCase implements IUpdateApplicationScoreUse
   ) {}
 
   async execute(userId: string, applicationId: string, score: number): Promise<JobApplication> {
-    // Get company profile
     const companyProfile = await this._companyProfileRepository.getProfileByUserId(userId);
     if (!companyProfile) {
       throw new NotFoundError('Company profile not found');
     }
 
-    // Get application
     const application = await this._jobApplicationRepository.findById(applicationId);
     if (!application) {
       throw new NotFoundError('Application not found');
     }
 
-    // Verify company owns the job
     const job = await this._jobPostingRepository.findById(application.job_id);
     if (!job) {
       throw new NotFoundError('Job posting not found');
@@ -34,12 +31,10 @@ export class UpdateApplicationScoreUseCase implements IUpdateApplicationScoreUse
       throw new ValidationError('You can only update applications for your own job postings');
     }
 
-    // Validate score range
     if (score < 0 || score > 5) {
       throw new ValidationError('Score must be between 0 and 5');
     }
 
-    // Update score
     const updatedApplication = await this._jobApplicationRepository.updateScore(applicationId, score);
 
     if (!updatedApplication) {

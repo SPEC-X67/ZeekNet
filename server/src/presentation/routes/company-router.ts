@@ -33,6 +33,7 @@ export class CompanyRouter {
     this.router.use(authorizeRoles('company'));
     this.router.use(userBlockedMiddleware.checkUserBlocked);
 
+    // Company Profile Routes
     this.router.post('/profile', companyController.createCompanyProfile);
     this.router.put('/profile', companyController.updateCompanyProfile);
     this.router.get('/profile', companyController.getCompanyProfile);

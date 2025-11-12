@@ -17,10 +17,11 @@ export interface PaginatedSkills {
 }
 
 export interface ISkillRepository {
-  create(name: string): Promise<Skill>;
   findById(id: string): Promise<Skill | null>;
   findByName(name: string): Promise<Skill | null>;
-  findAll(filters: SkillQueryFilters): Promise<PaginatedSkills>;
-  update(id: string, name: string): Promise<Skill | null>;
+  create(data: { name: string }): Promise<Skill>;
+  update(id: string, updates: { name: string }): Promise<Skill | null>;
   delete(id: string): Promise<boolean>;
+  count(): Promise<number>;
+  findAllWithPagination(filters?: SkillQueryFilters): Promise<PaginatedSkills>;
 }

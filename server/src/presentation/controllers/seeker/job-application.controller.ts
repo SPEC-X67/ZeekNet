@@ -39,21 +39,17 @@ export class SeekerJobApplicationController {
     try {
       const userId = validateUserId(req);
 
-      // Handle resume upload
       if (!req.file) {
         return badRequest(res, 'Resume file is required');
       }
 
       const resumeUploadResult = await UploadService.handleResumeUpload(req, this._s3Service, 'resume');
 
-      // Get job_id from body
       const { job_id, cover_letter } = req.body;
 
       if (!job_id) {
         return badRequest(res, 'Job ID is required');
       }
-
-      // Get company_id from job posting
       const job = await this._jobPostingRepository.findById(job_id);
       if (!job) {
         return sendNotFoundResponse(res, 'Job posting not found');
@@ -74,7 +70,6 @@ export class SeekerJobApplicationController {
         );
       }
 
-      // Create application
       const application = await this._createJobApplicationUseCase.execute(userId, dto.data);
 
       sendSuccessResponse(res, 'Application submitted successfully', { id: application.id }, undefined, 201);
@@ -87,7 +82,6 @@ export class SeekerJobApplicationController {
     try {
       const userId = validateUserId(req);
 
-      // Parse query parameters
       const filters = ApplicationFiltersDto.safeParse(req.query);
       if (!filters.success) {
         return handleValidationError(
@@ -102,7 +96,6 @@ export class SeekerJobApplicationController {
         limit: filters.data.limit,
       });
 
-      // Enrich with job/company info for user-facing list
       const applications: JobApplicationListResponseDto[] = [];
       for (const app of result.applications) {
         const job = await this._jobPostingRepository.findById(app.job_id);
@@ -133,7 +126,6 @@ export class SeekerJobApplicationController {
 
       const application = await this._getApplicationDetailsUseCase.execute(userId, id);
 
-      // Map to response DTO (would need to join with seeker profile and job posting data)
       const response: JobApplicationDetailResponseDto = JobApplicationMapper.toDetailDto(application);
 
       sendSuccessResponse(res, 'Application details retrieved successfully', response);

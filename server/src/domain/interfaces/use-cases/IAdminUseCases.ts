@@ -2,9 +2,23 @@ import { User } from '../../entities/user.entity';
 import { CompanyProfile } from '../../entities/company-profile.entity';
 import { JobPosting, PaginatedJobPostings, JobPostingFilters } from '../../entities/job-posting.entity';
 import { Skill } from '../../entities/skill.entity';
-import { PaginatedSkills, SkillQueryFilters } from '../repositories/skill/ISkillRepository';
 import { JobRole } from '../../entities/job-role.entity';
-import { PaginatedJobRoles, JobRoleQueryFilters } from '../repositories/job-role/IJobRoleRepository';
+
+export interface PaginatedSkills {
+  skills: Skill[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
+export interface PaginatedJobRoles {
+  jobRoles: JobRole[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
 
 export interface AuthResponse {
   accessToken: string;
@@ -162,7 +176,7 @@ export interface ICreateSkillUseCase {
 }
 
 export interface IGetAllSkillsUseCase {
-  execute(filters: SkillQueryFilters): Promise<PaginatedSkills>;
+  execute(options: { page?: number; limit?: number; search?: string }): Promise<PaginatedSkills>;
 }
 
 export interface IGetSkillByIdUseCase {
@@ -182,7 +196,7 @@ export interface ICreateJobRoleUseCase {
 }
 
 export interface IGetAllJobRolesUseCase {
-  execute(filters: JobRoleQueryFilters): Promise<PaginatedJobRoles>;
+  execute(options: { page?: number; limit?: number; search?: string }): Promise<PaginatedJobRoles>;
 }
 
 export interface IGetJobRoleByIdUseCase {

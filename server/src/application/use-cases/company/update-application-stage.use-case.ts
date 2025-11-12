@@ -22,19 +22,16 @@ export class UpdateApplicationStageUseCase implements IUpdateApplicationStageUse
     stage: 'applied' | 'shortlisted' | 'interview' | 'rejected' | 'hired',
     rejectionReason?: string,
   ): Promise<JobApplication> {
-    // Get company profile
     const companyProfile = await this._companyProfileRepository.getProfileByUserId(userId);
     if (!companyProfile) {
       throw new NotFoundError('Company profile not found');
     }
 
-    // Get application
     const application = await this._jobApplicationRepository.findById(applicationId);
     if (!application) {
       throw new NotFoundError('Application not found');
     }
 
-    // Verify company owns the job
     const job = await this._jobPostingRepository.findById(application.job_id);
     if (!job) {
       throw new NotFoundError('Job posting not found');
@@ -43,14 +40,12 @@ export class UpdateApplicationStageUseCase implements IUpdateApplicationStageUse
       throw new ValidationError('You can only update applications for your own job postings');
     }
 
-    // Update stage
     const updatedApplication = await this._jobApplicationRepository.updateStage(applicationId, stage, rejectionReason);
 
     if (!updatedApplication) {
       throw new NotFoundError('Failed to update application stage');
     }
 
-    // Send notification to seeker about status change
     const stageMessages: Record<string, { title: string; message: string }> = {
       shortlisted: {
         title: 'Application Shortlisted',
@@ -86,7 +81,7 @@ export class UpdateApplicationStageUseCase implements IUpdateApplicationStageUse
             job_title: job.title,
             rejection_reason: rejectionReason,
           },
-        }
+        },
       );
     }
 

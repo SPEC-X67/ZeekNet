@@ -16,20 +16,17 @@ export class AddInterviewUseCase implements IAddInterviewUseCase {
     private readonly _notificationRepository: INotificationRepository,
   ) {}
 
-  async execute(userId: string, applicationId: string, interviewData: AddInterviewData): Promise<JobApplication> {
-    // Get company profile
+  async execute(userId: string, applicationId: string, interviewData: AddInterviewData): Promise<JobApplication> {  
     const companyProfile = await this._companyProfileRepository.getProfileByUserId(userId);
     if (!companyProfile) {
       throw new NotFoundError('Company profile not found');
     }
 
-    // Get application
     const application = await this._jobApplicationRepository.findById(applicationId);
     if (!application) {
       throw new NotFoundError('Application not found');
     }
 
-    // Verify company owns the job
     const job = await this._jobPostingRepository.findById(application.job_id);
     if (!job) {
       throw new NotFoundError('Job posting not found');
@@ -38,13 +35,11 @@ export class AddInterviewUseCase implements IAddInterviewUseCase {
       throw new ValidationError('You can only manage interviews for your own job postings');
     }
 
-    // Validate interview date is in the future
     const interviewDate = interviewData.date instanceof Date ? interviewData.date : new Date(interviewData.date);
     if (interviewDate < new Date()) {
       throw new ValidationError('Interview date must be in the future');
     }
 
-    // Add interview
     const updatedApplication = await this._jobApplicationRepository.addInterview(applicationId, {
       date: interviewDate,
       time: interviewData.time,
@@ -58,10 +53,8 @@ export class AddInterviewUseCase implements IAddInterviewUseCase {
       throw new NotFoundError('Failed to add interview');
     }
 
-    // Get the newly added interview
     const newInterview = updatedApplication.interviews[updatedApplication.interviews.length - 1];
 
-    // Send notification to seeker about interview
     await notificationService.sendNotification(
       this._notificationRepository,
       {
@@ -80,7 +73,7 @@ export class AddInterviewUseCase implements IAddInterviewUseCase {
           interviewer_name: interviewData.interviewer_name,
           job_title: job.title,
         },
-      }
+      },
     );
 
     return updatedApplication;

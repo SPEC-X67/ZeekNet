@@ -38,8 +38,6 @@ export class AdminGetAllJobsUseCase implements IAdminGetAllJobsUseCase {
 
       const result = await this._jobPostingSearchRepository.findAll(filters);
 
-      console.log('result', result);
-
       return result;
     } catch (error) {
       throw new AppError('Failed to fetch jobs', 500);

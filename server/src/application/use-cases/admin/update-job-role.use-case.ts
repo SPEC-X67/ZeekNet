@@ -24,7 +24,7 @@ export class UpdateJobRoleUseCase implements IUpdateJobRoleUseCase {
       throw new AppError('Job role with this name already exists', 409);
     }
 
-    const updatedJobRole = await this._jobRoleRepository.update(jobRoleId, normalizedName);
+    const updatedJobRole = await this._jobRoleRepository.update(jobRoleId, { name: normalizedName });
     
     if (!updatedJobRole) {
       throw new AppError('Failed to update job role', 500);

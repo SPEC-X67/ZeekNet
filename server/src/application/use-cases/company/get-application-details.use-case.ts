@@ -13,19 +13,16 @@ export class GetApplicationDetailsUseCase implements IGetApplicationDetailsUseCa
   ) {}
 
   async execute(userId: string, applicationId: string): Promise<JobApplication> {
-    // Get company profile
     const companyProfile = await this._companyProfileRepository.getProfileByUserId(userId);
     if (!companyProfile) {
       throw new NotFoundError('Company profile not found');
     }
 
-    // Get application
     const application = await this._jobApplicationRepository.findById(applicationId);
     if (!application) {
       throw new NotFoundError('Application not found');
     }
 
-    // Verify company owns the job
     const job = await this._jobPostingRepository.findById(application.job_id);
     if (!job) {
       throw new NotFoundError('Job posting not found');

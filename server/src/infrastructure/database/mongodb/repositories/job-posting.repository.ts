@@ -113,7 +113,6 @@ export class JobPostingRepository extends RepositoryBase<JobPosting, JobPostingD
       return null;
     }
 
-    // Check if company is blocked
     if (jobPosting.company_id) {
       let companyId: Types.ObjectId;
       const companyIdValue = jobPosting.company_id as Types.ObjectId | { _id: Types.ObjectId } | string;
@@ -232,14 +231,12 @@ export class JobPostingRepository extends RepositoryBase<JobPosting, JobPostingD
     const limit = filters?.limit || 10;
     const skip = (page - 1) * limit;
 
-    // First, get all blocked company IDs
     const blockedCompanies = await CompanyProfileModel.find({ isBlocked: true }).select('_id').lean();
     const blockedCompanyIds = blockedCompanies.map((c) => c._id);
 
     // Exclude jobs from blocked companies
     if (blockedCompanyIds.length > 0) {
       if (query.company_id) {
-        // If company_id filter already exists, combine with $nin using $and
         const existingCompanyFilter = query.company_id;
         query.$and = [
           { company_id: existingCompanyFilter },

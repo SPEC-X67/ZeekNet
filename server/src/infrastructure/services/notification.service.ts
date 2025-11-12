@@ -19,7 +19,7 @@ export class NotificationService {
 
   async sendNotification(
     repository: INotificationRepository,
-    data: CreateNotificationData
+    data: CreateNotificationData,
   ): Promise<void> {
     const notification = await repository.create(data);
 
