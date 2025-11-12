@@ -4,6 +4,8 @@ import { SeekerProfileRepository } from '../database/mongodb/repositories/seeker
 import { SeekerExperienceRepository } from '../database/mongodb/repositories/seeker-experience.repository';
 import { SeekerEducationRepository } from '../database/mongodb/repositories/seeker-education.repository';
 import { UserRepository } from '../database/mongodb/repositories/user.repository';
+import { CompanyProfileRepository } from '../database/mongodb/repositories/company-profile.repository';
+import { notificationRepository } from './notificationDi';
 import { GetAllJobPostingsUseCase } from '../../application/use-cases/public/get-all-job-postings.use-case';
 import { GetJobPostingUseCase } from '../../application/use-cases/company/get-job-posting.use-case';
 import { IncrementJobViewCountUseCase } from '../../application/use-cases/company/increment-job-view-count.use-case';
@@ -35,7 +37,8 @@ const jobApplicationRepository = new JobApplicationRepository();
 const seekerProfileRepository = new SeekerProfileRepository();
 const seekerExperienceRepository = new SeekerExperienceRepository();
 const seekerEducationRepository = new SeekerEducationRepository();
-const userRepository = new UserRepository(); 
+const userRepository = new UserRepository();
+const companyProfileRepository = new CompanyProfileRepository();
 const s3Service = new S3Service();
 
 const getAllJobPostingsUseCase = new GetAllJobPostingsUseCase(jobPostingRepository);
@@ -59,7 +62,7 @@ const uploadResumeUseCase = new UploadResumeUseCase(seekerProfileRepository);
 const removeResumeUseCase = new RemoveResumeUseCase(seekerProfileRepository);
 
 // Job Application Use Cases
-const createJobApplicationUseCase = new CreateJobApplicationUseCase(jobApplicationRepository, jobPostingRepository, userRepository);
+const createJobApplicationUseCase = new CreateJobApplicationUseCase(jobApplicationRepository, jobPostingRepository, userRepository, companyProfileRepository, notificationRepository);
 const getApplicationsBySeekerUseCase = new GetApplicationsBySeekerUseCase(jobApplicationRepository);
 const getSeekerApplicationDetailsUseCase = new GetSeekerApplicationDetailsUseCase(jobApplicationRepository);
 

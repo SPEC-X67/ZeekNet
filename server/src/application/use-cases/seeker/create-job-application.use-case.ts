@@ -1,15 +1,21 @@
 import { IJobApplicationRepository } from '../../../domain/interfaces/repositories/job-application/IJobApplicationRepository';
 import { IJobPostingRepository } from '../../../domain/interfaces/repositories/job/IJobPostingRepository';
 import { IUserRepository } from '../../../domain/interfaces/repositories/user/IUserRepository';
+import { ICompanyProfileRepository } from '../../../domain/interfaces/repositories/company/ICompanyProfileRepository';
+import { INotificationRepository } from '../../../domain/interfaces/repositories/notification/INotificationRepository';
 import { ICreateJobApplicationUseCase, CreateJobApplicationData } from '../../../domain/interfaces/use-cases/IJobApplicationUseCases';
 import { ValidationError, NotFoundError } from '../../../domain/errors/errors';
 import { JobApplication } from '../../../domain/entities/job-application.entity';
+import { notificationService } from '../../../infrastructure/services/notification.service';
+import { NotificationType } from '../../../infrastructure/database/mongodb/models/notification.model';
 
 export class CreateJobApplicationUseCase implements ICreateJobApplicationUseCase {
   constructor(
     private readonly _jobApplicationRepository: IJobApplicationRepository,
     private readonly _jobPostingRepository: IJobPostingRepository,
     private readonly _userRepository: IUserRepository,
+    private readonly _companyProfileRepository: ICompanyProfileRepository,
+    private readonly _notificationRepository: INotificationRepository,
   ) {}
 
   async execute(seekerId: string, data: CreateJobApplicationData): Promise<JobApplication> {
@@ -51,6 +57,26 @@ export class CreateJobApplicationUseCase implements ICreateJobApplicationUseCase
     });
 
     await this._jobPostingRepository.incrementApplicationCount(data.job_id);
+
+    // Get company profile to find the user ID
+    const companyProfile = await this._companyProfileRepository.getProfileById(job.company_id);
+    if (companyProfile) {
+      // Send notification to company user
+      await notificationService.sendNotification(
+        this._notificationRepository,
+        {
+          user_id: companyProfile.userId,
+          type: NotificationType.JOB_APPLICATION_RECEIVED,
+          title: 'New Job Application',
+          message: `You have received a new application for ${job.title}`,
+          data: {
+            job_id: job._id,
+            application_id: application.id,
+            job_title: job.title,
+          },
+        }
+      );
+    }
 
     return application;
   }

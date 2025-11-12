@@ -1,5 +1,6 @@
   import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { Toaster } from 'sonner'
+import { NotificationProvider } from './contexts/NotificationContext'
 import Landing from './pages/Landing'
 import Login from './pages/auth/Login'
 import Register from './pages/auth/Register'
@@ -44,7 +45,7 @@ import ApplicationDetails from './pages/company/ApplicationDetails'
 
 function App() {
   return (
-    <>
+    <NotificationProvider>
       <Router>
         <Routes>
           <Route path="/" element={<Landing />} />
@@ -234,7 +235,7 @@ function App() {
         richColors
         closeButton
       />
-    </>
+    </NotificationProvider>
   )
 }
 

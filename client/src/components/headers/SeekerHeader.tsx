@@ -1,6 +1,6 @@
-import { Bell } from 'lucide-react';
 import { Button } from '../ui/button';
 import { useNavigate } from 'react-router-dom';
+import { NotificationBell } from '../notifications/NotificationBell';
 interface SeekerHeaderProps {
   currentPage: string;
 }
@@ -33,14 +33,7 @@ export function SeekerHeader({ currentPage }: SeekerHeaderProps) {
           Back to homepage
         </Button>
 
-        <div className="relative">
-          <div className="w-9 h-9 bg-white rounded-full flex items-center justify-center border border-[#e5e7eb] cursor-pointer hover:bg-[#f8f9ff] hover:border-[#4640de] transition-all duration-200">
-            <Bell className="w-5 h-5 text-[#6b7280]" />
-            <span className="absolute -top-1 -right-1 w-5 h-5 bg-gradient-to-r from-[#ef4444] to-[#f97316] rounded-full flex items-center justify-center">
-              <span className="text-white text-[10px] font-bold">3</span>
-            </span>
-          </div>
-        </div>
+        <NotificationBell />
       </div>
     </div>
   );
