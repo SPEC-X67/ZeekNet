@@ -2,7 +2,7 @@ import CompanyLayout from '../../components/layouts/CompanyLayout'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Checkbox } from '@/components/ui/checkbox'
+// removed checkbox selection per UX request
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Loading } from '@/components/ui/loading'
 import { useState, useEffect } from 'react'
@@ -12,18 +12,20 @@ import {
   Search,
   Filter,
   Star,
-  MoreVertical,
+  Calendar,
+  User,
+  Briefcase,
   ChevronLeft,
   ChevronRight,
-  Eye,
-  SortAsc
+  Eye
 } from 'lucide-react'
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { jobApplicationApi } from '@/api'
 
 interface Application {
@@ -44,7 +46,8 @@ const AllApplications = () => {
   const [applications, setApplications] = useState<Application[]>([])
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
-  const [selectedApplications, setSelectedApplications] = useState<string[]>([])
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('')
+  const [stage, setStage] = useState<string>('all')
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 10,
@@ -52,23 +55,23 @@ const AllApplications = () => {
     totalPages: 0
   })
 
-  const fetchApplications = async (page: number = 1, limit: number = 10, search: string = '') => {
+  const fetchApplications = async (page: number = 1, limit: number = 10, search: string = '', stageFilter?: string) => {
     try {
       setLoading(true)
 
-      const res = await jobApplicationApi.getCompanyApplications({ page, limit, search })
+      const res = await jobApplicationApi.getCompanyApplications({ page, limit, search, stage: stageFilter && stageFilter !== 'all' ? stageFilter as 'applied' | 'shortlisted' | 'interview' | 'rejected' | 'hired' : undefined })
       const data = res?.data?.data || res?.data
       const list = (data?.applications || []).map((a: any) => ({
         _id: a.id,
         seeker_id: a.seeker_id,
         seeker_name: a.seeker_name || a.seeker_full_name || 'Candidate',
-        seeker_avatar: a.seeker_avatar,
+        seeker_avatar: a.seeker_avatar, // now a full URL from server
         job_id: a.job_id,
         job_title: a.job_title,
         score: a.score,
         stage: a.stage,
         applied_date: a.applied_date,
-        resume_url: a.resume_url,
+        resume_url: undefined,
       })) as Application[]
 
       setApplications(list)
@@ -85,29 +88,31 @@ const AllApplications = () => {
     }
   }
 
+  // Debounce search query
   useEffect(() => {
-    fetchApplications(pagination.page, pagination.limit, searchQuery)
-  }, [pagination.page])
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery)
+    }, 400)
+
+    return () => {
+      clearTimeout(timer)
+    }
+  }, [searchQuery])
+
+  useEffect(() => {
+    fetchApplications(pagination.page, pagination.limit, debouncedSearchQuery, stage)
+  }, [pagination.page, stage, debouncedSearchQuery])
 
   const handleSearch = (query: string) => {
     setSearchQuery(query)
-    fetchApplications(1, pagination.limit, query)
+    // Reset to page 1 when searching
+    setPagination((p) => ({ ...p, page: 1 }))
   }
 
-  const handleSelectAll = (checked: boolean) => {
-    if (checked) {
-      setSelectedApplications(applications.map(app => app._id))
-    } else {
-      setSelectedApplications([])
-    }
-  }
-
-  const handleSelectApplication = (applicationId: string, checked: boolean) => {
-    if (checked) {
-      setSelectedApplications([...selectedApplications, applicationId])
-    } else {
-      setSelectedApplications(selectedApplications.filter(id => id !== applicationId))
-    }
+  const handleLimitChange = (value: string) => {
+    const nextLimit = Number(value) || 10
+    setPagination((p) => ({ ...p, page: 1, limit: nextLimit }))
+    fetchApplications(1, nextLimit, debouncedSearchQuery, stage)
   }
 
   const formatDate = (dateString: string) => {
@@ -150,16 +155,13 @@ const AllApplications = () => {
 
   const handlePageChange = (newPage: number) => {
     if (newPage >= 1 && newPage <= pagination.totalPages) {
-      fetchApplications(newPage, pagination.limit, searchQuery)
+      fetchApplications(newPage, pagination.limit, debouncedSearchQuery, stage)
     }
   }
 
   const handleSeeApplication = (applicationId: string) => {
     navigate(`/company/applicants/${applicationId}`)
   }
-
-  const allSelected = applications.length > 0 && selectedApplications.length === applications.length
-  const someSelected = selectedApplications.length > 0 && selectedApplications.length < applications.length
 
   return (
     <CompanyLayout>
@@ -184,13 +186,21 @@ const AllApplications = () => {
                 className="pl-10 border-[#D6DDEB] rounded-lg"
               />
             </div>
-            <Button
-              variant="outline"
-              className="border-[#D6DDEB] text-[#25324B] rounded-lg"
-            >
-              <Filter className="w-4 h-4 mr-2" />
-              Filter
-            </Button>
+            <div className="flex items-center gap-2">
+              <Select value={stage} onValueChange={(v) => setStage(v)}>
+                <SelectTrigger className="w-[160px]">
+                  <SelectValue placeholder="Stage" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All stages</SelectItem>
+                  <SelectItem value="applied">Applied</SelectItem>
+                  <SelectItem value="shortlisted">Shortlisted</SelectItem>
+                  <SelectItem value="interview">Interview</SelectItem>
+                  <SelectItem value="rejected">Rejected</SelectItem>
+                  <SelectItem value="hired">Hired</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </div>
 
@@ -200,34 +210,27 @@ const AllApplications = () => {
             {/* Table Header */}
             <div className="bg-white border-b border-[#D6DDEB] px-5 py-4">
               <div className="grid grid-cols-6 gap-4 items-center">
-                <div className="flex items-center gap-3">
-                  <Checkbox
-                    checked={allSelected}
-                    onCheckedChange={handleSelectAll}
-                    className={someSelected ? 'opacity-50' : ''}
-                  />
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium text-[#7C8493]">Full Name</span>
-                    <SortAsc className="w-4 h-4 text-[#7C8493]" />
-                  </div>
+                <div className="flex items-center gap-2">
+                  <User className="w-4 h-4 text-[#7C8493]" />
+                  <span className="text-sm font-medium text-[#7C8493]">Full Name</span>
                 </div>
                 <div className="flex items-center gap-2">
+                  <Star className="w-4 h-4 text-[#7C8493]" />
                   <span className="text-sm font-medium text-[#7C8493]">Score</span>
-                  <SortAsc className="w-4 h-4 text-[#7C8493]" />
                 </div>
                 <div className="flex items-center gap-2">
+                  <Filter className="w-4 h-4 text-[#7C8493]" />
                   <span className="text-sm font-medium text-[#7C8493]">Hiring Stage</span>
-                  <SortAsc className="w-4 h-4 text-[#7C8493]" />
                 </div>
                 <div className="flex items-center gap-2">
+                  <Calendar className="w-4 h-4 text-[#7C8493]" />
                   <span className="text-sm font-medium text-[#7C8493]">Applied Date</span>
-                  <SortAsc className="w-4 h-4 text-[#7C8493]" />
                 </div>
                 <div className="flex items-center gap-2">
+                  <Briefcase className="w-4 h-4 text-[#7C8493]" />
                   <span className="text-sm font-medium text-[#7C8493]">Job Role</span>
-                  <SortAsc className="w-4 h-4 text-[#7C8493]" />
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 justify-end">
                   <span className="text-sm font-medium text-[#7C8493]">Action</span>
                 </div>
               </div>
@@ -253,23 +256,17 @@ const AllApplications = () => {
                   >
                     {/* Full Name */}
                     <div className="flex items-center gap-3">
-                      <Checkbox
-                        checked={selectedApplications.includes(application._id)}
-                        onCheckedChange={(checked) => handleSelectApplication(application._id, checked as boolean)}
-                      />
-                      <div className="flex items-center gap-3">
-                        <Avatar className="w-10 h-10">
-                          {application.seeker_avatar ? (
-                            <AvatarImage src={application.seeker_avatar} alt={application.seeker_name} />
-                          ) : null}
-                          <AvatarFallback className="bg-[#4640DE]/10 text-[#4640DE] text-sm font-semibold">
-                            {getInitials(application.seeker_name)}
-                          </AvatarFallback>
-                        </Avatar>
-                        <span className="text-sm font-medium text-[#25324B]">
-                          {application.seeker_name}
-                        </span>
-                      </div>
+                      <Avatar className="w-10 h-10">
+                        {application.seeker_avatar ? (
+                          <AvatarImage src={application.seeker_avatar} alt={application.seeker_name} />
+                        ) : null}
+                        <AvatarFallback className="bg-[#4640DE]/10 text-[#4640DE] text-sm font-semibold">
+                          {getInitials(application.seeker_name)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <span className="text-sm font-medium text-[#25324B]">
+                        {application.seeker_name}
+                      </span>
                     </div>
 
                     {/* Score */}
@@ -296,28 +293,16 @@ const AllApplications = () => {
                     </span>
 
                     {/* Action */}
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center justify-end">
                       <Button
                         variant="outline"
                         size="sm"
                         className="border-[#4640DE] text-[#4640DE] bg-[#CCCCF5] hover:bg-[#4640DE] hover:text-white rounded-lg text-xs px-3 py-1.5"
                         onClick={() => handleSeeApplication(application._id)}
                       >
+                        <Eye className="w-4 h-4 mr-1.5" />
                         See Application
                       </Button>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                            <MoreVertical className="w-4 h-4 text-[#25324B]" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-48">
-                          <DropdownMenuItem onClick={() => handleSeeApplication(application._id)}>
-                            <Eye className="w-4 h-4 mr-2" />
-                            View Details
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
                     </div>
                   </div>
                 ))
@@ -328,12 +313,18 @@ const AllApplications = () => {
           {/* Pagination */}
           {!loading && applications.length > 0 && (
             <div className="mt-5 flex items-center justify-between">
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
                 <span className="text-xs font-medium text-[#7C8493]">View</span>
-                <div className="flex items-center gap-1 px-3 py-2 border border-[#D6DDEB] rounded-lg bg-white">
-                  <Filter className="w-4 h-4 text-[#25324B]" />
-                  <span className="text-xs font-medium text-[#25324B]">{pagination.limit}</span>
-                </div>
+                <Select value={String(pagination.limit)} onValueChange={handleLimitChange}>
+                  <SelectTrigger className="w-[90px] h-8">
+                    <SelectValue placeholder={String(pagination.limit)} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="10">10</SelectItem>
+                    <SelectItem value="20">20</SelectItem>
+                    <SelectItem value="50">50</SelectItem>
+                  </SelectContent>
+                </Select>
                 <span className="text-xs font-medium text-[#7C8493]">Applicants per page</span>
               </div>
 

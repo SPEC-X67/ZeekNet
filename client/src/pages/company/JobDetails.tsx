@@ -4,8 +4,6 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Loading } from '@/components/ui/loading'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Input } from '@/components/ui/input'
-import { Checkbox } from '@/components/ui/checkbox'
 import {
   Select,
   SelectContent,
@@ -16,10 +14,10 @@ import {
 import { useParams, useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { companyApi } from '@/api/company.api'
+import { jobApplicationApi } from '@/api'
 import { toast } from 'sonner'
 import { 
   ArrowLeft,
-  ChevronDown,
   Plus,
   CircleCheck,
   Heart,
@@ -31,22 +29,25 @@ import {
   Globe,
   AlertTriangle,
   Search,
-  SlidersHorizontal,
   Star,
-  MoreHorizontal,
   ArrowUpRight,
   ArrowDownRight,
   Eye,
-  ClipboardList
+  ClipboardList,
+  FilterIcon
 } from 'lucide-react'
+import { Input } from '@/components/ui/input'
 
 const JobDetails = () => {
   const { id } = useParams()
   const navigate = useNavigate()
   const [jobData, setJobData] = useState<any>(null)
   const [loading, setLoading] = useState(true)
+  const [applications, setApplications] = useState<any[]>([])
+  const [applicationsLoading, setApplicationsLoading] = useState(false)
   const [activeTab, setActiveTab] = useState<'applicants' | 'details' | 'analytics'>('details')
   const [searchTerm, setSearchTerm] = useState('')
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('')
   const [stageFilter, setStageFilter] = useState<'all' | 'applied' | 'shortlisted' | 'interview' | 'offered' | 'hired' | 'rejected'>('all')
   const [viewRange, setViewRange] = useState<'7d' | '14d' | '30d'>('7d')
   
@@ -78,6 +79,49 @@ const JobDetails = () => {
 
     fetchJobDetails()
   }, [id, navigate])
+
+  useEffect(() => {
+    const fetchApplications = async () => {
+      if (!id || activeTab !== 'applicants') return
+
+      try {
+        setApplicationsLoading(true)
+        const response = await jobApplicationApi.getCompanyApplications({
+          job_id: id,
+          limit: 100,
+        })
+        
+        if (response.data?.data?.applications) {
+          setApplications(response.data.data.applications)
+        } else if (response.data?.applications) {
+          setApplications(response.data.applications)
+        } else if (Array.isArray(response.data?.data)) {
+          setApplications(response.data.data)
+        } else if (Array.isArray(response.data)) {
+          setApplications(response.data)
+        }
+      } catch (error: any) {
+        console.error('Failed to fetch applications:', error)
+        // Don't show error toast, just use empty array
+        setApplications([])
+      } finally {
+        setApplicationsLoading(false)
+      }
+    }
+
+    fetchApplications()
+  }, [id, activeTab])
+
+  // Debounce search term
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm)
+    }, 300)
+
+    return () => {
+      clearTimeout(timer)
+    }
+  }, [searchTerm])
 
   if (loading) {
     return (
@@ -161,54 +205,6 @@ const JobDetails = () => {
     matchPercentage?: number
   }
 
-  const mockApplicants: Applicant[] = [
-    {
-      id: '1',
-      name: 'Jerome Bell',
-      stage: 'Interview',
-      appliedDate: '2024-07-11',
-      score: 4.2,
-      experience: '4 Years',
-      matchPercentage: 88,
-    },
-    {
-      id: '2',
-      name: 'Kathryn Murphy',
-      stage: 'Shortlisted',
-      appliedDate: '2024-07-09',
-      score: 4.6,
-      experience: '6 Years',
-      matchPercentage: 92,
-    },
-    {
-      id: '3',
-      name: 'Theresa Webb',
-      stage: 'Offered',
-      appliedDate: '2024-07-05',
-      score: 4.8,
-      experience: '8 Years',
-      matchPercentage: 95,
-    },
-    {
-      id: '4',
-      name: 'Albert Flores',
-      stage: 'Applied',
-      appliedDate: '2024-07-13',
-      score: 3.9,
-      experience: '3 Years',
-      matchPercentage: 80,
-    },
-    {
-      id: '5',
-      name: 'Courtney Henry',
-      stage: 'Rejected',
-      appliedDate: '2024-07-02',
-      score: 3.5,
-      experience: '2 Years',
-      matchPercentage: 72,
-    },
-  ]
-
   const getInitials = (name: string) =>
     name
       .split(' ')
@@ -226,19 +222,19 @@ const JobDetails = () => {
     return 'applied'
   }
 
-  const applicants: Applicant[] = Array.isArray(jobData.applicants) && jobData.applicants.length > 0
-    ? jobData.applicants.map((applicant: any, index: number) => ({
-        id: applicant._id || `applicant-${index}`,
-        name: applicant.name || applicant.full_name || 'Unknown Applicant',
+  const applicants: Applicant[] = applications.length > 0
+    ? applications.map((applicant: any, index: number) => ({
+        id: applicant.id || applicant._id || `applicant-${index}`,
+        name: applicant.seeker_name || applicant.name || applicant.full_name || 'Unknown Applicant',
         email: applicant.email,
-        stage: applicant.stage || 'Applied',
-        appliedDate: applicant.appliedAt || applicant.created_at || new Date().toISOString(),
+        stage: applicant.stage || 'applied',
+        appliedDate: applicant.applied_date || applicant.appliedAt || applicant.created_at || applicant.createdAt || new Date().toISOString(),
         score: applicant.score,
-        avatar: applicant.avatar,
+        avatar: applicant.seeker_avatar || applicant.avatar,
         experience: applicant.experience,
         matchPercentage: applicant.match_percentage,
       }))
-    : mockApplicants
+    : []
 
   const stageCounts = applicants.reduce(
     (acc, applicant) => {
@@ -368,7 +364,7 @@ const JobDetails = () => {
   const filteredApplicants = applicants.filter((applicant) => {
     const matchesStage =
       stageFilter === 'all' || normalizeStage(applicant.stage) === stageFilter
-    const term = searchTerm.toLowerCase()
+    const term = debouncedSearchTerm.toLowerCase()
     const matchesSearch =
       applicant.name.toLowerCase().includes(term) ||
       (applicant.email ? applicant.email.toLowerCase().includes(term) : false)
@@ -468,10 +464,6 @@ const JobDetails = () => {
                   </div>
                 </div>
               </div>
-              <Button variant="outline" className="border-[#CCCCF5] text-[#4640DE] text-sm px-3 py-1.5">
-                <ChevronDown className="w-4 h-4 mr-1.5" />
-                More Action
-              </Button>
             </div>
           </div>
         </div>
@@ -539,8 +531,6 @@ const JobDetails = () => {
         <div className="px-7 py-7">
           {activeTab === 'applicants' && (
             <div className="space-y-5">
-              <Card className="border border-[#D6DDEB]">
-                <CardContent className="p-5">
                   <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                     <div className="relative w-full max-w-md">
                       <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#7C8493]" />
@@ -552,6 +542,7 @@ const JobDetails = () => {
                       />
                     </div>
                     <div className="flex items-center gap-3">
+                      <FilterIcon className="w-4 h-4 text-[#7C8493]" />
                       <Select
                         value={stageFilter}
                         onValueChange={(value: typeof stageFilter) => setStageFilter(value)}
@@ -564,38 +555,29 @@ const JobDetails = () => {
                           <SelectItem value="applied">Applied</SelectItem>
                           <SelectItem value="shortlisted">Shortlisted</SelectItem>
                           <SelectItem value="interview">Interview</SelectItem>
-                          <SelectItem value="offered">Offered</SelectItem>
                           <SelectItem value="hired">Hired</SelectItem>
                           <SelectItem value="rejected">Rejected</SelectItem>
                         </SelectContent>
                       </Select>
-                      <Button
-                        variant="outline"
-                        className="h-11 rounded-lg border-[#D6DDEB] text-[#25324B]"
-                      >
-                        <SlidersHorizontal className="mr-2 h-4 w-4" />
-                        Filter
-                      </Button>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
 
-              <Card className="border border-[#D6DDEB]">
-                <CardContent className="p-0">
-                  {filteredApplicants.length === 0 ? (
+                  {applicationsLoading ? (
+                    <div className="py-10 text-center">
+                      <Loading />
+                    </div>
+                  ) : filteredApplicants.length === 0 ? (
                     <div className="py-10 text-center text-sm text-[#7C8493]">
-                      No applicants match your current filters.
+                      {applications.length === 0 
+                        ? 'No applicants have applied for this job yet.'
+                        : 'No applicants match your current filters.'}
                     </div>
                   ) : (
                     <div className="overflow-x-auto">
                       <table className="min-w-full">
                         <thead className="bg-[#F8F8FD]">
                           <tr className="text-left text-xs font-medium uppercase tracking-wide text-[#7C8493]">
-                            <th className="w-12 p-4">
-                              <Checkbox className="h-4 w-4" aria-label="Select all" />
-                            </th>
-                            <th className="py-4 pr-4 text-[#7C8493]">Full Name</th>
+                            <th className="py-4 pr-4 text-[#7C8493]"> Full Name</th>
                             <th className="py-4 pr-4 text-[#7C8493]">Score</th>
                             <th className="py-4 pr-4 text-[#7C8493]">Hiring Stage</th>
                             <th className="py-4 pr-4 text-[#7C8493]">Applied Date</th>
@@ -605,9 +587,6 @@ const JobDetails = () => {
                         <tbody className="divide-y divide-[#E6EAF5]">
                           {filteredApplicants.map((applicant) => (
                             <tr key={applicant.id} className="hover:bg-[#F8F8FD]/60">
-                              <td className="w-12 p-4 align-middle">
-                                <Checkbox className="h-4 w-4" aria-label={`Select ${applicant.name}`} />
-                              </td>
                               <td className="py-4 pr-4 align-middle">
                                 <div className="flex items-center gap-3">
                                   <Avatar className="h-10 w-10">
@@ -645,16 +624,9 @@ const JobDetails = () => {
                                     variant="outline"
                                     size="sm"
                                     className="h-9 rounded-lg border-[#CCCCF5] bg-[#E9EBFD] text-[#4640DE]"
+                                    onClick={() => navigate(`/company/applicants/${applicant.id}`)}
                                   >
                                     See Application
-                                  </Button>
-                                  <Button
-                                    variant="outline"
-                                    size="icon"
-                                    className="h-9 w-9 rounded-lg border-[#D6DDEB] text-[#25324B]"
-                                    aria-label={"More actions"}
-                                  >
-                                    <MoreHorizontal className="h-4 w-4" />
                                   </Button>
                                 </div>
                               </td>
@@ -664,29 +636,21 @@ const JobDetails = () => {
                       </table>
                     </div>
                   )}
-                </CardContent>
-              </Card>
+ 
             </div>
           )}
 
           {activeTab === 'details' && (
             <>
-              <Card className="border border-[#D6DDEB] rounded-lg mb-7">
-                <CardContent className="p-1">
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between mb-7">
                     <div className="flex items-center gap-5">
-                      <div className="w-10 h-10 bg-[#C4C4C4] rounded-full flex items-center justify-center">
-                        <div className="w-8 h-8 bg-[#1ED760] rounded-full"></div>
-                      </div>
-                      <h2 className="text-2xl font-semibold text-[#25324B]">{jobData.title}</h2>
+                      <h2 className="text-2xl font-bold text-[#25324B]">{jobData.title}</h2>
                     </div>
-                    <Button variant="outline" className="border-[#CCCCF5] text-[#4640DE] text-sm px-3 py-1.5">
+                    <Button variant="outline" className="border-[#CCCCF5] text-[#4640DE] text-sm px-3 py-1.5" onClick={() => navigate(`/company/edit-job/${id}`)}>
                       <Plus className="w-4 h-4 mr-1.5" />
                       Edit Job Details
                     </Button>
                   </div>
-                </CardContent>
-              </Card>
 
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-7">
                 <div className="lg:col-span-2 space-y-9">

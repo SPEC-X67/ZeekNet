@@ -176,6 +176,7 @@ const companyJobApplicationController = new CompanyJobApplicationController(
   jobPostingRepository,
   seekerExperienceRepository,
   seekerEducationRepository,
+  s3Service,
 );
 
 export { companyController, companyJobPostingController, companyJobApplicationController, companyProfileRepository, companyProfileRepository as companyRepository, companyListingRepository, companyVerificationRepository };
