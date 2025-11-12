@@ -1,96 +1,100 @@
-# ZeekNet - Job Portal Platform
+<h1 align="center">🌐 ZeekNet – Modern Job Portal Platform</h1>
 
-A modern, full-stack job portal application built with **React**, **TypeScript**, **Node.js**, and **MongoDB**. ZeekNet connects job seekers with companies, providing a comprehensive platform for job listings, applications, and company verification.
+<p align="center">
+  A full-stack, clean-architecture job portal built with <b>React, TypeScript, Node.js</b>, and <b>MongoDB</b>.
+</p>
 
-## 📋 Table of Contents
+<p align="center">
+  <img src="https://img.shields.io/badge/Frontend-React_19-blue?logo=react" />
+  <img src="https://img.shields.io/badge/Backend-Node.js-green?logo=node.js" />
+  <img src="https://img.shields.io/badge/Database-MongoDB-brightgreen?logo=mongodb" />
+  <img src="https://img.shields.io/badge/TypeScript-Strict-blue?logo=typescript" />
+  <img src="https://img.shields.io/badge/Architecture-Clean-orange?logo=typescript" />
+</p>
 
-- [Overview](#overview)
-- [Features](#features)
-- [Tech Stack](#tech-stack)
-- [Project Structure](#project-structure)
-- [Prerequisites](#prerequisites)
-- [Installation](#installation)
-- [Configuration](#configuration)
-- [Running the Application](#running-the-application)
-- [Development](#development)
-- [API Documentation](#api-documentation)
-- [Project Architecture](#project-architecture)
-- [Contributing](#contributing)
-- [License](#license)
+---
 
-## 🎯 Overview
+## 🏁 Overview
 
-ZeekNet is a comprehensive job portal platform designed to streamline the recruitment process. The platform supports three main user roles:
+**ZeekNet** is a scalable, real-time job portal that connects **job seekers**, **companies**, and **administrators** through a clean, modular architecture.  
+It’s built using **SOLID principles**, **dependency injection**, and a **clean separation of layers**, ensuring maintainability and scalability.
 
-- **Job Seekers**: Browse and apply for jobs, manage applications, and build their professional profile
-- **Companies**: Post job listings, manage applicants, and verify their business information
-- **Administrators**: Oversee platform operations, manage user verification, and monitor system health
+### 🎭 Roles
+- **Job Seekers** → Find jobs, apply, and track applications  
+- **Companies** → Post openings, manage applicants, and verify their profile  
+- **Admin** → Monitor the platform, verify users, and manage system operations  
 
-## ✨ Features
+---
 
-### For Job Seekers
-- 🔍 Advanced job search and filtering
-- 📋 Job application management
-- 👤 Professional profile creation and management
-- 🔔 Real-time notifications for application updates
-- 💼 Application history and status tracking
+## ✨ Core Features
 
-### For Companies
-- 📝 Create and manage job postings
-- 👥 Review applicants and manage applications
-- ✅ Company verification process
-- 📊 Dashboard with application statistics
-- 🔔 Notifications for new applications
+### 👤 For Job Seekers
+- 🔍 Advanced search and filters  
+- 📝 Manage job applications  
+- 🧩 Build a detailed professional profile  
+- 🔔 Real-time notifications  
+- 📊 Track job history and status  
 
-### For Administrators
-- 🛡️ User and company verification management
-- 📊 Platform analytics and monitoring
-- 👮 Content moderation and oversight
-- 🔧 System configuration and maintenance
+### 🏢 For Companies
+- 💼 Create and manage job postings  
+- 👥 Review and shortlist applicants  
+- ✅ Company verification process  
+- 📈 View analytics and job stats  
+- 🔔 Get notified for new applicants  
 
-### General Features
-- 🔐 Secure authentication (JWT-based)
-- 🌐 Real-time updates using WebSockets (Socket.io)
-- 🖼️ Image upload and cropping functionality
-- 📱 Responsive design with Tailwind CSS
-- 🎨 Modern UI components (Radix UI)
-- 🔄 State management with Redux Toolkit
-- 📧 Email notifications
-- ☁️ AWS S3 integration for file storage
+### 🛡️ For Administrators
+- 👮 Manage users and companies  
+- 📊 Platform analytics dashboard  
+- 🧰 Content moderation & system control  
+- 🧩 Configuration and maintenance  
 
-## 🛠️ Tech Stack
+### 🌍 General
+- 🔐 JWT Authentication  
+- ☁️ AWS S3 File Storage  
+- ⚡ Real-time WebSocket (Socket.io)  
+- 🎨 Tailwind + Radix UI  
+- 🧠 Redux Toolkit for state management  
+- 📨 Email Notifications (Nodemailer)  
 
-### Frontend
-- **React 19** - UI library
-- **TypeScript** - Type safety
-- **Vite** - Build tool and dev server
-- **Tailwind CSS** - Utility-first CSS framework
-- **Radix UI** - Headless UI components
-- **React Hook Form** - Form state management
-- **Redux Toolkit** - State management
-- **React Router** - Client-side routing
-- **Axios** - HTTP client
-- **Recharts** - Data visualization
-- **Zod** - Schema validation
+---
 
-### Backend
-- **Node.js + Express** - Server framework
-- **TypeScript** - Type safety
-- **MongoDB + Mongoose** - Database
-- **JWT** - Authentication
-- **Socket.io** - Real-time communication
-- **AWS S3** - File storage
-- **Redis** - Caching (optional)
-- **Nodemailer** - Email service
-- **Inversify** - Dependency injection
-- **Winston** - Logging
-- **Zod** - Schema validation
+## 🧩 Tech Stack
+
+### 🖥️ Frontend
+| Technology | Purpose |
+|-------------|----------|
+| React 19 + Vite | UI & Dev Environment |
+| TypeScript | Type safety |
+| Tailwind CSS | Styling |
+| Redux Toolkit | State management |
+| React Hook Form | Form handling |
+| Zod | Validation |
+| Recharts | Visualization |
+| Radix UI | Headless UI components |
+
+### ⚙️ Backend
+| Technology | Purpose |
+|-------------|----------|
+| Node.js + Express | Server |
+| MongoDB + Mongoose | Database |
+| Inversify | Dependency Injection |
+| JWT | Auth |
+| Socket.io | Real-time updates |
+| AWS S3 | File storage |
+| Winston | Logging |
+| Nodemailer | Email service |
+
+---
 
 ### Development Tools
 - **ESLint** - Code linting
 - **Prettier** - Code formatting
 - **Nodemon** - Auto-reload for development
 - **Jest** - Testing framework
+
+## 🧱 Clean Architecture
+
+ZeekNet follows a **Clean Architecture** approach with clear separation of layers:
 
 ## 📁 Project Structure
 
