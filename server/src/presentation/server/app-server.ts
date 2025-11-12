@@ -1,4 +1,5 @@
 import express from 'express';
+import { createServer } from 'http';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
@@ -8,6 +9,7 @@ import { connectToDatabase } from '../../infrastructure/database/mongodb/connect
 import { connectRedis } from '../../infrastructure/database/redis/connection/redis';
 import { env } from '../../infrastructure/config/env';
 import { logger } from '../../infrastructure/config/logger';
+import { SocketServer } from '../../infrastructure/socket/socket-server';
 
 import { AuthRouter } from '../routes/auth-router';
 import { CompanyRouter } from '../routes/company-router';
@@ -19,15 +21,19 @@ import { errorHandler } from '../middleware/error-handler';
 import { UserBlockedMiddleware } from '../middleware/user-blocked.middleware';
 import { userRepository } from '../../infrastructure/di/authDi';
 import { companyRepository } from '../../infrastructure/di/companyDi';
+import { notificationRouter } from '../../infrastructure/di/notificationDi';
 import { DateTimeUtil } from '../../shared/utils/datetime.utils';
 
 export class AppServer {
   private _app: express.Application;
   private _port: number;
+  private _httpServer: ReturnType<typeof createServer>;
+  private _socketServer: SocketServer | null = null;
 
   constructor() {
     this._app = express();
     this._port = Number(env.PORT ?? 4000);
+    this._httpServer = createServer(this._app);
   }
 
   public init(): void {
@@ -85,6 +91,7 @@ export class AppServer {
     this._app.use('/api/company', new CompanyRouter().router);
     this._app.use('/api/seeker', new SeekerRouter().router);
     this._app.use('/api/public', new PublicRouter().router);
+    this._app.use('/api/notifications', notificationRouter.router);
 
     this._app.use(errorHandler);
   }
@@ -112,9 +119,12 @@ export class AppServer {
       await this.connectDatabase();
       this.init();
 
-      this._app.listen(this._port, () => {
+      this._socketServer = new SocketServer(this._httpServer);
+
+      this._httpServer.listen(this._port, () => {
         logger.info(`Server running on http://localhost:${this._port}`);
         logger.info(`Health check: http://localhost:${this._port}/health`);
+        logger.info('Socket.IO server initialized');
       });
     } catch (error) {
       logger.error('Server startup failed:', error);

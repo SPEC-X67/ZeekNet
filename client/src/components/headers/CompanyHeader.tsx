@@ -2,12 +2,12 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { 
-  Bell, 
   Plus,
   ChevronDown
 } from 'lucide-react'
 import { useAppSelector } from '@/hooks/useRedux'
 import { companyApi } from '@/api/company.api'
+import { NotificationBell } from '@/components/notifications/NotificationBell'
 
 const CompanyHeader = () => {
   const navigate = useNavigate()
@@ -61,15 +61,7 @@ const CompanyHeader = () => {
 
         {}
         <div className="flex items-center justify-center" style={{ gap: '27px' }}>
-          {}
-          <div className="relative" style={{ width: '34px', height: '34px' }}>
-            <div className="absolute inset-0 rounded-full bg-white"></div>
-            <div className="absolute inset-0 flex items-center justify-center">
-              <Bell className="h-5 w-5" style={{ color: '#25324B' }} />
-            </div>
-            {}
-            <div className="absolute top-2.5 right-2.5 w-1 h-1 rounded-full" style={{ backgroundColor: '#FF6550' }}></div>
-          </div>
+          <NotificationBell />
 
           {}
           <Button 
