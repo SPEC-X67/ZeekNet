@@ -34,6 +34,8 @@ export class UpdateSeekerProfileUseCase implements IUpdateSeekerProfileUseCase {
     if (data.email !== undefined) updateData.email = data.email;
     if (data.avatarFileName !== undefined) updateData.avatarFileName = data.avatarFileName || null;
     if (data.bannerFileName !== undefined) updateData.bannerFileName = data.bannerFileName || null;
+    if (data.dateOfBirth !== undefined) updateData.dateOfBirth = data.dateOfBirth || null;
+    if (data.gender !== undefined) updateData.gender = data.gender || null;
     if (data.skills !== undefined) updateData.skills = data.skills;
     if (data.languages !== undefined) updateData.languages = data.languages || [];
     if (data.socialLinks !== undefined) updateData.socialLinks = data.socialLinks || [];

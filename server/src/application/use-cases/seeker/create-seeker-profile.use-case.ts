@@ -27,6 +27,8 @@ export class CreateSeekerProfileUseCase implements ICreateSeekerProfileUseCase {
       email: data.email, 
       avatarFileName: data.avatarFileName || null,
       bannerFileName: data.bannerFileName || null,
+      dateOfBirth: data.dateOfBirth || null,
+      gender: data.gender || null,
       skills: data.skills || [],
       languages: data.languages || [],
       socialLinks: data.socialLinks,

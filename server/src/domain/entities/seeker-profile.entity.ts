@@ -43,6 +43,8 @@ export class SeekerProfile {
     public readonly email: string | null, 
     public readonly avatarFileName: string | null, 
     public readonly bannerFileName: string | null, 
+    public readonly dateOfBirth: Date | null,
+    public readonly gender: string | null,
     public readonly skills: string[],
     public readonly languages: string[],
     public readonly socialLinks: SocialLink[],
@@ -61,6 +63,8 @@ export class SeekerProfile {
     email?: string | null; 
     avatarFileName?: string | null; 
     bannerFileName?: string | null; 
+    dateOfBirth?: Date | null;
+    gender?: string | null;
     skills?: string[];
     languages?: string[];
     socialLinks?: SocialLink[];
@@ -79,6 +83,8 @@ export class SeekerProfile {
       data.email ?? null,
       data.avatarFileName ?? null,
       data.bannerFileName ?? null,
+      data.dateOfBirth ?? null,
+      data.gender ?? null,
       data.skills ?? [],
       data.languages ?? [],
       data.socialLinks ?? [],
@@ -99,6 +105,8 @@ export class SeekerProfile {
       email: this.email,
       avatarFileName: this.avatarFileName,
       bannerFileName: this.bannerFileName,
+      dateOfBirth: this.dateOfBirth,
+      gender: this.gender,
       skills: this.skills,
       languages: this.languages,
       socialLinks: this.socialLinks,
@@ -119,6 +127,8 @@ export class SeekerProfile {
       (data.email as string) || null,
       (data.avatarFileName as string) ?? null,
       (data.bannerFileName as string) ?? null,
+      data.dateOfBirth ? new Date(data.dateOfBirth as string) : null,
+      (data.gender as string) ?? null,
       (data.skills as string[]) ?? [],
       (data.languages as string[]) ?? [],
       (data.socialLinks as SocialLink[]) ?? [],

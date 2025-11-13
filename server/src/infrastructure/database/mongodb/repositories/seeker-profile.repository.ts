@@ -20,6 +20,8 @@ export class SeekerProfileRepository extends RepositoryBase<SeekerProfile, Model
       email: doc.email || null,
       avatarFileName: doc.avatarFileName || null,
       bannerFileName: doc.bannerFileName || null,
+      dateOfBirth: doc.dateOfBirth || null,
+      gender: doc.gender || null,
       skills: doc.skills || [],
       languages: doc.languages || [],
       socialLinks: doc.socialLinks || [],
@@ -42,6 +44,8 @@ export class SeekerProfileRepository extends RepositoryBase<SeekerProfile, Model
     email?: string;
     avatarFileName?: string | null;
     bannerFileName?: string | null;
+    dateOfBirth?: Date | null;
+    gender?: string | null;
     skills?: string[];
     languages?: string[];
     socialLinks?: SocialLink[];
@@ -55,6 +59,8 @@ export class SeekerProfileRepository extends RepositoryBase<SeekerProfile, Model
       email: profile.email || undefined, 
       avatarFileName: profile.avatarFileName || undefined,
       bannerFileName: profile.bannerFileName || undefined,
+      dateOfBirth: profile.dateOfBirth || undefined,
+      gender: profile.gender || undefined,
       skills: profile.skills || [],
       languages: profile.languages || [],
       socialLinks: profile.socialLinks || [],

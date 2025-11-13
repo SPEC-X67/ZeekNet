@@ -54,6 +54,8 @@ export function SeekerProfile() {
     name: '',
     headline: '',
     location: '',
+    dateOfBirth: '',
+    gender: '',
   });
 
   const [aboutData, setAboutData] = useState('');
@@ -89,6 +91,8 @@ export function SeekerProfile() {
   const [editingLanguages, setEditingLanguages] = useState<string[]>([]);
   const [editingPhone, setEditingPhone] = useState<string>('');
   const [editingEmail, setEditingEmail] = useState<string>('');
+  const [editingDateOfBirth, setEditingDateOfBirth] = useState<string>('');
+  const [editingGender, setEditingGender] = useState<string>('');
 
   const SOCIAL_PLATFORMS = [
     { value: 'github', label: 'GitHub' },
@@ -115,10 +119,26 @@ export function SeekerProfile() {
                     setProfile(profileData);
                     setProfilePhoto(profileData.avatarUrl || '');
                     setBannerImage(profileData.bannerUrl || '');
+                    const dateOfBirthValue = profileData.dateOfBirth 
+                      ? (() => {
+                          try {
+                            const date = new Date(profileData.dateOfBirth);
+                            if (isNaN(date.getTime())) return '';
+                            const year = date.getFullYear();
+                            const month = String(date.getMonth() + 1).padStart(2, '0');
+                            const day = String(date.getDate()).padStart(2, '0');
+                            return `${year}-${month}-${day}`;
+                          } catch {
+                            return '';
+                          }
+                        })()
+                      : '';
                     setProfileData({
                       name: profileData.name || '',
                       headline: profileData.headline || '',
                       location: profileData.location || '',
+                      dateOfBirth: dateOfBirthValue,
+                      gender: profileData.gender || '',
                     });
                     setAboutData(profileData.summary || '');
                     setEditingPhone(profileData.phone || '');
@@ -233,6 +253,8 @@ export function SeekerProfile() {
         name: profileData.name,
         headline: profileData.headline,
         location: profileData.location,
+        dateOfBirth: profileData.dateOfBirth || undefined,
+        gender: profileData.gender || undefined,
       });
       if (response.success) {
         toast.success('Profile updated successfully');
@@ -557,6 +579,8 @@ export function SeekerProfile() {
       const updateData: {
         phone?: string;
         email?: string;
+        dateOfBirth?: string;
+        gender?: string;
       } = {};
 
       let hasChanges = false;
@@ -573,6 +597,17 @@ export function SeekerProfile() {
           return;
         }
         updateData.email = editingEmail.trim();
+        hasChanges = true;
+      }
+
+      const currentDateOfBirth = profile.dateOfBirth ? isoToDateInput(profile.dateOfBirth) : '';
+      if (editingDateOfBirth !== currentDateOfBirth) {
+        updateData.dateOfBirth = editingDateOfBirth || undefined;
+        hasChanges = true;
+      }
+
+      if (editingGender !== profile.gender) {
+        updateData.gender = editingGender || undefined;
         hasChanges = true;
       }
 
@@ -646,6 +681,8 @@ export function SeekerProfile() {
       setEditingPhone(profile.phone || '');
       setEditingEmail(profile.email || '');
       setEditingLanguages(profile.languages || []);
+      setEditingDateOfBirth(profile.dateOfBirth ? isoToDateInput(profile.dateOfBirth) : '');
+      setEditingGender(profile.gender || '');
     }
   }, [editSocialOpen, editDetailsOpen, profile]);
 
@@ -1177,6 +1214,13 @@ export function SeekerProfile() {
             onChange: (value) => setProfileData({ ...profileData, location: value }),
             placeholder: 'e.g., New York, NY',
           },
+          {
+            id: 'dateOfBirth',
+            label: 'Date of Birth',
+            type: 'date',
+            value: profileData.dateOfBirth,
+            onChange: (value) => setProfileData({ ...profileData, dateOfBirth: value }),
+          },
         ]}
         onSubmit={handleEditProfile}
         maxWidth="2xl"
@@ -1219,6 +1263,20 @@ export function SeekerProfile() {
               {profilePhotoFile ? profilePhotoFile.name : 'Click the icon to upload a new photo'}
             </p>
           </div>
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="gender">Gender</Label>
+          <Select value={profileData.gender} onValueChange={(value) => setProfileData({ ...profileData, gender: value })}>
+            <SelectTrigger id="gender">
+              <SelectValue placeholder="Select gender" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="">Prefer not to say</SelectItem>
+              <SelectItem value="male">Male</SelectItem>
+              <SelectItem value="female">Female</SelectItem>
+              <SelectItem value="other">Other</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </FormDialog>
 
@@ -1713,6 +1771,34 @@ export function SeekerProfile() {
                 onChange={(e) => setEditingPhone(e.target.value)}
                 placeholder="e.g., +1 234 567 8900"
               />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="dateOfBirth">Date of Birth</Label>
+                <Input
+                  id="dateOfBirth"
+                  type="date"
+                  value={editingDateOfBirth}
+                  onChange={(e) => setEditingDateOfBirth(e.target.value)}
+                  max={new Date().toISOString().split('T')[0]}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="gender">Gender</Label>
+                <Select value={editingGender} onValueChange={setEditingGender}>
+                  <SelectTrigger id="gender">
+                    <SelectValue placeholder="Select gender" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">Prefer not to say</SelectItem>
+                    <SelectItem value="male">Male</SelectItem>
+                    <SelectItem value="female">Female</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
             <div className="space-y-2">

@@ -10,6 +10,8 @@ export interface ISeekerProfileRepository {
     email?: string;
     avatarFileName?: string | null;
     bannerFileName?: string | null;
+    dateOfBirth?: Date | null;
+    gender?: string | null;
     skills?: string[];
     languages?: string[];
     socialLinks?: SocialLink[];
