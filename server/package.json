@@ -9,7 +9,8 @@
     "start": "node -r tsconfig-paths/register dist/index.js",
     "test:s3": "node test-s3-routes.js",
     "lint": "eslint \"src/**/*.ts\" --max-warnings=0",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "seed": "ts-node -r tsconfig-paths/register scripts/seed-data.ts"
   },
   "keywords": [],
   "author": "",

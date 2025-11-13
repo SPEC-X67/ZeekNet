@@ -3,6 +3,7 @@ import type { IJobApplicationRepository, ApplicationFilters, PaginatedApplicatio
 import type { JobApplication, InterviewSchedule, ApplicationStage } from '../../../../domain/entities/job-application.entity';
 import { JobApplicationModel } from '../models/job-application.model';
 import { JobApplicationMapper } from '../mappers/job-application.mapper';
+import { ValidationError } from 'src/domain/errors/errors';
 
 export class JobApplicationRepository implements IJobApplicationRepository {
   private toObjectId(id: string) {
@@ -17,6 +18,7 @@ export class JobApplicationRepository implements IJobApplicationRepository {
     resume_url: string;
     resume_filename: string;
   }): Promise<JobApplication> {
+
     const created = await JobApplicationModel.create({
       ...data,
       seeker_id: this.toObjectId(data.seeker_id),
