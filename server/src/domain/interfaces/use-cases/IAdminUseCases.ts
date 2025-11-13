@@ -123,10 +123,6 @@ export interface IVerifyCompanyUseCase {
   execute(companyId: string, isVerified: 'pending' | 'rejected' | 'verified', rejectionReason?: string): Promise<void>;
 }
 
-export interface IBlockCompanyUseCase {
-  execute(companyId: string, isBlocked: boolean): Promise<void>;
-}
-
 export interface IAdminGetAllJobsUseCase {
   execute(query: JobPostingFilters): Promise<PaginatedJobPostings>;
 }

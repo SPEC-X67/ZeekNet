@@ -28,6 +28,16 @@ export class NotificationService {
       this.io.to(socketId).emit('notification', notification);
     }
   }
+
+  sendUserBlockedEvent(userId: string): void {
+    const socketId = this.userSockets.get(userId);
+    if (socketId && this.io) {
+      this.io.to(socketId).emit('user-blocked', {
+        message: 'Your account has been blocked by the administrator',
+        timestamp: new Date().toISOString(),
+      });
+    }
+  }
 }
 
 export const notificationService = new NotificationService();
