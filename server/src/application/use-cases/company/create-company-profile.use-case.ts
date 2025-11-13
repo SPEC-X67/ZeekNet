@@ -27,7 +27,6 @@ export class CreateCompanyProfileUseCase implements ICreateCompanyProfileUseCase
       organisation: profileData.organisation,
       aboutUs: profileData.aboutUs,
       isVerified: 'pending',
-      isBlocked: false,
     });
 
     if (profileData.taxId || profileData.businessLicenseUrl) {

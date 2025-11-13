@@ -26,7 +26,7 @@ export class CompanyRouter {
     const { companyRepository } = require('../../infrastructure/di/companyDi');
     const { userRepository } = require('../../infrastructure/di/authDi');
 
-    const userBlockedMiddleware = new UserBlockedMiddleware(userRepository, companyRepository);
+    const userBlockedMiddleware = new UserBlockedMiddleware(userRepository);
     const companyVerificationMiddleware = new CompanyVerificationMiddleware(companyRepository);
 
     this.router.use(authenticateToken);

@@ -5,6 +5,7 @@ import { Types } from 'mongoose';
 import { JobPostingMapper } from '../mappers/job-posting.mapper';
 import { JobPostingResponseDto } from '../../../../application/dto/job-posting/job-posting-response.dto';
 import { RepositoryBase } from './base-repository';
+import { UserRole } from '../../../../domain/enums/user-role.enum';
 
 export interface JobPostingDetailResponseDto {
   id: string;
@@ -125,8 +126,14 @@ export class JobPostingRepository extends RepositoryBase<JobPosting, JobPostingD
         companyId = new Types.ObjectId(companyIdValue as string);
       }
       
-      const companyProfile = await CompanyProfileModel.findById(companyId);
-      if (!companyProfile || companyProfile.isBlocked) {
+      const companyProfile = await CompanyProfileModel.findById(companyId).populate('userId', 'isBlocked');
+      if (!companyProfile) {
+        return null;
+      }
+      // Check if user is blocked
+      const { UserModel } = await import('../models/user.model');
+      const user = await UserModel.findById(companyProfile.userId);
+      if (user && user.isBlocked) {
         return null;
       }
     }
@@ -231,8 +238,11 @@ export class JobPostingRepository extends RepositoryBase<JobPosting, JobPostingD
     const limit = filters?.limit || 10;
     const skip = (page - 1) * limit;
 
-    const blockedCompanies = await CompanyProfileModel.find({ isBlocked: true }).select('_id').lean();
-    const blockedCompanyIds = blockedCompanies.map((c) => c._id);
+    const { UserModel } = await import('../models/user.model');
+    const blockedUsers = await UserModel.find({ isBlocked: true, role: UserRole.COMPANY }).select('_id').lean();
+    const blockedUserIds = blockedUsers.map((u) => u._id.toString());
+    const blockedCompanyProfiles = await CompanyProfileModel.find({ userId: { $in: blockedUserIds } }).select('_id').lean();
+    const blockedCompanyIds = blockedCompanyProfiles.map((c) => c._id);
 
     // Exclude jobs from blocked companies
     if (blockedCompanyIds.length > 0) {

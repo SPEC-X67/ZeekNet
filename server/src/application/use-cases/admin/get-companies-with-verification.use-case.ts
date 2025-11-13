@@ -54,7 +54,7 @@ export class GetCompaniesWithVerificationUseCase implements IGetCompaniesWithVer
           organisation: companyData.organisation as string,
           aboutUs: companyData.aboutUs as string,
           isVerified: companyData.isVerified as 'pending' | 'rejected' | 'verified',
-          isBlocked: companyData.isBlocked as boolean,
+          isBlocked: (companyData.userIsBlocked as boolean) ?? false,
           createdAt: companyData.createdAt as string,
           updatedAt: companyData.updatedAt as string,
           ...(verification && {

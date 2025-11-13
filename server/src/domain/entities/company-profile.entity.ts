@@ -11,13 +11,15 @@ export class CompanyProfile {
     public readonly organisation: string,
     public readonly aboutUs: string,
     public readonly isVerified: 'pending' | 'rejected' | 'verified',
-    public readonly isBlocked: boolean,
     public readonly createdAt: Date,
     public readonly updatedAt: Date,
+    public email: string = '',
+    public isBlocked: boolean = false,
     public readonly foundedDate?: Date,
     public readonly phone?: string,
     public readonly rejectionReason?: string,
   ) {}
+
 
   static create(data: {
     id: string;
@@ -33,7 +35,6 @@ export class CompanyProfile {
     foundedDate?: Date;
     phone?: string;
     isVerified?: 'pending' | 'rejected' | 'verified';
-    isBlocked?: boolean;
     createdAt?: Date;
     updatedAt?: Date;
     rejectionReason?: string;
@@ -51,16 +52,17 @@ export class CompanyProfile {
       data.organisation,
       data.aboutUs,
       data.isVerified ?? 'pending',
-      data.isBlocked ?? false,
       data.createdAt ?? now,
       data.updatedAt ?? now,
+      '', 
+      false, 
       data.foundedDate,
       data.phone,
       data.rejectionReason,
     );
   }
 
-  toJSON(): Record<string, unknown> {
+  toJSON() {
     return {
       id: this.id,
       userId: this.userId,
@@ -72,15 +74,17 @@ export class CompanyProfile {
       industry: this.industry,
       organisation: this.organisation,
       aboutUs: this.aboutUs,
-      foundedDate: this.foundedDate?.toISOString(),
-      phone: this.phone,
       isVerified: this.isVerified,
-      isBlocked: this.isBlocked,
-      rejectionReason: this.rejectionReason,
       createdAt: this.createdAt.toISOString(),
       updatedAt: this.updatedAt.toISOString(),
+      userEmail: this.email,
+      userIsBlocked: this.isBlocked,
+      foundedDate: this.foundedDate?.toISOString(),
+      phone: this.phone,
+      rejectionReason: this.rejectionReason,
     };
   }
+
 
   static fromJSON(data: Record<string, unknown>): CompanyProfile {
     return new CompanyProfile(
@@ -95,10 +99,11 @@ export class CompanyProfile {
       data.organisation as string,
       data.aboutUs as string,
       data.isVerified as 'pending' | 'rejected' | 'verified',
-      data.isBlocked as boolean,
       new Date(data.createdAt as string),
       new Date(data.updatedAt as string),
-      data.foundedDate ? new Date(data.foundedDate as string) : undefined,
+      (data.userEmail as string) || '', 
+      (data.userIsBlocked as boolean) ?? false, 
+      data.foundedDate ? new Date(data.foundedDate as string | Date) : undefined,
       data.phone as string,
       data.rejectionReason as string | undefined,
     );

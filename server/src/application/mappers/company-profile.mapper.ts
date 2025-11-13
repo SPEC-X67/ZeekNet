@@ -32,7 +32,6 @@ export class CompanyProfileMapper {
       organisation: dto.organisation,
       aboutUs: dto.description,
       isVerified: 'pending' as const,
-      isBlocked: false,
     };
   }
 

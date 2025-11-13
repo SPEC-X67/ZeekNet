@@ -49,7 +49,7 @@ const verifyOtpUseCase = new VerifyOtpUseCase(otpService, userRepository, userRe
 
 const googleLoginUseCase = new GoogleLoginUseCase(userRepository, userRepository, passwordHasher, tokenService, googleTokenVerifier, otpService, mailerService);
 
-const refreshTokenUseCase = new RefreshTokenUseCase(userRepository, userRepository, companyProfileRepository, tokenService, passwordHasher);
+const refreshTokenUseCase = new RefreshTokenUseCase(userRepository, userRepository, tokenService, passwordHasher);
 
 const logoutUseCase = new LogoutUseCase(userRepository);
 
@@ -67,7 +67,7 @@ export const registrationController = new RegistrationController(registerUserUse
 
 export const loginController = new LoginController(loginUserUseCase, adminLoginUseCase, googleLoginUseCase);
 
-export const tokenController = new TokenController(refreshTokenUseCase, getUserByIdUseCase, tokenService, getCompanyProfileByUserIdUseCase);
+export const tokenController = new TokenController(refreshTokenUseCase, getUserByIdUseCase, tokenService);
 
 export const passwordController = new PasswordController(forgotPasswordUseCase, resetPasswordUseCase, logoutUseCase);
 

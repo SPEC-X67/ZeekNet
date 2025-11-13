@@ -2,12 +2,22 @@ import { ICompanyListingRepository } from '../../../../domain/interfaces/reposit
 import { CompanyProfile } from '../../../../domain/entities/company-profile.entity';
 import { CompanyProfileModel } from '../models/company-profile.model';
 import { CompanyProfileMapper, CompanyProfileDocument } from '../mappers/company-profile.mapper';
+import { Types } from 'mongoose';
 
 interface CompanyQuery {
   $or?: Array<{ [key: string]: { $regex: string; $options: string } }>;
   industry?: string;
   isVerified?: 'pending' | 'rejected' | 'verified';
-  isBlocked?: boolean;
+}
+
+interface PopulatedUser {
+  _id: unknown;
+  email: string;
+  isBlocked: boolean;
+}
+interface PopulatedCompanyDocument
+  extends Omit<CompanyProfileDocument, 'userId'> {
+  userId: PopulatedUser | null;
 }
 
 export class CompanyListingRepository implements ICompanyListingRepository {
@@ -21,42 +31,148 @@ export class CompanyListingRepository implements ICompanyListingRepository {
     sortBy?: 'createdAt' | 'companyName' | 'employeeCount';
     sortOrder?: 'asc' | 'desc';
   }): Promise<{ companies: CompanyProfile[]; total: number }> {
+    
     const { page, limit, search, industry, isVerified, isBlocked, sortBy = 'createdAt', sortOrder = 'desc' } = options;
-
-    const query: CompanyQuery = {};
-
-    if (search) {
-      query.$or = [{ companyName: { $regex: search, $options: 'i' } }, { industry: { $regex: search, $options: 'i' } }, { organisation: { $regex: search, $options: 'i' } }];
-    }
-
-    if (industry) {
-      query.industry = industry;
-    }
-
-    if (isVerified !== undefined) {
-      query.isVerified = isVerified;
-    }
-
-    if (isBlocked !== undefined) {
-      query.isBlocked = isBlocked;
-    }
 
     const skip = (page - 1) * limit;
     const sortDirection = sortOrder === 'asc' ? 1 : -1;
 
-    const [companies, total] = await Promise.all([
-      CompanyProfileModel.find(query)
-        .skip(skip)
-        .limit(limit)
-        .sort({ [sortBy]: sortDirection })
-        .exec(),
-      CompanyProfileModel.countDocuments(query).exec(),
-    ]);
+    const query: CompanyQuery = {};
 
-    return {
-      companies: companies.map((doc) => CompanyProfileMapper.toEntity(doc as CompanyProfileDocument)),
-      total,
-    };
+    if (search) {
+      query.$or = [
+        { companyName: { $regex: search, $options: 'i' } },
+        { industry: { $regex: search, $options: 'i' } },
+        { organisation: { $regex: search, $options: 'i' } },
+      ];
+    }
+
+    if (industry) query.industry = industry;
+
+    if (isVerified !== undefined) query.isVerified = isVerified;
+
+    if (isBlocked !== undefined) {
+      const allCompaniesDocs = await CompanyProfileModel.find(query)
+        .sort({ [sortBy]: sortDirection })
+        .populate<{ userId: PopulatedUser | null }>({
+          path: 'userId',
+          select: 'email isBlocked',
+        }).exec();
+
+      const allPopulatedDocs = allCompaniesDocs as PopulatedCompanyDocument[];
+
+      const filteredCompanies = allPopulatedDocs.filter((c) => c.userId && c.userId.isBlocked === isBlocked);
+
+      const total = filteredCompanies.length;
+
+      const paginatedCompanies = filteredCompanies.slice(skip, skip + limit);
+
+      const companies = paginatedCompanies.map((doc) => {
+        const populatedDoc = doc as PopulatedCompanyDocument;
+        const userId = populatedDoc.userId && typeof populatedDoc.userId === 'object' 
+          ? String(populatedDoc.userId._id || '')
+          : String(populatedDoc.userId || '');
+        
+        // Access _id from the original Mongoose document
+        // Mongoose documents have _id as a property, but we need to handle it carefully
+        const rawDoc = doc as { _id?: unknown; id?: string | unknown };
+        let docId: unknown = rawDoc._id;
+        if (!docId && rawDoc.id && typeof rawDoc.id === 'string') {
+          docId = new Types.ObjectId(rawDoc.id);
+        } else if (!docId) {
+          docId = rawDoc.id || populatedDoc._id;
+        }
+        
+        const docForMapper: CompanyProfileDocument = {
+          _id: docId,
+          userId: userId,
+          companyName: populatedDoc.companyName,
+          logo: populatedDoc.logo,
+          banner: populatedDoc.banner,
+          websiteLink: populatedDoc.websiteLink,
+          employeeCount: populatedDoc.employeeCount,
+          industry: populatedDoc.industry,
+          organisation: populatedDoc.organisation,
+          aboutUs: populatedDoc.aboutUs,
+          isVerified: populatedDoc.isVerified,
+          rejectionReason: populatedDoc.rejectionReason,
+          createdAt: populatedDoc.createdAt,
+          updatedAt: populatedDoc.updatedAt,
+        } as CompanyProfileDocument;
+        const entity = CompanyProfileMapper.toEntity(docForMapper);
+
+        entity.email = populatedDoc.userId && typeof populatedDoc.userId === 'object' 
+          ? populatedDoc.userId.email || '' 
+          : '';
+        entity.isBlocked = populatedDoc.userId && typeof populatedDoc.userId === 'object' 
+          ? populatedDoc.userId.isBlocked ?? false 
+          : false;
+
+        return entity;
+      });
+
+      return { companies, total };
+    } else {
+      const [companiesDocs, total] = await Promise.all([
+        CompanyProfileModel.find(query)
+          .skip(skip)
+          .limit(limit)
+          .sort({ [sortBy]: sortDirection })
+          .populate<{ userId: PopulatedUser | null }>({
+            path: 'userId',
+            select: 'email isBlocked',
+          }).exec(),
+        CompanyProfileModel.countDocuments(query),
+      ]);
+
+      const populatedDocs = companiesDocs as PopulatedCompanyDocument[];
+
+      const companies = populatedDocs.map((doc) => {
+        const populatedDoc = doc as PopulatedCompanyDocument;
+        const userId = populatedDoc.userId && typeof populatedDoc.userId === 'object' 
+          ? String(populatedDoc.userId._id || '')
+          : String(populatedDoc.userId || '');
+        
+        // Access _id from the original Mongoose document
+        // Mongoose documents have _id as a property, but we need to handle it carefully
+        const rawDoc = doc as { _id?: unknown; id?: string | unknown };
+        let docId: unknown = rawDoc._id;
+        if (!docId && rawDoc.id && typeof rawDoc.id === 'string') {
+          docId = new Types.ObjectId(rawDoc.id);
+        } else if (!docId) {
+          docId = rawDoc.id || populatedDoc._id;
+        }
+        
+        const docForMapper: CompanyProfileDocument = {
+          _id: docId,
+          userId: userId,
+          companyName: populatedDoc.companyName,
+          logo: populatedDoc.logo,
+          banner: populatedDoc.banner,
+          websiteLink: populatedDoc.websiteLink,
+          employeeCount: populatedDoc.employeeCount,
+          industry: populatedDoc.industry,
+          organisation: populatedDoc.organisation,
+          aboutUs: populatedDoc.aboutUs,
+          isVerified: populatedDoc.isVerified,
+          rejectionReason: populatedDoc.rejectionReason,
+          createdAt: populatedDoc.createdAt,
+          updatedAt: populatedDoc.updatedAt,
+        } as CompanyProfileDocument;
+        const entity = CompanyProfileMapper.toEntity(docForMapper);
+
+        entity.email = populatedDoc.userId && typeof populatedDoc.userId === 'object' 
+          ? populatedDoc.userId.email || '' 
+          : '';
+        entity.isBlocked = populatedDoc.userId && typeof populatedDoc.userId === 'object' 
+          ? populatedDoc.userId.isBlocked ?? false 
+          : false;
+
+        return entity;
+      });
+
+      return { companies, total };
+    }
   }
 
   async getCompaniesByIndustry(industry: string, limit: number = 10): Promise<CompanyProfile[]> {

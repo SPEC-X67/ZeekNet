@@ -20,7 +20,6 @@ import { authenticateToken } from '../middleware/auth.middleware';
 import { errorHandler } from '../middleware/error-handler';
 import { UserBlockedMiddleware } from '../middleware/user-blocked.middleware';
 import { userRepository } from '../../infrastructure/di/authDi';
-import { companyRepository } from '../../infrastructure/di/companyDi';
 import { notificationRouter } from '../../infrastructure/di/notificationDi';
 import { DateTimeUtil } from '../../shared/utils/datetime.utils';
 
@@ -74,7 +73,7 @@ export class AppServer {
   }
 
   private configureRoutes(): void {
-    const userBlockedMiddleware = new UserBlockedMiddleware(userRepository, companyRepository);
+    const userBlockedMiddleware = new UserBlockedMiddleware(userRepository);
 
     this._app.get('/health', (req, res) =>
       res.json({
