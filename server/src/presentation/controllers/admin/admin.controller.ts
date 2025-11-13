@@ -25,6 +25,7 @@ export class AdminController {
   };
 
   blockUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    console.log('BlockUser request body:', req.body);
     const parsed = BlockUserDto.safeParse(req.body);
     if (!parsed.success) {
       return handleValidationError('Invalid block user data', next);
