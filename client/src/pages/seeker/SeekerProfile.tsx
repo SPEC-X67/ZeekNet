@@ -91,8 +91,6 @@ export function SeekerProfile() {
   const [editingLanguages, setEditingLanguages] = useState<string[]>([]);
   const [editingPhone, setEditingPhone] = useState<string>('');
   const [editingEmail, setEditingEmail] = useState<string>('');
-  const [editingDateOfBirth, setEditingDateOfBirth] = useState<string>('');
-  const [editingGender, setEditingGender] = useState<string>('');
 
   const SOCIAL_PLATFORMS = [
     { value: 'github', label: 'GitHub' },
@@ -579,8 +577,6 @@ export function SeekerProfile() {
       const updateData: {
         phone?: string;
         email?: string;
-        dateOfBirth?: string;
-        gender?: string;
       } = {};
 
       let hasChanges = false;
@@ -597,17 +593,6 @@ export function SeekerProfile() {
           return;
         }
         updateData.email = editingEmail.trim();
-        hasChanges = true;
-      }
-
-      const currentDateOfBirth = profile.dateOfBirth ? isoToDateInput(profile.dateOfBirth) : '';
-      if (editingDateOfBirth !== currentDateOfBirth) {
-        updateData.dateOfBirth = editingDateOfBirth || undefined;
-        hasChanges = true;
-      }
-
-      if (editingGender !== profile.gender) {
-        updateData.gender = editingGender || undefined;
         hasChanges = true;
       }
 
@@ -681,8 +666,6 @@ export function SeekerProfile() {
       setEditingPhone(profile.phone || '');
       setEditingEmail(profile.email || '');
       setEditingLanguages(profile.languages || []);
-      setEditingDateOfBirth(profile.dateOfBirth ? isoToDateInput(profile.dateOfBirth) : '');
-      setEditingGender(profile.gender || '');
     }
   }, [editSocialOpen, editDetailsOpen, profile]);
 
@@ -1266,12 +1249,12 @@ export function SeekerProfile() {
         </div>
         <div className="space-y-2">
           <Label htmlFor="gender">Gender</Label>
-          <Select value={profileData.gender} onValueChange={(value) => setProfileData({ ...profileData, gender: value })}>
+          <Select value={profileData.gender || 'prefer-not-to-say'} onValueChange={(value) => setProfileData({ ...profileData, gender: value === 'prefer-not-to-say' ? '' : value })}>
             <SelectTrigger id="gender">
               <SelectValue placeholder="Select gender" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Prefer not to say</SelectItem>
+              <SelectItem value="prefer-not-to-say">Prefer not to say</SelectItem>
               <SelectItem value="male">Male</SelectItem>
               <SelectItem value="female">Female</SelectItem>
               <SelectItem value="other">Other</SelectItem>
@@ -1771,34 +1754,6 @@ export function SeekerProfile() {
                 onChange={(e) => setEditingPhone(e.target.value)}
                 placeholder="e.g., +1 234 567 8900"
               />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="dateOfBirth">Date of Birth</Label>
-                <Input
-                  id="dateOfBirth"
-                  type="date"
-                  value={editingDateOfBirth}
-                  onChange={(e) => setEditingDateOfBirth(e.target.value)}
-                  max={new Date().toISOString().split('T')[0]}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="gender">Gender</Label>
-                <Select value={editingGender} onValueChange={setEditingGender}>
-                  <SelectTrigger id="gender">
-                    <SelectValue placeholder="Select gender" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="">Prefer not to say</SelectItem>
-                    <SelectItem value="male">Male</SelectItem>
-                    <SelectItem value="female">Female</SelectItem>
-                    <SelectItem value="other">Other</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
             </div>
 
             <div className="space-y-2">
