@@ -1,17 +1,15 @@
 import { IJobCategoryRepository } from 'src/domain/interfaces/repositories/job-category/IJobCategoryRepository';
-import { JobCategory } from 'src/domain/entities/job-category.entity';
 import { BadRequestError, ConflictError } from 'src/domain/errors/errors';
-import { ICreateJobCategoryUseCase } from 'src/domain/interfaces/use-cases/admin/attributes/job-categorys/ICreateJobCategoryUseCase';
-import { CreateJobCategoryRequestDto } from 'src/application/dtos/admin/attributes/job-categorys/requests/create-job-category-request.dto';
-import { JobCategoryResponseDto } from 'src/application/dtos/admin/attributes/job-categorys/responses/job-category-response.dto';
+import { IUseCase } from 'src/domain/interfaces/use-cases/base/IUseCase';
+import { CreateJobCategoryRequestDto } from 'src/application/dtos/admin/attributes/job-categories/requests/create-job-category-request.dto';
+import { JobCategoryResponseDto } from 'src/application/dtos/admin/attributes/job-categories/responses/job-category-response.dto';
 import { JobCategoryMapper } from 'src/application/mappers/job/job-category.mapper';
 import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';
 import { ERROR, VALIDATION } from 'src/shared/constants/messages';
 
-
 @injectable()
-export class CreateJobCategoryUseCase implements ICreateJobCategoryUseCase {
+export class CreateJobCategoryUseCase implements IUseCase<CreateJobCategoryRequestDto, JobCategoryResponseDto> {
   constructor(@inject(TYPES.JobCategoryRepository) private readonly _jobCategoryRepository: IJobCategoryRepository) {}
 
   async execute(dto: CreateJobCategoryRequestDto): Promise<JobCategoryResponseDto> {

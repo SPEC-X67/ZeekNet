@@ -1,20 +1,19 @@
 import { IJobCategoryRepository } from 'src/domain/interfaces/repositories/job-category/IJobCategoryRepository';
-import { JobCategory } from 'src/domain/entities/job-category.entity';
 import { BadRequestError, ConflictError, InternalServerError, NotFoundError } from 'src/domain/errors/errors';
-import { IUpdateJobCategoryUseCase } from 'src/domain/interfaces/use-cases/admin/attributes/job-categorys/IUpdateJobCategoryUseCase';
-import { UpdateJobCategoryRequestDto } from 'src/application/dtos/admin/attributes/job-categorys/requests/update-job-category-request.dto';
-import { JobCategoryResponseDto } from 'src/application/dtos/admin/attributes/job-categorys/responses/job-category-response.dto';
+import { IUseCase } from 'src/domain/interfaces/use-cases/base/IUseCase';
+import { UpdateJobCategoryRequestDto } from 'src/application/dtos/admin/attributes/job-categories/requests/update-job-category-request.dto';
+import { JobCategoryResponseDto } from 'src/application/dtos/admin/attributes/job-categories/responses/job-category-response.dto';
 import { JobCategoryMapper } from 'src/application/mappers/job/job-category.mapper';
 import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';
 import { ERROR, VALIDATION } from 'src/shared/constants/messages';
 
-
 @injectable()
-export class UpdateJobCategoryUseCase implements IUpdateJobCategoryUseCase {
+export class UpdateJobCategoryUseCase implements IUseCase<{ id: string; dto: UpdateJobCategoryRequestDto }, JobCategoryResponseDto> {
   constructor(@inject(TYPES.JobCategoryRepository) private readonly _jobCategoryRepository: IJobCategoryRepository) {}
 
-  async execute(id: string, dto: UpdateJobCategoryRequestDto): Promise<JobCategoryResponseDto> {
+  async execute(params: { id: string; dto: UpdateJobCategoryRequestDto }): Promise<JobCategoryResponseDto> {
+    const { id, dto } = params;
     const { name } = dto;
     
     if (!name || !name.trim()) {

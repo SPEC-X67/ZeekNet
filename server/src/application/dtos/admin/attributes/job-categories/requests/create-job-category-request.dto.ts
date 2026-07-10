@@ -6,6 +6,4 @@ export const CreateJobCategoryRequestDtoSchema = z.object({
 
 export type CreateJobCategoryRequestDto = z.infer<typeof CreateJobCategoryRequestDtoSchema>;
 
-
 export const CreateJobCategoryDto = CreateJobCategoryRequestDtoSchema;
-

@@ -1,12 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
-import { ICreateJobCategoryUseCase } from 'src/domain/interfaces/use-cases/admin/attributes/job-categorys/ICreateJobCategoryUseCase';
-import { IDeleteJobCategoryUseCase } from 'src/domain/interfaces/use-cases/admin/attributes/job-categorys/IDeleteJobCategoryUseCase';
-import { IGetAllJobCategoriesUseCase } from 'src/domain/interfaces/use-cases/admin/attributes/job-categorys/IGetAllJobCategoriesUseCase';
-import { IGetJobCategoryByIdUseCase } from 'src/domain/interfaces/use-cases/admin/attributes/job-categorys/IGetJobCategoryByIdUseCase';
-import { IUpdateJobCategoryUseCase } from 'src/domain/interfaces/use-cases/admin/attributes/job-categorys/IUpdateJobCategoryUseCase';
-import { CreateJobCategoryDto } from 'src/application/dtos/admin/attributes/job-categorys/requests/create-job-category-request.dto';
-import { GetAllJobCategoriesQueryDto } from 'src/application/dtos/admin/attributes/job-categorys/requests/get-all-job-categories-query.dto';
-import { UpdateJobCategoryDto } from 'src/application/dtos/admin/attributes/job-categorys/requests/update-job-category-request.dto';
+import { IUseCase } from 'src/domain/interfaces/use-cases/base/IUseCase';
+import { CreateJobCategoryRequestDto, CreateJobCategoryDto } from 'src/application/dtos/admin/attributes/job-categories/requests/create-job-category-request.dto';
+import { GetAllJobCategoriesQueryDto } from 'src/application/dtos/admin/attributes/job-categories/requests/get-all-job-categories-query.dto';
+import { UpdateJobCategoryRequestDto, UpdateJobCategoryDto } from 'src/application/dtos/admin/attributes/job-categories/requests/update-job-category-request.dto';
+import { JobCategoryResponseDto } from 'src/application/dtos/admin/attributes/job-categories/responses/job-category-response.dto';
+import { PaginatedJobCategoriesResultDto } from 'src/application/dtos/admin/attributes/job-categories/responses/paginated-job-categories-result.dto';
 import { formatZodErrors, handleAsyncError, handleValidationError, sendSuccessResponse } from 'src/shared/utils';
 import { SUCCESS } from 'src/shared/constants/messages';
 import { injectable, inject } from 'inversify';
@@ -15,11 +13,16 @@ import { TYPES } from 'src/shared/constants/types';
 @injectable()
 export class AdminJobCategoryController {
   constructor(
-    @inject(TYPES.CreateJobCategoryUseCase) private readonly _createJobCategoryUseCase: ICreateJobCategoryUseCase,
-    @inject(TYPES.GetAllJobCategoriesUseCase) private readonly _getAllJobCategoriesUseCase: IGetAllJobCategoriesUseCase,
-    @inject(TYPES.GetJobCategoryByIdUseCase) private readonly _getJobCategoryByIdUseCase: IGetJobCategoryByIdUseCase,
-    @inject(TYPES.UpdateJobCategoryUseCase) private readonly _updateJobCategoryUseCase: IUpdateJobCategoryUseCase,
-    @inject(TYPES.DeleteJobCategoryUseCase) private readonly _deleteJobCategoryUseCase: IDeleteJobCategoryUseCase,
+    @inject(TYPES.CreateJobCategoryUseCase)
+    private readonly _createJobCategoryUseCase: IUseCase<CreateJobCategoryRequestDto, JobCategoryResponseDto>,
+    @inject(TYPES.GetAllJobCategoriesUseCase)
+    private readonly _getAllJobCategoriesUseCase: IUseCase<GetAllJobCategoriesQueryDto, PaginatedJobCategoriesResultDto>,
+    @inject(TYPES.GetJobCategoryByIdUseCase)
+    private readonly _getJobCategoryByIdUseCase: IUseCase<string, JobCategoryResponseDto>,
+    @inject(TYPES.UpdateJobCategoryUseCase)
+    private readonly _updateJobCategoryUseCase: IUseCase<{ id: string; dto: UpdateJobCategoryRequestDto }, JobCategoryResponseDto>,
+    @inject(TYPES.DeleteJobCategoryUseCase)
+    private readonly _deleteJobCategoryUseCase: IUseCase<string, boolean>,
   ) { }
 
   createJobCategory = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -65,7 +68,7 @@ export class AdminJobCategoryController {
     }
     try {
       const { id } = req.params;
-      const category = await this._updateJobCategoryUseCase.execute(id, parsedBody.data);
+      const category = await this._updateJobCategoryUseCase.execute({ id, dto: parsedBody.data });
       sendSuccessResponse(res, SUCCESS.UPDATED('Job category'), category);
     } catch (error) {
       handleAsyncError(error, next);

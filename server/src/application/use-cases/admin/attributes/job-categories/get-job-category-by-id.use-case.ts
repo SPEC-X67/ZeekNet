@@ -1,16 +1,14 @@
 import { IJobCategoryRepository } from 'src/domain/interfaces/repositories/job-category/IJobCategoryRepository';
-import { JobCategory } from 'src/domain/entities/job-category.entity';
 import { NotFoundError } from 'src/domain/errors/errors';
-import { IGetJobCategoryByIdUseCase } from 'src/domain/interfaces/use-cases/admin/attributes/job-categorys/IGetJobCategoryByIdUseCase';
-import { JobCategoryResponseDto } from 'src/application/dtos/admin/attributes/job-categorys/responses/job-category-response.dto';
+import { IUseCase } from 'src/domain/interfaces/use-cases/base/IUseCase';
+import { JobCategoryResponseDto } from 'src/application/dtos/admin/attributes/job-categories/responses/job-category-response.dto';
 import { JobCategoryMapper } from 'src/application/mappers/job/job-category.mapper';
 import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';
 import { ERROR } from 'src/shared/constants/messages';
 
-
 @injectable()
-export class GetJobCategoryByIdUseCase implements IGetJobCategoryByIdUseCase {
+export class GetJobCategoryByIdUseCase implements IUseCase<string, JobCategoryResponseDto> {
   constructor(@inject(TYPES.JobCategoryRepository) private readonly _jobCategoryRepository: IJobCategoryRepository) {}
 
   async execute(id: string): Promise<JobCategoryResponseDto> {
