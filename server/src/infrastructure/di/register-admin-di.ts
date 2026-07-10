@@ -15,11 +15,13 @@ import { IAdminUpdateJobStatusUseCase } from 'src/domain/interfaces/use-cases/ad
 import { IAdminDeleteJobUseCase } from 'src/domain/interfaces/use-cases/admin/job/IAdminDeleteJobUseCase';
 import { IAdminGetJobStatsUseCase } from 'src/domain/interfaces/use-cases/admin/analytics/IAdminGetJobStatsUseCase';
 import { IUseCase } from 'src/domain/interfaces/use-cases/base/IUseCase';
-import { CreateJobCategoryRequestDto } from 'src/application/dtos/admin/attributes/job-categories/requests/create-job-category-request.dto';
-import { GetAllJobCategoriesQueryDto } from 'src/application/dtos/admin/attributes/job-categories/requests/get-all-job-categories-query.dto';
-import { UpdateJobCategoryRequestDto } from 'src/application/dtos/admin/attributes/job-categories/requests/update-job-category-request.dto';
-import { JobCategoryResponseDto } from 'src/application/dtos/admin/attributes/job-categories/responses/job-category-response.dto';
-import { PaginatedJobCategoriesResultDto } from 'src/application/dtos/admin/attributes/job-categories/responses/paginated-job-categories-result.dto';
+import {
+  CreateJobCategoryRequestDto,
+  GetAllJobCategoriesQueryDto,
+  UpdateJobCategoryRequestDto,
+  JobCategoryResponseDto,
+  PaginatedJobCategoriesResultDto,
+} from 'src/application/dtos/admin/attributes/job-categories/job-category.dto';
 import { ICreateSkillUseCase } from 'src/domain/interfaces/use-cases/admin/attributes/skills/ICreateSkillUseCase';
 import { IGetAllSkillsUseCase } from 'src/domain/interfaces/use-cases/admin/attributes/skills/IGetAllSkillsUseCase';
 import { IGetSkillByIdUseCase } from 'src/domain/interfaces/use-cases/admin/attributes/skills/IGetSkillByIdUseCase';

@@ -1,10 +1,14 @@
 import { NextFunction, Request, Response } from 'express';
 import { IUseCase } from 'src/domain/interfaces/use-cases/base/IUseCase';
-import { CreateJobCategoryRequestDto, CreateJobCategoryDto } from 'src/application/dtos/admin/attributes/job-categories/requests/create-job-category-request.dto';
-import { GetAllJobCategoriesQueryDto } from 'src/application/dtos/admin/attributes/job-categories/requests/get-all-job-categories-query.dto';
-import { UpdateJobCategoryRequestDto, UpdateJobCategoryDto } from 'src/application/dtos/admin/attributes/job-categories/requests/update-job-category-request.dto';
-import { JobCategoryResponseDto } from 'src/application/dtos/admin/attributes/job-categories/responses/job-category-response.dto';
-import { PaginatedJobCategoriesResultDto } from 'src/application/dtos/admin/attributes/job-categories/responses/paginated-job-categories-result.dto';
+import {
+  CreateJobCategoryRequestDto,
+  CreateJobCategoryDto,
+  GetAllJobCategoriesQueryDto,
+  UpdateJobCategoryRequestDto,
+  UpdateJobCategoryDto,
+  JobCategoryResponseDto,
+  PaginatedJobCategoriesResultDto,
+} from 'src/application/dtos/admin/attributes/job-categories/job-category.dto';
 import { formatZodErrors, handleAsyncError, handleValidationError, sendSuccessResponse } from 'src/shared/utils';
 import { SUCCESS } from 'src/shared/constants/messages';
 import { injectable, inject } from 'inversify';
