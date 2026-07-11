@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { RegisterDto } from 'src/application/dtos/auth/registration/register.dto';
+import { RegisterDto } from 'src/application/dtos/auth/register.dto';
 import { IRegisterUserUseCase } from 'src/domain/interfaces/use-cases/auth/registration/IRegisterUserUseCase';
 import { formatZodErrors, handleAsyncError, handleValidationError, sendCreatedResponse } from 'src/shared/utils';
 import { AUTH } from 'src/shared/constants/messages';
@@ -23,5 +23,4 @@ export class RegistrationController {
     }
   };
 }
-
 

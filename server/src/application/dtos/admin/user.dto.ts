@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { UserRole } from 'src/domain/enums/user-role.enum';
-import { UserResponseDto } from 'src/application/dtos/auth/user/user-response.dto';
+import { UserResponseDto } from 'src/application/dtos/auth/user.dto';
 
 // requests/block-user-request.dto.ts
 export const BlockUserRequestDtoSchema = z.object({

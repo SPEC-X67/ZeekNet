@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import { RequestOtpDto } from 'src/application/dtos/auth/verification/request-otp.use-case';
-import { VerifyOtpDto } from 'src/application/dtos/auth/verification/verify-otp.dto';
+import { RequestOtpDto, VerifyOtpDto } from 'src/application/dtos/auth/otp.dto';
+
 import { IRequestOtpUseCase } from 'src/domain/interfaces/use-cases/auth/verification/IRequestOtpUseCase';
 import { IVerifyOtpUseCase } from 'src/domain/interfaces/use-cases/auth/verification/IVerifyOtpUseCase';
 import { ICookieService } from 'src/presentation/services/ICookieService';
@@ -16,7 +16,6 @@ export class OtpController {
     @inject(TYPES.VerifyOtpUseCase) private readonly _verifyOtpUseCase: IVerifyOtpUseCase,
     @inject(TYPES.CookieService) private readonly _cookieService: ICookieService,
   ) { }
-
 
   request = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const parsed = RequestOtpDto.safeParse(req.body);

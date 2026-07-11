@@ -5,8 +5,8 @@ import { IUserRepository } from 'src/domain/interfaces/repositories/user/IUserRe
 import { IAdminLoginUseCase } from 'src/domain/interfaces/use-cases/auth/session/IAdminLoginUseCase';
 import { AuthenticationError, AuthorizationError } from 'src/domain/errors/errors';
 import { UserMapper } from 'src/application/mappers/auth/user.mapper';
-import { LoginRequestDto } from 'src/application/dtos/auth/session/login.dto';
-import { LoginResponseDto } from 'src/application/dtos/auth/session/login-response.dto';
+import { LoginRequestDto, LoginResponseDto } from 'src/application/dtos/auth/login.dto';
+
 import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';
 
@@ -17,7 +17,6 @@ export class AdminLoginUseCase implements IAdminLoginUseCase {
     @inject(TYPES.PasswordHasher) private readonly _passwordHasher: IPasswordHasher,
     @inject(TYPES.TokenService) private readonly _tokenService: ITokenService,
   ) { }
-
 
   async execute(params: LoginRequestDto): Promise<LoginResponseDto> {
     const { email, password } = params;
@@ -50,5 +49,4 @@ export class AdminLoginUseCase implements IAdminLoginUseCase {
     };
   }
 }
-
 

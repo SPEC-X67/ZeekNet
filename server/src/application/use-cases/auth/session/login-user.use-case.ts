@@ -8,8 +8,8 @@ import { IUserRepository } from 'src/domain/interfaces/repositories/user/IUserRe
 import { IEmailTemplateService } from 'src/domain/interfaces/services/IEmailTemplateService';
 import { ILoginUserUseCase } from 'src/domain/interfaces/use-cases/auth/session/ILoginUserUseCase';
 import { UserMapper } from 'src/application/mappers/auth/user.mapper';
-import { LoginRequestDto } from 'src/application/dtos/auth/session/login.dto';
-import { LoginResponseDto } from 'src/application/dtos/auth/session/login-response.dto';
+import { LoginRequestDto, LoginResponseDto } from 'src/application/dtos/auth/login.dto';
+
 import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';
 
@@ -23,8 +23,6 @@ export class LoginUserUseCase implements ILoginUserUseCase {
     @inject(TYPES.MailerService) private readonly _mailerService: IMailerService,
     @inject(TYPES.EmailTemplateService) private readonly _emailTemplateService: IEmailTemplateService,
   ) { }
-
-
 
   async execute(params: LoginRequestDto): Promise<LoginResponseDto> {
     const { email, password } = params;
@@ -65,5 +63,4 @@ export class LoginUserUseCase implements ILoginUserUseCase {
     };
   }
 }
-
 

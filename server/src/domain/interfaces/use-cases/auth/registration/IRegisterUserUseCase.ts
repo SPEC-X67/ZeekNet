@@ -1,5 +1,4 @@
-import { RegisterRequestDto } from 'src/application/dtos/auth/registration/register.dto';
-import { RegisterResponseDto } from 'src/application/dtos/auth/registration/register-response.dto';
+import { RegisterRequestDto, RegisterResponseDto } from 'src/application/dtos/auth/register.dto';
 
 export interface IRegisterUserUseCase {
   execute(params: RegisterRequestDto): Promise<RegisterResponseDto>;

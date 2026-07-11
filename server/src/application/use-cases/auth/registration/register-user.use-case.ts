@@ -7,8 +7,7 @@ import { IEmailTemplateService } from 'src/domain/interfaces/services/IEmailTemp
 import { IRegisterUserUseCase } from 'src/domain/interfaces/use-cases/auth/registration/IRegisterUserUseCase';
 
 import { UserMapper } from 'src/application/mappers/auth/user.mapper';
-import { RegisterResponseDto } from 'src/application/dtos/auth/registration/register-response.dto';
-import { RegisterRequestDto } from 'src/application/dtos/auth/registration/register.dto';
+import { RegisterResponseDto, RegisterRequestDto } from 'src/application/dtos/auth/register.dto';
 
 import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';
@@ -22,7 +21,6 @@ export class RegisterUserUseCase implements IRegisterUserUseCase {
     @inject(TYPES.MailerService) private readonly _mailerService: IMailerService,
     @inject(TYPES.EmailTemplateService) private readonly _emailTemplateService: IEmailTemplateService,
   ) { }
-
 
   async execute(params: RegisterRequestDto): Promise<RegisterResponseDto> {
     const { email, password } = params;
@@ -48,5 +46,4 @@ export class RegisterUserUseCase implements IRegisterUserUseCase {
     await this._mailerService.sendMail(email, subject, html);
   }
 }
-
 

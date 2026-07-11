@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { SeekerProfileResponseDto } from 'src/application/dtos/seeker/profile/info/responses/seeker-profile-response.dto';
 
+// responses/user-response.dto.ts
 export const UserResponseDto = z.object({
   id: z.string(),
   name: z.string(),
@@ -13,5 +14,4 @@ export const UserResponseDto = z.object({
   avatar: z.string().optional(),
   seekerProfile: z.custom<SeekerProfileResponseDto>().optional(),
 });
-
 export type UserResponseDto = z.infer<typeof UserResponseDto>;

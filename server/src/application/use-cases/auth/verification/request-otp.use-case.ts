@@ -3,13 +3,12 @@ import { IMailerService } from 'src/domain/interfaces/services/IMailerService';
 import { IRequestOtpUseCase } from 'src/domain/interfaces/use-cases/auth/verification/IRequestOtpUseCase';
 import { ValidationError } from 'src/domain/errors/errors';
 import { otpVerificationTemplate } from 'src/infrastructure/messaging/templates/otp-verification.template';
-import { RequestOtpRequestDto } from 'src/application/dtos/auth/verification/request-otp.use-case';
+import { RequestOtpRequestDto } from 'src/application/dtos/auth/otp.dto';
 import { IUserRepository } from 'src/domain/interfaces/repositories/user/IUserRepository';
 
 import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';
 import { ERROR } from 'src/shared/constants/messages';
-
 
 @injectable()
 export class RequestOtpUseCase implements IRequestOtpUseCase {
@@ -18,7 +17,6 @@ export class RequestOtpUseCase implements IRequestOtpUseCase {
     @inject(TYPES.MailerService) private readonly _mailerService: IMailerService,
     @inject(TYPES.UserRepository) private readonly _userRepository: IUserRepository,
   ) { }
-
 
   async execute(params: RequestOtpRequestDto): Promise<void> {
     const { email } = params;

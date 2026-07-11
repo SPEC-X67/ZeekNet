@@ -1,4 +1,4 @@
-import { LoginResponseDto } from 'src/application/dtos/auth/session/login-response.dto';
+import { LoginResponseDto } from 'src/application/dtos/auth/login.dto';
 
 export interface IRefreshTokenUseCase {
   execute(refreshToken: string): Promise<LoginResponseDto>;
