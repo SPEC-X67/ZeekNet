@@ -7,7 +7,7 @@ import { ICompanyProfileRepository } from 'src/domain/interfaces/repositories/co
 import { JobPostingQueryRequestDto } from 'src/application/dtos/admin/job.dto';
 import { NotFoundError } from 'src/domain/errors/errors';
 import { IGetCompanyJobPostingsUseCase } from 'src/domain/interfaces/use-cases/job/IGetCompanyJobPostingsUseCase';
-import { PaginatedCompanyJobPostingsDto } from 'src/application/dtos/job/responses/paginated-company-job-postings.dto';
+import { PaginatedCompanyJobPostingsDto } from 'src/application/dtos/job/job.dto';;
 import { JobPostingMapper } from 'src/application/mappers/job/job-posting.mapper';
 
 @injectable()
