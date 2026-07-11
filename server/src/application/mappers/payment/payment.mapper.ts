@@ -1,9 +1,9 @@
 import { PaymentOrder } from 'src/domain/entities/payment-order.entity';
-import { PaymentResponseDto } from 'src/application/dtos/payment/responses/payment-response.dto';
+import { PaymentResponseDto, PaymentOrderWithDetailsResponseDto } from 'src/application/dtos/payment/payment.dto';;
 import { PaymentStatus } from 'src/domain/enums/payment-status.enum';
 import { PaymentMethod } from 'src/domain/enums/payment-method.enum';
 import { BillingCycle } from 'src/domain/enums/billing-cycle.enum';
-import { PaymentOrderWithDetailsResponseDto } from 'src/application/dtos/payment/responses/payment-order-with-details-response.dto';
+;
 import { CreateInput } from 'src/domain/types/common.types';
 
 export class PaymentMapper {

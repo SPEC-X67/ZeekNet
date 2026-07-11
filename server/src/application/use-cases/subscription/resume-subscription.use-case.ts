@@ -6,7 +6,7 @@ import { ICompanySubscriptionRepository } from 'src/domain/interfaces/repositori
 import { SubscriptionStatus } from 'src/domain/enums/subscription-status.enum';
 import { NotFoundError, ValidationError } from 'src/domain/errors/errors';
 import { IResumeSubscriptionUseCase } from 'src/domain/interfaces/use-cases/subscription/IResumeSubscriptionUseCase';
-import { CompanySubscriptionResponseDto } from 'src/application/dtos/subscription/responses/subscription-response.dto';
+import { CompanySubscriptionResponseDto } from 'src/application/dtos/subscription/subscription.dto';;
 import { CompanySubscriptionResponseMapper } from 'src/application/mappers/company/subscription/company-subscription-response.mapper';
 import { ERROR } from 'src/shared/constants/messages';
 

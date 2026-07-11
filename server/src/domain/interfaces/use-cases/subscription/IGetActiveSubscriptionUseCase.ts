@@ -1,4 +1,4 @@
-import { CompanySubscriptionResponseDto } from 'src/application/dtos/subscription/responses/subscription-response.dto';
+import { CompanySubscriptionResponseDto } from 'src/application/dtos/subscription/subscription.dto';;
 
 export interface IGetActiveSubscriptionUseCase {
   execute(userId: string): Promise<CompanySubscriptionResponseDto | null>;

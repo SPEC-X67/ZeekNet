@@ -9,8 +9,8 @@ import { ICompanySubscriptionRepository } from 'src/domain/interfaces/repositori
 import { IUserRepository } from 'src/domain/interfaces/repositories/user/IUserRepository';
 import { NotFoundError, ValidationError } from 'src/domain/errors/errors';
 import { ICreateCheckoutSessionUseCase } from 'src/domain/interfaces/use-cases/subscription/ICreateCheckoutSessionUseCase';
-import { CreateCheckoutSessionRequestDto } from 'src/application/dtos/subscription/requests/create-checkout-session.dto';
-import { CreateCheckoutSessionResponseDto } from 'src/application/dtos/subscription/responses/checkout-session-response.dto';
+import { CreateCheckoutSessionRequestDto, CreateCheckoutSessionResponseDto } from 'src/application/dtos/subscription/subscription.dto';;
+;
 import { StripeCheckoutMapper } from 'src/application/mappers/payment/stripe/stripe-checkout.mapper';
 
 @injectable()

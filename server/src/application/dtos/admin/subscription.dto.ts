@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { CompanySubscriptionResponseDto } from 'src/application/dtos/subscription/responses/subscription-response.dto';
+import { CompanySubscriptionResponseDto } from 'src/application/dtos/subscription/subscription.dto';;
 
 // common/company-subscription.dto.ts
 export interface CompanySubscriptionDto {

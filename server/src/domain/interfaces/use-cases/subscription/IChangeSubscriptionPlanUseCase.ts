@@ -1,4 +1,4 @@
-import { ChangeSubscriptionPlanRequestDto } from 'src/application/dtos/subscription/requests/change-subscription-plan.dto';
+import { ChangeSubscriptionPlanRequestDto } from 'src/application/dtos/subscription/subscription.dto';;
 import { ChangeSubscriptionResult } from 'src/application/dtos/admin/subscription.dto';
 
 export interface IChangeSubscriptionPlanUseCase {

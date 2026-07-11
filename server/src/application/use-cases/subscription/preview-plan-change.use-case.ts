@@ -6,8 +6,8 @@ import { ICompanyProfileRepository } from 'src/domain/interfaces/repositories/co
 import { ICompanySubscriptionRepository } from 'src/domain/interfaces/repositories/subscription/ICompanySubscriptionRepository';
 import { IJobPostingRepository } from 'src/domain/interfaces/repositories/job/IJobPostingRepository';
 import { NotFoundError, ValidationError } from 'src/domain/errors/errors';
-import { PreviewPlanChangeRequestDto } from 'src/application/dtos/subscription/requests/preview-plan-change.dto';
-import { PreviewPlanChangeResponseDto, PlanChangeType, JobToUnlistDetail } from 'src/application/dtos/subscription/responses/preview-plan-change-response.dto';
+import { PreviewPlanChangeRequestDto, PreviewPlanChangeResponseDto, PlanChangeType, JobToUnlistDetail } from 'src/application/dtos/subscription/subscription.dto';;
+;
 import { IPreviewPlanChangeUseCase } from 'src/domain/interfaces/use-cases/subscription/IPreviewPlanChangeUseCase';
 import { BillingCycle } from 'src/domain/enums/billing-cycle.enum';
 import { JobStatus } from 'src/domain/enums/job-status.enum';

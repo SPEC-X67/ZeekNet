@@ -3,7 +3,7 @@ import { TYPES } from 'src/shared/constants/types';
 import { NotificationMapper } from 'src/application/mappers/notification/notification.mapper';
 import { INotificationRepository, CreateNotificationData } from 'src/domain/interfaces/repositories/notification/INotificationRepository';
 import { ICreateNotificationUseCase } from 'src/domain/interfaces/use-cases/notification/management/ICreateNotificationUseCase';
-import { NotificationResponseDto } from 'src/application/dtos/notification/management/responses/notification-response.dto';
+import { NotificationResponseDto } from 'src/application/dtos/notification/notification.dto';;
 
 @injectable()
 export class CreateNotificationUseCase implements ICreateNotificationUseCase {
