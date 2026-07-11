@@ -1,4 +1,4 @@
-import { ATSOfferResponseDto } from 'src/application/dtos/application/offer/responses/ats-offer-response.dto';
+import { ATSOfferResponseDto } from 'src/application/dtos/application/offer.dto';
 import { UploadedFile } from 'src/domain/types/common.types';
 
 export interface UploadSignedOfferDocumentDto {

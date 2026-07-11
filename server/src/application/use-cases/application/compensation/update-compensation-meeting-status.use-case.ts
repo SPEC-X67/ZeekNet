@@ -6,8 +6,8 @@ import { IJobApplicationRepository } from 'src/domain/interfaces/repositories/jo
 
 import { ATSCompensationMeeting } from 'src/domain/entities/ats-compensation-meeting.entity';
 import { NotFoundError, ValidationError } from 'src/domain/errors/errors';
-import { UpdateCompensationMeetingStatusRequestDto } from 'src/application/dtos/application/compensation/requests/update-compensation-meeting-status.dto';
-import { ATSCompensationMeetingResponseDto } from 'src/application/dtos/application/compensation/responses/ats-compensation-meeting-response.dto';
+import { UpdateCompensationMeetingStatusRequestDto, ATSCompensationMeetingResponseDto } from 'src/application/dtos/application/compensation.dto';
+
 import { ATSCompensationMeetingMapper } from 'src/application/mappers/ats/ats-compensation-meeting.mapper';
 import { IUserRepository } from 'src/domain/interfaces/repositories/user/IUserRepository';
 import { ERROR } from 'src/shared/constants/messages';
@@ -33,7 +33,6 @@ export class UpdateCompensationMeetingStatusUseCase implements IUpdateCompensati
     if (meeting.applicationId !== dto.applicationId) {
       throw new ValidationError('Meeting does not belong to this application');
     }
-
 
     const application = await this._jobApplicationRepository.findById(dto.applicationId);
     if (!application) {

@@ -9,7 +9,7 @@ import {
   UploadSignedOfferDocumentDto,
   IUploadSignedOfferDocumentUseCase,
 } from 'src/domain/interfaces/use-cases/seeker/applications/IUploadSignedOfferDocumentUseCase';
-import { ATSOfferResponseDto } from 'src/application/dtos/application/offer/responses/ats-offer-response.dto';
+import { ATSOfferResponseDto } from 'src/application/dtos/application/offer.dto';
 import { ATSOfferMapper } from 'src/application/mappers/ats/ats-offer.mapper';
 
 import { injectable, inject } from 'inversify';

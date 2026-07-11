@@ -9,8 +9,8 @@ import { IGetApplicationsByJobUseCase } from 'src/domain/interfaces/use-cases/co
 import { IBulkUpdateApplicationsUseCase } from 'src/domain/interfaces/use-cases/company/hiring/IBulkUpdateApplicationsUseCase';
 import { IMarkCandidateHiredUseCase } from 'src/domain/interfaces/use-cases/company/hiring/IMarkCandidateHiredUseCase';
 import { ApplicationFiltersDto } from 'src/application/dtos/company/hiring/requests/application-filters.dto';
-import { UpdateApplicationStageRequestDtoSchema } from 'src/application/dtos/application/requests/update-application-stage.dto';
-import { UpdateScoreDto } from 'src/application/dtos/application/requests/update-score.dto';
+import { UpdateApplicationStageRequestDtoSchema, UpdateScoreDto } from 'src/application/dtos/application/application.dto';
+
 import { BulkUpdateApplicationsDto } from 'src/application/dtos/company/hiring/requests/bulk-update-applications.dto';
 import { AuthenticatedRequest } from 'src/shared/types/authenticated-request';
 import { formatZodErrors, handleAsyncError, handleValidationError, sendSuccessResponse, validateUserId } from 'src/shared/utils';
@@ -171,11 +171,4 @@ export class CompanyJobApplicationController {
     }
   };
 }
-
-
-
-
-
-
-
 

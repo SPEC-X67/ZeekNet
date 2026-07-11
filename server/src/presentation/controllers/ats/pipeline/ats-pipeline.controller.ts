@@ -1,11 +1,11 @@
 import { Response, NextFunction } from 'express';
 import { AuthenticatedRequest } from 'src/shared/types/authenticated-request';
-import { UpdateSubStageDtoSchema } from 'src/application/dtos/application/requests/update-sub-stage.dto';
+import { UpdateSubStageDtoSchema, MoveApplicationStageDtoSchema } from 'src/application/dtos/application/application.dto';
 import { IMoveApplicationStageUseCase } from 'src/domain/interfaces/use-cases/application/pipeline/IMoveApplicationStageUseCase';
 import { IUpdateApplicationSubStageUseCase } from 'src/domain/interfaces/use-cases/application/pipeline/IUpdateApplicationSubStageUseCase';
 import { IGetJobATSPipelineUseCase } from 'src/domain/interfaces/use-cases/application/pipeline/IGetJobATSPipelineUseCase';
 import { IGetJobApplicationsForKanbanUseCase } from 'src/domain/interfaces/use-cases/application/pipeline/IGetJobApplicationsForKanbanUseCase';
-import { MoveApplicationStageDtoSchema } from 'src/application/dtos/application/requests/move-application-stage.dto';
+
 import { formatZodErrors, handleAsyncError, handleValidationError, sendSuccessResponse, validateUserId } from 'src/shared/utils';
 import { SUCCESS } from 'src/shared/constants/messages';
 import { injectable, inject } from 'inversify';

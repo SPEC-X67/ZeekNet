@@ -8,10 +8,8 @@ import { IGetCompensationUseCase } from 'src/domain/interfaces/use-cases/applica
 import { IScheduleCompensationMeetingUseCase } from 'src/domain/interfaces/use-cases/application/compensation/IScheduleCompensationMeetingUseCase';
 import { IGetCompensationMeetingsUseCase } from 'src/domain/interfaces/use-cases/application/compensation/IGetCompensationMeetingsUseCase';
 import { IUpdateCompensationMeetingStatusUseCase } from 'src/domain/interfaces/use-cases/application/compensation/IUpdateCompensationMeetingStatusUseCase';
-import { InitiateCompensationSchema } from 'src/application/dtos/application/compensation/requests/initiate-compensation.dto';
-import { UpdateCompensationSchema } from 'src/application/dtos/application/compensation/requests/update-compensation.dto';
-import { ScheduleCompensationMeetingSchema } from 'src/application/dtos/application/compensation/requests/schedule-compensation-meeting.dto';
-import { UpdateCompensationMeetingStatusSchema } from 'src/application/dtos/application/compensation/requests/update-compensation-meeting-status.dto';
+import { InitiateCompensationSchema, UpdateCompensationSchema, ScheduleCompensationMeetingSchema, UpdateCompensationMeetingStatusSchema } from 'src/application/dtos/application/compensation.dto';
+
 import { formatZodErrors, handleAsyncError, handleValidationError, sendCreatedResponse, sendSuccessResponse, validateUserId } from 'src/shared/utils';
 import { SUCCESS, ERROR } from 'src/shared/constants/messages';
 
@@ -80,7 +78,6 @@ export class ATSCompensationController {
       if (!compensation) {
         throw new Error(ERROR.NOT_FOUND('Compensation record'));
       }
-
 
       sendSuccessResponse(res, SUCCESS.RETRIEVED('Compensation'), compensation);
     } catch (error) {

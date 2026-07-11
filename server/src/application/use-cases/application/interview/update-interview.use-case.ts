@@ -4,10 +4,9 @@ import { IUpdateInterviewUseCase } from 'src/domain/interfaces/use-cases/applica
 import { IATSInterviewRepository } from 'src/domain/interfaces/repositories/ats/IATSInterviewRepository';
 import { IUserRepository } from 'src/domain/interfaces/repositories/user/IUserRepository';
 import { NotFoundError, BadRequestError } from 'src/domain/errors/errors';
-import { UpdateInterviewRequestDto } from 'src/application/dtos/application/interview/requests/update-interview.dto';
-import { ATSInterviewResponseDto } from 'src/application/dtos/application/interview/responses/ats-interview-response.dto';
-import { ERROR } from 'src/shared/constants/messages';
+import { UpdateInterviewRequestDto, ATSInterviewResponseDto } from 'src/application/dtos/application/interview.dto';
 
+import { ERROR } from 'src/shared/constants/messages';
 
 @injectable()
 export class UpdateInterviewUseCase implements IUpdateInterviewUseCase {

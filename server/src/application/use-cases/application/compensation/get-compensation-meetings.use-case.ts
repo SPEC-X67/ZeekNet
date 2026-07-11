@@ -2,7 +2,7 @@ import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';
 import { IGetCompensationMeetingsUseCase } from 'src/domain/interfaces/use-cases/application/compensation/IGetCompensationMeetingsUseCase';
 import { IATSCompensationMeetingRepository } from 'src/domain/interfaces/repositories/ats/IATSCompensationMeetingRepository';
-import { ATSCompensationMeetingResponseDto } from 'src/application/dtos/application/compensation/responses/ats-compensation-meeting-response.dto';
+import { ATSCompensationMeetingResponseDto } from 'src/application/dtos/application/compensation.dto';
 import { ATSCompensationMeetingMapper } from 'src/application/mappers/ats/ats-compensation-meeting.mapper';
 
 @injectable()

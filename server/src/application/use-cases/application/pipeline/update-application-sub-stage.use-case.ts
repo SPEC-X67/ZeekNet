@@ -7,8 +7,8 @@ import { JobApplication } from 'src/domain/entities/job-application.entity';
 import { ATSSubStage, ATSStage } from 'src/domain/enums/ats-stage.enum';
 import { NotFoundError, ValidationError } from 'src/domain/errors/errors';
 import { isValidSubStageForStage } from 'src/domain/utils/ats-pipeline.util';
-import { UpdateSubStageDto } from 'src/application/dtos/application/requests/update-sub-stage.dto';
-import { JobApplicationResponseDto } from 'src/application/dtos/application/responses/job-application-response.dto';
+import { UpdateSubStageDto, JobApplicationResponseDto } from 'src/application/dtos/application/application.dto';
+
 import { JobApplicationMapper } from 'src/application/mappers/job-application/job-application.mapper';
 import { ATSComment } from 'src/domain/entities/ats-comment.entity';
 import { v4 as uuidv4 } from 'uuid';
@@ -39,21 +39,16 @@ export class UpdateApplicationSubStageUseCase implements IUpdateApplicationSubSt
       throw new NotFoundError(ERROR.NOT_FOUND('Application'));
     }
 
-
     const job = await this.jobPostingRepository.findById(application.jobId);
     if (!job) {
       throw new NotFoundError(ERROR.NOT_FOUND('Job'));
     }
 
-
     if (!isValidSubStageForStage(application.stage, data.subStage)) {
       throw new ValidationError(`Sub-stage '${data.subStage}' is not valid for stage '${application.stage}'`);
     }
 
-
-
     const previousSubStage = application.subStage;
-
 
     const updatedApplication = await this.jobApplicationRepository.update(data.applicationId, {
       subStage: data.subStage,

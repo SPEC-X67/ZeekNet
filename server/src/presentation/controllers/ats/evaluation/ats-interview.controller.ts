@@ -5,8 +5,8 @@ import { AuthenticatedRequest } from 'src/shared/types/authenticated-request';
 import { IScheduleInterviewUseCase } from 'src/domain/interfaces/use-cases/application/interview/IScheduleInterviewUseCase';
 import { IUpdateInterviewUseCase } from 'src/domain/interfaces/use-cases/application/interview/IUpdateInterviewUseCase';
 import { IGetInterviewsByApplicationUseCase } from 'src/domain/interfaces/use-cases/application/interview/IGetInterviewsByApplicationUseCase';
-import { ScheduleInterviewDtoSchema } from 'src/application/dtos/application/interview/requests/schedule-interview.dto';
-import { UpdateInterviewDtoSchema } from 'src/application/dtos/application/interview/requests/update-interview.dto';
+import { ScheduleInterviewDtoSchema, UpdateInterviewDtoSchema } from 'src/application/dtos/application/interview.dto';
+
 import { formatZodErrors, handleAsyncError, handleValidationError, sendCreatedResponse, sendSuccessResponse, validateUserId } from 'src/shared/utils';
 import { SUCCESS } from 'src/shared/constants/messages';
 

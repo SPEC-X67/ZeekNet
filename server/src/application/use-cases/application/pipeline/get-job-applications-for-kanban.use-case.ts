@@ -8,9 +8,9 @@ import { IUserRepository } from 'src/domain/interfaces/repositories/user/IUserRe
 import { NotFoundError, ValidationError } from 'src/domain/errors/errors';
 import { ISeekerProfileRepository } from 'src/domain/interfaces/repositories/seeker/ISeekerProfileRepository';
 import { IS3Service } from 'src/domain/interfaces/services/IS3Service';
-import { GetJobApplicationsKanbanDto } from 'src/application/dtos/application/requests/get-job-applications-kanban.dto';
+import { GetJobApplicationsKanbanDto } from 'src/application/dtos/application/application.dto';
 import { IGetCompanyIdByUserIdUseCase } from 'src/domain/interfaces/use-cases/admin/companies/IGetCompanyIdByUserIdUseCase';
-import { JobApplicationsKanbanResponseDto } from 'src/application/dtos/application/pipeline/responses/job-applications-kanban-response.dto';
+import { JobApplicationsKanbanResponseDto } from 'src/application/dtos/application/pipeline.dto';
 
 @injectable()
 export class GetJobApplicationsForKanbanUseCase implements IGetJobApplicationsForKanbanUseCase {
@@ -39,15 +39,12 @@ export class GetJobApplicationsForKanbanUseCase implements IGetJobApplicationsFo
       company_id: companyId,
     });
 
-    
     const grouped: JobApplicationsKanbanResponseDto = {};
 
-    
     job.enabledStages.forEach((stage) => {
       grouped[stage] = [];
     });
 
-    
     const seekerIds = [...new Set(applications.map((app: { seekerId: string }) => app.seekerId))];
     const seekers = await Promise.all(
       seekerIds.map(async (seekerId: string) => {
@@ -71,7 +68,6 @@ export class GetJobApplicationsForKanbanUseCase implements IGetJobApplicationsFo
       seekers.map((data) => [data.id, data]),
     );
 
-    
     for (const application of applications) {
       const stage = application.stage;
       if (!grouped[stage]) {

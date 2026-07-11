@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import {
   ATSStage,
+  ATSSubStage,
   InReviewSubStage,
   ShortlistedSubStage,
   InterviewSubStage,
@@ -9,6 +10,16 @@ import {
   OfferSubStage,
 } from 'src/domain/enums/ats-stage.enum';
 
+// requests/add-comment-params.dto.ts
+export interface AddCommentParamsDto {
+  applicationId: string;
+  comment: string;
+  stage: ATSStage;
+  subStage?: ATSSubStage;
+  userId: string;
+}
+
+// requests/add-comment-request.dto.ts
 export const AddCommentRequestDtoSchema = z.object({
   applicationId: z.string().min(1, 'Application ID is required'),
   comment: z.string().min(1, 'Comment is required'),
@@ -22,5 +33,21 @@ export const AddCommentRequestDtoSchema = z.object({
     z.nativeEnum(OfferSubStage),
   ]).optional(),
 });
-
 export type AddCommentRequestDto = z.infer<typeof AddCommentRequestDtoSchema>;
+
+// requests/get-comments-by-application-params.dto.ts
+export interface GetCommentsByApplicationParamsDto {
+  applicationId: string;
+  stage?: string;
+}
+
+// responses/ats-comment-response.dto.ts
+export interface ATSCommentResponseDto {
+  id: string;
+  applicationId: string;
+  comment: string;
+  stage: ATSStage;
+  subStage?: ATSSubStage;
+  createdAt: Date;
+  updatedAt: Date;
+}

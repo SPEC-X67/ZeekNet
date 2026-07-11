@@ -8,7 +8,7 @@ import {
   ISubmitTechnicalTaskUseCase,
 } from 'src/domain/interfaces/use-cases/seeker/applications/ISubmitTechnicalTaskUseCase';
 import { ATSTechnicalTaskMapper } from 'src/application/mappers/ats/ats-technical-task.mapper';
-import { ATSTechnicalTaskResponseDto } from 'src/application/dtos/application/task/responses/ats-technical-task-response.dto';
+import { ATSTechnicalTaskResponseDto } from 'src/application/dtos/application/task.dto';
 
 import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';

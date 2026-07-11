@@ -5,7 +5,7 @@ import {
   JobApplicationListResponseDto,
   JobApplicationDetailResponseDto,
 } from 'src/application/dtos/seeker/applications/responses/job-application-response.dto';
-import { JobApplicationResponseDto } from 'src/application/dtos/application/responses/job-application-response.dto';
+import { JobApplicationResponseDto } from 'src/application/dtos/application/application.dto';
 import { CreateInput } from 'src/domain/types/common.types';
 
 export class JobApplicationMapper {
@@ -175,5 +175,4 @@ export class JobApplicationMapper {
     };
   }
 }
-
 

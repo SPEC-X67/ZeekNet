@@ -5,8 +5,8 @@ import { AuthenticatedRequest } from 'src/shared/types/authenticated-request';
 import { IUploadOfferUseCase } from 'src/domain/interfaces/use-cases/application/offer/IUploadOfferUseCase';
 import { IUpdateOfferStatusUseCase } from 'src/domain/interfaces/use-cases/application/offer/IUpdateOfferStatusUseCase';
 import { IGetOffersByApplicationUseCase } from 'src/domain/interfaces/use-cases/application/offer/IGetOffersByApplicationUseCase';
-import { UploadOfferSchema } from 'src/application/dtos/application/offer/requests/upload-offer.dto';
-import { UpdateOfferStatusDtoSchema } from 'src/application/dtos/application/offer/requests/update-offer-status.dto';
+import { UploadOfferSchema, UpdateOfferStatusDtoSchema } from 'src/application/dtos/application/offer.dto';
+
 import { formatZodErrors, handleAsyncError, handleValidationError, sendCreatedResponse, sendSuccessResponse, validateUserId } from 'src/shared/utils';
 import { SUCCESS } from 'src/shared/constants/messages';
 

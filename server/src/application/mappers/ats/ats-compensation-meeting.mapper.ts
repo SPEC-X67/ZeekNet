@@ -1,5 +1,5 @@
 import { ATSCompensationMeeting } from 'src/domain/entities/ats-compensation-meeting.entity';
-import { ATSCompensationMeetingResponseDto } from 'src/application/dtos/application/compensation/responses/ats-compensation-meeting-response.dto';
+import { ATSCompensationMeetingResponseDto } from 'src/application/dtos/application/compensation.dto';
 
 export class ATSCompensationMeetingMapper {
   static toResponse(meeting: ATSCompensationMeeting): ATSCompensationMeetingResponseDto {

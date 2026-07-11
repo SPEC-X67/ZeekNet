@@ -6,7 +6,7 @@ import { IATSTechnicalTaskRepository } from 'src/domain/interfaces/repositories/
 import { IJobApplicationRepository } from 'src/domain/interfaces/repositories/job-application/IJobApplicationRepository';
 
 import { NotFoundError } from 'src/domain/errors/errors';
-import { DeleteTechnicalTaskRequestDto } from 'src/application/dtos/application/task/requests/delete-technical-task.dto';
+import { DeleteTechnicalTaskRequestDto } from 'src/application/dtos/application/task.dto';
 
 @injectable()
 export class DeleteTechnicalTaskUseCase implements IDeleteTechnicalTaskUseCase {

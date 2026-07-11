@@ -1,4 +1,4 @@
-import { ATSTechnicalTaskResponseDto } from 'src/application/dtos/application/task/responses/ats-technical-task-response.dto';
+import { ATSTechnicalTaskResponseDto } from 'src/application/dtos/application/task.dto';
 import { UploadedFile } from 'src/domain/types/common.types';
 
 export interface SubmitTechnicalTaskDto {

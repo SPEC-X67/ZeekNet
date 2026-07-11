@@ -4,7 +4,7 @@ import { NextFunction, Response } from 'express';
 import { AuthenticatedRequest } from 'src/shared/types/authenticated-request';
 import { IAddCommentUseCase } from 'src/domain/interfaces/use-cases/application/comments/IAddCommentUseCase';
 import { IGetCommentsByApplicationUseCase } from 'src/domain/interfaces/use-cases/application/comments/IGetCommentsByApplicationUseCase';
-import { AddCommentRequestDtoSchema } from 'src/application/dtos/application/comments/requests/add-comment-request.dto';
+import { AddCommentRequestDtoSchema } from 'src/application/dtos/application/comment.dto';
 import { formatZodErrors, handleAsyncError, handleValidationError, sendCreatedResponse, sendSuccessResponse, validateUserId } from 'src/shared/utils';
 import { SUCCESS } from 'src/shared/constants/messages';
 
