@@ -1,4 +1,4 @@
-import { CompanyWithVerificationResult } from 'src/application/dtos/admin/companies/responses/company-with-verification-result.dto';
+import { CompanyWithVerificationResult } from 'src/application/dtos/admin/companies/company.dto';
 
 export interface PaginatedCompaniesWithVerificationResultDto {
   companies: CompanyWithVerificationResult[];

@@ -1,7 +1,7 @@
 import { IBlockUserUseCase } from 'src/domain/interfaces/use-cases/admin/user/IBlockUserUseCase';
 import { INotificationService } from 'src/domain/interfaces/services/INotificationService';
 import { IUserRepository } from 'src/domain/interfaces/repositories/user/IUserRepository';
-import { BlockUserRequestDto } from 'src/application/dtos/admin/user/requests/block-user-request.dto';
+import { BlockUserRequestDto } from 'src/application/dtos/admin/user/user.dto';
 import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';
 

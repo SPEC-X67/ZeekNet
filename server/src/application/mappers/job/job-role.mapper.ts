@@ -1,5 +1,5 @@
 import { JobRole } from 'src/domain/entities/job-role.entity';
-import { JobRoleResponseDto } from 'src/application/dtos/admin/attributes/job-roles/responses/job-role-response.dto';
+import { JobRoleResponseDto } from 'src/application/dtos/admin/attributes/job-roles/job-role.dto';
 
 export class JobRoleMapper {
   static toResponse(jobRole: JobRole): JobRoleResponseDto {

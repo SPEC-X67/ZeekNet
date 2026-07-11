@@ -1,4 +1,4 @@
-import { PaginatedCompaniesWithVerificationResultDto } from 'src/application/dtos/admin/companies/responses/paginated-companies-with-verification-result.dto';
+import { PaginatedCompaniesWithVerificationResultDto } from 'src/application/dtos/admin/companies/company.dto';
 
 
 export interface IGetPendingCompaniesUseCase {

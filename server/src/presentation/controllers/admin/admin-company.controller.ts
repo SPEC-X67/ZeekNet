@@ -3,8 +3,7 @@ import { IGetAllCompaniesUseCase } from 'src/domain/interfaces/use-cases/admin/c
 import { IGetCompanyByIdUseCase } from 'src/domain/interfaces/use-cases/admin/companies/IGetCompanyByIdUseCase';
 import { IGetPendingCompaniesUseCase } from 'src/domain/interfaces/use-cases/admin/companies/IGetPendingCompaniesUseCase';
 import { IVerifyCompanyUseCase } from 'src/domain/interfaces/use-cases/admin/companies/IVerifyCompanyUseCase';
-import { GetCompaniesQueryDtoSchema } from 'src/application/dtos/admin/companies/requests/get-companies-query.dto';
-import { VerifyCompanyDto } from 'src/application/dtos/admin/companies/requests/verify-company-request.dto';
+import { GetCompaniesQueryDtoSchema, VerifyCompanyDto } from 'src/application/dtos/admin/companies/company.dto';
 import { formatZodErrors, handleAsyncError, handleValidationError, sendSuccessResponse } from 'src/shared/utils';
 import { SUCCESS } from 'src/shared/constants/messages';
 import { injectable, inject } from 'inversify';
