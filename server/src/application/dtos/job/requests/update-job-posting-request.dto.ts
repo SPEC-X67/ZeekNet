@@ -34,7 +34,5 @@ export const UpdateJobPostingRequestDtoSchema = z.object({
 
 export type UpdateJobPostingRequestDto = z.infer<typeof UpdateJobPostingRequestDtoSchema>;
 
-
 export const UpdateJobPostingDto = UpdateJobPostingRequestDtoSchema;
-
 

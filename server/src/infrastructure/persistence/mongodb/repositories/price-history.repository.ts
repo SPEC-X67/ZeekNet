@@ -118,4 +118,3 @@ export class PriceHistoryRepository extends RepositoryBase<PriceHistory, ModelDo
   }
 }
 
-

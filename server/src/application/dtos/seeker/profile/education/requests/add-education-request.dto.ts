@@ -12,6 +12,5 @@ export const AddEducationRequestDtoSchema = z.object({
 
 export type AddEducationRequestDto = z.infer<typeof AddEducationRequestDtoSchema>;
 
-
 export const AddEducationDto = AddEducationRequestDtoSchema;
 

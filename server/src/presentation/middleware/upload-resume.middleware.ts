@@ -4,7 +4,6 @@ import { sendBadRequestResponse } from 'src/shared/utils';
 
 const storage = multer.memoryStorage();
 
-
 const resumeFileFilter = (req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
   const allowedMimeTypes = [
     'application/pdf',
@@ -45,5 +44,4 @@ export const uploadResume = (fieldName: string = 'resume') => {
     });
   };
 };
-
 

@@ -3,17 +3,3 @@ export interface UploadLogoResult {
   filename: string;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-

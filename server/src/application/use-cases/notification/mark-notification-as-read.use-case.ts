@@ -7,7 +7,6 @@ import { NotFoundError, ValidationError } from 'src/domain/errors/errors';
 import { IMarkNotificationAsReadUseCase } from 'src/domain/interfaces/use-cases/notification/management/INotificationUseCases';
 import { ERROR } from 'src/shared/constants/messages';
 
-
 @injectable()
 export class MarkNotificationAsReadUseCase implements IMarkNotificationAsReadUseCase {
   constructor(
@@ -41,5 +40,4 @@ export class MarkNotificationAsReadUseCase implements IMarkNotificationAsReadUse
     return NotificationMapper.toResponse(updatedNotification);
   }
 }
-
 

@@ -3,17 +3,3 @@ export interface UploadBusinessLicenseResult {
   filename: string;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-

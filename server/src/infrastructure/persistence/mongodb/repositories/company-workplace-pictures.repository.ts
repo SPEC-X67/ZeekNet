@@ -21,4 +21,3 @@ export class CompanyWorkplacePicturesRepository extends RepositoryBase<CompanyWo
   }
 }
 
-

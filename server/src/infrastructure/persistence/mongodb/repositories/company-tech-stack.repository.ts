@@ -21,4 +21,3 @@ export class CompanyTechStackRepository extends RepositoryBase<CompanyTechStack,
   }
 }
 
-

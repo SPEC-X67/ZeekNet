@@ -9,7 +9,6 @@ import { CompanyContactResponseDto } from 'src/application/dtos/company/profile/
 import { CompanyContactMapper } from 'src/application/mappers/company/profile/company-contact.mapper';
 import { ERROR } from 'src/shared/constants/messages';
 
-
 @injectable()
 export class UpsertCompanyContactUseCase implements IUpsertCompanyContactUseCase {
   constructor(

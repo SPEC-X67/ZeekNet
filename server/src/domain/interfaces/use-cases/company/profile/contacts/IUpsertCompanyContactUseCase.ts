@@ -5,4 +5,3 @@ export interface IUpsertCompanyContactUseCase {
   execute(dto: UpsertCompanyContactRequestDto): Promise<CompanyContactResponseDto>;
 }
 
-

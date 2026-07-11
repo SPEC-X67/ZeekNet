@@ -32,5 +32,3 @@ export class GetAllJobRolesUseCase implements IGetAllJobRolesUseCase {
   }
 }
 
-
-

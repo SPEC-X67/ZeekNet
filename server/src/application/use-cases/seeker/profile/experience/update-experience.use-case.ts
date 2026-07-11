@@ -11,7 +11,6 @@ import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';
 import { ERROR } from 'src/shared/constants/messages';
 
-
 @injectable()
 export class UpdateExperienceUseCase implements IUpdateExperienceUseCase {
   constructor(
@@ -65,7 +64,4 @@ export class UpdateExperienceUseCase implements IUpdateExperienceUseCase {
     return SeekerProfileMapper.experienceToResponse(updatedExperience);
   }
 }
-
-
-
 

@@ -43,4 +43,3 @@ export class CreateSeekerProfileUseCase implements ICreateSeekerProfileUseCase {
   }
 }
 
-

@@ -6,6 +6,5 @@ export const UpdateLanguagesRequestDtoSchema = z.object({
 
 export type UpdateLanguagesRequestDto = z.infer<typeof UpdateLanguagesRequestDtoSchema>;
 
-
 export const UpdateLanguagesDto = UpdateLanguagesRequestDtoSchema;
 

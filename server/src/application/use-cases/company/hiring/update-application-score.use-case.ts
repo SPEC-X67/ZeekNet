@@ -55,8 +55,3 @@ export class UpdateApplicationScoreUseCase implements IUpdateApplicationScoreUse
   }
 }
 
-
-
-
-
-

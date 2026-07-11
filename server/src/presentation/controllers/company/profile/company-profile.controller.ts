@@ -77,7 +77,6 @@ export class CompanyProfileController {
     }
   };
 
-
   reapplyVerification = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
     const parsed = SimpleCompanyProfileDto.safeParse(req.body);
     if (!parsed.success) {
@@ -129,8 +128,4 @@ export class CompanyProfileController {
     }
   };
 }
-
-
-
-
 

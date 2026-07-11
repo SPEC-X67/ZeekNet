@@ -3,17 +3,3 @@ export interface UploadWorkplacePictureResult {
   filename: string;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-

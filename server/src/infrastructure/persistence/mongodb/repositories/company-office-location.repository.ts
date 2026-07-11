@@ -21,4 +21,3 @@ export class CompanyOfficeLocationRepository extends RepositoryBase<CompanyOffic
   }
 }
 
-

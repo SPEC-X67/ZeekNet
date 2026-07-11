@@ -19,7 +19,6 @@ import { TYPES } from 'src/shared/constants/types';
 export class PasswordResetServiceImpl implements IPasswordResetService {
   constructor(@inject(TYPES.MailerService) private readonly _mailerService: IMailerService) { }
 
-
   async generateResetToken(userId: string, email: string): Promise<string> {
     const token = randomBytes(32).toString('hex');
     const expiresAt = new Date(Date.now() + 15 * 60 * 1000);

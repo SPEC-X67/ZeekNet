@@ -21,4 +21,3 @@ export class CompanyContactRepository extends RepositoryBase<CompanyContact, Com
   }
 }
 
-

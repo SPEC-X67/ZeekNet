@@ -12,4 +12,3 @@ export const UpdateJobStatusDtoSchema = z.object({
 
 export type UpdateJobStatusDto = z.infer<typeof UpdateJobStatusDtoSchema>;
 
-

@@ -10,7 +10,6 @@ import { CompanySubscriptionResponseDto } from 'src/application/dtos/subscriptio
 import { CompanySubscriptionResponseMapper } from 'src/application/mappers/company/subscription/company-subscription-response.mapper';
 import { ERROR } from 'src/shared/constants/messages';
 
-
 @injectable()
 export class ResumeSubscriptionUseCase implements IResumeSubscriptionUseCase {
   constructor(

@@ -7,7 +7,6 @@ import { injectable } from 'inversify';
 @injectable()
 export class EmailTemplateService implements IEmailTemplateService {
 
-
   getPriceChangeNotificationEmail(
     planName: string,
     oldPrice: number,

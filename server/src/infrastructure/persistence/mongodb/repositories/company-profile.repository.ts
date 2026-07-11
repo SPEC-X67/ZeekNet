@@ -245,4 +245,3 @@ export class CompanyProfileRepository extends RepositoryBase<CompanyProfile, Mod
   }
 }
 
-

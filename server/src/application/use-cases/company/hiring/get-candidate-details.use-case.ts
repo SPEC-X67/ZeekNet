@@ -11,7 +11,6 @@ import { ILogger } from 'src/domain/interfaces/services/ILogger';
 import { NotFoundError } from 'src/domain/errors/errors';
 import { ERROR, VALIDATION } from 'src/shared/constants/messages';
 
-
 @injectable()
 export class GetCandidateDetailsUseCase implements IGetCandidateDetailsUseCase {
   constructor(

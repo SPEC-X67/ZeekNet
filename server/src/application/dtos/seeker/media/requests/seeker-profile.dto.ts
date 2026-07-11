@@ -8,6 +8,5 @@ export const UploadResumeRequestDtoSchema = z.object({
 
 export type UploadResumeRequestDto = z.infer<typeof UploadResumeRequestDtoSchema>;
 
-
 export const UploadResumeDto = UploadResumeRequestDtoSchema;
 

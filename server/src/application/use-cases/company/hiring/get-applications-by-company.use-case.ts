@@ -39,7 +39,6 @@ export class GetApplicationsByCompanyUseCase implements IGetApplicationsByCompan
     const query: Record<string, unknown> = { company_id: companyProfile.id };
     if (filters.stage) query.stage = filters.stage;
 
-
     if (filters.min_score !== undefined || filters.max_score !== undefined) {
       query.score = {};
       if (filters.min_score !== undefined) {
@@ -65,8 +64,6 @@ export class GetApplicationsByCompanyUseCase implements IGetApplicationsByCompan
         this._seekerProfileRepository.findOne({ userId: app.seekerId }),
       ]);
 
-
-
       const avatarUrl = profile?.avatarFileName
         ? await this._s3Service.getSignedUrl(profile.avatarFileName)
         : undefined;
@@ -91,9 +88,4 @@ export class GetApplicationsByCompanyUseCase implements IGetApplicationsByCompan
     };
   }
 }
-
-
-
-
-
 

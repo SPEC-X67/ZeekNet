@@ -28,4 +28,3 @@ export class SkillRepository extends RepositoryBase<Skill, ModelDocument> implem
   }
 }
 
-

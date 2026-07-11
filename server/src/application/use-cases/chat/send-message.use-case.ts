@@ -6,14 +6,13 @@ import { IChatSocketService } from 'src/domain/interfaces/services/IChatSocketSe
 import { AuthorizationError, NotFoundError, ValidationError } from 'src/domain/errors/errors';
 import { ChatMessage, MessageStatus } from 'src/domain/entities/chat-message.entity';
 import { CreateInput } from 'src/domain/types/common.types';
-import { SendMessageResponseDto } from 'src/application/dtos/chat/responses/send-message-response.dto';
+
 import { ConversationMapper } from 'src/application/mappers/chat/conversation.mapper';
 import { ChatMessageMapper } from 'src/application/mappers/chat/chat-message.mapper';
-import { SendMessageDto } from 'src/application/dtos/chat/requests/send-message.dto';
+import { SendMessageDto, SendMessageResponseDto } from 'src/application/dtos/chat/message.dto';
 import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';
 import { ERROR, VALIDATION } from 'src/shared/constants/messages';
-
 
 @injectable()
 export class SendMessageUseCase implements ISendMessageUseCase {
@@ -23,7 +22,6 @@ export class SendMessageUseCase implements ISendMessageUseCase {
     @inject(TYPES.UserRepository) private readonly _userRepository: IUserRepository,
     @inject(TYPES.ChatSocketService) private readonly _chatSocketService: IChatSocketService,
   ) { }
-
 
   async execute(input: SendMessageDto): Promise<SendMessageResponseDto> {
     const { senderId, receiverId, content, conversationId, replyToMessageId } = input;

@@ -9,7 +9,6 @@ import {
   OfferSubStage,
 } from 'src/domain/enums/ats-stage.enum';
 
-
 export const STAGE_TO_SUB_STAGES: Record<ATSStage, readonly ATSSubStage[]> = {
   [ATSStage.APPLIED]: [],
   [ATSStage.IN_REVIEW]: Object.values(InReviewSubStage),
@@ -21,7 +20,6 @@ export const STAGE_TO_SUB_STAGES: Record<ATSStage, readonly ATSSubStage[]> = {
   [ATSStage.HIRED]: [],
   [ATSStage.REJECTED]: [],
 };
-
 
 export function getDefaultSubStage(stage: ATSStage): ATSSubStage {
   switch (stage) {
@@ -46,12 +44,10 @@ export function getDefaultSubStage(stage: ATSStage): ATSSubStage {
   }
 }
 
-
 export function isValidSubStageForStage(stage: ATSStage, subStage: ATSSubStage): boolean {
   const validSubStages = STAGE_TO_SUB_STAGES[stage];
   return validSubStages.includes(subStage);
 }
-
 
 export function getValidSubStagesForStage(stage: ATSStage): readonly ATSSubStage[] {
   return STAGE_TO_SUB_STAGES[stage];

@@ -10,7 +10,6 @@ import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';
 import { ERROR } from 'src/shared/constants/messages';
 
-
 @injectable()
 export class UploadBannerUseCase implements IUploadBannerUseCase {
   constructor(
@@ -51,5 +50,4 @@ export class UploadBannerUseCase implements IUploadBannerUseCase {
     return SeekerProfileMapper.toResponse(updatedProfile, this._s3Service, { avatarUrl, bannerUrl, resumeUrl });
   }
 }
-
 

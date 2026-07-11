@@ -12,7 +12,6 @@ import { logger } from 'src/infrastructure/config/logger';
 import { SocketServer } from 'src/infrastructure/external-services/socket/socket-server';
 import { APP_ROUTES } from 'src/shared/constants/routes';
 
-
 import { AuthRouter } from 'src/presentation/routes/auth-router';
 import { CompanyRouter } from 'src/presentation/routes/company-router';
 import { AdminRouter } from 'src/presentation/routes/admin-router';
@@ -52,7 +51,6 @@ export class AppServer {
     );
 
     this._app.use(APP_ROUTES.WEBHOOK_STRIPE, express.raw({ type: '*/*' }));
-
 
     this._app.use(express.json({ limit: '10mb' }));
     this._app.use(express.urlencoded({ extended: true }));
@@ -95,11 +93,9 @@ export class AppServer {
     this._app.use(APP_ROUTES.NOTIFICATIONS.BASE, notificationRouter.router);
     this._app.use(APP_ROUTES.CHAT.BASE, new ChatRouter().router);
 
-
     const stripeWebhookController = container.get<StripeWebhookController>(TYPES.StripeWebhookController);
     this._app.post(APP_ROUTES.WEBHOOK_STRIPE, stripeWebhookController.handleWebhook);
     logger.info(`Stripe webhook endpoint configured at ${APP_ROUTES.WEBHOOK_STRIPE}`);
-
 
     this._app.use(errorHandler);
   }

@@ -8,7 +8,6 @@ import { TYPES } from 'src/shared/constants/types';
 export class LogoutUseCase implements ILogoutUseCase {
   constructor(@inject(TYPES.UserRepository) private readonly _userRepository: IUserRepository) { }
 
-
   async execute(userId: string): Promise<void> {
     await this._userRepository.update(userId, { refreshToken: null });
   }

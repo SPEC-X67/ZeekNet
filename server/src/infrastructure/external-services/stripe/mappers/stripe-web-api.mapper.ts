@@ -68,7 +68,6 @@ export class StripeWebApiMapper {
       subscription: typeof l.subscription === 'string' ? l.subscription : (l.subscription as Stripe.Subscription)?.id,
     } as PaymentInvoiceLineItem)) || [];
 
-    
     const invoiceAny = invoice as Stripe.Invoice & { payment_intent?: string | { id: string }; subscription?: string | Stripe.Subscription };
 
     return {
@@ -121,7 +120,6 @@ export class StripeWebApiMapper {
   static mapEvent(event: Stripe.Event): PaymentEvent {
     let objectData: PaymentSession | PaymentInvoice | PaymentSubscription | Record<string, unknown> = event.data.object as unknown as Record<string, unknown>;
 
-    
     if (event.type.startsWith('customer.subscription.')) {
       objectData = this.mapSubscription(event.data.object as Stripe.Subscription);
     } else if (event.type.startsWith('invoice.')) {

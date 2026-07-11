@@ -246,4 +246,3 @@ export class SeekerProfileMapper {
   }
 }
 
-

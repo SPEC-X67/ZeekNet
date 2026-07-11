@@ -61,7 +61,6 @@ CRITICAL: If the provided candidate application text does not appear to be a res
 
       const result = JSON.parse(responseContent);
 
-
       let score = Number(result.score);
       if (isNaN(score) || score < 0) score = 0;
       if (score > 100) score = 100;

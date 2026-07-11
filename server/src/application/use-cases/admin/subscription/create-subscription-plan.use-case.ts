@@ -13,7 +13,6 @@ import { injectable, inject, optional } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';
 import { ERROR, VALIDATION } from 'src/shared/constants/messages';
 
-
 @injectable()
 export class CreateSubscriptionPlanUseCase implements ICreateSubscriptionPlanUseCase {
   constructor(
@@ -170,5 +169,4 @@ export class CreateSubscriptionPlanUseCase implements ICreateSubscriptionPlanUse
     return SubscriptionPlanMapper.toResponse(plan)!;
   }
 }
-
 

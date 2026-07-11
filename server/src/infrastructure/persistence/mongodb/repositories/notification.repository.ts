@@ -28,5 +28,3 @@ export class NotificationRepository extends RepositoryBase<Notification, Notific
   }
 }
 
-
-

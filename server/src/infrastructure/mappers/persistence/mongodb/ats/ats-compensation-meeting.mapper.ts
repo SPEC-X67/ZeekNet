@@ -37,5 +37,3 @@ export class ATSCompensationMeetingMapper {
   }
 }
 
-
-

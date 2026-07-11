@@ -7,14 +7,12 @@ import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';
 import { ERROR } from 'src/shared/constants/messages';
 
-
 @injectable()
 export class ChangePasswordUseCase implements IChangePasswordUseCase {
   constructor(
     @inject(TYPES.UserRepository) private readonly _userRepository: IUserRepository,
     @inject(TYPES.PasswordHasher) private readonly _passwordHasher: IPasswordHasher,
   ) { }
-
 
   async execute(userId: string, currentPassword: string, newPassword: string): Promise<void> {
     const user = await this._userRepository.findById(userId);

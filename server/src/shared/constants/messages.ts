@@ -24,7 +24,6 @@ export const SUCCESS = {
   OPERATION_SUCCESS: 'Operation completed successfully',
 } as const;
 
-
 /**
  * Common error messages
  */
@@ -64,8 +63,6 @@ export const SUBSCRIPTION = {
   LIMIT_EXCEEDED: (limit: number, type: string) => `You have reached your ${type} limit of ${limit}. Please upgrade your plan.`,
 } as const;
 
-
-
 /**
  * Module specific messages
  */
@@ -83,8 +80,4 @@ export const AUTH = {
   REGISTRATION_SUCCESS: (entity: string) => `${entity} registered successfully. Please verify your email.`,
   ADMIN_REQUIRED: 'Admin access required',
 } as const;
-
-
-
-
 

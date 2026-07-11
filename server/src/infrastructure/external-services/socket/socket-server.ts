@@ -158,7 +158,6 @@ export class SocketServer implements ISocketServer {
         },
       );
 
-
       socket.on('webrtc:join-room', (payload: { roomId: string; userName?: string }, callback?: (response: unknown) => void) => {
         try {
           const { roomId, userName } = payload || {};
@@ -176,12 +175,10 @@ export class SocketServer implements ISocketServer {
 
           socket.join(`webrtc:${roomId}`);
 
-
           if (!this._webrtcRooms.has(roomId)) {
             this._webrtcRooms.set(roomId, new Set());
           }
           this._webrtcRooms.get(roomId)!.add(socket.id);
-
 
           const otherParticipants = Array.from(this._webrtcRooms.get(roomId)!).filter(id => id !== socket.id);
           socket.to(`webrtc:${roomId}`).emit('webrtc:user-joined', { socketId: socket.id, userId, userName });
@@ -266,7 +263,6 @@ export class SocketServer implements ISocketServer {
 
           socket.leave(`webrtc:${roomId}`);
 
-
           const roomParticipants = this._webrtcRooms.get(roomId);
           if (roomParticipants) {
             roomParticipants.delete(socket.id);
@@ -293,7 +289,6 @@ export class SocketServer implements ISocketServer {
         if (!chatSocketService.isUserOnline(userId)) {
           chatSocketService.emitUserOffline(userId);
         }
-
 
         this._webrtcRooms.forEach((participants, roomId) => {
           if (participants.has(socket.id)) {

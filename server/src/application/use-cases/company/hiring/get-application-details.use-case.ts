@@ -55,8 +55,6 @@ export class GetApplicationDetailsUseCase implements IGetApplicationDetailsUseCa
       this._seekerProfileRepository.findOne({ userId: application.seekerId }),
     ]);
 
-
-
     let experiences: Array<{ title: string; company: string; startDate: Date; endDate?: Date; location?: string; description?: string; }> = [];
     let education: Array<{ school: string; degree?: string; startDate: Date; endDate?: Date; location?: string; }> = [];
     if (profile) {
@@ -116,9 +114,4 @@ export class GetApplicationDetailsUseCase implements IGetApplicationDetailsUseCa
     );
   }
 }
-
-
-
-
-
 

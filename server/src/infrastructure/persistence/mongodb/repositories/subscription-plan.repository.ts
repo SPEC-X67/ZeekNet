@@ -124,4 +124,3 @@ export class SubscriptionPlanRepository extends RepositoryBase<SubscriptionPlan,
   }
 }
 
-

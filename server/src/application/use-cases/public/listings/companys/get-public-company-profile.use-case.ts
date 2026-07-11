@@ -18,7 +18,6 @@ import { CompanyTechStack } from 'src/domain/entities/company-tech-stack.entity'
 import { CompanyWorkplacePictures } from 'src/domain/entities/company-workplace-pictures.entity';
 import { ERROR } from 'src/shared/constants/messages';
 
-
 @injectable()
 export class GetPublicCompanyProfileUseCase implements IGetPublicCompanyProfileUseCase {
   constructor(
@@ -40,7 +39,6 @@ export class GetPublicCompanyProfileUseCase implements IGetPublicCompanyProfileU
       throw new NotFoundError(ERROR.NOT_FOUND('Company'));
     }
 
-
     const [
       activeJobsCount,
       subscription,
@@ -61,7 +59,6 @@ export class GetPublicCompanyProfileUseCase implements IGetPublicCompanyProfileU
 
     const hasActiveSubscription = !!subscription && !subscription.isDefault;
 
-
     let logo = company.logo;
     if (logo && !logo.startsWith('http')) {
       logo = await this._s3Service.getSignedUrl(logo);
@@ -71,7 +68,6 @@ export class GetPublicCompanyProfileUseCase implements IGetPublicCompanyProfileU
     if (banner && !banner.startsWith('http')) {
       banner = await this._s3Service.getSignedUrl(banner);
     }
-
 
     const workplacePicturesWithUrls = await Promise.all(
       workplacePictures.map(async (pic: CompanyWorkplacePictures) => {

@@ -480,5 +480,3 @@ export class HandleStripeWebhookUseCase implements IHandleStripeWebhookUseCase {
   }
 }
 
-
-

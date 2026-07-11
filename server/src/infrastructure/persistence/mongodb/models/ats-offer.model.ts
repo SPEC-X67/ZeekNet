@@ -42,7 +42,6 @@ const ATSOfferSchema = new Schema<IATSOfferDocument>(
   },
 );
 
-
 ATSOfferSchema.index({ applicationId: 1, createdAt: -1 });
 ATSOfferSchema.index({ status: 1 });
 

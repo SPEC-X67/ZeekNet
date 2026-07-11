@@ -15,7 +15,6 @@ import { injectable, inject, optional } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';
 import { ERROR } from 'src/shared/constants/messages';
 
-
 @injectable()
 export class UpdateSubscriptionPlanUseCase implements IUpdateSubscriptionPlanUseCase {
   constructor(
@@ -381,5 +380,4 @@ export class UpdateSubscriptionPlanUseCase implements IUpdateSubscriptionPlanUse
     }
   }
 }
-
 

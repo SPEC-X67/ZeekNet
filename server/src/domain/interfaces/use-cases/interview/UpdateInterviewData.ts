@@ -11,11 +11,3 @@ export interface UpdateInterviewData {
   status?: InterviewStatus;
 }
 
-
-
-
-
-
-
-
-

@@ -4,13 +4,12 @@ import { IUserRepository } from 'src/domain/interfaces/repositories/user/IUserRe
 import { ValidationError, NotFoundError } from 'src/domain/errors/errors';
 import { Conversation } from 'src/domain/entities/conversation.entity';
 import { CreateInput } from 'src/domain/types/common.types';
-import { ConversationResponseDto } from 'src/application/dtos/chat/responses/conversation-response.dto';
+
 import { ConversationMapper } from 'src/application/mappers/chat/conversation.mapper';
-import { CreateConversationDto } from 'src/application/dtos/chat/requests/create-conversation.dto';
+import { CreateConversationDto, ConversationResponseDto } from 'src/application/dtos/chat/conversation.dto';
 import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';
 import { ERROR } from 'src/shared/constants/messages';
-
 
 @injectable()
 export class CreateConversationUseCase implements ICreateConversationUseCase {
@@ -18,7 +17,6 @@ export class CreateConversationUseCase implements ICreateConversationUseCase {
     @inject(TYPES.ConversationRepository) private readonly _conversationRepository: IConversationRepository,
     @inject(TYPES.UserRepository) private readonly _userRepository: IUserRepository,
   ) { }
-
 
   async execute(input: CreateConversationDto): Promise<ConversationResponseDto> {
     const { creatorId, participantId } = input;

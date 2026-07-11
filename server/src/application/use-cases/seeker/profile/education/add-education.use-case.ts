@@ -10,7 +10,6 @@ import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';
 import { ERROR } from 'src/shared/constants/messages';
 
-
 @injectable()
 export class AddEducationUseCase implements IAddEducationUseCase {
   constructor(
@@ -43,5 +42,4 @@ export class AddEducationUseCase implements IAddEducationUseCase {
     return SeekerProfileMapper.educationToResponse(education);
   }
 }
-
 

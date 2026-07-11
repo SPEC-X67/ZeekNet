@@ -36,8 +36,6 @@ export class CreateCheckoutSessionUseCase implements ICreateCheckoutSessionUseCa
       throw new NotFoundError(ERROR.NOT_FOUND('Company profile'));
     }
 
-
-
     const plan = await this._subscriptionPlanRepository.findById(planId);
     if (!plan) {
       throw new NotFoundError(ERROR.NOT_FOUND('Subscription plan'));

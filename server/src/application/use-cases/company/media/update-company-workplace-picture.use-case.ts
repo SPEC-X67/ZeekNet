@@ -32,4 +32,3 @@ export class UpdateCompanyWorkplacePictureUseCase implements IUpdateCompanyWorkp
   }
 }
 
-

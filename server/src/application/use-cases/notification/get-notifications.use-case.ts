@@ -26,4 +26,3 @@ export class GetNotificationsUseCase implements IGetNotificationsUseCase {
   }
 }
 
-

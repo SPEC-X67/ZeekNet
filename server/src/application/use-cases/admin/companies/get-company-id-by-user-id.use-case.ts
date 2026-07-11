@@ -5,7 +5,6 @@ import { IGetCompanyIdByUserIdUseCase } from 'src/domain/interfaces/use-cases/ad
 import { NotFoundError } from 'src/domain/errors/errors';
 import { ERROR } from 'src/shared/constants/messages';
 
-
 @injectable()
 export class GetCompanyIdByUserIdUseCase implements IGetCompanyIdByUserIdUseCase {
   constructor(

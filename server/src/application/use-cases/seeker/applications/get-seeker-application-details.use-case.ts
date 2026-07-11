@@ -37,9 +37,3 @@ export class GetSeekerApplicationDetailsUseCase implements IGetSeekerApplication
   }
 }
 
-
-
-
-
-
-

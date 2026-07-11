@@ -1,5 +1,4 @@
-import { CreateConversationDto } from 'src/application/dtos/chat/requests/create-conversation.dto';
-import { ConversationResponseDto } from 'src/application/dtos/chat/responses/conversation-response.dto';
+import { CreateConversationDto, ConversationResponseDto } from 'src/application/dtos/chat/conversation.dto';
 
 export interface ICreateConversationUseCase {
     execute(input: CreateConversationDto): Promise<ConversationResponseDto>;

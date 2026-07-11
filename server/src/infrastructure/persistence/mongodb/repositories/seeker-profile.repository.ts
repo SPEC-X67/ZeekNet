@@ -105,4 +105,3 @@ export class SeekerProfileRepository extends RepositoryBase<SeekerProfile, Model
   }
 }
 
-

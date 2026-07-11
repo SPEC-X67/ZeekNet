@@ -28,4 +28,3 @@ export class JobCategoryRepository extends RepositoryBase<JobCategory, ModelDocu
   }
 }
 
-

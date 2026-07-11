@@ -14,7 +14,6 @@ export class ChatMessageRepository
     super(ChatMessageModel);
   }
 
-
   protected mapToEntity(document: ChatMessageDocument): ChatMessage {
     return ChatMessagePersistenceMapper.toEntity(document);
   }
@@ -125,6 +124,4 @@ export class ChatMessageRepository
     return await ChatMessageModel.countDocuments(filter);
   }
 }
-
-
 

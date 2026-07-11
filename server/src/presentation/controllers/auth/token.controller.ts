@@ -20,7 +20,6 @@ export class TokenController {
     @inject(TYPES.CookieService) private readonly _cookieService: ICookieService,
   ) { }
 
-
   refresh = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const cookieName = env.COOKIE_NAME_REFRESH;
     const fromCookie = (req as Request & { cookies?: Record<string, string> }).cookies?.[cookieName];
@@ -65,5 +64,4 @@ export class TokenController {
     }
   };
 }
-
 

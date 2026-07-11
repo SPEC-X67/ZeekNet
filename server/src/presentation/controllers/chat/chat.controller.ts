@@ -1,8 +1,7 @@
 import { Response, NextFunction } from 'express';
-import { CreateConversationRequestDtoSchema } from 'src/application/dtos/chat/requests/create-conversation-request.dto';
-import { SendMessageRequestDtoSchema } from 'src/application/dtos/chat/requests/send-message-request.dto';
-import { GetConversationsRequestDtoSchema } from 'src/application/dtos/chat/requests/get-conversations-request.dto';
-import { GetMessagesRequestDtoSchema } from 'src/application/dtos/chat/requests/get-messages-request.dto';
+import { CreateConversationRequestDtoSchema, GetConversationsRequestDtoSchema } from 'src/application/dtos/chat/conversation.dto';
+import { SendMessageRequestDtoSchema, GetMessagesRequestDtoSchema } from 'src/application/dtos/chat/message.dto';
+
 import { ICreateConversationUseCase } from 'src/domain/interfaces/use-cases/chat/ICreateConversationUseCase';
 import { ISendMessageUseCase } from 'src/domain/interfaces/use-cases/chat/ISendMessageUseCase';
 import { IGetConversationsUseCase } from 'src/domain/interfaces/use-cases/chat/IGetConversationsUseCase';
@@ -25,7 +24,6 @@ export class ChatController {
     @inject(TYPES.MarkMessagesAsReadUseCase) private readonly _markMessagesAsReadUseCase: IMarkMessagesAsReadUseCase,
     @inject(TYPES.DeleteMessageUseCase) private readonly _deleteMessageUseCase: IDeleteMessageUseCase,
   ) { }
-
 
   createConversation = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
     try {

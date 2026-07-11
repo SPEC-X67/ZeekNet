@@ -5,16 +5,11 @@ import { AuthenticatedRequest } from 'src/shared/types/authenticated-request';
 import { ITokenPayload } from 'src/domain/interfaces/services/ITokenService';
 import { ERROR } from 'src/shared/constants/messages';
 
-
 export { AuthenticatedRequest };
-
-
-
 
 function extractBearerToken(authHeader?: string): string | undefined {
   return authHeader?.startsWith('Bearer ') ? authHeader.substring(7) : undefined;
 }
-
 
 function createUserContext(payload: ITokenPayload): AuthenticatedRequest['user'] {
   return {
@@ -25,7 +20,6 @@ function createUserContext(payload: ITokenPayload): AuthenticatedRequest['user']
   };
 }
 
-
 export function createAuthenticationMiddleware(tokenService: JwtTokenService) {
 
   function authenticateToken(req: AuthenticatedRequest, _res: Response, next: NextFunction): void {
@@ -34,7 +28,6 @@ export function createAuthenticationMiddleware(tokenService: JwtTokenService) {
     if (!token) {
       return next(new AuthenticationError(ERROR.MISSING_TOKEN));
     }
-
 
     try {
       const payload = tokenService.verifyAccess(token);
@@ -45,7 +38,6 @@ export function createAuthenticationMiddleware(tokenService: JwtTokenService) {
     }
 
   }
-
 
   function optionalAuthentication(req: AuthenticatedRequest, _res: Response, next: NextFunction): void {
     const token = extractBearerToken(req.headers.authorization);
@@ -70,7 +62,6 @@ export function createAuthenticationMiddleware(tokenService: JwtTokenService) {
   };
 }
 
-
 export function authorizeRoles(...roles: string[]) {
   return (req: AuthenticatedRequest, _res: Response, next: NextFunction): void => {
     const role = req.user?.role;
@@ -82,8 +73,6 @@ export function authorizeRoles(...roles: string[]) {
     next();
   };
 }
-
-
 
 const tokenService = new JwtTokenService();
 const { authenticateToken, optionalAuthentication } = createAuthenticationMiddleware(tokenService);

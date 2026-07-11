@@ -8,7 +8,6 @@ import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';
 import { ERROR, VALIDATION } from 'src/shared/constants/messages';
 
-
 @injectable()
 export class UpdateJobRoleUseCase implements IUpdateJobRoleUseCase {
   constructor(@inject(TYPES.JobRoleRepository) private readonly _jobRoleRepository: IJobRoleRepository) { }

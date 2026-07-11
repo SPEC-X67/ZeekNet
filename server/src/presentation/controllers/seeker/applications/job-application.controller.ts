@@ -18,8 +18,6 @@ import { CreateJobApplicationDto } from 'src/application/dtos/seeker/application
 import { ApplicationFiltersDto } from 'src/application/dtos/company/hiring/requests/application-filters.dto';
 import { SUCCESS, VALIDATION, ERROR } from 'src/shared/constants/messages';
 
-
-
 import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';
 

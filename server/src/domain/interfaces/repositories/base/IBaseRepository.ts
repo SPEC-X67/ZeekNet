@@ -6,12 +6,10 @@ export interface IBaseRepository<T> {
   update(id: string, data: Partial<T>): Promise<T | null>;
   delete(id: string): Promise<boolean>;
 
-  
   findOne(filter: Record<string, unknown>): Promise<T | null>;
   findMany(filter: Record<string, unknown>): Promise<T[]>;
   countDocuments(filter: Record<string, unknown>): Promise<number>;
-  
-  
+
   paginate(
     filter: Record<string, unknown>,
     options?: {

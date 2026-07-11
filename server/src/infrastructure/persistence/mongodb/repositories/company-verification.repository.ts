@@ -50,4 +50,3 @@ export class CompanyVerificationRepository extends RepositoryBase<CompanyVerific
   }
 }
 
-

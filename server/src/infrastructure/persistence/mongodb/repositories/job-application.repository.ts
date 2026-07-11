@@ -26,8 +26,5 @@ export class JobApplicationRepository extends RepositoryBase<JobApplication, Job
     return docs.map(JobApplicationMapper.toEntity);
   }
 
-  
-  
 }
-
 

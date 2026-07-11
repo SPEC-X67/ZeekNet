@@ -21,8 +21,6 @@ export class PasswordController {
     @inject(TYPES.CookieService) private readonly _cookieService: ICookieService,
   ) { }
 
-
-
   // be - move zod schema to dtos
   forgotPassword = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const parsed = z.object({
@@ -90,5 +88,4 @@ export class PasswordController {
     }
   };
 }
-
 

@@ -6,6 +6,5 @@ export const UpdateSkillsRequestDtoSchema = z.object({
 
 export type UpdateSkillsRequestDto = z.infer<typeof UpdateSkillsRequestDtoSchema>;
 
-
 export const UpdateSkillsDto = UpdateSkillsRequestDtoSchema;
 

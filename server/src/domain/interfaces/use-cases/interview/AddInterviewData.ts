@@ -7,11 +7,3 @@ export interface AddInterviewData {
   location: string;
 }
 
-
-
-
-
-
-
-
-

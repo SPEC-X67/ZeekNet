@@ -33,9 +33,7 @@ export class StripeEventMapper {
   }
 
   static getPaymentIntentId(invoice: PaymentInvoice): string | undefined {
-    
-    
-    
+
     const paymentIntent = invoice.paymentIntent;
     if (!paymentIntent) {
       return undefined;

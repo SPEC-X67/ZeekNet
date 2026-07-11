@@ -19,7 +19,6 @@ export const JobPostingFiltersDtoSchema = z.object({
 
 export type JobPostingFiltersDto = z.infer<typeof JobPostingFiltersDtoSchema>;
 
-
 export interface JobPostingFilters {
   status?: JobStatus;
   categoryIds?: string[];
@@ -42,5 +41,4 @@ export interface PaginatedJobPostings<T = unknown> {
     totalPages: number;
   };
 }
-
 

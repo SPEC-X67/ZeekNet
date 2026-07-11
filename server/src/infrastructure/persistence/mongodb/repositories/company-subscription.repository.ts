@@ -142,4 +142,3 @@ export class CompanySubscriptionRepository extends RepositoryBase<CompanySubscri
   }
 }
 
-

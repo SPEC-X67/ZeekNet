@@ -3,14 +3,13 @@ import { IMessageRepository } from 'src/domain/interfaces/repositories/chat/IMes
 import { IConversationRepository } from 'src/domain/interfaces/repositories/chat/IConversationRepository';
 import { IChatSocketService } from 'src/domain/interfaces/services/IChatSocketService';
 import { Conversation } from 'src/domain/entities/conversation.entity';
-import { DeleteMessageResponseDto } from 'src/application/dtos/chat/responses/delete-message-response.dto';
+
 import { ConversationMapper } from 'src/application/mappers/chat/conversation.mapper';
 import { ChatMessageMapper } from 'src/application/mappers/chat/chat-message.mapper';
-import { DeleteMessageDto } from 'src/application/dtos/chat/requests/delete-message.dto';
+import { DeleteMessageDto, DeleteMessageResponseDto } from 'src/application/dtos/chat/message.dto';
 import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';
 import { ERROR } from 'src/shared/constants/messages';
-
 
 @injectable()
 export class DeleteMessageUseCase implements IDeleteMessageUseCase {
@@ -19,7 +18,6 @@ export class DeleteMessageUseCase implements IDeleteMessageUseCase {
     @inject(TYPES.ConversationRepository) private readonly _conversationRepository: IConversationRepository,
     @inject(TYPES.ChatSocketService) private readonly _chatSocketService: IChatSocketService,
   ) { }
-
 
   async execute(input: DeleteMessageDto): Promise<DeleteMessageResponseDto | null> {
     const { userId, messageId } = input;

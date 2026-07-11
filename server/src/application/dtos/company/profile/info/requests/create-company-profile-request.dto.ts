@@ -20,19 +20,4 @@ export const CreateCompanyProfileRequestDto = z.object({
 
 export type CreateCompanyProfileRequestDtoType = z.infer<typeof CreateCompanyProfileRequestDto>;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 export type CreateCompanyProfileRequestRequestDto = z.infer<typeof CreateCompanyProfileRequestDto>;

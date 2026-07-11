@@ -36,7 +36,6 @@ const ATSCommentSchema = new Schema<IATSCommentDocument>(
   },
 );
 
-
 ATSCommentSchema.index({ applicationId: 1, createdAt: -1 });
 
 export const ATSCommentModel = mongoose.model<IATSCommentDocument>('ATSComment', ATSCommentSchema);

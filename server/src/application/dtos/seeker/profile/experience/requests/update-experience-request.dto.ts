@@ -18,6 +18,5 @@ export const UpdateExperienceRequestDtoSchema = z.object({
 
 export type UpdateExperienceRequestDto = z.infer<typeof UpdateExperienceRequestDtoSchema>;
 
-
 export const UpdateExperienceDto = UpdateExperienceRequestDtoSchema;
 

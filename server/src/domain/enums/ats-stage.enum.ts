@@ -11,12 +11,10 @@ export enum ATSStage {
   REJECTED = 'REJECTED',
 }
 
-
 export enum InReviewSubStage {
   PROFILE_REVIEW = 'PROFILE_REVIEW',
   PENDING_DECISION = 'PENDING_DECISION',
 }
-
 
 export enum ShortlistedSubStage {
   READY_FOR_INTERVIEW = 'READY_FOR_INTERVIEW',
@@ -24,14 +22,12 @@ export enum ShortlistedSubStage {
   AWAITING_RESPONSE = 'AWAITING_RESPONSE',
 }
 
-
 export enum InterviewSubStage {
   NOT_SCHEDULED = 'NOT_SCHEDULED',
   SCHEDULED = 'SCHEDULED',
   COMPLETED = 'COMPLETED',
   EVALUATION_PENDING = 'EVALUATION_PENDING',
 }
-
 
 export enum TechnicalTaskSubStage {
   NOT_ASSIGNED = 'NOT_ASSIGNED',
@@ -41,14 +37,12 @@ export enum TechnicalTaskSubStage {
   COMPLETED = 'COMPLETED',
 }
 
-
 export enum CompensationSubStage {
   NOT_INITIATED = 'NOT_INITIATED',
   INITIATED = 'INITIATED',
   NEGOTIATION_ONGOING = 'NEGOTIATION_ONGOING',
   APPROVED = 'APPROVED',
 }
-
 
 export enum OfferSubStage {
   NOT_SENT = 'NOT_SENT',
@@ -64,7 +58,4 @@ export type ATSSubStage =
   | TechnicalTaskSubStage
   | CompensationSubStage
   | OfferSubStage;
-
-
-
 

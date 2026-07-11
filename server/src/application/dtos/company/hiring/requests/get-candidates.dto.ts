@@ -10,4 +10,3 @@ export const GetCandidatesDto = z.object({
 
 export type GetCandidatesRequestDto = z.infer<typeof GetCandidatesDto>;
 
-

@@ -10,7 +10,6 @@ import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';
 import { ERROR } from 'src/shared/constants/messages';
 
-
 @injectable()
 export class UploadResumeUseCase implements IUploadResumeUseCase {
   constructor(
@@ -40,7 +39,4 @@ export class UploadResumeUseCase implements IUploadResumeUseCase {
     return SeekerProfileMapper.resumeMetaToResponse(resume);
   }
 }
-
-
-
 

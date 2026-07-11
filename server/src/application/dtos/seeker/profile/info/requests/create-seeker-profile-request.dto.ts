@@ -21,7 +21,5 @@ export const CreateSeekerProfileRequestDtoSchema = z.object({
 
 export type CreateSeekerProfileRequestDto = z.infer<typeof CreateSeekerProfileRequestDtoSchema>;
 
-
 export const CreateSeekerProfileDto = CreateSeekerProfileRequestDtoSchema;
-
 

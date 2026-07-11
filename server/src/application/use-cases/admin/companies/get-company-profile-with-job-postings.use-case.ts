@@ -12,7 +12,6 @@ import { NotFoundError } from 'src/domain/errors/errors';
 import { IS3Service } from 'src/domain/interfaces/services/IS3Service';
 import { ERROR } from 'src/shared/constants/messages';
 
-
 @injectable()
 export class GetCompanyProfileWithJobPostingsUseCase implements IGetCompanyProfileWithJobPostingsUseCase {
   constructor(
@@ -87,6 +86,4 @@ export class GetCompanyProfileWithJobPostingsUseCase implements IGetCompanyProfi
     return responseData;
   }
 }
-
-
 

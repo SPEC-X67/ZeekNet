@@ -8,7 +8,6 @@ import { PaymentResponseDto } from 'src/application/dtos/payment/responses/payme
 import { PaymentMapper } from 'src/application/mappers/payment/payment.mapper';
 import { ERROR } from 'src/shared/constants/messages';
 
-
 @injectable()
 export class GetPaymentHistoryUseCase implements IGetPaymentHistoryUseCase {
   constructor(

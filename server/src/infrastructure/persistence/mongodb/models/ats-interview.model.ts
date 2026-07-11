@@ -69,7 +69,6 @@ const ATSInterviewSchema = new Schema<IATSInterviewDocument>(
   },
 );
 
-
 ATSInterviewSchema.index({ applicationId: 1, scheduledDate: -1 });
 ATSInterviewSchema.index({ status: 1 });
 

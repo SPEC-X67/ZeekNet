@@ -9,7 +9,6 @@ export class S3Service implements IS3Service {
   private _s3Client: S3Client;
   private _bucketName: string;
 
-
   constructor() {
     this._s3Client = new S3Client({
       region: env.AWS_REGION!,

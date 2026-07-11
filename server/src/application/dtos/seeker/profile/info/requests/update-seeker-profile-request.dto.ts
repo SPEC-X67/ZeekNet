@@ -26,7 +26,5 @@ export const UpdateSeekerProfileRequestDtoSchema = z.object({
 
 export type UpdateSeekerProfileRequestDto = z.infer<typeof UpdateSeekerProfileRequestDtoSchema>;
 
-
 export const UpdateSeekerProfileDto = UpdateSeekerProfileRequestDtoSchema;
-
 

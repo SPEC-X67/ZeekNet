@@ -49,8 +49,7 @@ export class GetApplicationsByJobUseCase implements IGetApplicationsByJobUseCase
     if (filters.stage) {
       query.stage = String(filters.stage).toUpperCase().replace(/-/g, '_');
     }
-    
-    
+
     if (filters.min_score !== undefined || filters.max_score !== undefined) {
       query.score = {};
       if (filters.min_score !== undefined) {
@@ -102,8 +101,4 @@ export class GetApplicationsByJobUseCase implements IGetApplicationsByJobUseCase
     };
   }
 }
-
-
-
-
 

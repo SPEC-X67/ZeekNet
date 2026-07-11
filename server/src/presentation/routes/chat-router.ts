@@ -9,7 +9,6 @@ const chatController = container.get<ChatController>(TYPES.ChatController);
 const chatUserRepository = container.get<IUserRepository>(TYPES.UserRepository);
 const getUserByIdUseCase = container.get<GetUserByIdUseCase>(TYPES.GetUserByIdUseCase);
 
-
 import { APP_ROUTES } from 'src/shared/constants/routes';
 
 import { authenticateToken } from 'src/presentation/middleware/auth.middleware';
@@ -36,5 +35,4 @@ export class ChatRouter {
     this.router.post(APP_ROUTES.CHAT.CONVERSATION_READ, chatController.markAsRead);
   }
 }
-
 

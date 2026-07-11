@@ -7,7 +7,6 @@ import { IDeleteJobPostingUseCase } from 'src/domain/interfaces/use-cases/job/ID
 import { DeleteCompanyJobPostingDto } from 'src/application/dtos/company/job/requests/delete-company-job-posting.dto';
 import { ERROR } from 'src/shared/constants/messages';
 
-
 @injectable()
 export class DeleteJobPostingUseCase implements IDeleteJobPostingUseCase {
   constructor(

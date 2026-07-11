@@ -6,7 +6,6 @@ import { Types } from 'mongoose';
 import { JobPostingMapper } from 'src/infrastructure/mappers/persistence/mongodb/job/job-posting.mapper';
 import { RepositoryBase } from 'src/infrastructure/persistence/mongodb/repositories/base-repository';
 
-
 @injectable()
 export class JobPostingRepository extends RepositoryBase<JobPosting, JobPostingDocument> implements IJobPostingRepository {
   constructor() {
@@ -71,7 +70,6 @@ export class JobPostingRepository extends RepositoryBase<JobPosting, JobPostingD
   ): Promise<Partial<JobPosting>[]> {
     const { CompanyProfileModel } = await import('../models/company-profile.model');
     const { UserModel } = await import('../models/user.model');
-
 
     const blockedUsers = await UserModel.find({ isBlocked: true }).select('_id').lean();
     const blockedUserIds = blockedUsers.map(u => String(u._id));

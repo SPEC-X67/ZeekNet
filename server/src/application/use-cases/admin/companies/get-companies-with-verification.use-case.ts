@@ -66,4 +66,3 @@ export class GetCompaniesWithVerificationUseCase implements IGetCompaniesWithVer
   }
 }
 
-
