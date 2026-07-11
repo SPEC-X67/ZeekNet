@@ -17,7 +17,7 @@ import { CreateCompanyProfileFromDtoRequestDto } from 'src/application/dtos/comp
 import { CreateCompanyProfileRequestDtoType } from 'src/application/dtos/company/profile/info/requests/create-company-profile-request.dto';
 import { CompanyVerificationStatus } from 'src/domain/enums/verification-status.enum';
 import { SimpleUpdateCompanyProfileRequestDto } from 'src/application/dtos/company/profile/info/requests/company-profile.dto';
-import { CompanyWithVerificationResult } from 'src/application/dtos/admin/companies/company.dto';
+import { CompanyWithVerificationResult } from 'src/application/dtos/admin/company.dto';
 import { CreateInput } from 'src/domain/types/common.types';
 
 export class CompanyProfileMapper {

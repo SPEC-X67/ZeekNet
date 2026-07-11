@@ -2,7 +2,7 @@ import { IJobPostingRepository } from 'src/domain/interfaces/repositories/job/IJ
 import { IAdminUpdateJobStatusUseCase } from 'src/domain/interfaces/use-cases/admin/job/IAdminUpdateJobStatusUseCase';
 import { NotFoundError, InternalServerError } from 'src/domain/errors/errors';
 import { JobStatus } from 'src/domain/enums/job-status.enum';
-import { UpdateJobStatusRequestDto, JobPostingResponseDto } from 'src/application/dtos/admin/job/job.dto';
+import { UpdateJobStatusRequestDto, JobPostingResponseDto } from 'src/application/dtos/admin/job.dto';
 
 import { JobPostingMapper } from 'src/application/mappers/job/job-posting.mapper';
 import { injectable, inject } from 'inversify';

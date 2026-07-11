@@ -1,7 +1,7 @@
 import { IJobPostingRepository } from 'src/domain/interfaces/repositories/job/IJobPostingRepository';
 import { IAdminGetAllJobsUseCase } from 'src/domain/interfaces/use-cases/admin/job/IAdminGetAllJobsUseCase';
 import { JobStatus } from 'src/domain/enums/job-status.enum';
-import { GetAllJobsQueryDtoType, AdminJobListResponseDto } from 'src/application/dtos/admin/job/job.dto';
+import { GetAllJobsQueryDtoType, AdminJobListResponseDto } from 'src/application/dtos/admin/job.dto';
 import { JobPostingMapper } from 'src/application/mappers/job/job-posting.mapper';
 
 import { IS3Service } from 'src/domain/interfaces/services/IS3Service';

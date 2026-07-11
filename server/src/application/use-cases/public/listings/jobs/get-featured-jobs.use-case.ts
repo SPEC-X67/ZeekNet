@@ -8,7 +8,7 @@ import { GetFeaturedJobsMapper } from 'src/application/mappers/public/get-featur
 import { JobPosting } from 'src/domain/entities/job-posting.entity';
 import { IS3Service } from 'src/domain/interfaces/services/IS3Service';
 import { JobPostingMapper } from 'src/application/mappers/job/job-posting.mapper';
-import { PublicJobListItemDto } from 'src/application/dtos/admin/job/job.dto';
+import { PublicJobListItemDto } from 'src/application/dtos/admin/job.dto';
 
 @injectable()
 export class GetFeaturedJobsUseCase implements IGetFeaturedJobsUseCase {

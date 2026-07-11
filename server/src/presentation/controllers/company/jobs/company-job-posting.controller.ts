@@ -1,7 +1,7 @@
 import { injectable, inject } from 'inversify';
 import { Response, NextFunction } from 'express';
 import { TYPES } from 'src/shared/constants/types';
-import { CreateJobPostingRequestDtoSchema, UpdateJobPostingDto, JobPostingQueryDto } from 'src/application/dtos/admin/job/job.dto';
+import { CreateJobPostingRequestDtoSchema, UpdateJobPostingDto, JobPostingQueryDto } from 'src/application/dtos/admin/job.dto';
 
 import { UpdateJobStatusDto } from 'src/application/dtos/company/job/requests/update-job-status.dto';
 import { ReopenJobDto } from 'src/application/dtos/company/job/requests/reopen-job.dto';

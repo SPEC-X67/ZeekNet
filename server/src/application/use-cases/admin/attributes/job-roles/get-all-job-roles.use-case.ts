@@ -1,6 +1,6 @@
 import { IJobRoleRepository } from 'src/domain/interfaces/repositories/job-role/IJobRoleRepository';
 import { IGetAllJobRolesUseCase } from 'src/domain/interfaces/use-cases/admin/attributes/job-roles/IGetAllJobRolesUseCase';
-import { PaginatedJobRolesResultDto } from 'src/application/dtos/admin/attributes/job-roles/job-role.dto';
+import { PaginatedJobRolesResultDto } from 'src/application/dtos/admin/job-role.dto';
 import { JobRoleMapper } from 'src/application/mappers/job/job-role.mapper';
 import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';

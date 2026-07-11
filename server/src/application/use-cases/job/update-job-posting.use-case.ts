@@ -7,7 +7,7 @@ import { JobPosting } from 'src/domain/entities/job-posting.entity';
 import { IUpdateJobPostingUseCase } from 'src/domain/interfaces/use-cases/job/IUpdateJobPostingUseCase';
 import { JobStatus } from 'src/domain/enums/job-status.enum';
 import { IGetCompanyProfileByUserIdUseCase } from 'src/domain/interfaces/use-cases/company/profile/info/IGetCompanyProfileByUserIdUseCase';
-import { JobPostingResponseDto } from 'src/application/dtos/admin/job/job.dto';
+import { JobPostingResponseDto } from 'src/application/dtos/admin/job.dto';
 import { JobPostingMapper } from 'src/application/mappers/job/job-posting.mapper';
 import { ERROR } from 'src/shared/constants/messages';
 

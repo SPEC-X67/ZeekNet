@@ -4,7 +4,7 @@ import { ERROR, VALIDATION } from 'src/shared/constants/messages';
 import { IJobPostingRepository } from 'src/domain/interfaces/repositories/job/IJobPostingRepository';
 import { ICompanySubscriptionRepository } from 'src/domain/interfaces/repositories/subscription/ICompanySubscriptionRepository';
 import { ISubscriptionPlanRepository } from 'src/domain/interfaces/repositories/subscription-plan/ISubscriptionPlanRepository';
-import { CreateJobPostingRequestDto, JobPostingResponseDto } from 'src/application/dtos/admin/job/job.dto';
+import { CreateJobPostingRequestDto, JobPostingResponseDto } from 'src/application/dtos/admin/job.dto';
 import { NotFoundError, ValidationError } from 'src/domain/errors/errors';
 import { ICreateJobPostingUseCase } from 'src/domain/interfaces/use-cases/job/ICreateJobPostingUseCase';
 import { IGetCompanyProfileByUserIdUseCase } from 'src/domain/interfaces/use-cases/company/profile/info/IGetCompanyProfileByUserIdUseCase';

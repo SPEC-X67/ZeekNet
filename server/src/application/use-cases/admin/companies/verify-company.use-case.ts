@@ -4,7 +4,7 @@ import { ICompanySubscriptionRepository } from 'src/domain/interfaces/repositori
 import { IVerifyCompanyUseCase } from 'src/domain/interfaces/use-cases/admin/companies/IVerifyCompanyUseCase';
 import { CompanyVerificationStatus } from 'src/domain/enums/verification-status.enum';
 import { CompanySubscriptionMapper } from 'src/application/mappers/company/subscription/company-subscription.mapper';
-import { VerifyCompanyRequestDto } from 'src/application/dtos/admin/companies/company.dto';
+import { VerifyCompanyRequestDto } from 'src/application/dtos/admin/company.dto';
 import { ICompanyProfileRepository } from 'src/domain/interfaces/repositories/company/ICompanyProfileRepository';
 import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';

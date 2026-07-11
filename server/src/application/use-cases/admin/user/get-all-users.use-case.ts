@@ -2,7 +2,7 @@ import { IUserRepository } from 'src/domain/interfaces/repositories/user/IUserRe
 import { ISeekerProfileRepository } from 'src/domain/interfaces/repositories/seeker/ISeekerProfileRepository';
 import { IS3Service } from 'src/domain/interfaces/services/IS3Service';
 import { IGetAllUsersUseCase } from 'src/domain/interfaces/use-cases/admin/user/IGetAllUsersUseCase';
-import { GetUsersQueryDto, PaginatedUsersResultDto } from 'src/application/dtos/admin/user/user.dto';
+import { GetUsersQueryDto, PaginatedUsersResultDto } from 'src/application/dtos/admin/user.dto';
 import { UserRole } from 'src/domain/enums/user-role.enum';
 import { UserMapper } from 'src/application/mappers/auth/user.mapper';
 import { injectable, inject } from 'inversify';

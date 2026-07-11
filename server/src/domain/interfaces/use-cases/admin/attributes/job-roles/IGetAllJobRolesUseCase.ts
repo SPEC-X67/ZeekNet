@@ -1,4 +1,4 @@
-import { GetAllJobRolesRequestDto, PaginatedJobRolesResultDto } from 'src/application/dtos/admin/attributes/job-roles/job-role.dto';
+import { GetAllJobRolesRequestDto, PaginatedJobRolesResultDto } from 'src/application/dtos/admin/job-role.dto';
 
 export interface IGetAllJobRolesUseCase {
   execute(options: GetAllJobRolesRequestDto): Promise<PaginatedJobRolesResultDto>;

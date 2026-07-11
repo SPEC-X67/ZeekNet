@@ -8,7 +8,7 @@ import {
   UpdateJobCategoryDto,
   JobCategoryResponseDto,
   PaginatedJobCategoriesResultDto,
-} from 'src/application/dtos/admin/attributes/job-categories/job-category.dto';
+} from 'src/application/dtos/admin/job-category.dto';
 import { formatZodErrors, handleAsyncError, handleValidationError, sendSuccessResponse } from 'src/shared/utils';
 import { SUCCESS } from 'src/shared/constants/messages';
 import { injectable, inject } from 'inversify';

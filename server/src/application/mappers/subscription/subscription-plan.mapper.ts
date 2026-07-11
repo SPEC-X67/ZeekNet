@@ -1,5 +1,5 @@
 import { SubscriptionPlan } from 'src/domain/entities/subscription-plan.entity';
-import { SubscriptionPlanResponseDto } from 'src/application/dtos/admin/subscription/subscription.dto';
+import { SubscriptionPlanResponseDto } from 'src/application/dtos/admin/subscription.dto';
 
 export class SubscriptionPlanMapper {
   static toResponse(plan: SubscriptionPlan | null): SubscriptionPlanResponseDto | null {

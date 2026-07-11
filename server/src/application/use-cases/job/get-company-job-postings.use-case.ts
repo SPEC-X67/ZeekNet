@@ -4,7 +4,7 @@ import { ERROR, VALIDATION } from 'src/shared/constants/messages';
 import { IJobPostingRepository } from 'src/domain/interfaces/repositories/job/IJobPostingRepository';
 import { JobPosting } from 'src/domain/entities/job-posting.entity';
 import { ICompanyProfileRepository } from 'src/domain/interfaces/repositories/company/ICompanyProfileRepository';
-import { JobPostingQueryRequestDto } from 'src/application/dtos/admin/job/job.dto';
+import { JobPostingQueryRequestDto } from 'src/application/dtos/admin/job.dto';
 import { NotFoundError } from 'src/domain/errors/errors';
 import { IGetCompanyJobPostingsUseCase } from 'src/domain/interfaces/use-cases/job/IGetCompanyJobPostingsUseCase';
 import { PaginatedCompanyJobPostingsDto } from 'src/application/dtos/job/responses/paginated-company-job-postings.dto';

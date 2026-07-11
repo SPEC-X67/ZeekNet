@@ -7,7 +7,7 @@ import { IUserRepository } from 'src/domain/interfaces/repositories/user/IUserRe
 import { ICompanyWorkplacePicturesRepository } from 'src/domain/interfaces/repositories/company/ICompanyWorkplacePicturesRepository';
 import { IGetJobPostingForPublicUseCase } from 'src/domain/interfaces/use-cases/public/listings/jobs/IGetJobPostingForPublicUseCase';
 import { BadRequestError, NotFoundError } from 'src/domain/errors/errors';
-import { JobPostingDetailResponseDto } from 'src/application/dtos/admin/job/job.dto';
+import { JobPostingDetailResponseDto } from 'src/application/dtos/admin/job.dto';
 import { JobPostingMapper } from 'src/application/mappers/job/job-posting.mapper';
 import { CompanyProfileMapper } from 'src/application/mappers/company/profile/company-profile.mapper';
 import { CompanyProfile } from 'src/domain/entities/company-profile.entity';

@@ -11,7 +11,7 @@ import { JobPosting } from 'src/domain/entities/job-posting.entity';
 import { IUpdateJobStatusUseCase } from 'src/domain/interfaces/use-cases/job/IUpdateJobStatusUseCase';
 import { UpdateJobStatusDto } from 'src/application/dtos/job/requests/update-job-status.dto';
 import { JobStatus } from 'src/domain/enums/job-status.enum';
-import { JobPostingResponseDto } from 'src/application/dtos/admin/job/job.dto';
+import { JobPostingResponseDto } from 'src/application/dtos/admin/job.dto';
 import { JobPostingMapper } from 'src/application/mappers/job/job-posting.mapper';
 
 @injectable()

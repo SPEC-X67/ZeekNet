@@ -3,7 +3,7 @@ import { ICreateSubscriptionPlanUseCase } from 'src/domain/interfaces/use-cases/
 import { IGetAllSubscriptionPlansUseCase } from 'src/domain/interfaces/use-cases/admin/subscription/IGetAllSubscriptionPlansUseCase';
 import { IGetSubscriptionPlanByIdUseCase } from 'src/domain/interfaces/use-cases/admin/subscription/IGetSubscriptionPlanByIdUseCase';
 import { IUpdateSubscriptionPlanUseCase } from 'src/domain/interfaces/use-cases/admin/subscription/IUpdateSubscriptionPlanUseCase';
-import { CreateSubscriptionPlanDto, GetAllSubscriptionPlansDto, UpdateSubscriptionPlanDto } from 'src/application/dtos/admin/subscription/subscription.dto';
+import { CreateSubscriptionPlanDto, GetAllSubscriptionPlansDto, UpdateSubscriptionPlanDto } from 'src/application/dtos/admin/subscription.dto';
 import { formatZodErrors, handleAsyncError, handleValidationError, sendCreatedResponse, sendSuccessResponse } from 'src/shared/utils';
 import { SUCCESS } from 'src/shared/constants/messages';
 import { injectable, inject } from 'inversify';

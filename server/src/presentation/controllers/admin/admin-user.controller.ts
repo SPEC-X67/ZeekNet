@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import { IAdminGetUserByIdUseCase } from 'src/domain/interfaces/use-cases/admin/user/IAdminGetUserByIdUseCase';
 import { IBlockUserUseCase } from 'src/domain/interfaces/use-cases/admin/user/IBlockUserUseCase';
 import { IGetAllUsersUseCase } from 'src/domain/interfaces/use-cases/admin/user/IGetAllUsersUseCase';
-import { BlockUserDto, GetUsersQueryDtoSchema } from 'src/application/dtos/admin/user/user.dto';
+import { BlockUserDto, GetUsersQueryDtoSchema } from 'src/application/dtos/admin/user.dto';
 import { formatZodErrors, handleAsyncError, handleValidationError, sendSuccessResponse } from 'src/shared/utils';
 import { SUCCESS } from 'src/shared/constants/messages';
 import { injectable, inject } from 'inversify';

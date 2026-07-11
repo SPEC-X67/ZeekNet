@@ -5,7 +5,7 @@ import { NotFoundError } from 'src/domain/errors/errors';
 import { IGetCompanyJobPostingUseCase } from 'src/domain/interfaces/use-cases/job/IGetCompanyJobPostingUseCase';
 import { GetCompanyJobPostingDto } from 'src/application/dtos/company/job/requests/get-company-job-posting.dto';
 import { IGetCompanyProfileByUserIdUseCase } from 'src/domain/interfaces/use-cases/company/profile/info/IGetCompanyProfileByUserIdUseCase';
-import { JobPostingResponseDto } from 'src/application/dtos/admin/job/job.dto';
+import { JobPostingResponseDto } from 'src/application/dtos/admin/job.dto';
 import { JobPostingMapper } from 'src/application/mappers/job/job-posting.mapper';
 import { ERROR } from 'src/shared/constants/messages';
 

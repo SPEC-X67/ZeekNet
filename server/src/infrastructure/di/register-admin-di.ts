@@ -21,7 +21,7 @@ import {
   UpdateJobCategoryRequestDto,
   JobCategoryResponseDto,
   PaginatedJobCategoriesResultDto,
-} from 'src/application/dtos/admin/attributes/job-categories/job-category.dto';
+} from 'src/application/dtos/admin/job-category.dto';
 import { ICreateSkillUseCase } from 'src/domain/interfaces/use-cases/admin/attributes/skills/ICreateSkillUseCase';
 import { IGetAllSkillsUseCase } from 'src/domain/interfaces/use-cases/admin/attributes/skills/IGetAllSkillsUseCase';
 import { IGetSkillByIdUseCase } from 'src/domain/interfaces/use-cases/admin/attributes/skills/IGetSkillByIdUseCase';

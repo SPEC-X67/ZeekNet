@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { IGetAllPaymentOrdersUseCase } from 'src/domain/interfaces/use-cases/admin/payments/IGetAllPaymentOrdersUseCase';
-import { GetAllPaymentOrdersDto } from 'src/application/dtos/admin/payments/payment.dto';
+import { GetAllPaymentOrdersDto } from 'src/application/dtos/admin/payment.dto';
 import { formatZodErrors, handleAsyncError, handleValidationError, sendSuccessResponse } from 'src/shared/utils';
 import { SUCCESS } from 'src/shared/constants/messages';
 import { injectable, inject } from 'inversify';
