@@ -9,7 +9,7 @@ import { IJobPostingRepository } from 'src/domain/interfaces/repositories/job/IJ
 import { NotFoundError, ValidationError } from 'src/domain/errors/errors';
 import { ILogger } from 'src/domain/interfaces/services/ILogger';
 import { ChangeSubscriptionPlanRequestDto } from 'src/application/dtos/subscription/requests/change-subscription-plan.dto';
-import { ChangeSubscriptionResult } from 'src/application/dtos/admin/subscription/responses/change-subscription-result.dto';
+import { ChangeSubscriptionResult } from 'src/application/dtos/admin/subscription/subscription.dto';
 import { IChangeSubscriptionPlanUseCase } from 'src/domain/interfaces/use-cases/subscription/IChangeSubscriptionPlanUseCase';
 import { BillingCycle } from 'src/domain/enums/billing-cycle.enum';
 import { JobStatus } from 'src/domain/enums/job-status.enum';

@@ -1,4 +1,4 @@
-import { CompanyJobPostingListItemDto } from 'src/application/dtos/admin/job/responses/job-posting-response.dto';
+import { CompanyJobPostingListItemDto } from 'src/application/dtos/admin/job/job.dto';
 
 export interface PaginatedCompanyJobPostingsDto {
   jobs: CompanyJobPostingListItemDto[];

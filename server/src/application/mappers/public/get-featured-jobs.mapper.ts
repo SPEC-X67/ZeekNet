@@ -1,4 +1,4 @@
-import { PublicJobListItemDto } from 'src/application/dtos/admin/job/responses/job-posting-response.dto';
+import { PublicJobListItemDto } from 'src/application/dtos/admin/job/job.dto';
 import { GetFeaturedJobsResponseDto } from 'src/application/dtos/public/listings/jobs/responses/get-featured-jobs-response.dto';
 
 export class GetFeaturedJobsMapper {

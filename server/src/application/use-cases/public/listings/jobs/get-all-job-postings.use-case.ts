@@ -2,8 +2,8 @@ import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';
 import { IJobPostingRepository } from 'src/domain/interfaces/repositories/job/IJobPostingRepository';
 import { IGetAllJobPostingsUseCase } from 'src/domain/interfaces/use-cases/public/listings/jobs/IGetAllJobPostingsUseCase';
-import { JobPostingFilters } from 'src/application/dtos/admin/job/requests/job-posting-filters.dto';
-import { PublicJobListItemDto } from 'src/application/dtos/admin/job/responses/job-posting-response.dto';
+import { JobPostingFilters, PublicJobListItemDto } from 'src/application/dtos/admin/job/job.dto';
+
 import { PaginatedPublicJobsDto } from 'src/application/dtos/public/listings/jobs/responses/paginated-public-jobs.dto';
 import { JobPostingMapper } from 'src/application/mappers/job/job-posting.mapper';
 import { JobPosting } from 'src/domain/entities/job-posting.entity';
@@ -70,7 +70,4 @@ export class GetAllJobPostingsUseCase implements IGetAllJobPostingsUseCase {
     };
   }
 }
-
-
-
 

@@ -1,4 +1,4 @@
-import { CompanySubscriptionDto } from 'src/application/dtos/admin/subscription/common/company-subscription.dto';
+import { CompanySubscriptionDto } from 'src/application/dtos/admin/subscription/subscription.dto';
 
 export interface ChangeSubscriptionResult {
   subscription: CompanySubscriptionDto;

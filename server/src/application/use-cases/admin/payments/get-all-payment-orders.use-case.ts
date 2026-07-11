@@ -3,8 +3,7 @@ import { ICompanyProfileRepository } from 'src/domain/interfaces/repositories/co
 import { ISubscriptionPlanRepository } from 'src/domain/interfaces/repositories/subscription-plan/ISubscriptionPlanRepository';
 import { SubscriptionPlan } from 'src/domain/entities/subscription-plan.entity';
 import { IGetAllPaymentOrdersUseCase } from 'src/domain/interfaces/use-cases/admin/payments/IGetAllPaymentOrdersUseCase';
-import { GetAllPaymentOrdersRequestDto } from 'src/application/dtos/admin/payments/requests/payment-order.dto';
-import { GetAllPaymentOrdersResponseDto } from 'src/application/dtos/admin/payments/responses/get-all-payment-orders-response.dto';
+import { GetAllPaymentOrdersRequestDto, GetAllPaymentOrdersResponseDto } from 'src/application/dtos/admin/payments/payment.dto';
 
 import { PaymentMapper } from 'src/application/mappers/payment/payment.mapper';
 import { injectable, inject } from 'inversify';

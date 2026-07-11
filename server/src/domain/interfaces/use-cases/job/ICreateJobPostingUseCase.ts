@@ -1,6 +1,4 @@
-import { JobPostingResponseDto } from 'src/application/dtos/admin/job/responses/job-posting-response.dto';
-import { CreateJobPostingRequestDto } from 'src/application/dtos/admin/job/requests/create-job-posting-request.dto';
-
+import { JobPostingResponseDto, CreateJobPostingRequestDto } from 'src/application/dtos/admin/job/job.dto';
 
 export interface ICreateJobPostingUseCase {
   execute(data: CreateJobPostingRequestDto): Promise<JobPostingResponseDto>;

@@ -1,10 +1,9 @@
 import { IJobPostingRepository } from 'src/domain/interfaces/repositories/job/IJobPostingRepository';
 import { IGetJobPostingUseCase } from 'src/domain/interfaces/use-cases/job/IGetJobPostingUseCase';
 import { NotFoundError } from 'src/domain/errors/errors';
-import { JobPostingResponseDto } from 'src/application/dtos/admin/job/responses/job-posting-response.dto';
+import { JobPostingResponseDto } from 'src/application/dtos/admin/job/job.dto';
 import { JobPostingMapper } from 'src/application/mappers/job/job-posting.mapper';
 import { ERROR } from 'src/shared/constants/messages';
-
 
 export class GetJobPostingUseCase implements IGetJobPostingUseCase {
   constructor(private readonly _jobPostingRepository: IJobPostingRepository) {}
@@ -23,5 +22,4 @@ export class GetJobPostingUseCase implements IGetJobPostingUseCase {
     return JobPostingMapper.toResponse(jobPosting);
   }
 }
-
 

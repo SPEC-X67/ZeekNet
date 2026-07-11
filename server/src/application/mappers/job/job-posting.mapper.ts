@@ -3,8 +3,7 @@ import { JobStatus } from 'src/domain/enums/job-status.enum';
 import { EmploymentType } from 'src/domain/enums/employment-type.enum';
 import { ATSStage } from 'src/domain/enums/ats-stage.enum';
 import { Salary } from 'src/domain/interfaces/salary.interface';
-import { JobPostingResponseDto, JobPostingDetailResponseDto, CompanyJobPostingListItemDto, PublicJobListItemDto } from 'src/application/dtos/admin/job/responses/job-posting-response.dto';
-import { AdminJobListItem, AdminJobStatsResponseDto } from 'src/application/dtos/admin/job/responses/admin-job-response.dto';
+import { JobPostingResponseDto, JobPostingDetailResponseDto, CompanyJobPostingListItemDto, PublicJobListItemDto, AdminJobListItem, AdminJobStatsResponseDto } from 'src/application/dtos/admin/job/job.dto';
 
 export class JobPostingMapper {
   static toDomain(data: {

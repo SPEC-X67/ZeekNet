@@ -1,7 +1,7 @@
 import { IJobPostingRepository } from 'src/domain/interfaces/repositories/job/IJobPostingRepository';
 import { IAdminGetJobByIdUseCase } from 'src/domain/interfaces/use-cases/admin/job/IAdminGetJobByIdUseCase';
 import { NotFoundError } from 'src/domain/errors/errors';
-import { JobPostingResponseDto } from 'src/application/dtos/admin/job/responses/job-posting-response.dto';
+import { JobPostingResponseDto } from 'src/application/dtos/admin/job/job.dto';
 import { JobPostingMapper } from 'src/application/mappers/job/job-posting.mapper';
 
 import { IS3Service } from 'src/domain/interfaces/services/IS3Service';

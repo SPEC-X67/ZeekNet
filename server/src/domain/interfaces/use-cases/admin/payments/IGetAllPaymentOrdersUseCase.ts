@@ -1,5 +1,4 @@
-import { GetAllPaymentOrdersResponseDto } from 'src/application/dtos/admin/payments/responses/get-all-payment-orders-response.dto';
-import { GetAllPaymentOrdersRequestDto } from 'src/application/dtos/admin/payments/requests/payment-order.dto';
+import { GetAllPaymentOrdersRequestDto, GetAllPaymentOrdersResponseDto } from 'src/application/dtos/admin/payments/payment.dto';
 
 
 export interface IGetAllPaymentOrdersUseCase {

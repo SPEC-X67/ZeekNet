@@ -3,10 +3,8 @@ import { ISeekerProfileRepository } from 'src/domain/interfaces/repositories/see
 import { IJobPostingRepository } from 'src/domain/interfaces/repositories/job/IJobPostingRepository';
 import { IPaymentOrderRepository } from 'src/domain/interfaces/repositories/payment/IPaymentOrderRepository';
 import { IUserRepository } from 'src/domain/interfaces/repositories/user/IUserRepository';
-import { AdminDashboardStatsResponseDto } from 'src/application/dtos/admin/analytics/responses/admin-dashboard-stats-response.dto';
+import { AdminDashboardStatsResponseDto, GetAdminDashboardStatsQueryDto } from 'src/application/dtos/admin/analytics/analytics.dto';
 import { IGetAdminDashboardStatsUseCase } from 'src/domain/interfaces/use-cases/admin/analytics/IGetAdminDashboardStatsUseCase';
-import { GetAdminDashboardStatsQueryDto } from 'src/application/dtos/admin/analytics/requests/get-admin-dashboard-stats-query.dto';
-
 import { IS3Service } from 'src/domain/interfaces/services/IS3Service';
 import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';
