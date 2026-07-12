@@ -3,7 +3,7 @@ import { JobRole } from 'src/domain/entities/job-role.entity';
 import { BadRequestError, ConflictError } from 'src/domain/errors/errors';
 import { ICreateJobRoleUseCase } from 'src/domain/interfaces/use-cases/admin/attributes/job-roles/ICreateJobRoleUseCase';
 import { CreateInput } from 'src/domain/types/common.types';
-import { CreateJobRoleRequestDto, JobRoleResponseDto } from 'src/application/dtos/admin/job-role.dto';
+import { CreateJobRoleRequestDto, JobRoleResponseDto } from 'src/application/dtos/job-role.dto';
 import { JobRoleMapper } from 'src/application/mappers/job/job-role.mapper';
 import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';

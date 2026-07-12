@@ -12,7 +12,7 @@ import { ATSStage } from 'src/domain/enums/ats-stage.enum';
 import { IEmailTemplateService } from 'src/domain/interfaces/services/IEmailTemplateService';
 import { ILogger } from 'src/domain/interfaces/services/ILogger';
 
-import { CloseJobDto } from 'src/application/dtos/company/job/requests/close-job.dto';
+import { CloseJobDto } from 'src/application/dtos/job-posting.dto';
 import { ICloseJobManuallyUseCase } from 'src/domain/interfaces/use-cases/job/ICloseJobManuallyUseCase';
 import { ERROR } from 'src/shared/constants/messages';
 

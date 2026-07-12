@@ -1,11 +1,11 @@
 import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';
 import { ICompanyBenefitsRepository } from 'src/domain/interfaces/repositories/company/ICompanyBenefitsRepository';
-import { UpdateCompanyBenefitsRequestDto } from 'src/application/dtos/company/profile/benefits/requests/company-benefits.dto';
+import { UpdateCompanyBenefitsRequestDto } from 'src/application/dtos/company-benefit.dto';
 import { NotFoundError, AuthorizationError } from 'src/domain/errors/errors';
 import { IUpdateCompanyBenefitUseCase } from 'src/domain/interfaces/use-cases/company/profile/benefits/IUpdateCompanyBenefitUseCase';
 import { IGetCompanyIdByUserIdUseCase } from 'src/domain/interfaces/use-cases/admin/companies/IGetCompanyIdByUserIdUseCase';
-import { CompanyBenefitResponseDto } from 'src/application/dtos/company/profile/benefits/responses/company-benefit-response.dto';
+import { CompanyBenefitResponseDto } from 'src/application/dtos/company-benefit.dto';
 import { CompanyBenefitMapper } from 'src/application/mappers/company/profile/company-benefit.mapper';
 
 @injectable()

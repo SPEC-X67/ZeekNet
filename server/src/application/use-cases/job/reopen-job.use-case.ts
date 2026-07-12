@@ -6,7 +6,7 @@ import { NotFoundError, ValidationError } from 'src/domain/errors/errors';
 import { JobStatus } from 'src/domain/enums/job-status.enum';
 import { JobClosureType } from 'src/domain/enums/job-closure-type.enum';
 
-import { ReopenJobRequestDto } from 'src/application/dtos/company/job/requests/reopen-job-request.dto';
+import { ReopenJobRequestDto } from 'src/application/dtos/job-posting.dto';
 import { IReopenJobUseCase } from 'src/domain/interfaces/use-cases/job/IReopenJobUseCase';
 import { ERROR } from 'src/shared/constants/messages';
 

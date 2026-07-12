@@ -1,5 +1,5 @@
 import { ATSTechnicalTask } from 'src/domain/entities/ats-technical-task.entity';
-import { ATSTechnicalTaskResponseDto } from 'src/application/dtos/application/task.dto';
+import { ATSTechnicalTaskResponseDto } from 'src/application/dtos/ats-technical-task.dto';
 
 export class ATSTechnicalTaskMapper {
   static toResponse(task: ATSTechnicalTask): ATSTechnicalTaskResponseDto {

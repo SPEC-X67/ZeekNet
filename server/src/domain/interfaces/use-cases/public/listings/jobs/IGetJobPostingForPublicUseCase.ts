@@ -1,4 +1,4 @@
-import { JobPostingDetailResponseDto } from 'src/application/dtos/admin/job.dto';
+import { JobPostingDetailResponseDto } from 'src/application/dtos/public.dto';
 
 export interface IGetJobPostingForPublicUseCase {
   execute(jobId: string, userId?: string): Promise<JobPostingDetailResponseDto>;

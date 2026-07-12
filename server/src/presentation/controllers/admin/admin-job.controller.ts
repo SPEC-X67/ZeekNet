@@ -4,7 +4,7 @@ import { IAdminGetAllJobsUseCase } from 'src/domain/interfaces/use-cases/admin/j
 import { IAdminGetJobByIdUseCase } from 'src/domain/interfaces/use-cases/admin/job/IAdminGetJobByIdUseCase';
 import { IAdminGetJobStatsUseCase } from 'src/domain/interfaces/use-cases/admin/analytics/IAdminGetJobStatsUseCase';
 import { IAdminUpdateJobStatusUseCase } from 'src/domain/interfaces/use-cases/admin/job/IAdminUpdateJobStatusUseCase';
-import { UpdateJobStatusRequestDtoSchema, GetAllJobsQueryDto } from 'src/application/dtos/admin/job.dto';
+import { UpdateJobStatusRequestSchema, GetAllJobsQuerySchema } from 'src/application/validations/job-posting.validation';
 
 import { formatZodErrors, handleAsyncError, handleValidationError, sendSuccessResponse } from 'src/shared/utils';
 import { SUCCESS } from 'src/shared/constants/messages';
@@ -22,7 +22,7 @@ export class AdminJobController {
   ) {}
 
   getAllJobs = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const parsed = GetAllJobsQueryDto.safeParse(req.query);
+    const parsed = GetAllJobsQuerySchema.safeParse(req.query);
     if (!parsed.success) {
       return handleValidationError(formatZodErrors(parsed.error), next);
     }
@@ -46,7 +46,7 @@ export class AdminJobController {
   };
 
   updateJobStatus = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const parsedBody = UpdateJobStatusRequestDtoSchema.safeParse(req.body);
+    const parsedBody = UpdateJobStatusRequestSchema.safeParse(req.body);
     if (!parsedBody.success) {
       return handleValidationError(formatZodErrors(parsedBody.error), next);
     }

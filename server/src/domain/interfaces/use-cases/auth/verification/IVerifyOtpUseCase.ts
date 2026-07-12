@@ -1,5 +1,5 @@
-import { LoginResponseDto } from 'src/application/dtos/auth/login.dto';
-import { VerifyOtpRequestDto } from 'src/application/dtos/auth/otp.dto';
+import { LoginResponseDto } from 'src/application/dtos/auth.dto';
+import { VerifyOtpRequestDto } from 'src/application/dtos/auth.dto';
 
 export interface IVerifyOtpUseCase {
   execute(params: VerifyOtpRequestDto): Promise<LoginResponseDto>;

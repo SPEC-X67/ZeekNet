@@ -3,8 +3,10 @@ import { ISeekerProfileRepository } from 'src/domain/interfaces/repositories/see
 import { IJobPostingRepository } from 'src/domain/interfaces/repositories/job/IJobPostingRepository';
 import { IPaymentOrderRepository } from 'src/domain/interfaces/repositories/payment/IPaymentOrderRepository';
 import { IUserRepository } from 'src/domain/interfaces/repositories/user/IUserRepository';
-import { AdminDashboardStatsResponseDto, GetAdminDashboardStatsQueryDto } from 'src/application/dtos/admin/analytics.dto';
+import { GetAdminDashboardStatsQueryDto } from 'src/application/dtos/analytics.dto';
+import { AdminDashboardStatsResponseDto } from 'src/application/dtos/analytics.dto';
 import { IGetAdminDashboardStatsUseCase } from 'src/domain/interfaces/use-cases/admin/analytics/IGetAdminDashboardStatsUseCase';
+import { DashboardPeriod } from 'src/domain/enums/dashboard-period.enum';
 import { IS3Service } from 'src/domain/interfaces/services/IS3Service';
 import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';
@@ -25,26 +27,26 @@ export class GetAdminDashboardStatsUseCase implements IGetAdminDashboardStatsUse
     const now = new Date();
 
     const getRange = (): { start: Date; end: Date } | null => {
-      if (period === 'all') return null;
+      if (period === DashboardPeriod.ALL) return null;
       if (startDate && endDate) return { start: startDate, end: endDate };
 
       switch (period) {
-      case 'day':
+      case DashboardPeriod.DAY:
         return {
           start: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0),
           end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999),
         };
-      case 'week':
+      case DashboardPeriod.WEEK:
         return {
           start: new Date(now.getFullYear(), now.getMonth(), now.getDate() - 6, 0, 0, 0, 0),
           end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999),
         };
-      case 'month':
+      case DashboardPeriod.MONTH:
         return {
           start: new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0, 0),
           end: new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999),
         };
-      case 'year':
+      case DashboardPeriod.YEAR:
         return {
           start: new Date(now.getFullYear(), 0, 1, 0, 0, 0, 0),
           end: new Date(now.getFullYear(), 11, 31, 23, 59, 59, 999),

@@ -8,9 +8,9 @@ import { IUserRepository } from 'src/domain/interfaces/repositories/user/IUserRe
 import { NotFoundError, ValidationError } from 'src/domain/errors/errors';
 import { ISeekerProfileRepository } from 'src/domain/interfaces/repositories/seeker/ISeekerProfileRepository';
 import { IS3Service } from 'src/domain/interfaces/services/IS3Service';
-import { GetJobApplicationsKanbanDto } from 'src/application/dtos/application/application.dto';
+import { GetJobApplicationsKanbanDto } from 'src/application/dtos/job-application.dto';
 import { IGetCompanyIdByUserIdUseCase } from 'src/domain/interfaces/use-cases/admin/companies/IGetCompanyIdByUserIdUseCase';
-import { JobApplicationsKanbanResponseDto } from 'src/application/dtos/application/pipeline.dto';
+import { JobApplicationsKanbanResponseDto } from 'src/application/dtos/job-application.dto';
 
 @injectable()
 export class GetJobApplicationsForKanbanUseCase implements IGetJobApplicationsForKanbanUseCase {

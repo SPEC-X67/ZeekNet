@@ -7,8 +7,8 @@ import { IUserRepository } from 'src/domain/interfaces/repositories/user/IUserRe
 import { IVerifyOtpUseCase } from 'src/domain/interfaces/use-cases/auth/verification/IVerifyOtpUseCase';
 import { ValidationError } from 'src/domain/errors/errors';
 import { welcomeTemplate } from 'src/infrastructure/messaging/templates/welcome.template';
-import { VerifyOtpRequestDto } from 'src/application/dtos/auth/otp.dto';
-import { LoginResponseDto } from 'src/application/dtos/auth/login.dto';
+import { VerifyOtpRequestDto } from 'src/application/dtos/auth.dto';
+import { LoginResponseDto } from 'src/application/dtos/auth.dto';
 import { getDashboardLink } from 'src/shared/utils';
 
 import { injectable, inject } from 'inversify';

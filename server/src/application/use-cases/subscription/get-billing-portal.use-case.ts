@@ -6,7 +6,7 @@ import { ICompanyProfileRepository } from 'src/domain/interfaces/repositories/co
 import { ICompanySubscriptionRepository } from 'src/domain/interfaces/repositories/subscription/ICompanySubscriptionRepository';
 import { NotFoundError, ValidationError } from 'src/domain/errors/errors';
 import { IGetBillingPortalUseCase } from 'src/domain/interfaces/use-cases/subscription/IGetBillingPortalUseCase';
-import { GetBillingPortalRequestDto } from 'src/application/dtos/subscription/subscription.dto';;
+import { GetBillingPortalRequestDto } from 'src/application/dtos/company-subscription.dto';;
 
 @injectable()
 export class GetBillingPortalUseCase implements IGetBillingPortalUseCase {

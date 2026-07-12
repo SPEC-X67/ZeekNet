@@ -3,8 +3,7 @@ import { TYPES } from 'src/shared/constants/types';
 import { IS3Service } from 'src/domain/interfaces/services/IS3Service';
 import { ValidationError } from 'src/domain/errors/errors';
 import { IUploadBusinessLicenseUseCase } from 'src/domain/interfaces/use-cases/company/media/IUploadBusinessLicenseUseCase';
-import { UploadBusinessLicenseResult } from 'src/application/dtos/company/media/responses/upload-business-license-result.dto';
-import { UploadBusinessLicenseDto } from 'src/application/dtos/company/media/requests/upload-business-license.dto';
+import { UploadBusinessLicenseResult, UploadBusinessLicenseDto } from 'src/application/dtos/company-media.dto';
 
 @injectable()
 export class UploadBusinessLicenseUseCase implements IUploadBusinessLicenseUseCase {

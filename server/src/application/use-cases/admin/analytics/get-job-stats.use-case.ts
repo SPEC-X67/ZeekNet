@@ -1,7 +1,7 @@
 import { IJobPostingRepository } from 'src/domain/interfaces/repositories/job/IJobPostingRepository';
 import { AppError } from 'src/domain/errors/errors';
 import { IAdminGetJobStatsUseCase } from 'src/domain/interfaces/use-cases/admin/analytics/IAdminGetJobStatsUseCase';
-import { AdminJobStatsResponseDto } from 'src/application/dtos/admin/job.dto';
+import { AdminJobStatsResponseDto } from 'src/application/dtos/job-posting.dto';
 import { JobPostingMapper } from 'src/application/mappers/job/job-posting.mapper';
 import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';

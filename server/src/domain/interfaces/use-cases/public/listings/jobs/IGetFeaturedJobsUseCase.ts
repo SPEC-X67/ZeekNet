@@ -1,4 +1,4 @@
-import { GetFeaturedJobsRequestDto, GetFeaturedJobsResponseDto } from 'src/application/dtos/public/public.dto';;
+import { GetFeaturedJobsRequestDto, GetFeaturedJobsResponseDto } from 'src/application/dtos/public.dto';;
 ;
 
 export interface IGetFeaturedJobsUseCase {

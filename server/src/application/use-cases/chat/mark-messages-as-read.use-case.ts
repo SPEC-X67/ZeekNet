@@ -3,9 +3,9 @@ import { IMessageRepository } from 'src/domain/interfaces/repositories/chat/IMes
 import { IConversationRepository } from 'src/domain/interfaces/repositories/chat/IConversationRepository';
 import { IChatSocketService } from 'src/domain/interfaces/services/IChatSocketService';
 import { NotFoundError, AuthorizationError } from 'src/domain/errors/errors';
-import { ConversationResponseDto } from 'src/application/dtos/chat/conversation.dto';
+import { ConversationResponseDto } from 'src/application/dtos/chat.dto';
 import { ConversationMapper } from 'src/application/mappers/chat/conversation.mapper';
-import { MarkMessagesAsReadDto } from 'src/application/dtos/chat/message.dto';
+import { MarkMessagesAsReadDto } from 'src/application/dtos/chat.dto';
 import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';
 import { ERROR } from 'src/shared/constants/messages';

@@ -13,7 +13,7 @@ import { IJobPostingRepository } from 'src/domain/interfaces/repositories/job/IJ
 import { IUserRepository } from 'src/domain/interfaces/repositories/user/IUserRepository';
 import { IMailerService } from 'src/domain/interfaces/services/IMailerService';
 import { IEmailTemplateService } from 'src/domain/interfaces/services/IEmailTemplateService';
-import { AssignTechnicalTaskRequestDto, ATSTechnicalTaskResponseDto } from 'src/application/dtos/application/task.dto';
+import { AssignTechnicalTaskRequestDto, ATSTechnicalTaskResponseDto } from 'src/application/dtos/ats-technical-task.dto';
 
 import { ATSTechnicalTaskMapper } from 'src/application/mappers/ats/ats-technical-task.mapper';
 import { IS3Service } from 'src/domain/interfaces/services/IS3Service';

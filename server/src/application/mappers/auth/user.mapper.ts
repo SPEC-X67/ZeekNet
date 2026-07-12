@@ -1,9 +1,9 @@
 import { User } from 'src/domain/entities/user.entity';
-import { UserResponseDto } from 'src/application/dtos/auth/user.dto';
+import { UserResponseDto } from 'src/application/dtos/user.dto';
 
 import { UserRole } from 'src/domain/enums/user-role.enum';
 import { CreateInput } from 'src/domain/types/common.types';
-import { RegisterRequestDto } from 'src/application/dtos/auth/register.dto';
+import { RegisterRequestDto } from 'src/application/dtos/auth.dto';
 
 export class UserMapper {
   static toResponse(user: User): UserResponseDto {

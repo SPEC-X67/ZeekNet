@@ -5,7 +5,7 @@ import { AuthenticatedRequest } from 'src/shared/types/authenticated-request';
 import { IScheduleInterviewUseCase } from 'src/domain/interfaces/use-cases/application/interview/IScheduleInterviewUseCase';
 import { IUpdateInterviewUseCase } from 'src/domain/interfaces/use-cases/application/interview/IUpdateInterviewUseCase';
 import { IGetInterviewsByApplicationUseCase } from 'src/domain/interfaces/use-cases/application/interview/IGetInterviewsByApplicationUseCase';
-import { ScheduleInterviewDtoSchema, UpdateInterviewDtoSchema } from 'src/application/dtos/application/interview.dto';
+import { ScheduleInterviewSchema, UpdateInterviewSchema } from 'src/application/validations/ats-interview.validation';
 
 import { formatZodErrors, handleAsyncError, handleValidationError, sendCreatedResponse, sendSuccessResponse, validateUserId } from 'src/shared/utils';
 import { SUCCESS } from 'src/shared/constants/messages';
@@ -19,7 +19,7 @@ export class ATSInterviewController {
   ) { }
 
   scheduleInterview = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
-    const validation = ScheduleInterviewDtoSchema.safeParse(req.body);
+    const validation = ScheduleInterviewSchema.safeParse(req.body);
     if (!validation.success) {
       return handleValidationError(formatZodErrors(validation.error), next);
     }
@@ -39,7 +39,7 @@ export class ATSInterviewController {
   };
 
   updateInterview = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
-    const bodySchema = UpdateInterviewDtoSchema.omit({ interviewId: true, userId: true });
+    const bodySchema = UpdateInterviewSchema.omit({ interviewId: true, userId: true });
     const validation = bodySchema.safeParse(req.body);
 
     if (!validation.success) {

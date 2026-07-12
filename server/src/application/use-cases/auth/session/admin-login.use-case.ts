@@ -5,7 +5,7 @@ import { IUserRepository } from 'src/domain/interfaces/repositories/user/IUserRe
 import { IAdminLoginUseCase } from 'src/domain/interfaces/use-cases/auth/session/IAdminLoginUseCase';
 import { AuthenticationError, AuthorizationError } from 'src/domain/errors/errors';
 import { UserMapper } from 'src/application/mappers/auth/user.mapper';
-import { LoginRequestDto, LoginResponseDto } from 'src/application/dtos/auth/login.dto';
+import { LoginRequestDto, LoginResponseDto } from 'src/application/dtos/auth.dto';
 
 import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';

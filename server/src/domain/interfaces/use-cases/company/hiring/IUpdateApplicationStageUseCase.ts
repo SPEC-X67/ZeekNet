@@ -1,5 +1,5 @@
-import type { JobApplicationListResponseDto } from 'src/application/dtos/seeker/applications/responses/job-application-response.dto';
-import { UpdateApplicationStageDto } from 'src/application/dtos/application/application.dto';
+import type { JobApplicationListResponseDto } from 'src/application/dtos/job-application.dto';
+import { UpdateApplicationStageDto } from 'src/application/dtos/job-application.dto';
 
 export interface IUpdateApplicationStageUseCase {
   execute(dto: UpdateApplicationStageDto): Promise<JobApplicationListResponseDto>;

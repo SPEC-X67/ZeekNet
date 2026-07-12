@@ -1,5 +1,5 @@
-import { JobPostingResponseDto } from 'src/application/dtos/admin/job.dto';
-import { UpdateCompanyJobPostingDto } from 'src/application/dtos/company/job/requests/update-company-job-posting.dto';
+import { JobPostingResponseDto } from 'src/application/dtos/public.dto';
+import { UpdateCompanyJobPostingDto } from 'src/application/dtos/job-posting.dto';
 
 export interface IUpdateJobPostingUseCase {
   execute(dto: UpdateCompanyJobPostingDto): Promise<JobPostingResponseDto>;

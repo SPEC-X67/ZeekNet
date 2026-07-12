@@ -11,7 +11,7 @@ import { IJobPostingRepository } from 'src/domain/interfaces/repositories/job/IJ
 import { IUserRepository } from 'src/domain/interfaces/repositories/user/IUserRepository';
 import { IMailerService } from 'src/domain/interfaces/services/IMailerService';
 import { IEmailTemplateService } from 'src/domain/interfaces/services/IEmailTemplateService';
-import { ScheduleInterviewRequestDto, ATSInterviewResponseDto } from 'src/application/dtos/application/interview.dto';
+import { ScheduleInterviewRequestDto, ATSInterviewResponseDto } from 'src/application/dtos/ats-interview.dto';
 
 import { ATSInterviewMapper } from 'src/application/mappers/ats/ats-interview.mapper';
 import { ILogger } from 'src/domain/interfaces/services/ILogger';

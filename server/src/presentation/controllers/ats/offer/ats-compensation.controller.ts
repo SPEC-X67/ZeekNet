@@ -8,7 +8,8 @@ import { IGetCompensationUseCase } from 'src/domain/interfaces/use-cases/applica
 import { IScheduleCompensationMeetingUseCase } from 'src/domain/interfaces/use-cases/application/compensation/IScheduleCompensationMeetingUseCase';
 import { IGetCompensationMeetingsUseCase } from 'src/domain/interfaces/use-cases/application/compensation/IGetCompensationMeetingsUseCase';
 import { IUpdateCompensationMeetingStatusUseCase } from 'src/domain/interfaces/use-cases/application/compensation/IUpdateCompensationMeetingStatusUseCase';
-import { InitiateCompensationSchema, UpdateCompensationSchema, ScheduleCompensationMeetingSchema, UpdateCompensationMeetingStatusSchema } from 'src/application/dtos/application/compensation.dto';
+import { InitiateCompensationSchema, UpdateCompensationSchema } from 'src/application/validations/ats-compensation.validation';
+import { ScheduleCompensationMeetingSchema, UpdateCompensationMeetingStatusSchema } from 'src/application/validations/ats-compensation-meeting.validation';
 
 import { formatZodErrors, handleAsyncError, handleValidationError, sendCreatedResponse, sendSuccessResponse, validateUserId } from 'src/shared/utils';
 import { SUCCESS, ERROR } from 'src/shared/constants/messages';

@@ -1,5 +1,5 @@
 import { JobCategory } from 'src/domain/entities/job-category.entity';
-import { JobCategoryResponseDto } from 'src/application/dtos/admin/job-category.dto';
+import { JobCategoryResponseDto } from 'src/application/dtos/job-category.dto';
 
 export class JobCategoryMapper {
   static toResponse(category: JobCategory): JobCategoryResponseDto {

@@ -1,11 +1,8 @@
 import { JobApplication } from 'src/domain/entities/job-application.entity';
 import { JobPosting } from 'src/domain/entities/job-posting.entity';
 import { ATSStage, ATSSubStage, InReviewSubStage } from 'src/domain/enums/ats-stage.enum';
-import {
-  JobApplicationListResponseDto,
-  JobApplicationDetailResponseDto,
-} from 'src/application/dtos/seeker/applications/responses/job-application-response.dto';
-import { JobApplicationResponseDto } from 'src/application/dtos/application/application.dto';
+import { JobApplicationListResponseDto, JobApplicationDetailResponseDto } from 'src/application/dtos/job-application.dto';
+import { JobApplicationResponseDto } from 'src/application/dtos/job-application.dto';
 import { CreateInput } from 'src/domain/types/common.types';
 
 export class JobApplicationMapper {

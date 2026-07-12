@@ -3,8 +3,7 @@ import { ISeekerEducationRepository } from 'src/domain/interfaces/repositories/s
 import { IAddEducationUseCase } from 'src/domain/interfaces/use-cases/seeker/profile/education/IAddEducationUseCase';
 import { NotFoundError, ValidationError } from 'src/domain/errors/errors';
 import { SeekerProfileMapper } from 'src/application/mappers/seeker/seeker-profile.mapper';
-import { EducationResponseDto } from 'src/application/dtos/seeker/profile/info/responses/seeker-profile-response.dto';
-import { AddEducationRequestDto } from 'src/application/dtos/seeker/profile/education/requests/add-education-request.dto';
+import { EducationResponseDto, AddEducationRequestDto } from 'src/application/dtos/seeker-education.dto';
 
 import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';

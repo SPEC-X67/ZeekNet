@@ -1,4 +1,4 @@
-import { PreviewPlanChangeRequestDto, PreviewPlanChangeResponseDto } from 'src/application/dtos/subscription/subscription.dto';;
+import { PreviewPlanChangeRequestDto, PreviewPlanChangeResponseDto } from 'src/application/dtos/company-subscription.dto';;
 ;
 
 export interface IPreviewPlanChangeUseCase {

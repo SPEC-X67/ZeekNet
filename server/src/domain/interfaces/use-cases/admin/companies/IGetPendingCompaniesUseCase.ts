@@ -1,4 +1,4 @@
-import { PaginatedCompaniesWithVerificationResultDto } from 'src/application/dtos/admin/company.dto';
+import { PaginatedCompaniesWithVerificationResultDto } from 'src/application/dtos/company-verification.dto';
 
 export interface IGetPendingCompaniesUseCase {
   execute(): Promise<PaginatedCompaniesWithVerificationResultDto>;

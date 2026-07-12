@@ -7,7 +7,7 @@ import { ISubscriptionPlanRepository } from 'src/domain/interfaces/repositories/
 import { CompanySubscription } from 'src/domain/entities/company-subscription.entity';
 import { NotFoundError } from 'src/domain/errors/errors';
 import { IGetActiveSubscriptionUseCase } from 'src/domain/interfaces/use-cases/subscription/IGetActiveSubscriptionUseCase';
-import { CompanySubscriptionResponseDto } from 'src/application/dtos/subscription/subscription.dto';;
+import { CompanySubscriptionResponseDto } from 'src/application/dtos/company-subscription.dto';;
 import { CompanySubscriptionResponseMapper } from 'src/application/mappers/company/subscription/company-subscription-response.mapper';
 import { ERROR } from 'src/shared/constants/messages';
 

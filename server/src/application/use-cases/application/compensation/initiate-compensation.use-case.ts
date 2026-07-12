@@ -14,7 +14,7 @@ import { IJobPostingRepository } from 'src/domain/interfaces/repositories/job/IJ
 import { IUserRepository } from 'src/domain/interfaces/repositories/user/IUserRepository';
 import { IMailerService } from 'src/domain/interfaces/services/IMailerService';
 import { IEmailTemplateService } from 'src/domain/interfaces/services/IEmailTemplateService';
-import { InitiateCompensationRequestDto, ATSCompensationResponseDto } from 'src/application/dtos/application/compensation.dto';
+import { InitiateCompensationRequestDto, ATSCompensationResponseDto } from 'src/application/dtos/ats-compensation.dto';
 
 import { ATSCompensationMapper } from 'src/application/mappers/ats/ats-compensation.mapper';
 import { ILogger } from 'src/domain/interfaces/services/ILogger';

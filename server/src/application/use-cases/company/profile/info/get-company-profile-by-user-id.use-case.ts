@@ -4,7 +4,7 @@ import { VALIDATION } from 'src/shared/constants/messages';
 import { ICompanyProfileRepository } from 'src/domain/interfaces/repositories/company/ICompanyProfileRepository';
 import { BadRequestError } from 'src/domain/errors/errors';
 import { IGetCompanyProfileByUserIdUseCase } from 'src/domain/interfaces/use-cases/company/profile/info/IGetCompanyProfileByUserIdUseCase';
-import { CompanyProfileResponseDto } from 'src/application/dtos/company/profile/info/responses/company-response.dto';
+import { CompanyProfileResponseDto } from 'src/application/dtos/company-profile.dto';
 import { CompanyProfileMapper } from 'src/application/mappers/company/profile/company-profile.mapper';
 
 @injectable()

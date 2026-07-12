@@ -4,7 +4,7 @@ import { IJobPostingRepository } from 'src/domain/interfaces/repositories/job/IJ
 import { IUserRepository } from 'src/domain/interfaces/repositories/user/IUserRepository';
 import { ICompanyProfileRepository } from 'src/domain/interfaces/repositories/company/ICompanyProfileRepository';
 import { ICreateJobApplicationUseCase } from 'src/domain/interfaces/use-cases/seeker/applications/ICreateJobApplicationUseCase';
-import { CreateJobApplicationDto } from 'src/application/dtos/seeker/applications/requests/create-job-application.dto';
+import { CreateJobApplicationSchema } from 'src/application/validations/job-application.validation';
 import { z } from 'zod';
 import { ValidationError, NotFoundError } from 'src/domain/errors/errors';
 import { INotificationService } from 'src/domain/interfaces/services/INotificationService';
@@ -42,7 +42,7 @@ export class CreateJobApplicationUseCase implements ICreateJobApplicationUseCase
   ) { }
 
   async execute(
-    data: Omit<z.infer<typeof CreateJobApplicationDto>, 'resume_url' | 'resume_filename'> & {
+    data: Omit<z.infer<typeof CreateJobApplicationSchema>, 'resume_url' | 'resume_filename'> & {
       seekerId?: string;
       resume_url?: string;
       resume_filename?: string;
@@ -138,7 +138,7 @@ export class CreateJobApplicationUseCase implements ICreateJobApplicationUseCase
     }
   }
 
-  private async _createApplication(seekerId: string, applicationData: z.infer<typeof CreateJobApplicationDto>, job: JobPosting) {
+  private async _createApplication(seekerId: string, applicationData: z.infer<typeof CreateJobApplicationSchema>, job: JobPosting) {
     return await this._jobApplicationRepository.create(
       JobApplicationMapper.toEntity({
         seekerId: seekerId,

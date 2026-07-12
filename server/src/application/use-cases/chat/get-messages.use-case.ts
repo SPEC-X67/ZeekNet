@@ -4,7 +4,7 @@ import { IConversationRepository } from 'src/domain/interfaces/repositories/chat
 import { NotFoundError, AuthorizationError } from 'src/domain/errors/errors';
 
 import { ChatMessageMapper } from 'src/application/mappers/chat/chat-message.mapper';
-import { GetMessagesDto, PaginatedMessagesResponseDto } from 'src/application/dtos/chat/message.dto';
+import { GetMessagesDto, PaginatedMessagesResponseDto } from 'src/application/dtos/chat.dto';
 import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';
 import { ERROR } from 'src/shared/constants/messages';

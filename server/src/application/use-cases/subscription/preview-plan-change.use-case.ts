@@ -6,7 +6,7 @@ import { ICompanyProfileRepository } from 'src/domain/interfaces/repositories/co
 import { ICompanySubscriptionRepository } from 'src/domain/interfaces/repositories/subscription/ICompanySubscriptionRepository';
 import { IJobPostingRepository } from 'src/domain/interfaces/repositories/job/IJobPostingRepository';
 import { NotFoundError, ValidationError } from 'src/domain/errors/errors';
-import { PreviewPlanChangeRequestDto, PreviewPlanChangeResponseDto, PlanChangeType, JobToUnlistDetail } from 'src/application/dtos/subscription/subscription.dto';;
+import { PreviewPlanChangeRequestDto, PreviewPlanChangeResponseDto, PlanChangeType, JobToUnlistDetail } from 'src/application/dtos/company-subscription.dto';;
 ;
 import { IPreviewPlanChangeUseCase } from 'src/domain/interfaces/use-cases/subscription/IPreviewPlanChangeUseCase';
 import { BillingCycle } from 'src/domain/enums/billing-cycle.enum';

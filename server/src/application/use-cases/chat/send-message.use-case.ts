@@ -9,7 +9,8 @@ import { CreateInput } from 'src/domain/types/common.types';
 
 import { ConversationMapper } from 'src/application/mappers/chat/conversation.mapper';
 import { ChatMessageMapper } from 'src/application/mappers/chat/chat-message.mapper';
-import { SendMessageDto, SendMessageResponseDto } from 'src/application/dtos/chat/message.dto';
+import { SendMessageDto } from 'src/application/dtos/chat.dto';
+import { SendMessageResponseDto } from 'src/application/dtos/chat.dto';
 import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';
 import { ERROR, VALIDATION } from 'src/shared/constants/messages';

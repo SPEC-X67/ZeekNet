@@ -4,7 +4,7 @@ import { IDeleteSkillUseCase } from 'src/domain/interfaces/use-cases/admin/attri
 import { IGetAllSkillsUseCase } from 'src/domain/interfaces/use-cases/admin/attributes/skills/IGetAllSkillsUseCase';
 import { IGetSkillByIdUseCase } from 'src/domain/interfaces/use-cases/admin/attributes/skills/IGetSkillByIdUseCase';
 import { IUpdateSkillUseCase } from 'src/domain/interfaces/use-cases/admin/attributes/skills/IUpdateSkillUseCase';
-import { CreateSkillDto, GetAllSkillsDto, UpdateSkillDto } from 'src/application/dtos/admin/skill.dto';
+import { CreateSkillSchema, GetAllSkillsSchema, UpdateSkillSchema } from 'src/application/validations/skill.validation';
 import { formatZodErrors, handleAsyncError, handleValidationError, sendSuccessResponse } from 'src/shared/utils';
 import { SUCCESS } from 'src/shared/constants/messages';
 import { injectable, inject } from 'inversify';
@@ -21,7 +21,7 @@ export class AdminSkillController {
   ) { }
 
   createSkill = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const parsed = CreateSkillDto.safeParse(req.body);
+    const parsed = CreateSkillSchema.safeParse(req.body);
     if (!parsed.success) {
       return handleValidationError(formatZodErrors(parsed.error), next);
     }
@@ -35,7 +35,7 @@ export class AdminSkillController {
   };
 
   getAllSkills = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const parsed = GetAllSkillsDto.safeParse(req.query);
+    const parsed = GetAllSkillsSchema.safeParse(req.query);
     if (!parsed.success) {
       return handleValidationError(formatZodErrors(parsed.error), next);
     }
@@ -59,7 +59,7 @@ export class AdminSkillController {
   };
 
   updateSkill = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const parsedBody = UpdateSkillDto.safeParse(req.body);
+    const parsedBody = UpdateSkillSchema.safeParse(req.body);
     if (!parsedBody.success) {
       return handleValidationError(formatZodErrors(parsedBody.error), next);
     }

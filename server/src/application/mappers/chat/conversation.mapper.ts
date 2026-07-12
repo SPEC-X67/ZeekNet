@@ -1,5 +1,5 @@
 import { Conversation } from 'src/domain/entities/conversation.entity';
-import { ConversationResponseDto } from 'src/application/dtos/chat/conversation.dto';
+import { ConversationResponseDto } from 'src/application/dtos/chat.dto';
 
 export class ConversationMapper {
   static toResponse(conversation: Conversation): ConversationResponseDto {

@@ -1,5 +1,5 @@
 import { ATSComment } from 'src/domain/entities/ats-comment.entity';
-import { ATSCommentResponseDto } from 'src/application/dtos/application/comment.dto';
+import { ATSCommentResponseDto } from 'src/application/dtos/ats-comment.dto';
 
 export class ATSCommentMapper {
   static toResponse(comment: ATSComment): ATSCommentResponseDto {

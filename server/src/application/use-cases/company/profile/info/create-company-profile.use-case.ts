@@ -8,13 +8,12 @@ import { ICompanyOfficeLocationRepository } from 'src/domain/interfaces/reposito
 import { ISubscriptionPlanRepository } from 'src/domain/interfaces/repositories/subscription-plan/ISubscriptionPlanRepository';
 import { ICompanySubscriptionRepository } from 'src/domain/interfaces/repositories/subscription/ICompanySubscriptionRepository';
 import { ICreateCompanyProfileUseCase } from 'src/domain/interfaces/use-cases/company/profile/info/ICreateCompanyProfileUseCase';
-import { CreateCompanyProfileRequestDtoType } from 'src/application/dtos/company/profile/info/requests/create-company-profile-request.dto';
+import { CreateCompanyProfileRequestDtoType, CompanyProfileResponseDto } from 'src/application/dtos/company-profile.dto';
 import { CompanyOfficeLocation } from 'src/domain/entities/company-office-location.entity';
 import { CompanyProfileMapper } from 'src/application/mappers/company/profile/company-profile.mapper';
 import { CompanySubscriptionResponseMapper } from 'src/application/mappers/company/subscription/company-subscription-response.mapper';
 import { CompanyProfile } from 'src/domain/entities/company-profile.entity';
 import { CompanyContact } from 'src/domain/entities/company-contact.entity';
-import { CompanyProfileResponseDto } from 'src/application/dtos/company/profile/info/responses/company-response.dto';
 
 @injectable()
 export class CreateCompanyProfileUseCase implements ICreateCompanyProfileUseCase {

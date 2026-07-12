@@ -9,9 +9,9 @@ import { CompanySubscription } from 'src/domain/entities/company-subscription.en
 import { AuthorizationError, InternalServerError, NotFoundError, ValidationError } from 'src/domain/errors/errors';
 import { JobPosting } from 'src/domain/entities/job-posting.entity';
 import { IUpdateJobStatusUseCase } from 'src/domain/interfaces/use-cases/job/IUpdateJobStatusUseCase';
-import { UpdateJobStatusDto } from 'src/application/dtos/job/job.dto';;
+import { UpdateJobStatusDto } from 'src/application/dtos/job-posting.dto';;
 import { JobStatus } from 'src/domain/enums/job-status.enum';
-import { JobPostingResponseDto } from 'src/application/dtos/admin/job.dto';
+import { JobPostingResponseDto } from 'src/application/dtos/public.dto';
 import { JobPostingMapper } from 'src/application/mappers/job/job-posting.mapper';
 
 @injectable()

@@ -4,7 +4,7 @@ import { NextFunction, Response } from 'express';
 import { AuthenticatedRequest } from 'src/shared/types/authenticated-request';
 import { IAddCommentUseCase } from 'src/domain/interfaces/use-cases/application/comments/IAddCommentUseCase';
 import { IGetCommentsByApplicationUseCase } from 'src/domain/interfaces/use-cases/application/comments/IGetCommentsByApplicationUseCase';
-import { AddCommentRequestDtoSchema } from 'src/application/dtos/application/comment.dto';
+import { AddCommentSchema } from 'src/application/validations/ats-comment.validation';
 import { formatZodErrors, handleAsyncError, handleValidationError, sendCreatedResponse, sendSuccessResponse, validateUserId } from 'src/shared/utils';
 import { SUCCESS } from 'src/shared/constants/messages';
 
@@ -16,7 +16,7 @@ export class ATSCommentController {
   ) { }
 
   addComment = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
-    const parsedBody = AddCommentRequestDtoSchema.safeParse(req.body);
+    const parsedBody = AddCommentSchema.safeParse(req.body);
     if (!parsedBody.success) {
       return handleValidationError(formatZodErrors(parsedBody.error), next);
     }

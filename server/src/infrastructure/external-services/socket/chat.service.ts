@@ -1,8 +1,8 @@
 import { Server as SocketIOServer } from 'socket.io';
 import { IChatSocketService } from 'src/domain/interfaces/services/IChatSocketService';
 import { ISocketConnectionManager } from 'src/domain/interfaces/services/ISocketConnectionManager';
-import { ChatMessageResponseDto } from 'src/application/dtos/chat/message.dto';
-import { ConversationResponseDto } from 'src/application/dtos/chat/conversation.dto';
+import { ChatMessageResponseDto } from 'src/application/dtos/chat.dto';
+import { ConversationResponseDto } from 'src/application/dtos/chat.dto';
 import { injectable } from 'inversify';
 
 @injectable()

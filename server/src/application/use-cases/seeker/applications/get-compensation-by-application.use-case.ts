@@ -2,7 +2,7 @@ import { IJobApplicationRepository } from 'src/domain/interfaces/repositories/jo
 import { IATSCompensationRepository } from 'src/domain/interfaces/repositories/ats/IATSCompensationRepository';
 import { NotFoundError, AuthorizationError } from 'src/domain/errors/errors';
 import { ATSCompensation } from 'src/domain/entities/ats-compensation.entity';
-import { ATSCompensationResponseDto } from 'src/application/dtos/application/compensation.dto';
+import { ATSCompensationResponseDto } from 'src/application/dtos/ats-compensation.dto';
 import { ATSCompensationMapper } from 'src/application/mappers/ats/ats-compensation.mapper';
 
 export interface IGetCompensationByApplicationUseCase {

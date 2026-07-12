@@ -1,4 +1,4 @@
-import { ATSInterviewResponseDto } from 'src/application/dtos/application/interview.dto';
+import { ATSInterviewResponseDto } from 'src/application/dtos/ats-interview.dto';
 
 export interface IGetInterviewsByApplicationUseCase {
   execute(applicationId: string): Promise<ATSInterviewResponseDto[]>;

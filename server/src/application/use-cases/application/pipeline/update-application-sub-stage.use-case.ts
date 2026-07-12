@@ -7,7 +7,7 @@ import { JobApplication } from 'src/domain/entities/job-application.entity';
 import { ATSSubStage, ATSStage } from 'src/domain/enums/ats-stage.enum';
 import { NotFoundError, ValidationError } from 'src/domain/errors/errors';
 import { isValidSubStageForStage } from 'src/domain/utils/ats-pipeline.util';
-import { UpdateSubStageDto, JobApplicationResponseDto } from 'src/application/dtos/application/application.dto';
+import { UpdateSubStageDto, JobApplicationResponseDto } from 'src/application/dtos/job-application.dto';
 
 import { JobApplicationMapper } from 'src/application/mappers/job-application/job-application.mapper';
 import { ATSComment } from 'src/domain/entities/ats-comment.entity';

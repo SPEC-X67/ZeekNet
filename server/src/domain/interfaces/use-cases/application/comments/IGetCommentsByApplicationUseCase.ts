@@ -1,4 +1,4 @@
-import { ATSCommentResponseDto, GetCommentsByApplicationParamsDto } from 'src/application/dtos/application/comment.dto';
+import { ATSCommentResponseDto, GetCommentsByApplicationParamsDto } from 'src/application/dtos/ats-comment.dto';
 
 export interface IGetCommentsByApplicationUseCase {
   execute(params: GetCommentsByApplicationParamsDto): Promise<ATSCommentResponseDto[]>;

@@ -1,5 +1,5 @@
-import { GetApplicationDetailsRequestDto } from 'src/application/dtos/company/hiring/requests/get-application-details.dto';
-import type { JobApplicationDetailResponseDto } from 'src/application/dtos/seeker/applications/responses/job-application-response.dto';
+import { GetApplicationDetailsRequestDto } from 'src/application/dtos/company-hiring.dto';
+import type { JobApplicationDetailResponseDto } from 'src/application/dtos/job-application.dto';
 
 export interface IGetApplicationDetailsUseCase {
   execute(data: GetApplicationDetailsRequestDto): Promise<JobApplicationDetailResponseDto>;

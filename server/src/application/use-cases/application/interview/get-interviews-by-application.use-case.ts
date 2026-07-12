@@ -2,7 +2,7 @@ import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';
 import { IGetInterviewsByApplicationUseCase } from 'src/domain/interfaces/use-cases/application/interview/IGetInterviewsByApplicationUseCase';
 import { IATSInterviewRepository } from 'src/domain/interfaces/repositories/ats/IATSInterviewRepository';
-import { ATSInterviewResponseDto } from 'src/application/dtos/application/interview.dto';
+import { ATSInterviewResponseDto } from 'src/application/dtos/ats-interview.dto';
 import { ATSInterviewMapper } from 'src/application/mappers/ats/ats-interview.mapper';
 
 @injectable()

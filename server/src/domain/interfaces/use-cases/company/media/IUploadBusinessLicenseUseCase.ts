@@ -1,5 +1,4 @@
-import { UploadBusinessLicenseResult } from 'src/application/dtos/company/media/responses/upload-business-license-result.dto';
-import { UploadBusinessLicenseDto } from 'src/application/dtos/company/media/requests/upload-business-license.dto';
+import { UploadBusinessLicenseResult, UploadBusinessLicenseDto } from 'src/application/dtos/company-media.dto';
 
 export interface IUploadBusinessLicenseUseCase {
   execute(dto: UploadBusinessLicenseDto): Promise<UploadBusinessLicenseResult>;

@@ -4,7 +4,7 @@ import { IUpdateInterviewUseCase } from 'src/domain/interfaces/use-cases/applica
 import { IATSInterviewRepository } from 'src/domain/interfaces/repositories/ats/IATSInterviewRepository';
 import { IUserRepository } from 'src/domain/interfaces/repositories/user/IUserRepository';
 import { NotFoundError, BadRequestError } from 'src/domain/errors/errors';
-import { UpdateInterviewRequestDto, ATSInterviewResponseDto } from 'src/application/dtos/application/interview.dto';
+import { UpdateInterviewRequestDto, ATSInterviewResponseDto } from 'src/application/dtos/ats-interview.dto';
 
 import { ERROR } from 'src/shared/constants/messages';
 

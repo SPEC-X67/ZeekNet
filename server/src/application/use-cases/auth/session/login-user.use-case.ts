@@ -8,7 +8,7 @@ import { IUserRepository } from 'src/domain/interfaces/repositories/user/IUserRe
 import { IEmailTemplateService } from 'src/domain/interfaces/services/IEmailTemplateService';
 import { ILoginUserUseCase } from 'src/domain/interfaces/use-cases/auth/session/ILoginUserUseCase';
 import { UserMapper } from 'src/application/mappers/auth/user.mapper';
-import { LoginRequestDto, LoginResponseDto } from 'src/application/dtos/auth/login.dto';
+import { LoginRequestDto, LoginResponseDto } from 'src/application/dtos/auth.dto';
 
 import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';

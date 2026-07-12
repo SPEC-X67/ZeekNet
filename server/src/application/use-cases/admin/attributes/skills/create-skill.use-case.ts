@@ -3,7 +3,7 @@ import { Skill } from 'src/domain/entities/skill.entity';
 import { ICreateSkillUseCase } from 'src/domain/interfaces/use-cases/admin/attributes/skills/ICreateSkillUseCase';
 import { BadRequestError, ConflictError } from 'src/domain/errors/errors';
 import { CreateInput } from 'src/domain/types/common.types';
-import { CreateSkillRequestDto, SkillResponseDto } from 'src/application/dtos/admin/skill.dto';
+import { CreateSkillRequestDto, SkillResponseDto } from 'src/application/dtos/skill.dto';
 import { SkillMapper } from 'src/application/mappers/skill/skill.mapper';
 import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';

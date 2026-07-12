@@ -4,7 +4,7 @@ import { ICompanyWorkplacePicturesRepository } from 'src/domain/interfaces/repos
 import { NotFoundError, AuthorizationError } from 'src/domain/errors/errors';
 import { IUpdateCompanyWorkplacePictureUseCase } from 'src/domain/interfaces/use-cases/company/media/IUpdateCompanyWorkplacePictureUseCase';
 import { IGetCompanyIdByUserIdUseCase } from 'src/domain/interfaces/use-cases/admin/companies/IGetCompanyIdByUserIdUseCase';
-import { CompanyWorkplacePictureResponseDto } from 'src/application/dtos/company/media/responses/company-workplace-picture-response.dto';
+import { CompanyWorkplacePictureResponseDto } from 'src/application/dtos/company-media.dto';
 import { CompanyWorkplacePictureMapper } from 'src/application/mappers/company/media/company-workplace-picture.mapper';
 
 @injectable()

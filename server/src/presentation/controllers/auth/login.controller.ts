@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { LoginDto, GoogleLoginDto } from 'src/application/dtos/auth/login.dto';
+import { LoginSchema, GoogleLoginSchema } from 'src/application/validations/auth.validation';
 
 import { ILoginUserUseCase } from 'src/domain/interfaces/use-cases/auth/session/ILoginUserUseCase';
 import { IAdminLoginUseCase } from 'src/domain/interfaces/use-cases/auth/session/IAdminLoginUseCase';
@@ -20,7 +20,7 @@ export class LoginController {
   ) { }
 
   login = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const parsed = LoginDto.safeParse(req.body);
+    const parsed = LoginSchema.safeParse(req.body);
     if (!parsed.success) {
       return handleValidationError(formatZodErrors(parsed.error), next);
     }
@@ -40,7 +40,7 @@ export class LoginController {
   };
 
   adminLogin = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const parsed = LoginDto.safeParse(req.body);
+    const parsed = LoginSchema.safeParse(req.body);
     if (!parsed.success) {
       return handleValidationError(formatZodErrors(parsed.error), next);
     }
@@ -60,7 +60,7 @@ export class LoginController {
   };
 
   googleLogin = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const parsed = GoogleLoginDto.safeParse(req.body);
+    const parsed = GoogleLoginSchema.safeParse(req.body);
     if (!parsed.success) {
       return handleValidationError(formatZodErrors(parsed.error), next);
     }

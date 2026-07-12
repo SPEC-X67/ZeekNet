@@ -1,5 +1,5 @@
 import { Skill } from 'src/domain/entities/skill.entity';
-import { SkillResponseDto } from 'src/application/dtos/admin/skill.dto';
+import { SkillResponseDto } from 'src/application/dtos/skill.dto';
 
 export class SkillMapper {
   static toResponse(skill: Skill): SkillResponseDto {

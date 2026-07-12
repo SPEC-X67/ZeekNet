@@ -1,14 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { IUseCase } from 'src/domain/interfaces/use-cases/base/IUseCase';
-import {
-  CreateJobCategoryRequestDto,
-  CreateJobCategoryDto,
-  GetAllJobCategoriesQueryDto,
-  UpdateJobCategoryRequestDto,
-  UpdateJobCategoryDto,
-  JobCategoryResponseDto,
-  PaginatedJobCategoriesResultDto,
-} from 'src/application/dtos/admin/job-category.dto';
+import { CreateJobCategorySchema, GetAllJobCategoriesQuerySchema, UpdateJobCategorySchema } from 'src/application/validations/job-category.validation';
+import { CreateJobCategoryRequestDto, UpdateJobCategoryRequestDto, JobCategoryResponseDto, PaginatedJobCategoriesResultDto, GetAllJobCategoriesQueryDto } from 'src/application/dtos/job-category.dto';
 import { formatZodErrors, handleAsyncError, handleValidationError, sendSuccessResponse } from 'src/shared/utils';
 import { SUCCESS } from 'src/shared/constants/messages';
 import { injectable, inject } from 'inversify';
@@ -30,7 +23,7 @@ export class AdminJobCategoryController {
   ) { }
 
   createJobCategory = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const parsed = CreateJobCategoryDto.safeParse(req.body);
+    const parsed = CreateJobCategorySchema.safeParse(req.body);
     if (!parsed.success) {
       return handleValidationError(formatZodErrors(parsed.error), next);
     }
@@ -43,7 +36,7 @@ export class AdminJobCategoryController {
   };
 
   getAllJobCategories = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const parsed = GetAllJobCategoriesQueryDto.safeParse(req.query);
+    const parsed = GetAllJobCategoriesQuerySchema.safeParse(req.query);
     if (!parsed.success) {
       return handleValidationError(formatZodErrors(parsed.error), next);
     }
@@ -66,7 +59,7 @@ export class AdminJobCategoryController {
   };
 
   updateJobCategory = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const parsedBody = UpdateJobCategoryDto.safeParse(req.body);
+    const parsedBody = UpdateJobCategorySchema.safeParse(req.body);
     if (!parsedBody.success) {
       return handleValidationError(formatZodErrors(parsedBody.error), next);
     }

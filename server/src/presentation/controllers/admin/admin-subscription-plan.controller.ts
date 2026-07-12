@@ -3,7 +3,7 @@ import { ICreateSubscriptionPlanUseCase } from 'src/domain/interfaces/use-cases/
 import { IGetAllSubscriptionPlansUseCase } from 'src/domain/interfaces/use-cases/admin/subscription/IGetAllSubscriptionPlansUseCase';
 import { IGetSubscriptionPlanByIdUseCase } from 'src/domain/interfaces/use-cases/admin/subscription/IGetSubscriptionPlanByIdUseCase';
 import { IUpdateSubscriptionPlanUseCase } from 'src/domain/interfaces/use-cases/admin/subscription/IUpdateSubscriptionPlanUseCase';
-import { CreateSubscriptionPlanDto, GetAllSubscriptionPlansDto, UpdateSubscriptionPlanDto } from 'src/application/dtos/admin/subscription.dto';
+import { CreateSubscriptionPlanSchema, UpdateSubscriptionPlanSchema, GetAllSubscriptionPlansQuerySchema } from 'src/application/validations/subscription-plan.validation';
 import { formatZodErrors, handleAsyncError, handleValidationError, sendCreatedResponse, sendSuccessResponse } from 'src/shared/utils';
 import { SUCCESS } from 'src/shared/constants/messages';
 import { injectable, inject } from 'inversify';
@@ -19,7 +19,7 @@ export class AdminSubscriptionPlanController {
   ) { }
 
   createSubscriptionPlan = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const parsed = CreateSubscriptionPlanDto.safeParse(req.body);
+    const parsed = CreateSubscriptionPlanSchema.safeParse(req.body);
     if (!parsed.success) {
       return handleValidationError(formatZodErrors(parsed.error), next);
     }
@@ -33,7 +33,7 @@ export class AdminSubscriptionPlanController {
   };
 
   getAllSubscriptionPlans = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const parsed = GetAllSubscriptionPlansDto.safeParse(req.query);
+    const parsed = GetAllSubscriptionPlansQuerySchema.safeParse(req.query);
     if (!parsed.success) {
       return handleValidationError(formatZodErrors(parsed.error), next);
     }
@@ -58,7 +58,7 @@ export class AdminSubscriptionPlanController {
 
   updateSubscriptionPlan = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { id } = req.params;
-    const parsedBody = UpdateSubscriptionPlanDto.safeParse({ ...req.body, planId: id });
+    const parsedBody = UpdateSubscriptionPlanSchema.safeParse({ ...req.body, planId: id });
     if (!parsedBody.success) {
       return handleValidationError(formatZodErrors(parsedBody.error), next);
     }

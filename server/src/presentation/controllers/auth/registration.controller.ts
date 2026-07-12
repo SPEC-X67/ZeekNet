@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { RegisterDto } from 'src/application/dtos/auth/register.dto';
+import { RegisterSchema } from 'src/application/validations/auth.validation';
 import { IRegisterUserUseCase } from 'src/domain/interfaces/use-cases/auth/registration/IRegisterUserUseCase';
 import { formatZodErrors, handleAsyncError, handleValidationError, sendCreatedResponse } from 'src/shared/utils';
 import { AUTH } from 'src/shared/constants/messages';
@@ -11,7 +11,7 @@ export class RegistrationController {
   constructor(@inject(TYPES.RegisterUserUseCase) private readonly _registerUserUseCase: IRegisterUserUseCase) { }
 
   register = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const parsed = RegisterDto.safeParse(req.body);
+    const parsed = RegisterSchema.safeParse(req.body);
     if (!parsed.success) {
       return handleValidationError(formatZodErrors(parsed.error), next);
     }

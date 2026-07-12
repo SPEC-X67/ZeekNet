@@ -4,8 +4,7 @@ import { IUpdateExperienceUseCase } from 'src/domain/interfaces/use-cases/seeker
 import { Experience } from 'src/domain/entities/seeker-profile.entity';
 import { NotFoundError, ValidationError } from 'src/domain/errors/errors';
 import { SeekerProfileMapper } from 'src/application/mappers/seeker/seeker-profile.mapper';
-import { ExperienceResponseDto } from 'src/application/dtos/seeker/profile/info/responses/seeker-profile-response.dto';
-import { UpdateExperienceRequestDto } from 'src/application/dtos/seeker/profile/experience/requests/update-experience-request.dto';
+import { ExperienceResponseDto, UpdateExperienceRequestDto } from 'src/application/dtos/seeker-experience.dto';
 
 import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';

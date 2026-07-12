@@ -1,4 +1,4 @@
-import { PaymentResponseDto } from 'src/application/dtos/payment/payment.dto';;
+import { PaymentResponseDto } from 'src/application/dtos/payment.dto';;
 
 export interface IGetPaymentHistoryUseCase {
   execute(userId: string): Promise<PaymentResponseDto[]>;

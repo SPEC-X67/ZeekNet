@@ -5,7 +5,7 @@ import { ICreateCompanyTechStackUseCase } from 'src/domain/interfaces/use-cases/
 import { IUpdateCompanyTechStackUseCase } from 'src/domain/interfaces/use-cases/company/profile/stack/IUpdateCompanyTechStackUseCase';
 import { IDeleteCompanyTechStackUseCase } from 'src/domain/interfaces/use-cases/company/profile/stack/IDeleteCompanyTechStackUseCase';
 import { IGetCompanyTechStackUseCase } from 'src/domain/interfaces/use-cases/company/profile/stack/IGetCompanyTechStackUseCase';
-import { CreateCompanyTechStackDto, UpdateCompanyTechStackDto } from 'src/application/dtos/company/profile/stack/requests/company-tech-stack.dto';
+import { CreateCompanyTechStackDto, UpdateCompanyTechStackDto } from 'src/application/dtos/company-tech-stack.dto';
 import { handleValidationError, handleAsyncError, sendSuccessResponse, sendCreatedResponse, validateUserId, formatZodErrors } from 'src/shared/utils';
 import { SUCCESS } from 'src/shared/constants/messages';
 import { TYPES } from 'src/shared/constants/types';

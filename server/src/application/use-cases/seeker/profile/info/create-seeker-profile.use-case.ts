@@ -3,8 +3,7 @@ import { ICreateSeekerProfileUseCase } from 'src/domain/interfaces/use-cases/see
 import { IS3Service } from 'src/domain/interfaces/services/IS3Service';
 import { ValidationError } from 'src/domain/errors/errors';
 import { SeekerProfileMapper } from 'src/application/mappers/seeker/seeker-profile.mapper';
-import { SeekerProfileResponseDto } from 'src/application/dtos/seeker/profile/info/responses/seeker-profile-response.dto';
-import { CreateSeekerProfileRequestDto } from 'src/application/dtos/seeker/profile/info/requests/create-seeker-profile-request.dto';
+import { SeekerProfileResponseDto, CreateSeekerProfileRequestDto } from 'src/application/dtos/seeker-profile.dto';
 
 import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';

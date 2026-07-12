@@ -1,11 +1,10 @@
 import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';
 import { ERROR, VALIDATION } from 'src/shared/constants/messages';
-import { SimpleUpdateCompanyProfileRequestDto } from 'src/application/dtos/company/profile/info/requests/company-profile.dto';
+import { SimpleUpdateCompanyProfileRequestDto, CompanyProfileResponseDto } from 'src/application/dtos/company-profile.dto';
 import { ICompanyProfileRepository } from 'src/domain/interfaces/repositories/company/ICompanyProfileRepository';
 import { ICompanyVerificationRepository } from 'src/domain/interfaces/repositories/company/ICompanyVerificationRepository';
 import { CompanyProfileMapper } from 'src/application/mappers/company/profile/company-profile.mapper';
-import { CompanyProfileResponseDto } from 'src/application/dtos/company/profile/info/responses/company-response.dto';
 import { IS3Service } from 'src/domain/interfaces/services/IS3Service';
 import { IUpdateCompanyProfileUseCase } from 'src/domain/interfaces/use-cases/company/profile/info/IUpdateCompanyProfileUseCase';
 import { CompanyProfile } from 'src/domain/entities/company-profile.entity';

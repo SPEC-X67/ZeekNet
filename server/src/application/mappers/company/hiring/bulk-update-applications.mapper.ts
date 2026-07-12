@@ -1,4 +1,4 @@
-import { BulkUpdateApplicationsResponseDto } from 'src/application/dtos/company/hiring/responses/bulk-update-applications-response.dto';
+import { BulkUpdateApplicationsResponseDto } from 'src/application/dtos/company-hiring.dto';
 
 export class BulkUpdateApplicationsMapper {
   static toResponse(

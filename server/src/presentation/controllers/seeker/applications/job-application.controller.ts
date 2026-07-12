@@ -14,9 +14,11 @@ import { IGetCompensationMeetingsByApplicationUseCase } from 'src/domain/interfa
 import { IUpdateOfferStatusUseCase } from 'src/domain/interfaces/use-cases/seeker/applications/IUpdateOfferStatusUseCase';
 import { IUploadSignedOfferDocumentUseCase } from 'src/domain/interfaces/use-cases/seeker/applications/IUploadSignedOfferDocumentUseCase';
 import { UploadedFile } from 'src/domain/types/common.types';
-import { CreateJobApplicationDto } from 'src/application/dtos/seeker/applications/requests/create-job-application.dto';
-import { ApplicationFiltersDto } from 'src/application/dtos/company/hiring/requests/application-filters.dto';
+import { CreateJobApplicationSchema } from 'src/application/validations/job-application.validation';
+import { ApplicationFiltersSchema } from 'src/application/validations/company-hiring.validation';
+import { SubmitTechnicalTaskSchema } from 'src/application/validations/ats-technical-task.validation';
 import { SUCCESS, VALIDATION, ERROR } from 'src/shared/constants/messages';
+import { OfferStatus } from 'src/domain/enums/offer-status.enum';
 
 import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';
@@ -42,7 +44,7 @@ export class SeekerJobApplicationController {
     try {
       const userId = validateUserId(req);
 
-      const bodySchema = CreateJobApplicationDto.omit({ resume_url: true, resume_filename: true });
+      const bodySchema = CreateJobApplicationSchema.omit({ resume_url: true, resume_filename: true });
       const parsedBody = bodySchema.safeParse(req.body);
 
       if (!parsedBody.success) {
@@ -61,7 +63,7 @@ export class SeekerJobApplicationController {
     try {
       const userId = validateUserId(req);
 
-      const filters = ApplicationFiltersDto.safeParse(req.query);
+      const filters = ApplicationFiltersSchema.safeParse(req.query);
       if (!filters.success) {
         return handleValidationError(formatZodErrors(filters.error), next);
       }
@@ -146,17 +148,18 @@ export class SeekerJobApplicationController {
   };
 
   submitTechnicalTask = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+    const validation = SubmitTechnicalTaskSchema.safeParse(req.body);
+    if (!validation.success) {
+      return handleValidationError(formatZodErrors(validation.error), next);
+    }
+
     try {
       const userId = validateUserId(req);
       const { applicationId, taskId } = req.params;
-      const { submissionLink, submissionNote, submissionUrl, submissionFilename } = req.body;
 
       const result = await this._submitTechnicalTaskUseCase.execute(userId, applicationId, taskId, {
         file: req.file as unknown as UploadedFile,
-        submissionUrl,
-        submissionFilename,
-        submissionLink,
-        submissionNote,
+        ...validation.data,
       });
 
       sendSuccessResponse(res, SUCCESS.CREATED('Technical task submission'), result);
@@ -214,7 +217,7 @@ export class SeekerJobApplicationController {
         performedBy: userId,
         performedByName: req.user?.email || 'Unknown User',
         offerId,
-        status: status as 'signed' | 'declined',
+        status: status as OfferStatus,
         withdrawalReason,
       });
 

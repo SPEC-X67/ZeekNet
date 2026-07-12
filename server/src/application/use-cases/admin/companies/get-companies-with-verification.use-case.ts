@@ -1,7 +1,7 @@
 import { ICompanyProfileRepository } from 'src/domain/interfaces/repositories/company/ICompanyProfileRepository';
 import { ICompanyVerificationRepository } from 'src/domain/interfaces/repositories/company/ICompanyVerificationRepository';
 import { IGetCompaniesWithVerificationUseCase } from 'src/domain/interfaces/use-cases/admin/companies/IGetCompaniesWithVerificationUseCase';
-import { GetCompaniesQueryDto, PaginatedCompaniesWithVerificationResultDto } from 'src/application/dtos/admin/company.dto';
+import { GetCompaniesQueryDto, PaginatedCompaniesWithVerificationResultDto } from 'src/application/dtos/company-verification.dto';
 import { IS3Service } from 'src/domain/interfaces/services/IS3Service';
 import { CompanyProfile } from 'src/domain/entities/company-profile.entity';
 import { CompanyProfileMapper } from 'src/application/mappers/company/profile/company-profile.mapper';

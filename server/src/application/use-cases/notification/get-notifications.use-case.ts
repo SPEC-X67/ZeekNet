@@ -2,7 +2,7 @@ import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';
 import { INotificationRepository } from 'src/domain/interfaces/repositories/notification/INotificationRepository';
 import { IGetNotificationsUseCase } from 'src/domain/interfaces/use-cases/notification/management/INotificationUseCases';
-import { NotificationResponseDto } from 'src/application/dtos/notification/notification.dto';;
+import { NotificationResponseDto } from 'src/application/dtos/notification.dto';;
 import { NotificationMapper } from 'src/application/mappers/notification/notification.mapper';
 
 @injectable()

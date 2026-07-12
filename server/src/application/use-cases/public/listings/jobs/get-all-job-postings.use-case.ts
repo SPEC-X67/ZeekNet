@@ -2,9 +2,10 @@ import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';
 import { IJobPostingRepository } from 'src/domain/interfaces/repositories/job/IJobPostingRepository';
 import { IGetAllJobPostingsUseCase } from 'src/domain/interfaces/use-cases/public/listings/jobs/IGetAllJobPostingsUseCase';
-import { JobPostingFilters, PublicJobListItemDto } from 'src/application/dtos/admin/job.dto';
+import { JobPostingFilters } from 'src/application/dtos/public.dto';
+import { PublicJobListItemDto } from 'src/application/dtos/job-posting.dto';
 
-import { PaginatedPublicJobsDto } from 'src/application/dtos/public/public.dto';;
+import { PaginatedPublicJobsDto } from 'src/application/dtos/public.dto';;
 import { JobPostingMapper } from 'src/application/mappers/job/job-posting.mapper';
 import { JobPosting } from 'src/domain/entities/job-posting.entity';
 import { IS3Service } from 'src/domain/interfaces/services/IS3Service';

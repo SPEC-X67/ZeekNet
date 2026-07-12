@@ -1,6 +1,7 @@
 import { IUseCase } from 'src/domain/interfaces/use-cases/base/IUseCase';
 import { IJobCategoryRepository } from 'src/domain/interfaces/repositories/job-category/IJobCategoryRepository';
-import { GetAllJobCategoriesQueryDto, PaginatedJobCategoriesResultDto } from 'src/application/dtos/admin/job-category.dto';
+import { GetAllJobCategoriesQueryDto } from 'src/application/dtos/job-category.dto';
+import { PaginatedJobCategoriesResultDto } from 'src/application/dtos/job-category.dto';
 import { JobCategoryMapper } from 'src/application/mappers/job/job-category.mapper';
 import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';

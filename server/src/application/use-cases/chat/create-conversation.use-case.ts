@@ -6,7 +6,8 @@ import { Conversation } from 'src/domain/entities/conversation.entity';
 import { CreateInput } from 'src/domain/types/common.types';
 
 import { ConversationMapper } from 'src/application/mappers/chat/conversation.mapper';
-import { CreateConversationDto, ConversationResponseDto } from 'src/application/dtos/chat/conversation.dto';
+import { CreateConversationDto } from 'src/application/dtos/chat.dto';
+import { ConversationResponseDto } from 'src/application/dtos/chat.dto';
 import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';
 import { ERROR } from 'src/shared/constants/messages';

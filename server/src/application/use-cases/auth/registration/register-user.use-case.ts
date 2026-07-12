@@ -7,7 +7,7 @@ import { IEmailTemplateService } from 'src/domain/interfaces/services/IEmailTemp
 import { IRegisterUserUseCase } from 'src/domain/interfaces/use-cases/auth/registration/IRegisterUserUseCase';
 
 import { UserMapper } from 'src/application/mappers/auth/user.mapper';
-import { RegisterResponseDto, RegisterRequestDto } from 'src/application/dtos/auth/register.dto';
+import { RegisterResponseDto, RegisterRequestDto } from 'src/application/dtos/auth.dto';
 
 import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';

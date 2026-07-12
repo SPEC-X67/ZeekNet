@@ -15,13 +15,8 @@ import { IAdminUpdateJobStatusUseCase } from 'src/domain/interfaces/use-cases/ad
 import { IAdminDeleteJobUseCase } from 'src/domain/interfaces/use-cases/admin/job/IAdminDeleteJobUseCase';
 import { IAdminGetJobStatsUseCase } from 'src/domain/interfaces/use-cases/admin/analytics/IAdminGetJobStatsUseCase';
 import { IUseCase } from 'src/domain/interfaces/use-cases/base/IUseCase';
-import {
-  CreateJobCategoryRequestDto,
-  GetAllJobCategoriesQueryDto,
-  UpdateJobCategoryRequestDto,
-  JobCategoryResponseDto,
-  PaginatedJobCategoriesResultDto,
-} from 'src/application/dtos/admin/job-category.dto';
+import { GetAllJobCategoriesQueryDto } from 'src/application/dtos/job-category.dto';
+import { CreateJobCategoryRequestDto, UpdateJobCategoryRequestDto, JobCategoryResponseDto, PaginatedJobCategoriesResultDto } from 'src/application/dtos/job-category.dto';
 import { ICreateSkillUseCase } from 'src/domain/interfaces/use-cases/admin/attributes/skills/ICreateSkillUseCase';
 import { IGetAllSkillsUseCase } from 'src/domain/interfaces/use-cases/admin/attributes/skills/IGetAllSkillsUseCase';
 import { IGetSkillByIdUseCase } from 'src/domain/interfaces/use-cases/admin/attributes/skills/IGetSkillByIdUseCase';

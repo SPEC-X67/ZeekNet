@@ -1,5 +1,4 @@
-import { GetApplicationsBySeekerRequestDto } from 'src/application/dtos/seeker/applications/requests/get-applications-by-seeker.dto';
-import type { PaginatedApplicationsResponseDto } from 'src/application/dtos/seeker/applications/responses/job-application-response.dto';
+import { GetApplicationsBySeekerRequestDto, PaginatedApplicationsResponseDto } from 'src/application/dtos/job-application.dto';
 
 export interface IGetApplicationsBySeekerUseCase {
   execute(data: GetApplicationsBySeekerRequestDto): Promise<PaginatedApplicationsResponseDto>;

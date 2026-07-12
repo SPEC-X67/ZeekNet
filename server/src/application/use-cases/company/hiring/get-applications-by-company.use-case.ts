@@ -8,11 +8,11 @@ import { ISeekerProfileRepository } from 'src/domain/interfaces/repositories/see
 import { IJobPostingRepository } from 'src/domain/interfaces/repositories/job/IJobPostingRepository';
 import { IS3Service } from 'src/domain/interfaces/services/IS3Service';
 import { IGetApplicationsByCompanyUseCase } from 'src/domain/interfaces/use-cases/company/hiring/IGetApplicationsByCompanyUseCase';
-import { ApplicationFiltersRequestDto } from 'src/application/dtos/company/hiring/requests/application-filters.dto';
+import { ApplicationFiltersRequestDto } from 'src/application/dtos/company-hiring.dto';
 import { NotFoundError } from 'src/domain/errors/errors';
 import type { ATSStage } from 'src/domain/enums/ats-stage.enum';
 import { JobApplicationMapper } from 'src/application/mappers/job-application/job-application.mapper';
-import { JobApplicationListResponseDto, PaginatedApplicationsResponseDto } from 'src/application/dtos/seeker/applications/responses/job-application-response.dto';
+import { JobApplicationListResponseDto, PaginatedApplicationsResponseDto } from 'src/application/dtos/job-application.dto';
 
 @injectable()
 export class GetApplicationsByCompanyUseCase implements IGetApplicationsByCompanyUseCase {

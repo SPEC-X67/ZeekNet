@@ -5,9 +5,8 @@ import { IUserRepository } from 'src/domain/interfaces/repositories/user/IUserRe
 import { IS3Service } from 'src/domain/interfaces/services/IS3Service';
 import { ILogger } from 'src/domain/interfaces/services/ILogger';
 import { IGetApplicationsBySeekerUseCase } from 'src/domain/interfaces/use-cases/seeker/applications/IGetApplicationsBySeekerUseCase';
-import { GetApplicationsBySeekerRequestDto } from 'src/application/dtos/seeker/applications/requests/get-applications-by-seeker.dto';
+import { GetApplicationsBySeekerRequestDto, JobApplicationListResponseDto, PaginatedApplicationsResponseDto } from 'src/application/dtos/job-application.dto';
 import { JobApplicationMapper } from 'src/application/mappers/job-application/job-application.mapper';
-import { JobApplicationListResponseDto, PaginatedApplicationsResponseDto } from 'src/application/dtos/seeker/applications/responses/job-application-response.dto';
 import { JobApplication } from 'src/domain/entities/job-application.entity';
 import { CompanyProfile } from 'src/domain/entities/company-profile.entity';
 

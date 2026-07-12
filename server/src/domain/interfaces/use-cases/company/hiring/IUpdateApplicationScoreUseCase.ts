@@ -1,5 +1,5 @@
-import type { JobApplicationListResponseDto } from 'src/application/dtos/seeker/applications/responses/job-application-response.dto';
-import { UpdateApplicationScoreDto } from 'src/application/dtos/company/hiring/requests/update-application-score.dto';
+import type { JobApplicationListResponseDto } from 'src/application/dtos/job-application.dto';
+import { UpdateApplicationScoreDto } from 'src/application/dtos/company-hiring.dto';
 
 export interface IUpdateApplicationScoreUseCase {
   execute(dto: UpdateApplicationScoreDto): Promise<JobApplicationListResponseDto>;

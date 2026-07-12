@@ -1,7 +1,7 @@
 import { injectable, inject } from 'inversify';
 import { Response, NextFunction } from 'express';
 import { AuthenticatedRequest } from 'src/shared/types/authenticated-request';
-import { CreateCompanyOfficeLocationDto, UpdateCompanyOfficeLocationDto } from 'src/application/dtos/company/profile/location/requests/company-office-location.dto';
+import { CreateCompanyOfficeLocationSchema, UpdateCompanyOfficeLocationSchema } from 'src/application/validations/company-office-location.validation';
 import { ICreateCompanyOfficeLocationUseCase } from 'src/domain/interfaces/use-cases/company/profile/location/ICreateCompanyOfficeLocationUseCase';
 import { IUpdateCompanyOfficeLocationUseCase } from 'src/domain/interfaces/use-cases/company/profile/location/IUpdateCompanyOfficeLocationUseCase';
 import { IDeleteCompanyOfficeLocationUseCase } from 'src/domain/interfaces/use-cases/company/profile/location/IDeleteCompanyOfficeLocationUseCase';
@@ -30,7 +30,7 @@ export class CompanyOfficeLocationController {
   };
 
   createCompanyOfficeLocation = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
-    const parsed = CreateCompanyOfficeLocationDto.safeParse(req.body);
+    const parsed = CreateCompanyOfficeLocationSchema.safeParse(req.body);
     if (!parsed.success) {
       return handleValidationError(formatZodErrors(parsed.error), next);
     }
@@ -45,7 +45,7 @@ export class CompanyOfficeLocationController {
   };
 
   updateCompanyOfficeLocation = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
-    const parsed = UpdateCompanyOfficeLocationDto.safeParse(req.body);
+    const parsed = UpdateCompanyOfficeLocationSchema.safeParse(req.body);
     if (!parsed.success) {
       return handleValidationError(formatZodErrors(parsed.error), next);
     }

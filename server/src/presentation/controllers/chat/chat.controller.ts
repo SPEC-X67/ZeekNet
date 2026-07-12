@@ -1,6 +1,6 @@
 import { Response, NextFunction } from 'express';
-import { CreateConversationRequestDtoSchema, GetConversationsRequestDtoSchema } from 'src/application/dtos/chat/conversation.dto';
-import { SendMessageRequestDtoSchema, GetMessagesRequestDtoSchema } from 'src/application/dtos/chat/message.dto';
+import { CreateConversationRequestSchema, GetConversationsRequestSchema } from 'src/application/validations/chat.validation';
+import { SendMessageRequestSchema, GetMessagesRequestSchema } from 'src/application/validations/chat.validation';
 
 import { ICreateConversationUseCase } from 'src/domain/interfaces/use-cases/chat/ICreateConversationUseCase';
 import { ISendMessageUseCase } from 'src/domain/interfaces/use-cases/chat/ISendMessageUseCase';
@@ -29,7 +29,7 @@ export class ChatController {
     try {
       const userId = validateUserId(req);
 
-      const parsed = CreateConversationRequestDtoSchema.safeParse(req.body);
+      const parsed = CreateConversationRequestSchema.safeParse(req.body);
       if (!parsed.success) {
         handleValidationError(formatZodErrors(parsed.error), next);
         return;
@@ -50,7 +50,7 @@ export class ChatController {
     try {
       const userId = validateUserId(req);
 
-      const parsed = SendMessageRequestDtoSchema.safeParse(req.body);
+      const parsed = SendMessageRequestSchema.safeParse(req.body);
       if (!parsed.success) {
         handleValidationError(formatZodErrors(parsed.error), next);
         return;
@@ -71,7 +71,7 @@ export class ChatController {
     try {
       const userId = validateUserId(req);
 
-      const parsed = GetConversationsRequestDtoSchema.safeParse({
+      const parsed = GetConversationsRequestSchema.safeParse({
         userId,
         ...req.query,
       });
@@ -94,7 +94,7 @@ export class ChatController {
       const userId = validateUserId(req);
       const conversationId = req.params.conversationId;
 
-      const parsed = GetMessagesRequestDtoSchema.safeParse({
+      const parsed = GetMessagesRequestSchema.safeParse({
         userId,
         conversationId,
         ...req.query,

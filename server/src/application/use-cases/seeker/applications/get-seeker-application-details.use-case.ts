@@ -3,7 +3,7 @@ import { IJobPostingRepository } from 'src/domain/interfaces/repositories/job/IJ
 import { IGetSeekerApplicationDetailsUseCase } from 'src/domain/interfaces/use-cases/seeker/applications/IGetSeekerApplicationDetailsUseCase';
 import { NotFoundError, ValidationError } from 'src/domain/errors/errors';
 import { JobApplicationMapper } from 'src/application/mappers/job-application/job-application.mapper';
-import { JobApplicationDetailResponseDto } from 'src/application/dtos/seeker/applications/responses/job-application-response.dto';
+import { JobApplicationDetailResponseDto } from 'src/application/dtos/job-application.dto';
 
 import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';

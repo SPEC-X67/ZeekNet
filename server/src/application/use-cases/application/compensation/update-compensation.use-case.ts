@@ -7,7 +7,7 @@ import { IAddCommentUseCase } from 'src/domain/interfaces/use-cases/application/
 
 import { ATSStage } from 'src/domain/enums/ats-stage.enum';
 import { NotFoundError } from 'src/domain/errors/errors';
-import { UpdateCompensationRequestDto, ATSCompensationResponseDto } from 'src/application/dtos/application/compensation.dto';
+import { UpdateCompensationRequestDto, ATSCompensationResponseDto } from 'src/application/dtos/ats-compensation.dto';
 
 import { ATSCompensationMapper } from 'src/application/mappers/ats/ats-compensation.mapper';
 import { IUserRepository } from 'src/domain/interfaces/repositories/user/IUserRepository';

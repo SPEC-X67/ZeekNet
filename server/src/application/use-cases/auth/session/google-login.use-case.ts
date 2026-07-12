@@ -9,7 +9,7 @@ import { IGoogleTokenVerifier } from 'src/domain/interfaces/services/IGoogleToke
 import { IGoogleLoginUseCase } from 'src/domain/interfaces/use-cases/auth/session/IGoogleLoginUseCase';
 import { IEmailTemplateService } from 'src/domain/interfaces/services/IEmailTemplateService';
 import { UserMapper } from 'src/application/mappers/auth/user.mapper';
-import { LoginResponseDto, GoogleLoginRequestDto } from 'src/application/dtos/auth/login.dto';
+import { LoginResponseDto, GoogleLoginRequestDto } from 'src/application/dtos/auth.dto';
 
 import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';

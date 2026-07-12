@@ -1,4 +1,4 @@
-import { LoginResponseDto } from 'src/application/dtos/auth/login.dto';
+import { LoginResponseDto } from 'src/application/dtos/auth.dto';
 import { IUserRepository } from 'src/domain/interfaces/repositories/user/IUserRepository';
 import { ITokenService } from 'src/domain/interfaces/services/ITokenService';
 import { IPasswordHasher } from 'src/domain/interfaces/services/IPasswordHasher';

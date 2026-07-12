@@ -11,7 +11,7 @@ import { SubscriptionStatus } from 'src/domain/enums/subscription-status.enum';
 import { NotificationType } from 'src/domain/enums/notification-type.enum';
 import { ILogger } from 'src/domain/interfaces/services/ILogger';
 import { IRevertToDefaultPlanUseCase } from 'src/domain/interfaces/use-cases/subscription/IRevertToDefaultPlanUseCase';
-import { HandleStripeWebhookRequestDto } from 'src/application/dtos/payment/payment.dto';;
+import { HandleStripeWebhookRequestDto } from 'src/application/dtos/payment.dto';;
 import { IHandleStripeWebhookUseCase } from 'src/domain/interfaces/use-cases/payment/stripe/IHandleStripeWebhookUseCase';
 import { PaymentStatus } from 'src/domain/enums/payment-status.enum';
 import { PaymentMethod } from 'src/domain/enums/payment-method.enum';

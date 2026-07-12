@@ -5,7 +5,7 @@ import { IAddCommentUseCase } from 'src/domain/interfaces/use-cases/application/
 import { IATSCommentRepository } from 'src/domain/interfaces/repositories/ats/IATSCommentRepository';
 
 import { ATSComment } from 'src/domain/entities/ats-comment.entity';
-import { AddCommentParamsDto, ATSCommentResponseDto } from 'src/application/dtos/application/comment.dto';
+import { AddCommentParamsDto, ATSCommentResponseDto } from 'src/application/dtos/ats-comment.dto';
 import { ATSCommentMapper } from 'src/application/mappers/ats/ats-comment.mapper';
 
 @injectable()

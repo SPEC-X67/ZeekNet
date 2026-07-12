@@ -1,5 +1,5 @@
-import { ResumeMetaResponseDto } from 'src/application/dtos/seeker/profile/info/responses/seeker-profile-response.dto';
-import { UploadResumeRequestDto } from 'src/application/dtos/seeker/media/requests/seeker-profile.dto';
+import { ResumeMetaResponseDto } from 'src/application/dtos/seeker-profile.dto';
+import { UploadResumeRequestDto } from 'src/application/dtos/seeker-media.dto';
 
 export interface IUploadResumeUseCase {
   execute(dto: UploadResumeRequestDto): Promise<ResumeMetaResponseDto>;

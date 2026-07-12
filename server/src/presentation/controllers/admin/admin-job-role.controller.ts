@@ -4,7 +4,7 @@ import { IDeleteJobRoleUseCase } from 'src/domain/interfaces/use-cases/admin/att
 import { IGetAllJobRolesUseCase } from 'src/domain/interfaces/use-cases/admin/attributes/job-roles/IGetAllJobRolesUseCase';
 import { IGetJobRoleByIdUseCase } from 'src/domain/interfaces/use-cases/admin/attributes/job-roles/IGetJobRoleByIdUseCase';
 import { IUpdateJobRoleUseCase } from 'src/domain/interfaces/use-cases/admin/attributes/job-roles/IUpdateJobRoleUseCase';
-import { CreateJobRoleDto, GetAllJobRolesQueryDtoSchema, UpdateJobRoleDto } from 'src/application/dtos/admin/job-role.dto';
+import { CreateJobRoleSchema, GetAllJobRolesQuerySchema, UpdateJobRoleSchema } from 'src/application/validations/job-role.validation';
 import { created, formatZodErrors, handleAsyncError, handleValidationError, sendSuccessResponse } from 'src/shared/utils';
 import { SUCCESS } from 'src/shared/constants/messages';
 import { injectable, inject } from 'inversify';
@@ -21,7 +21,7 @@ export class AdminJobRoleController {
   ) { }
 
   createJobRole = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const parsed = CreateJobRoleDto.safeParse(req.body);
+    const parsed = CreateJobRoleSchema.safeParse(req.body);
     if (!parsed.success) {
       return handleValidationError(formatZodErrors(parsed.error), next);
     }
@@ -35,7 +35,7 @@ export class AdminJobRoleController {
   };
 
   getAllJobRoles = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const parsed = GetAllJobRolesQueryDtoSchema.safeParse(req.query);
+    const parsed = GetAllJobRolesQuerySchema.safeParse(req.query);
     if (!parsed.success) {
       return handleValidationError(formatZodErrors(parsed.error), next);
     }
@@ -59,7 +59,7 @@ export class AdminJobRoleController {
   };
 
   updateJobRole = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const parsedBody = UpdateJobRoleDto.safeParse(req.body);
+    const parsedBody = UpdateJobRoleSchema.safeParse(req.body);
     if (!parsedBody.success) {
       return handleValidationError(formatZodErrors(parsedBody.error), next);
     }

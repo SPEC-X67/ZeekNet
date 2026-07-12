@@ -11,7 +11,7 @@ import { IJobPostingRepository } from 'src/domain/interfaces/repositories/job/IJ
 import { IUserRepository } from 'src/domain/interfaces/repositories/user/IUserRepository';
 import { IMailerService } from 'src/domain/interfaces/services/IMailerService';
 import { IEmailTemplateService } from 'src/domain/interfaces/services/IEmailTemplateService';
-import { UpdateOfferStatusRequestDto, ATSOfferResponseDto } from 'src/application/dtos/application/offer.dto';
+import { UpdateOfferStatusRequestDto, ATSOfferResponseDto } from 'src/application/dtos/ats-offer.dto';
 
 import { ATSOfferMapper } from 'src/application/mappers/ats/ats-offer.mapper';
 import { ILogger } from 'src/domain/interfaces/services/ILogger';

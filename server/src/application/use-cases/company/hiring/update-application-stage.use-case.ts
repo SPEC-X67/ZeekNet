@@ -11,8 +11,8 @@ import { JobApplication } from 'src/domain/entities/job-application.entity';
 import { INotificationService } from 'src/domain/interfaces/services/INotificationService';
 import { NotificationType } from 'src/domain/enums/notification-type.enum';
 import { JobApplicationMapper } from 'src/application/mappers/job-application/job-application.mapper';
-import { JobApplicationListResponseDto } from 'src/application/dtos/seeker/applications/responses/job-application-response.dto';
-import { UpdateApplicationStageDto } from 'src/application/dtos/application/application.dto';
+import { JobApplicationListResponseDto } from 'src/application/dtos/job-application.dto';
+import { UpdateApplicationStageDto } from 'src/application/dtos/job-application.dto';
 
 @injectable()
 export class UpdateApplicationStageUseCase implements IUpdateApplicationStageUseCase {

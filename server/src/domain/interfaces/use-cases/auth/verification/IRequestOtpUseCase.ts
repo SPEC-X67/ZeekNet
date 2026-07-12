@@ -1,4 +1,4 @@
-import { RequestOtpRequestDto } from 'src/application/dtos/auth/otp.dto';
+import { RequestOtpRequestDto } from 'src/application/dtos/auth.dto';
 
 export interface IRequestOtpUseCase {
     execute(params: RequestOtpRequestDto): Promise<void>;

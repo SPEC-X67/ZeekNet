@@ -8,7 +8,7 @@ import { ICompanyBenefitsRepository } from 'src/domain/interfaces/repositories/c
 import { ICompanyWorkplacePicturesRepository } from 'src/domain/interfaces/repositories/company/ICompanyWorkplacePicturesRepository';
 import { ICompanyVerificationRepository } from 'src/domain/interfaces/repositories/company/ICompanyVerificationRepository';
 import { IGetCompanyProfileUseCase } from 'src/domain/interfaces/use-cases/company/profile/info/IGetCompanyProfileUseCase';
-import { GetCompanyProfileResponseDto } from 'src/application/dtos/company/profile/info/responses/company-profile-response.dto';
+import { CompanyProfileWithDetailsResponseDto } from 'src/application/dtos/company-profile.dto';
 import { CompanyProfileMapper } from 'src/application/mappers/company/profile/company-profile.mapper';
 
 @injectable()
@@ -23,7 +23,7 @@ export class GetCompanyProfileUseCase implements IGetCompanyProfileUseCase {
     @inject(TYPES.CompanyVerificationRepository) private readonly _companyVerificationRepository: ICompanyVerificationRepository,
   ) {}
 
-  async execute(userId: string): Promise<GetCompanyProfileResponseDto | null> {
+  async execute(userId: string): Promise<CompanyProfileWithDetailsResponseDto | null> {
     const profile = await this._companyProfileRepository.findOne({ userId });
     if (!profile) return null;
 

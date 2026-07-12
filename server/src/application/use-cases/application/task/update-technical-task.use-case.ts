@@ -3,7 +3,7 @@ import { TYPES } from 'src/shared/constants/types';
 import { IUpdateTechnicalTaskUseCase } from 'src/domain/interfaces/use-cases/application/task/IUpdateTechnicalTaskUseCase';
 import { IATSTechnicalTaskRepository } from 'src/domain/interfaces/repositories/ats/IATSTechnicalTaskRepository';
 import { NotFoundError, BadRequestError } from 'src/domain/errors/errors';
-import { UpdateTechnicalTaskRequestDto, ATSTechnicalTaskResponseDto } from 'src/application/dtos/application/task.dto';
+import { UpdateTechnicalTaskRequestDto, ATSTechnicalTaskResponseDto } from 'src/application/dtos/ats-technical-task.dto';
 
 import { ATSTechnicalTaskMapper } from 'src/application/mappers/ats/ats-technical-task.mapper';
 import { IS3Service } from 'src/domain/interfaces/services/IS3Service';

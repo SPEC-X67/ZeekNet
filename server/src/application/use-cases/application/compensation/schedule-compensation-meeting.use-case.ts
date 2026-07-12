@@ -8,7 +8,7 @@ import { IJobApplicationRepository } from 'src/domain/interfaces/repositories/jo
 
 import { ATSCompensationMeeting } from 'src/domain/entities/ats-compensation-meeting.entity';
 import { NotFoundError } from 'src/domain/errors/errors';
-import { ScheduleCompensationMeetingRequestDto, ATSCompensationMeetingResponseDto } from 'src/application/dtos/application/compensation.dto';
+import { ScheduleCompensationMeetingRequestDto, ATSCompensationMeetingResponseDto } from 'src/application/dtos/ats-compensation-meeting.dto';
 
 import { ATSCompensationMeetingMapper } from 'src/application/mappers/ats/ats-compensation-meeting.mapper';
 import { IUserRepository } from 'src/domain/interfaces/repositories/user/IUserRepository';

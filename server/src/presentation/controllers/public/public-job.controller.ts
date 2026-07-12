@@ -4,9 +4,9 @@ import { TYPES } from 'src/shared/constants/types';
 import { IGetAllJobPostingsUseCase } from 'src/domain/interfaces/use-cases/public/listings/jobs/IGetAllJobPostingsUseCase';
 import { IGetJobPostingForPublicUseCase } from 'src/domain/interfaces/use-cases/public/listings/jobs/IGetJobPostingForPublicUseCase';
 import { IGetFeaturedJobsUseCase } from 'src/domain/interfaces/use-cases/public/listings/jobs/IGetFeaturedJobsUseCase';
-import { GetFeaturedJobsRequestSchema } from 'src/application/dtos/public/public.dto';;
+import { GetFeaturedJobsRequestSchema } from 'src/application/validations/public.validation';;
 import { formatZodErrors, handleAsyncError, sendSuccessResponse, handleValidationError } from 'src/shared/utils';
-import { JobPostingQueryRequestDto } from 'src/application/dtos/admin/job.dto';
+import { JobPostingQueryRequestDto } from 'src/application/dtos/job-posting.dto';
 import { SUCCESS } from 'src/shared/constants/messages';
 
 @injectable()

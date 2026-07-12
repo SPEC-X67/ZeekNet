@@ -3,7 +3,7 @@ import { IGetAllCompaniesUseCase } from 'src/domain/interfaces/use-cases/admin/c
 import { IGetCompanyByIdUseCase } from 'src/domain/interfaces/use-cases/admin/companies/IGetCompanyByIdUseCase';
 import { IGetPendingCompaniesUseCase } from 'src/domain/interfaces/use-cases/admin/companies/IGetPendingCompaniesUseCase';
 import { IVerifyCompanyUseCase } from 'src/domain/interfaces/use-cases/admin/companies/IVerifyCompanyUseCase';
-import { GetCompaniesQueryDtoSchema, VerifyCompanyDto } from 'src/application/dtos/admin/company.dto';
+import { GetCompaniesQuerySchema, VerifyCompanySchema } from 'src/application/validations/company-verification.validation';
 import { formatZodErrors, handleAsyncError, handleValidationError, sendSuccessResponse } from 'src/shared/utils';
 import { SUCCESS } from 'src/shared/constants/messages';
 import { injectable, inject } from 'inversify';
@@ -19,7 +19,7 @@ export class AdminCompanyController {
   ) { }
 
   getAllCompanies = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const parsed = GetCompaniesQueryDtoSchema.safeParse(req.query);
+    const parsed = GetCompaniesQuerySchema.safeParse(req.query);
     if (!parsed.success) {
       return handleValidationError(formatZodErrors(parsed.error), next);
     }
@@ -52,7 +52,7 @@ export class AdminCompanyController {
   };
 
   verifyCompany = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const parsed = VerifyCompanyDto.safeParse(req.body);
+    const parsed = VerifyCompanySchema.safeParse(req.body);
     if (!parsed.success) {
       return handleValidationError(formatZodErrors(parsed.error), next);
     }

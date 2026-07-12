@@ -4,8 +4,8 @@ import { IJobPostingRepository } from 'src/domain/interfaces/repositories/job/IJ
 import { ICompanyProfileRepository } from 'src/domain/interfaces/repositories/company/ICompanyProfileRepository';
 import { ICompanySubscriptionRepository } from 'src/domain/interfaces/repositories/subscription/ICompanySubscriptionRepository';
 import { IToggleFeaturedJobUseCase } from 'src/domain/interfaces/use-cases/job/IToggleFeaturedJobUseCase';
-import { ToggleFeaturedJobDto } from 'src/application/dtos/company/job/requests/toggle-featured-job.dto';
-import { JobPostingResponseDto } from 'src/application/dtos/admin/job.dto';
+import { ToggleFeaturedJobDto } from 'src/application/dtos/job-posting.dto';
+import { JobPostingResponseDto } from 'src/application/dtos/public.dto';
 import { JobPostingMapper } from 'src/application/mappers/job/job-posting.mapper';
 import { NotFoundError, ConflictError, AuthorizationError } from 'src/domain/errors/errors';
 import { JobStatus } from 'src/domain/enums/job-status.enum';

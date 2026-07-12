@@ -3,7 +3,7 @@ import { IMailerService } from 'src/domain/interfaces/services/IMailerService';
 import { IRequestOtpUseCase } from 'src/domain/interfaces/use-cases/auth/verification/IRequestOtpUseCase';
 import { ValidationError } from 'src/domain/errors/errors';
 import { otpVerificationTemplate } from 'src/infrastructure/messaging/templates/otp-verification.template';
-import { RequestOtpRequestDto } from 'src/application/dtos/auth/otp.dto';
+import { RequestOtpRequestDto } from 'src/application/dtos/auth.dto';
 import { IUserRepository } from 'src/domain/interfaces/repositories/user/IUserRepository';
 
 import { injectable, inject } from 'inversify';

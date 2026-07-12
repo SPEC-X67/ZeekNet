@@ -1,4 +1,4 @@
-import { AssignTechnicalTaskRequestDto, ATSTechnicalTaskResponseDto } from 'src/application/dtos/application/task.dto';
+import { AssignTechnicalTaskRequestDto, ATSTechnicalTaskResponseDto } from 'src/application/dtos/ats-technical-task.dto';
 
 import { UploadedFile } from 'src/domain/types/common.types';
 
