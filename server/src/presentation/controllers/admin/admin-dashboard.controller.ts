@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { IGetAdminDashboardStatsUseCase } from 'src/domain/interfaces/use-cases/admin/analytics/IGetAdminDashboardStatsUseCase';
-import { GetAdminDashboardStatsQueryDto } from 'src/application/dtos/admin/analytics/requests/get-admin-dashboard-stats-query.dto';
+import { GetAdminDashboardStatsQuerySchema } from 'src/application/validations/analytics.validation';
 import { formatZodErrors, handleAsyncError, handleValidationError, sendSuccessResponse } from 'src/shared/utils';
 import { SUCCESS } from 'src/shared/constants/messages';
 import { injectable, inject } from 'inversify';
@@ -14,7 +14,7 @@ export class AdminDashboardController {
 
   getDashboardStats = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const parsed = GetAdminDashboardStatsQueryDto.safeParse(req.query);
+      const parsed = GetAdminDashboardStatsQuerySchema.safeParse(req.query);
 
       if (!parsed.success) {
         return handleValidationError(formatZodErrors(parsed.error), next);

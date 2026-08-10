@@ -11,8 +11,8 @@ import { JobApplication } from 'src/domain/entities/job-application.entity';
 import { INotificationService } from 'src/domain/interfaces/services/INotificationService';
 import { NotificationType } from 'src/domain/enums/notification-type.enum';
 import { JobApplicationMapper } from 'src/application/mappers/job-application/job-application.mapper';
-import { JobApplicationListResponseDto } from 'src/application/dtos/seeker/applications/responses/job-application-response.dto';
-import { UpdateApplicationStageDto } from 'src/application/dtos/application/requests/update-application-stage.dto';
+import { JobApplicationListResponseDto } from 'src/application/dtos/job-application.dto';
+import { UpdateApplicationStageDto } from 'src/application/dtos/job-application.dto';
 
 @injectable()
 export class UpdateApplicationStageUseCase implements IUpdateApplicationStageUseCase {
@@ -49,8 +49,6 @@ export class UpdateApplicationStageUseCase implements IUpdateApplicationStageUse
     if (subStage) {
       updateData.subStage = subStage as ATSSubStage;
     }
-    
-    
 
     const updatedApplication = await this._jobApplicationRepository.update(applicationId, updateData as Partial<JobApplication>);
 
@@ -107,9 +105,4 @@ export class UpdateApplicationStageUseCase implements IUpdateApplicationStageUse
     });
   }
 }
-
-
-
-
-
 

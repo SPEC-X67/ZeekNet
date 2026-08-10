@@ -2,9 +2,8 @@ import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';
 import { IS3Service } from 'src/domain/interfaces/services/IS3Service';
 import { ValidationError } from 'src/domain/errors/errors';
-import { UploadWorkplacePictureResult } from 'src/application/dtos/company/media/responses/upload-workplace-picture-result.dto';
+import { UploadWorkplacePictureResult, UploadWorkplacePictureDto } from 'src/application/dtos/company-media.dto';
 import { IUploadWorkplacePictureUseCase } from 'src/domain/interfaces/use-cases/company/media/IUploadWorkplacePictureUseCase';
-import { UploadWorkplacePictureDto } from 'src/application/dtos/company/media/requests/upload-workplace-picture.dto';
 
 @injectable()
 export class UploadWorkplacePictureUseCase implements IUploadWorkplacePictureUseCase {

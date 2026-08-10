@@ -1,7 +1,6 @@
 import { ChatMessage } from 'src/domain/entities/chat-message.entity';
 import { ConversationParticipant, LastMessageSummary } from 'src/domain/interfaces/conversation.interfaces';
 
-
 export class Conversation {
   constructor(
     public readonly id: string,

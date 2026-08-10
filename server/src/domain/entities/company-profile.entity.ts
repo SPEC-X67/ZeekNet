@@ -22,7 +22,6 @@ export class CompanyProfile {
     public readonly rejectionReason?: string,
   ) {}
 
-
   static create(data: {
     id: string;
     userId: string;

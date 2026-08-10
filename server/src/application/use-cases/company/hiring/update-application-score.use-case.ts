@@ -8,8 +8,8 @@ import { IUpdateApplicationScoreUseCase } from 'src/domain/interfaces/use-cases/
 import { NotFoundError, ValidationError } from 'src/domain/errors/errors';
 import { JobApplication } from 'src/domain/entities/job-application.entity';
 import { JobApplicationMapper } from 'src/application/mappers/job-application/job-application.mapper';
-import { JobApplicationListResponseDto } from 'src/application/dtos/seeker/applications/responses/job-application-response.dto';
-import { UpdateApplicationScoreDto } from 'src/application/dtos/company/hiring/requests/update-application-score.dto';
+import { JobApplicationListResponseDto } from 'src/application/dtos/job-application.dto';
+import { UpdateApplicationScoreDto } from 'src/application/dtos/company-hiring.dto';
 
 @injectable()
 export class UpdateApplicationScoreUseCase implements IUpdateApplicationScoreUseCase {
@@ -54,9 +54,4 @@ export class UpdateApplicationScoreUseCase implements IUpdateApplicationScoreUse
     });
   }
 }
-
-
-
-
-
 

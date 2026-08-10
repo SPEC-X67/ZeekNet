@@ -5,7 +5,7 @@ import { ICreateCompanyBenefitUseCase } from 'src/domain/interfaces/use-cases/co
 import { IUpdateCompanyBenefitUseCase } from 'src/domain/interfaces/use-cases/company/profile/benefits/IUpdateCompanyBenefitUseCase';
 import { IDeleteCompanyBenefitUseCase } from 'src/domain/interfaces/use-cases/company/profile/benefits/IDeleteCompanyBenefitUseCase';
 import { IGetCompanyBenefitUseCase } from 'src/domain/interfaces/use-cases/company/profile/benefits/IGetCompanyBenefitUseCase';
-import { CreateCompanyBenefitsDto, UpdateCompanyBenefitsDto } from 'src/application/dtos/company/profile/benefits/requests/company-benefits.dto';
+import { CreateCompanyBenefitsDto, UpdateCompanyBenefitsDto } from 'src/application/dtos/company-benefit.dto';
 import { formatZodErrors, handleAsyncError, handleValidationError, sendCreatedResponse, sendSuccessResponse, validateUserId } from 'src/shared/utils';
 import { SUCCESS } from 'src/shared/constants/messages';
 import { TYPES } from 'src/shared/constants/types';

@@ -4,13 +4,14 @@ import { ERROR, VALIDATION } from 'src/shared/constants/messages';
 import { IJobPostingRepository } from 'src/domain/interfaces/repositories/job/IJobPostingRepository';
 import { ICompanySubscriptionRepository } from 'src/domain/interfaces/repositories/subscription/ICompanySubscriptionRepository';
 import { ISubscriptionPlanRepository } from 'src/domain/interfaces/repositories/subscription-plan/ISubscriptionPlanRepository';
-import { CreateJobPostingRequestDto } from 'src/application/dtos/admin/job/requests/create-job-posting-request.dto';
+import { CreateJobPostingRequestDto } from 'src/application/dtos/job-posting.dto';
+import { JobPostingResponseDto } from 'src/application/dtos/public.dto';
 import { NotFoundError, ValidationError } from 'src/domain/errors/errors';
 import { ICreateJobPostingUseCase } from 'src/domain/interfaces/use-cases/job/ICreateJobPostingUseCase';
 import { IGetCompanyProfileByUserIdUseCase } from 'src/domain/interfaces/use-cases/company/profile/info/IGetCompanyProfileByUserIdUseCase';
 import { JobPostingMapper } from 'src/application/mappers/job/job-posting.mapper';
 import { Types } from 'mongoose';
-import { JobPostingResponseDto } from 'src/application/dtos/admin/job/responses/job-posting-response.dto';
+
 import { CompanySubscription } from 'src/domain/entities/company-subscription.entity';
 
 @injectable()
@@ -104,8 +105,4 @@ export class CreateJobPostingUseCase implements ICreateJobPostingUseCase {
     return JobPostingMapper.toResponse(createdJob);
   }
 }
-
-
-
-
 

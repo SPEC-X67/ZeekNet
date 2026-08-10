@@ -3,7 +3,7 @@ import { TYPES } from 'src/shared/constants/types';
 import { ICompanyOfficeLocationRepository } from 'src/domain/interfaces/repositories/company/ICompanyOfficeLocationRepository';
 import { NotFoundError, AuthorizationError } from 'src/domain/errors/errors';
 import { IDeleteCompanyOfficeLocationUseCase } from 'src/domain/interfaces/use-cases/company/profile/location/IDeleteCompanyOfficeLocationUseCase';
-import { DeleteCompanyOfficeLocationRequestDto } from 'src/application/dtos/company/profile/location/requests/company-office-location.dto';
+import { DeleteCompanyOfficeLocationRequestDto } from 'src/application/dtos/company-office-location.dto';
 import { IGetCompanyIdByUserIdUseCase } from 'src/domain/interfaces/use-cases/admin/companies/IGetCompanyIdByUserIdUseCase';
 
 @injectable()

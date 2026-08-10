@@ -8,11 +8,11 @@ import { IUserRepository } from 'src/domain/interfaces/repositories/user/IUserRe
 import { ISeekerProfileRepository } from 'src/domain/interfaces/repositories/seeker/ISeekerProfileRepository';
 import { IS3Service } from 'src/domain/interfaces/services/IS3Service';
 import { IGetApplicationsByJobUseCase } from 'src/domain/interfaces/use-cases/company/hiring/IGetApplicationsByJobUseCase';
-import { GetApplicationsByJobRequestDto } from 'src/application/dtos/company/hiring/requests/get-applications-by-job.dto';
+import { GetApplicationsByJobRequestDto } from 'src/application/dtos/company-hiring.dto';
 import { NotFoundError, ValidationError } from 'src/domain/errors/errors';
 import type { ATSStage } from 'src/domain/enums/ats-stage.enum';
 import { JobApplicationMapper } from 'src/application/mappers/job-application/job-application.mapper';
-import { JobApplicationListResponseDto, PaginatedApplicationsResponseDto } from 'src/application/dtos/seeker/applications/responses/job-application-response.dto';
+import { JobApplicationListResponseDto, PaginatedApplicationsResponseDto } from 'src/application/dtos/job-application.dto';
 
 @injectable()
 export class GetApplicationsByJobUseCase implements IGetApplicationsByJobUseCase {
@@ -49,8 +49,7 @@ export class GetApplicationsByJobUseCase implements IGetApplicationsByJobUseCase
     if (filters.stage) {
       query.stage = String(filters.stage).toUpperCase().replace(/-/g, '_');
     }
-    
-    
+
     if (filters.min_score !== undefined || filters.max_score !== undefined) {
       query.score = {};
       if (filters.min_score !== undefined) {
@@ -102,8 +101,4 @@ export class GetApplicationsByJobUseCase implements IGetApplicationsByJobUseCase
     };
   }
 }
-
-
-
-
 

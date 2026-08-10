@@ -4,8 +4,8 @@ import { ICompanyProfileRepository } from 'src/domain/interfaces/repositories/co
 import { ICompanyVerificationRepository } from 'src/domain/interfaces/repositories/company/ICompanyVerificationRepository';
 import { ICompanyOfficeLocationRepository } from 'src/domain/interfaces/repositories/company/ICompanyOfficeLocationRepository';
 import { IReapplyCompanyVerificationUseCase } from 'src/domain/interfaces/use-cases/company/profile/verification/IReapplyCompanyVerificationUseCase';
-import { CompanyProfileResponseDto } from 'src/application/dtos/company/profile/info/responses/company-response.dto';
-import { ReapplyVerificationRequestDto } from 'src/application/dtos/company/profile/verification/requests/reapply-verification-request.dto';
+import { CompanyProfileResponseDto } from 'src/application/dtos/company-profile.dto';
+import { ReapplyVerificationRequestDto } from 'src/application/dtos/company-verification.dto';
 import { CompanyVerificationStatus } from 'src/domain/enums/verification-status.enum';
 import { CompanyProfileMapper } from 'src/application/mappers/company/profile/company-profile.mapper';
 import { CompanyProfile } from 'src/domain/entities/company-profile.entity';

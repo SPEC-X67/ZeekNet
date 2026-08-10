@@ -4,7 +4,7 @@ import { ICompanyWorkplacePicturesRepository } from 'src/domain/interfaces/repos
 import { CompanyWorkplacePictures } from 'src/domain/entities/company-workplace-pictures.entity';
 import { ICreateCompanyWorkplacePictureUseCase } from 'src/domain/interfaces/use-cases/company/media/ICreateCompanyWorkplacePictureUseCase';
 import { IGetCompanyIdByUserIdUseCase } from 'src/domain/interfaces/use-cases/admin/companies/IGetCompanyIdByUserIdUseCase';
-import { CompanyWorkplacePictureResponseDto } from 'src/application/dtos/company/media/responses/company-workplace-picture-response.dto';
+import { CompanyWorkplacePictureResponseDto } from 'src/application/dtos/company-media.dto';
 import { CompanyWorkplacePictureMapper } from 'src/application/mappers/company/media/company-workplace-picture.mapper';
 
 @injectable()

@@ -2,7 +2,7 @@ import { IJobApplicationRepository } from 'src/domain/interfaces/repositories/jo
 import { IATSOfferRepository } from 'src/domain/interfaces/repositories/ats/IATSOfferRepository';
 import { NotFoundError, AuthorizationError, ValidationError } from 'src/domain/errors/errors';
 import { ATSOffer } from 'src/domain/entities/ats-offer.entity';
-import { ATSOfferResponseDto } from 'src/application/dtos/application/offer/responses/ats-offer-response.dto';
+import { ATSOfferResponseDto } from 'src/application/dtos/ats-offer.dto';
 import { ATSOfferMapper } from 'src/application/mappers/ats/ats-offer.mapper';
 
 export interface IUpdateOfferStatusUseCase {

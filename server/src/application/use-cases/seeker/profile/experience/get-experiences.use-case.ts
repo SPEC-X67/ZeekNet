@@ -2,13 +2,12 @@ import { ISeekerProfileRepository } from 'src/domain/interfaces/repositories/see
 import { ISeekerExperienceRepository } from 'src/domain/interfaces/repositories/seeker/ISeekerExperienceRepository';
 import { NotFoundError } from 'src/domain/errors/errors';
 import { SeekerProfileMapper } from 'src/application/mappers/seeker/seeker-profile.mapper';
-import { ExperienceResponseDto } from 'src/application/dtos/seeker/profile/info/responses/seeker-profile-response.dto';
+import { ExperienceResponseDto } from 'src/application/dtos/seeker-experience.dto';
 import { IGetExperiencesUseCase } from 'src/domain/interfaces/use-cases/seeker/profile/experience/IGetExperiencesUseCase';
 
 import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';
 import { ERROR } from 'src/shared/constants/messages';
-
 
 @injectable()
 export class GetExperiencesUseCase implements IGetExperiencesUseCase {
@@ -28,7 +27,4 @@ export class GetExperiencesUseCase implements IGetExperiencesUseCase {
     return experiences.map(exp => SeekerProfileMapper.experienceToResponse(exp));
   }
 }
-
-
-
 

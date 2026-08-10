@@ -1,8 +1,7 @@
 import { injectable, inject } from 'inversify';
 import { Request, Response, NextFunction } from 'express';
 import { AuthenticatedRequest } from 'src/shared/types/authenticated-request';
-import { SimpleCompanyProfileDto } from 'src/application/dtos/company/requests/create-company.dto';
-import { SimpleUpdateCompanyProfileDto } from 'src/application/dtos/company/profile/info/requests/company-profile.dto';
+import { SimpleCompanyProfileSchema, SimpleUpdateCompanyProfileSchema } from 'src/application/validations/company-profile.validation';
 import { IUpdateCompanyProfileUseCase } from 'src/domain/interfaces/use-cases/company/profile/info/IUpdateCompanyProfileUseCase';
 import { ICreateCompanyProfileFromDtoUseCase } from 'src/domain/interfaces/use-cases/company/profile/info/ICreateCompanyProfileFromDtoUseCase';
 import { IGetCompanyProfileWithJobPostingsUseCase } from 'src/domain/interfaces/use-cases/admin/companies/IGetCompanyProfileWithJobPostingsUseCase';
@@ -23,7 +22,7 @@ export class CompanyProfileController {
   ) { }
 
   createCompanyProfile = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
-    const parsed = SimpleCompanyProfileDto.safeParse(req.body);
+    const parsed = SimpleCompanyProfileSchema.safeParse(req.body);
     if (!parsed.success) {
       return handleValidationError(formatZodErrors(parsed.error), next);
     }
@@ -39,7 +38,7 @@ export class CompanyProfileController {
   };
 
   updateCompanyProfile = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
-    const parsed = SimpleUpdateCompanyProfileDto.safeParse(req.body);
+    const parsed = SimpleUpdateCompanyProfileSchema.safeParse(req.body);
     if (!parsed.success) {
       return handleValidationError(formatZodErrors(parsed.error), next);
     }
@@ -77,9 +76,8 @@ export class CompanyProfileController {
     }
   };
 
-
   reapplyVerification = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
-    const parsed = SimpleCompanyProfileDto.safeParse(req.body);
+    const parsed = SimpleCompanyProfileSchema.safeParse(req.body);
     if (!parsed.success) {
       return handleValidationError(formatZodErrors(parsed.error), next);
     }
@@ -129,8 +127,4 @@ export class CompanyProfileController {
     }
   };
 }
-
-
-
-
 

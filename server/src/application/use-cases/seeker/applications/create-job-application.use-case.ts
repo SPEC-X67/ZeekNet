@@ -4,7 +4,7 @@ import { IJobPostingRepository } from 'src/domain/interfaces/repositories/job/IJ
 import { IUserRepository } from 'src/domain/interfaces/repositories/user/IUserRepository';
 import { ICompanyProfileRepository } from 'src/domain/interfaces/repositories/company/ICompanyProfileRepository';
 import { ICreateJobApplicationUseCase } from 'src/domain/interfaces/use-cases/seeker/applications/ICreateJobApplicationUseCase';
-import { CreateJobApplicationDto } from 'src/application/dtos/seeker/applications/requests/create-job-application.dto';
+import { CreateJobApplicationSchema } from 'src/application/validations/job-application.validation';
 import { z } from 'zod';
 import { ValidationError, NotFoundError } from 'src/domain/errors/errors';
 import { INotificationService } from 'src/domain/interfaces/services/INotificationService';
@@ -25,7 +25,6 @@ import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';
 import { ERROR, VALIDATION } from 'src/shared/constants/messages';
 
-
 @injectable()
 export class CreateJobApplicationUseCase implements ICreateJobApplicationUseCase {
   constructor(
@@ -43,7 +42,7 @@ export class CreateJobApplicationUseCase implements ICreateJobApplicationUseCase
   ) { }
 
   async execute(
-    data: Omit<z.infer<typeof CreateJobApplicationDto>, 'resume_url' | 'resume_filename'> & {
+    data: Omit<z.infer<typeof CreateJobApplicationSchema>, 'resume_url' | 'resume_filename'> & {
       seekerId?: string;
       resume_url?: string;
       resume_filename?: string;
@@ -52,12 +51,9 @@ export class CreateJobApplicationUseCase implements ICreateJobApplicationUseCase
   ): Promise<{ id: string }> {
     const { seekerId, ...applicationData } = data;
 
-
     const seeker = await this._validateSeeker(seekerId);
 
-
     const job = await this._validateJobPosting(applicationData.job_id);
-
 
     await this._checkDuplicateApplication(seekerId!, applicationData.job_id);
 
@@ -80,18 +76,14 @@ export class CreateJobApplicationUseCase implements ICreateJobApplicationUseCase
       resume_filename: resumeFilename,
     }, job);
 
-
     let resumeText = '';
     if (resumeFile && resumeFile.buffer && resumeFile.mimetype) {
       resumeText = await this._parseResume(resumeFile.buffer, resumeFile.mimetype);
     }
 
-
     this._triggerATSCalculation(application.id, job, applicationData.cover_letter, resumeText);
 
-
     await this._incrementApplicationCount(applicationData.job_id, job.applicationCount);
-
 
     await this._notifyCompany(job, application.id);
 
@@ -99,7 +91,6 @@ export class CreateJobApplicationUseCase implements ICreateJobApplicationUseCase
 
     return { id: application.id };
   }
-
 
   private async _validateSeeker(seekerId?: string): Promise<User> {
     if (!seekerId) {
@@ -117,7 +108,6 @@ export class CreateJobApplicationUseCase implements ICreateJobApplicationUseCase
 
     return user;
   }
-
 
   private async _validateJobPosting(jobId: string) {
     const job = await this._jobPostingRepository.findById(jobId);
@@ -137,7 +127,6 @@ export class CreateJobApplicationUseCase implements ICreateJobApplicationUseCase
     return job;
   }
 
-
   private async _checkDuplicateApplication(seekerId: string, jobId: string): Promise<void> {
     const existingApplication = await this._jobApplicationRepository.findOne({
       seeker_id: seekerId,
@@ -149,8 +138,7 @@ export class CreateJobApplicationUseCase implements ICreateJobApplicationUseCase
     }
   }
 
-
-  private async _createApplication(seekerId: string, applicationData: z.infer<typeof CreateJobApplicationDto>, job: JobPosting) {
+  private async _createApplication(seekerId: string, applicationData: z.infer<typeof CreateJobApplicationSchema>, job: JobPosting) {
     return await this._jobApplicationRepository.create(
       JobApplicationMapper.toEntity({
         seekerId: seekerId,
@@ -166,7 +154,6 @@ export class CreateJobApplicationUseCase implements ICreateJobApplicationUseCase
     );
   }
 
-
   private async _parseResume(resumeBuffer?: Buffer, mimeType?: string): Promise<string> {
     if (!resumeBuffer || !mimeType) {
       return '';
@@ -179,7 +166,6 @@ export class CreateJobApplicationUseCase implements ICreateJobApplicationUseCase
       return '';
     }
   }
-
 
   private _triggerATSCalculation(
     applicationId: string,
@@ -202,17 +188,14 @@ export class CreateJobApplicationUseCase implements ICreateJobApplicationUseCase
       },
     }).catch(error => {
 
-
     });
   }
-
 
   private async _incrementApplicationCount(jobId: string, currentCount: number): Promise<void> {
     await this._jobPostingRepository.update(jobId, {
       applicationCount: currentCount + 1,
     });
   }
-
 
   private async _notifyCompany(job: JobPosting, applicationId: string): Promise<void> {
     const companyProfile = await this._companyProfileRepository.findById(job.companyId);
@@ -257,6 +240,4 @@ export class CreateJobApplicationUseCase implements ICreateJobApplicationUseCase
     }
   }
 }
-
-
 

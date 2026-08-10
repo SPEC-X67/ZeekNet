@@ -2,8 +2,7 @@ import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';
 import { IS3Service } from 'src/domain/interfaces/services/IS3Service';
 import { ValidationError } from 'src/domain/errors/errors';
-import { UploadLogoResult } from 'src/application/dtos/company/media/responses/upload-logo-result.dto';
-import { UploadLogoRequestDto } from 'src/application/dtos/company/media/requests/upload-logo.dto';
+import { UploadLogoResult, UploadLogoRequestDto } from 'src/application/dtos/company-media.dto';
 import { IUploadLogoUseCase } from 'src/domain/interfaces/use-cases/company/media/IUploadLogoUseCase';
 import { ICompanyProfileRepository } from 'src/domain/interfaces/repositories/company/ICompanyProfileRepository';
 

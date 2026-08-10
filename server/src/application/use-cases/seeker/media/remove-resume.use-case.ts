@@ -6,7 +6,6 @@ import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';
 import { ERROR } from 'src/shared/constants/messages';
 
-
 @injectable()
 export class RemoveResumeUseCase implements IRemoveResumeUseCase {
   constructor(
@@ -27,5 +26,4 @@ export class RemoveResumeUseCase implements IRemoveResumeUseCase {
     await this._seekerProfileRepository.update(profile.id, { resume: null });
   }
 }
-
 

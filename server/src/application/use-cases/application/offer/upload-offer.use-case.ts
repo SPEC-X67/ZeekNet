@@ -9,8 +9,8 @@ import { IJobApplicationRepository } from 'src/domain/interfaces/repositories/jo
 import { ATSOffer } from 'src/domain/entities/ats-offer.entity';
 import { NotFoundError } from 'src/domain/errors/errors';
 import { IUserRepository } from 'src/domain/interfaces/repositories/user/IUserRepository';
-import { UploadOfferRequestDto } from 'src/application/dtos/application/offer/requests/upload-offer.dto';
-import { ATSOfferResponseDto } from 'src/application/dtos/application/offer/responses/ats-offer-response.dto';
+import { UploadOfferRequestDto, ATSOfferResponseDto } from 'src/application/dtos/ats-offer.dto';
+
 import { ATSOfferMapper } from 'src/application/mappers/ats/ats-offer.mapper';
 import { IFileUploadService } from 'src/domain/interfaces/services/IFileUploadService';
 

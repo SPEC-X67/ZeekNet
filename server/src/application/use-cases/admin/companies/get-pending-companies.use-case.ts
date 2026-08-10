@@ -1,7 +1,7 @@
 import { CompanyVerificationStatus } from 'src/domain/enums/verification-status.enum';
 import { IGetPendingCompaniesUseCase } from 'src/domain/interfaces/use-cases/admin/companies/IGetPendingCompaniesUseCase';
 import { IGetCompaniesWithVerificationUseCase } from 'src/domain/interfaces/use-cases/admin/companies/IGetCompaniesWithVerificationUseCase';
-import { PaginatedCompaniesWithVerificationResultDto } from 'src/application/dtos/admin/companies/responses/paginated-companies-with-verification-result.dto';
+import { PaginatedCompaniesWithVerificationResultDto } from 'src/application/dtos/company-verification.dto';
 import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';
 
@@ -18,5 +18,4 @@ export class GetPendingCompaniesUseCase implements IGetPendingCompaniesUseCase {
     });
   }
 }
-
 

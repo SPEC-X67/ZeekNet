@@ -1,5 +1,5 @@
 import { CompanyBenefits } from 'src/domain/entities/company-benefits.entity';
-import { CompanyBenefitResponseDto } from 'src/application/dtos/company/profile/benefits/responses/company-benefit-response.dto';
+import { CompanyBenefitResponseDto } from 'src/application/dtos/company-benefit.dto';
 
 export class CompanyBenefitMapper {
   static toResponse(benefit: CompanyBenefits): CompanyBenefitResponseDto {
@@ -16,5 +16,4 @@ export class CompanyBenefitMapper {
     return benefits.map((benefit) => this.toResponse(benefit));
   }
 }
-
 

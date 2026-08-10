@@ -1,5 +1,5 @@
 import { ATSInterview } from 'src/domain/entities/ats-interview.entity';
-import { ATSInterviewResponseDto } from 'src/application/dtos/application/interview/responses/ats-interview-response.dto';
+import { ATSInterviewResponseDto } from 'src/application/dtos/ats-interview.dto';
 
 export class ATSInterviewMapper {
   static toResponse(interview: ATSInterview): ATSInterviewResponseDto {

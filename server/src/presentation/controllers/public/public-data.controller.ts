@@ -1,7 +1,7 @@
 import { injectable, inject } from 'inversify';
 import { Request, Response, NextFunction } from 'express';
 import { TYPES } from 'src/shared/constants/types';
-import { GetSeekerCompaniesDtoSchema } from 'src/application/dtos/public/requests/get-seeker-companies.dto';
+import { GetSeekerCompaniesSchema } from 'src/application/validations/public.validation';;
 import { IGetPublicJobRolesUseCase } from 'src/domain/interfaces/use-cases/public/attributes/IGetPublicJobRolesUseCase';
 import { IGetPublicJobCategoriesUseCase } from 'src/domain/interfaces/use-cases/public/attributes/IGetPublicJobCategoriesUseCase';
 import { IGetPublicSkillsUseCase } from 'src/domain/interfaces/use-cases/public/attributes/IGetPublicSkillsUseCase';
@@ -51,7 +51,7 @@ export class PublicDataController {
 
   getAllCompanies = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const parsed = GetSeekerCompaniesDtoSchema.safeParse(req.query);
+      const parsed = GetSeekerCompaniesSchema.safeParse(req.query);
       if (!parsed.success) {
         return handleValidationError(formatZodErrors(parsed.error), next);
       }

@@ -4,14 +4,12 @@ import { IS3Service } from 'src/domain/interfaces/services/IS3Service';
 import { SeekerProfile } from 'src/domain/entities/seeker-profile.entity';
 import { NotFoundError } from 'src/domain/errors/errors';
 import { SeekerProfileMapper } from 'src/application/mappers/seeker/seeker-profile.mapper';
-import { SeekerProfileResponseDto } from 'src/application/dtos/seeker/profile/info/responses/seeker-profile-response.dto';
+import { SeekerProfileResponseDto, UpdateSeekerProfileRequestDto } from 'src/application/dtos/seeker-profile.dto';
 import { IUserRepository } from 'src/domain/interfaces/repositories/user/IUserRepository';
-import { UpdateSeekerProfileRequestDto } from 'src/application/dtos/seeker/profile/info/requests/update-seeker-profile-request.dto';
 
 import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';
 import { ERROR } from 'src/shared/constants/messages';
-
 
 @injectable()
 export class UpdateSeekerProfileUseCase implements IUpdateSeekerProfileUseCase {
@@ -47,7 +45,4 @@ export class UpdateSeekerProfileUseCase implements IUpdateSeekerProfileUseCase {
     return SeekerProfileMapper.toResponse(updatedProfile, this._s3Service);
   }
 }
-
-
-
 

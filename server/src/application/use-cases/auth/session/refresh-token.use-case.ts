@@ -1,4 +1,4 @@
-import { LoginResponseDto } from 'src/application/dtos/auth/session/login-response.dto';
+import { LoginResponseDto } from 'src/application/dtos/auth.dto';
 import { IUserRepository } from 'src/domain/interfaces/repositories/user/IUserRepository';
 import { ITokenService } from 'src/domain/interfaces/services/ITokenService';
 import { IPasswordHasher } from 'src/domain/interfaces/services/IPasswordHasher';
@@ -10,7 +10,6 @@ import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';
 import { ERROR } from 'src/shared/constants/messages';
 
-
 @injectable()
 export class RefreshTokenUseCase implements IRefreshTokenUseCase {
   constructor(
@@ -18,7 +17,6 @@ export class RefreshTokenUseCase implements IRefreshTokenUseCase {
     @inject(TYPES.TokenService) private readonly _tokenService: ITokenService,
     @inject(TYPES.PasswordHasher) private readonly _passwordHasher: IPasswordHasher,
   ) { }
-
 
   async execute(refreshToken: string): Promise<LoginResponseDto> {
     const payload = this._tokenService.verifyRefresh(refreshToken);
@@ -50,5 +48,4 @@ export class RefreshTokenUseCase implements IRefreshTokenUseCase {
     };
   }
 }
-
 

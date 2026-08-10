@@ -1,5 +1,5 @@
-import { PublicJobListItemDto } from 'src/application/dtos/admin/job/responses/job-posting-response.dto';
-import { GetFeaturedJobsResponseDto } from 'src/application/dtos/public/listings/jobs/responses/get-featured-jobs-response.dto';
+import { PublicJobListItemDto } from 'src/application/dtos/job-posting.dto';
+import { GetFeaturedJobsResponseDto } from 'src/application/dtos/public.dto';;
 
 export class GetFeaturedJobsMapper {
   static toResponse(

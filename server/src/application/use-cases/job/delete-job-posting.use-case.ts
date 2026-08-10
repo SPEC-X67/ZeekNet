@@ -4,9 +4,8 @@ import { IJobPostingRepository } from 'src/domain/interfaces/repositories/job/IJ
 import { ICompanyProfileRepository } from 'src/domain/interfaces/repositories/company/ICompanyProfileRepository';
 import { AuthorizationError, InternalServerError, NotFoundError } from 'src/domain/errors/errors';
 import { IDeleteJobPostingUseCase } from 'src/domain/interfaces/use-cases/job/IDeleteJobPostingUseCase';
-import { DeleteCompanyJobPostingDto } from 'src/application/dtos/company/job/requests/delete-company-job-posting.dto';
+import { DeleteCompanyJobPostingDto } from 'src/application/dtos/job-posting.dto';
 import { ERROR } from 'src/shared/constants/messages';
-
 
 @injectable()
 export class DeleteJobPostingUseCase implements IDeleteJobPostingUseCase {

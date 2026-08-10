@@ -12,10 +12,9 @@ import { NotificationType } from 'src/domain/enums/notification-type.enum';
 import { ILogger } from 'src/domain/interfaces/services/ILogger';
 import { IRevertToDefaultPlanUseCase } from 'src/domain/interfaces/use-cases/subscription/IRevertToDefaultPlanUseCase';
 import { JobStatus } from 'src/domain/enums/job-status.enum';
-import { CompanySubscriptionResponseDto } from 'src/application/dtos/subscription/responses/subscription-response.dto';
+import { CompanySubscriptionResponseDto } from 'src/application/dtos/company-subscription.dto';;
 import { CompanySubscriptionResponseMapper } from 'src/application/mappers/company/subscription/company-subscription-response.mapper';
 import { ERROR } from 'src/shared/constants/messages';
-
 
 @injectable()
 export class RevertToDefaultPlanUseCase implements IRevertToDefaultPlanUseCase {
@@ -127,5 +126,4 @@ export class RevertToDefaultPlanUseCase implements IRevertToDefaultPlanUseCase {
     return CompanySubscriptionResponseMapper.toResponse(updatedSubscription);
   }
 }
-
 

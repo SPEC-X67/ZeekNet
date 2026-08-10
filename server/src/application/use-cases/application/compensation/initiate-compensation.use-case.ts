@@ -14,8 +14,8 @@ import { IJobPostingRepository } from 'src/domain/interfaces/repositories/job/IJ
 import { IUserRepository } from 'src/domain/interfaces/repositories/user/IUserRepository';
 import { IMailerService } from 'src/domain/interfaces/services/IMailerService';
 import { IEmailTemplateService } from 'src/domain/interfaces/services/IEmailTemplateService';
-import { InitiateCompensationRequestDto } from 'src/application/dtos/application/compensation/requests/initiate-compensation.dto';
-import { ATSCompensationResponseDto } from 'src/application/dtos/application/compensation/responses/ats-compensation.response.dto';
+import { InitiateCompensationRequestDto, ATSCompensationResponseDto } from 'src/application/dtos/ats-compensation.dto';
+
 import { ATSCompensationMapper } from 'src/application/mappers/ats/ats-compensation.mapper';
 import { ILogger } from 'src/domain/interfaces/services/ILogger';
 import { ERROR } from 'src/shared/constants/messages';
@@ -41,7 +41,6 @@ export class InitiateCompensationUseCase implements IInitiateCompensationUseCase
       throw new ValidationError('Compensation discussion already initiated');
     }
 
-
     const application = await this._jobApplicationRepository.findById(dto.applicationId);
     if (!application) {
       throw new NotFoundError(ERROR.NOT_FOUND('Application'));
@@ -56,7 +55,6 @@ export class InitiateCompensationUseCase implements IInitiateCompensationUseCase
       );
     }
 
-
     const compensation = ATSCompensation.create({
       id: uuidv4(),
       applicationId: dto.applicationId,
@@ -65,11 +63,8 @@ export class InitiateCompensationUseCase implements IInitiateCompensationUseCase
 
     const created = await this._compensationRepository.create(compensation);
 
-
     const currentUser = await this._userRepository.findById(dto.performedBy);
     const performedByName = currentUser ? currentUser.name : 'Unknown';
-
-
 
     if (dto.notes) {
       await this._addCommentUseCase.execute({

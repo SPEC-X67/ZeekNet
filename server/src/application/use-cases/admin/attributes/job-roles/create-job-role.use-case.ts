@@ -3,13 +3,11 @@ import { JobRole } from 'src/domain/entities/job-role.entity';
 import { BadRequestError, ConflictError } from 'src/domain/errors/errors';
 import { ICreateJobRoleUseCase } from 'src/domain/interfaces/use-cases/admin/attributes/job-roles/ICreateJobRoleUseCase';
 import { CreateInput } from 'src/domain/types/common.types';
-import { CreateJobRoleRequestDto } from 'src/application/dtos/admin/attributes/job-roles/requests/create-job-role-request.dto';
-import { JobRoleResponseDto } from 'src/application/dtos/admin/attributes/job-roles/responses/job-role-response.dto';
+import { CreateJobRoleRequestDto, JobRoleResponseDto } from 'src/application/dtos/job-role.dto';
 import { JobRoleMapper } from 'src/application/mappers/job/job-role.mapper';
 import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';
 import { ERROR, VALIDATION } from 'src/shared/constants/messages';
-
 
 @injectable()
 export class CreateJobRoleUseCase implements ICreateJobRoleUseCase {

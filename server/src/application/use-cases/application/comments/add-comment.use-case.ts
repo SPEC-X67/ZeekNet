@@ -5,9 +5,8 @@ import { IAddCommentUseCase } from 'src/domain/interfaces/use-cases/application/
 import { IATSCommentRepository } from 'src/domain/interfaces/repositories/ats/IATSCommentRepository';
 
 import { ATSComment } from 'src/domain/entities/ats-comment.entity';
-import { AddCommentParamsDto } from 'src/application/dtos/application/comments/requests/add-comment-params.dto';
+import { AddCommentParamsDto, ATSCommentResponseDto } from 'src/application/dtos/ats-comment.dto';
 import { ATSCommentMapper } from 'src/application/mappers/ats/ats-comment.mapper';
-import { ATSCommentResponseDto } from 'src/application/dtos/application/comments/responses/ats-comment-response.dto';
 
 @injectable()
 export class AddCommentUseCase implements IAddCommentUseCase {

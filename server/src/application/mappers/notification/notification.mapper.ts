@@ -1,5 +1,5 @@
 import { Notification } from 'src/domain/entities/notification.entity';
-import { NotificationResponseDto } from 'src/application/dtos/notification/management/responses/notification-response.dto';
+import { NotificationResponseDto } from 'src/application/dtos/notification.dto';;
 import { NotificationType } from 'src/domain/enums/notification-type.enum';
 import { CreateInput } from 'src/domain/types/common.types';
 
@@ -40,5 +40,4 @@ export class NotificationMapper {
     return notifications.map((notification) => this.toResponse(notification));
   }
 }
-
 

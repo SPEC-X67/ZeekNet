@@ -62,10 +62,8 @@ const ATSCompensationMeetingSchema = new Schema<IATSCompensationMeetingDocument>
   },
 );
 
-
 ATSCompensationMeetingSchema.index({ applicationId: 1, createdAt: -1 });
 ATSCompensationMeetingSchema.index({ scheduledDate: 1 });
 
 export const ATSCompensationMeetingModel = mongoose.model<IATSCompensationMeetingDocument>('ATSCompensationMeeting', ATSCompensationMeetingSchema);
-
 

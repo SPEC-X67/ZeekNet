@@ -1,7 +1,6 @@
 import { ILogger } from 'src/domain/interfaces/services/ILogger';
 import { logger as winstonLogger } from 'src/infrastructure/config/logger';
 
-
 import { injectable } from 'inversify';
 
 @injectable()

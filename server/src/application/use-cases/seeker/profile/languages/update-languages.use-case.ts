@@ -6,7 +6,6 @@ import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';
 import { ERROR } from 'src/shared/constants/messages';
 
-
 @injectable()
 export class UpdateLanguagesUseCase implements IUpdateLanguagesUseCase {
   constructor(
@@ -24,5 +23,4 @@ export class UpdateLanguagesUseCase implements IUpdateLanguagesUseCase {
     return languages;
   }
 }
-
 

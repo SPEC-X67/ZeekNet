@@ -1,6 +1,5 @@
-import { ApplicationFiltersRequestDto } from 'src/application/dtos/company/hiring/requests/application-filters.dto';
-import type { PaginatedApplicationsResponseDto } from 'src/application/dtos/seeker/applications/responses/job-application-response.dto';
-
+import { ApplicationFiltersRequestDto } from 'src/application/dtos/company-hiring.dto';
+import type { PaginatedApplicationsResponseDto } from 'src/application/dtos/job-application.dto';
 
 export interface IGetApplicationsByCompanyUseCase {
   execute(data: ApplicationFiltersRequestDto): Promise<PaginatedApplicationsResponseDto>;

@@ -1,6 +1,5 @@
 import { NotificationType } from 'src/domain/enums/notification-type.enum';
 
-
 export class Notification {
   constructor(
     public readonly id: string,

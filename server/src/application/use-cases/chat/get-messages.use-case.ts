@@ -2,13 +2,12 @@ import { IGetMessagesUseCase } from 'src/domain/interfaces/use-cases/chat/IGetMe
 import { IMessageRepository } from 'src/domain/interfaces/repositories/chat/IMessageRepository';
 import { IConversationRepository } from 'src/domain/interfaces/repositories/chat/IConversationRepository';
 import { NotFoundError, AuthorizationError } from 'src/domain/errors/errors';
-import { PaginatedMessagesResponseDto } from 'src/application/dtos/chat/responses/paginated-messages-response.dto';
+
 import { ChatMessageMapper } from 'src/application/mappers/chat/chat-message.mapper';
-import { GetMessagesDto } from 'src/application/dtos/chat/requests/get-messages.dto';
+import { GetMessagesDto, PaginatedMessagesResponseDto } from 'src/application/dtos/chat.dto';
 import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';
 import { ERROR } from 'src/shared/constants/messages';
-
 
 @injectable()
 export class GetMessagesUseCase implements IGetMessagesUseCase {
@@ -16,7 +15,6 @@ export class GetMessagesUseCase implements IGetMessagesUseCase {
     @inject(TYPES.ChatMessageRepository) private readonly _messageRepository: IMessageRepository,
     @inject(TYPES.ConversationRepository) private readonly _conversationRepository: IConversationRepository,
   ) { }
-
 
   async execute(input: GetMessagesDto): Promise<PaginatedMessagesResponseDto> {
     const { userId, conversationId, page, limit } = input;

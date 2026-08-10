@@ -7,13 +7,9 @@ import {
   ResumeMeta,
   SocialLink,
 } from 'src/domain/interfaces/seeker-profile.interfaces';
-import {
-  SeekerProfileResponseDto,
-  ExperienceResponseDto,
-  EducationResponseDto,
-  ResumeMetaResponseDto,
-  SocialLinkResponseDto,
-} from 'src/application/dtos/seeker/profile/info/responses/seeker-profile-response.dto';
+import { SeekerProfileResponseDto, ResumeMetaResponseDto, SocialLinkResponseDto } from 'src/application/dtos/seeker-profile.dto';
+import { ExperienceResponseDto } from 'src/application/dtos/seeker-experience.dto';
+import { EducationResponseDto } from 'src/application/dtos/seeker-education.dto';
 import { IS3Service } from 'src/domain/interfaces/services/IS3Service';
 import { CreateInput } from 'src/domain/types/common.types';
 
@@ -245,5 +241,4 @@ export class SeekerProfileMapper {
     return updateData;
   }
 }
-
 

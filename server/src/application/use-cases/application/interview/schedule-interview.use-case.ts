@@ -11,8 +11,8 @@ import { IJobPostingRepository } from 'src/domain/interfaces/repositories/job/IJ
 import { IUserRepository } from 'src/domain/interfaces/repositories/user/IUserRepository';
 import { IMailerService } from 'src/domain/interfaces/services/IMailerService';
 import { IEmailTemplateService } from 'src/domain/interfaces/services/IEmailTemplateService';
-import { ScheduleInterviewRequestDto } from 'src/application/dtos/application/interview/requests/schedule-interview.dto';
-import { ATSInterviewResponseDto } from 'src/application/dtos/application/interview/responses/ats-interview-response.dto';
+import { ScheduleInterviewRequestDto, ATSInterviewResponseDto } from 'src/application/dtos/ats-interview.dto';
+
 import { ATSInterviewMapper } from 'src/application/mappers/ats/ats-interview.mapper';
 import { ILogger } from 'src/domain/interfaces/services/ILogger';
 import { ERROR } from 'src/shared/constants/messages';
@@ -79,8 +79,6 @@ export class ScheduleInterviewUseCase implements IScheduleInterviewUseCase {
         data.type,
       );
     }
-
-
 
     return ATSInterviewMapper.toResponse(savedInterview);
   }

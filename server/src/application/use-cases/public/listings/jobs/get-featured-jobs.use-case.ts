@@ -2,13 +2,13 @@ import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';
 import { IJobPostingRepository } from 'src/domain/interfaces/repositories/job/IJobPostingRepository';
 import { IGetFeaturedJobsUseCase } from 'src/domain/interfaces/use-cases/public/listings/jobs/IGetFeaturedJobsUseCase';
-import { GetFeaturedJobsRequestDto } from 'src/application/dtos/public/listings/jobs/requests/get-featured-jobs-request.dto';
-import { GetFeaturedJobsResponseDto } from 'src/application/dtos/public/listings/jobs/responses/get-featured-jobs-response.dto';
+import { GetFeaturedJobsRequestDto, GetFeaturedJobsResponseDto } from 'src/application/dtos/public.dto';;
+;
 import { GetFeaturedJobsMapper } from 'src/application/mappers/public/get-featured-jobs.mapper';
 import { JobPosting } from 'src/domain/entities/job-posting.entity';
 import { IS3Service } from 'src/domain/interfaces/services/IS3Service';
 import { JobPostingMapper } from 'src/application/mappers/job/job-posting.mapper';
-import { PublicJobListItemDto } from 'src/application/dtos/admin/job/responses/job-posting-response.dto';
+import { PublicJobListItemDto } from 'src/application/dtos/job-posting.dto';
 
 @injectable()
 export class GetFeaturedJobsUseCase implements IGetFeaturedJobsUseCase {

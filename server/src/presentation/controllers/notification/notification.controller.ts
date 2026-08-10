@@ -68,5 +68,3 @@ export class NotificationController {
   };
 }
 
-
-

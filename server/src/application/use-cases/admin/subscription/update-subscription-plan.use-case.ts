@@ -5,9 +5,9 @@ import { SubscriptionPlan } from 'src/domain/entities/subscription-plan.entity';
 import { IUpdateSubscriptionPlanUseCase } from 'src/domain/interfaces/use-cases/admin/subscription/IUpdateSubscriptionPlanUseCase';
 import { BadRequestError, ConflictError, InternalServerError, NotFoundError } from 'src/domain/errors/errors';
 import { ILogger } from 'src/domain/interfaces/services/ILogger';
-import { UpdateSubscriptionPlanDto } from 'src/application/dtos/admin/subscription/requests/update-subscription-plan.dto';
+import { UpdateSubscriptionPlanDto } from 'src/application/dtos/subscription-plan.dto';
+import { SubscriptionPlanResponseDto } from 'src/application/dtos/subscription-plan.dto';
 import { PriceType } from 'src/domain/entities/price-history.entity';
-import { SubscriptionPlanResponseDto } from 'src/application/dtos/admin/subscription/responses/subscription-plan-response.dto';
 import { SubscriptionPlanMapper } from 'src/application/mappers/subscription/subscription-plan.mapper';
 import { IMailerService } from 'src/domain/interfaces/services/IMailerService';
 import { IEmailTemplateService } from 'src/domain/interfaces/services/IEmailTemplateService';
@@ -15,7 +15,6 @@ import { PaymentSubscription } from 'src/domain/types/payment/payment-types';
 import { injectable, inject, optional } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';
 import { ERROR } from 'src/shared/constants/messages';
-
 
 @injectable()
 export class UpdateSubscriptionPlanUseCase implements IUpdateSubscriptionPlanUseCase {
@@ -382,5 +381,4 @@ export class UpdateSubscriptionPlanUseCase implements IUpdateSubscriptionPlanUse
     }
   }
 }
-
 

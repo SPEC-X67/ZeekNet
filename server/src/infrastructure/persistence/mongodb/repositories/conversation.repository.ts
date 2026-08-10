@@ -134,7 +134,6 @@ export class ConversationRepository extends RepositoryBase<Conversation, Convers
   private async _getEnrichedParticipants(doc: ConversationDocument): Promise<Map<string, { name: string; profileImage: string | null }>> {
     const detailsMap = new Map<string, { name: string; profileImage: string | null }>();
 
-
     const isPopulatedUser = (u: unknown): u is { _id: Types.ObjectId; isBlocked?: boolean; role?: string; name?: string } => {
       return typeof u === 'object' && u !== null && '_id' in u;
     };
@@ -143,12 +142,10 @@ export class ConversationRepository extends RepositoryBase<Conversation, Convers
       doc.participants.map(async (participant: ConversationDocument['participants'][0]) => {
         const user = participant.user_id;
 
-
         const userId = isPopulatedUser(user) ? String(user._id) : String(participant.user_id);
 
         let profileImage: string | null = null;
         let name = 'Unknown';
-
 
         if (isPopulatedUser(user)) {
           const populatedUser = user as { _id: Types.ObjectId; isBlocked?: boolean; role?: string; name?: string };
@@ -248,19 +245,4 @@ export class ConversationRepository extends RepositoryBase<Conversation, Convers
     return conversation ? this.mapToEntity(conversation) : null;
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

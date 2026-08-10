@@ -1,5 +1,5 @@
 import { CompanyTechStack } from 'src/domain/entities/company-tech-stack.entity';
-import { CompanyTechStackResponseDto } from 'src/application/dtos/company/profile/stack/responses/company-tech-stack-response.dto';
+import { CompanyTechStackResponseDto } from 'src/application/dtos/company-tech-stack.dto';
 
 export class CompanyTechStackMapper {
   static toResponse(techStack: CompanyTechStack): CompanyTechStackResponseDto {
@@ -15,5 +15,4 @@ export class CompanyTechStackMapper {
     return techStacks.map((techStack) => this.toResponse(techStack));
   }
 }
-
 

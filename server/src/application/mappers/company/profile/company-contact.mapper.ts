@@ -1,5 +1,5 @@
 import { CompanyContact } from 'src/domain/entities/company-contact.entity';
-import { CompanyContactResponseDto } from 'src/application/dtos/company/profile/info/responses/company-response.dto';
+import { CompanyContactResponseDto } from 'src/application/dtos/company-contact.dto';
 
 export class CompanyContactMapper {
   static toResponse(contact: CompanyContact): CompanyContactResponseDto {
@@ -17,6 +17,4 @@ export class CompanyContactMapper {
     return contacts.map((contact) => this.toResponse(contact));
   }
 }
-
-
 

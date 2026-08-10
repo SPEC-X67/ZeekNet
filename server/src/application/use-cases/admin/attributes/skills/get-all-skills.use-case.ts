@@ -1,6 +1,6 @@
 import { IGetAllSkillsUseCase } from 'src/domain/interfaces/use-cases/admin/attributes/skills/IGetAllSkillsUseCase';
 import { ISkillRepository } from 'src/domain/interfaces/repositories/skill/ISkillRepository';
-import { PaginatedSkillsResultDto } from 'src/application/dtos/admin/attributes/skills/responses/paginated-skills-result.dto';
+import { PaginatedSkillsResultDto } from 'src/application/dtos/skill.dto';
 import { SkillMapper } from 'src/application/mappers/skill/skill.mapper';
 import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';
@@ -30,5 +30,4 @@ export class GetAllSkillsUseCase implements IGetAllSkillsUseCase {
     };
   }
 }
-
 

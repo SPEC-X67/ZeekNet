@@ -2,13 +2,11 @@ import { ISkillRepository } from 'src/domain/interfaces/repositories/skill/ISkil
 import { Skill } from 'src/domain/entities/skill.entity';
 import { IUpdateSkillUseCase } from 'src/domain/interfaces/use-cases/admin/attributes/skills/IUpdateSkillUseCase';
 import { BadRequestError, ConflictError, InternalServerError, NotFoundError } from 'src/domain/errors/errors';
-import { UpdateSkillRequestDto } from 'src/application/dtos/admin/attributes/skills/requests/update-skill-request.dto';
-import { SkillResponseDto } from 'src/application/dtos/admin/attributes/skills/responses/skill-response.dto';
+import { UpdateSkillRequestDto, SkillResponseDto } from 'src/application/dtos/skill.dto';
 import { SkillMapper } from 'src/application/mappers/skill/skill.mapper';
 import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';
 import { ERROR, VALIDATION } from 'src/shared/constants/messages';
-
 
 @injectable()
 export class UpdateSkillUseCase implements IUpdateSkillUseCase {

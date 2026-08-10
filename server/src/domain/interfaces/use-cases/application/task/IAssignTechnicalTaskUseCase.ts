@@ -1,5 +1,5 @@
-import { AssignTechnicalTaskRequestDto } from 'src/application/dtos/application/task/requests/assign-technical-task.dto';
-import { ATSTechnicalTaskResponseDto } from 'src/application/dtos/application/task/responses/ats-technical-task-response.dto';
+import { AssignTechnicalTaskRequestDto, ATSTechnicalTaskResponseDto } from 'src/application/dtos/ats-technical-task.dto';
+
 import { UploadedFile } from 'src/domain/types/common.types';
 
 export interface IAssignTechnicalTaskUseCase {

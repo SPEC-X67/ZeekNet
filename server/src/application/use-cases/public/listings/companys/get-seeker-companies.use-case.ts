@@ -16,7 +16,6 @@ export class GetSeekerCompaniesUseCase implements IGetSeekerCompaniesUseCase {
     @inject(TYPES.S3Service) private readonly _s3Service: IS3Service,
   ) {}
 
-
   async execute(options: {
     page?: number;
     limit?: number;

@@ -59,5 +59,3 @@ export class ATSCompensationMeetingRepository implements IATSCompensationMeeting
   }
 }
 
-
-

@@ -22,7 +22,6 @@ export interface ICalculateATSScoreUseCase {
   execute(input: CalculateATSScoreInput): Promise<void>;
 }
 
-
 import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';
 
@@ -47,7 +46,6 @@ export class CalculateATSScoreUseCase implements ICalculateATSScoreUseCase {
       this._logger.info(`ATS score calculated for application ${applicationId}: ${atsResult.score}`);
     } catch (error) {
       this._logger.error(`Failed to calculate ATS score for application ${applicationId}:`, error);
-
 
       await this._jobApplicationRepository.update(applicationId, {
         score: undefined,

@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { IGetAllPaymentOrdersUseCase } from 'src/domain/interfaces/use-cases/admin/payments/IGetAllPaymentOrdersUseCase';
-import { GetAllPaymentOrdersDto } from 'src/application/dtos/admin/payments/requests/payment-order.dto';
+import { GetAllPaymentOrdersSchema } from 'src/application/validations/payment.validation';
 import { formatZodErrors, handleAsyncError, handleValidationError, sendSuccessResponse } from 'src/shared/utils';
 import { SUCCESS } from 'src/shared/constants/messages';
 import { injectable, inject } from 'inversify';
@@ -13,7 +13,7 @@ export class AdminPaymentOrderController {
   ) { }
 
   getAllPaymentOrders = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const parsed = GetAllPaymentOrdersDto.safeParse(req.query);
+    const parsed = GetAllPaymentOrdersSchema.safeParse(req.query);
     if (!parsed.success) {
       return handleValidationError(formatZodErrors(parsed.error), next);
     }

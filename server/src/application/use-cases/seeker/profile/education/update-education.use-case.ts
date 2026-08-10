@@ -3,14 +3,12 @@ import { ISeekerEducationRepository } from 'src/domain/interfaces/repositories/s
 import { Education } from 'src/domain/entities/seeker-profile.entity';
 import { NotFoundError, ValidationError } from 'src/domain/errors/errors';
 import { SeekerProfileMapper } from 'src/application/mappers/seeker/seeker-profile.mapper';
-import { EducationResponseDto } from 'src/application/dtos/seeker/profile/info/responses/seeker-profile-response.dto';
-import { UpdateEducationRequestDto } from 'src/application/dtos/seeker/profile/education/requests/update-education-request.dto';
+import { EducationResponseDto, UpdateEducationRequestDto } from 'src/application/dtos/seeker-education.dto';
 import { IUpdateEducationUseCase } from 'src/domain/interfaces/use-cases/seeker/profile/education/IUpdateEducationUseCase';
 
 import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';
 import { ERROR } from 'src/shared/constants/messages';
-
 
 @injectable()
 export class UpdateEducationUseCase implements IUpdateEducationUseCase {
@@ -53,7 +51,4 @@ export class UpdateEducationUseCase implements IUpdateEducationUseCase {
     return SeekerProfileMapper.educationToResponse(updatedEducation);
   }
 }
-
-
-
 

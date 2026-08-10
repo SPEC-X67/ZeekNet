@@ -10,10 +10,10 @@ import { ISeekerExperienceRepository } from 'src/domain/interfaces/repositories/
 import { ISeekerEducationRepository } from 'src/domain/interfaces/repositories/seeker/ISeekerEducationRepository';
 import { IS3Service } from 'src/domain/interfaces/services/IS3Service';
 import { IGetApplicationDetailsUseCase } from 'src/domain/interfaces/use-cases/company/hiring/IGetApplicationDetailsUseCase';
-import { GetApplicationDetailsRequestDto } from 'src/application/dtos/company/hiring/requests/get-application-details.dto';
+import { GetApplicationDetailsRequestDto } from 'src/application/dtos/company-hiring.dto';
 import { NotFoundError, ValidationError } from 'src/domain/errors/errors';
 import { JobApplicationMapper } from 'src/application/mappers/job-application/job-application.mapper';
-import { JobApplicationDetailResponseDto } from 'src/application/dtos/seeker/applications/responses/job-application-response.dto';
+import { JobApplicationDetailResponseDto } from 'src/application/dtos/job-application.dto';
 
 @injectable()
 export class GetApplicationDetailsUseCase implements IGetApplicationDetailsUseCase {
@@ -54,8 +54,6 @@ export class GetApplicationDetailsUseCase implements IGetApplicationDetailsUseCa
       this._userRepository.findById(application.seekerId),
       this._seekerProfileRepository.findOne({ userId: application.seekerId }),
     ]);
-
-
 
     let experiences: Array<{ title: string; company: string; startDate: Date; endDate?: Date; location?: string; description?: string; }> = [];
     let education: Array<{ school: string; degree?: string; startDate: Date; endDate?: Date; location?: string; }> = [];
@@ -116,9 +114,4 @@ export class GetApplicationDetailsUseCase implements IGetApplicationDetailsUseCa
     );
   }
 }
-
-
-
-
-
 

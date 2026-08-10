@@ -6,12 +6,11 @@ import { EmploymentType } from 'src/domain/enums/employment-type.enum';
 import { IGetCompanyJobPostingsUseCase } from 'src/domain/interfaces/use-cases/job/IGetCompanyJobPostingsUseCase';
 import { IGetCompanyProfileWithJobPostingsUseCase } from 'src/domain/interfaces/use-cases/admin/companies/IGetCompanyProfileWithJobPostingsUseCase';
 import { JobPosting } from 'src/domain/entities/job-posting.entity';
-import { CompanyProfileWithDetailsResponseDto } from 'src/application/dtos/company/profile/info/responses/company-response.dto';
+import { CompanyProfileWithDetailsResponseDto } from 'src/application/dtos/company-profile.dto';
 import { CompanyProfileMapper } from 'src/application/mappers/company/profile/company-profile.mapper';
 import { NotFoundError } from 'src/domain/errors/errors';
 import { IS3Service } from 'src/domain/interfaces/services/IS3Service';
 import { ERROR } from 'src/shared/constants/messages';
-
 
 @injectable()
 export class GetCompanyProfileWithJobPostingsUseCase implements IGetCompanyProfileWithJobPostingsUseCase {
@@ -87,6 +86,4 @@ export class GetCompanyProfileWithJobPostingsUseCase implements IGetCompanyProfi
     return responseData;
   }
 }
-
-
 

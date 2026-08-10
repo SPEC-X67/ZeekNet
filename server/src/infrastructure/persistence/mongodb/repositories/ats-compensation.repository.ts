@@ -60,4 +60,3 @@ export class ATSCompensationRepository implements IATSCompensationRepository {
   }
 }
 
-

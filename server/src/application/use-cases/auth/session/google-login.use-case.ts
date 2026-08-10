@@ -9,8 +9,8 @@ import { IGoogleTokenVerifier } from 'src/domain/interfaces/services/IGoogleToke
 import { IGoogleLoginUseCase } from 'src/domain/interfaces/use-cases/auth/session/IGoogleLoginUseCase';
 import { IEmailTemplateService } from 'src/domain/interfaces/services/IEmailTemplateService';
 import { UserMapper } from 'src/application/mappers/auth/user.mapper';
-import { LoginResponseDto } from 'src/application/dtos/auth/session/login-response.dto';
-import { GoogleLoginRequestDto } from 'src/application/dtos/auth/session/google-login.dto';
+import { LoginResponseDto, GoogleLoginRequestDto } from 'src/application/dtos/auth.dto';
+
 import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';
 
@@ -25,7 +25,6 @@ export class GoogleLoginUseCase implements IGoogleLoginUseCase {
     @inject(TYPES.MailerService) private readonly _mailerService: IMailerService,
     @inject(TYPES.EmailTemplateService) private readonly _emailTemplateService: IEmailTemplateService,
   ) { }
-
 
   async execute(params: GoogleLoginRequestDto): Promise<LoginResponseDto> {
     const { idToken } = params;
@@ -58,5 +57,4 @@ export class GoogleLoginUseCase implements IGoogleLoginUseCase {
     return { tokens: { accessToken, refreshToken }, user: UserMapper.toResponse(user) };
   }
 }
-
 

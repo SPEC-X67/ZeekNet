@@ -3,8 +3,7 @@ import { TYPES } from 'src/shared/constants/types';
 import { VALIDATION } from 'src/shared/constants/messages';
 import { ICreateCompanyProfileUseCase } from 'src/domain/interfaces/use-cases/company/profile/info/ICreateCompanyProfileUseCase';
 import { ICreateCompanyProfileFromDtoUseCase } from 'src/domain/interfaces/use-cases/company/profile/info/ICreateCompanyProfileFromDtoUseCase';
-import { CreateCompanyProfileFromDtoRequestDto } from 'src/application/dtos/company/profile/info/requests/create-company-profile-from-dto.dto';
-import { CompanyProfileResponseDto } from 'src/application/dtos/company/profile/info/responses/company-response.dto';
+import { CreateCompanyProfileFromDtoRequestDto, CompanyProfileResponseDto } from 'src/application/dtos/company-profile.dto';
 import { CompanyProfileMapper } from 'src/application/mappers/company/profile/company-profile.mapper';
 
 @injectable()

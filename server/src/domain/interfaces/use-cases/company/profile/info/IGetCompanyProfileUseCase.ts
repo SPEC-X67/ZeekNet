@@ -1,8 +1,6 @@
-import { GetCompanyProfileResponseDto } from 'src/application/dtos/company/profile/info/responses/company-profile-response.dto';
-
-
+import { CompanyProfileWithDetailsResponseDto } from 'src/application/dtos/company-profile.dto';
 
 export interface IGetCompanyProfileUseCase {
-  execute(userId: string): Promise<GetCompanyProfileResponseDto | null>;
+  execute(userId: string): Promise<CompanyProfileWithDetailsResponseDto | null>;
 }
 

@@ -1,4 +1,4 @@
-import { DeleteTechnicalTaskRequestDto } from 'src/application/dtos/application/task/requests/delete-technical-task.dto';
+import { DeleteTechnicalTaskRequestDto } from 'src/application/dtos/ats-technical-task.dto';
 
 export interface IDeleteTechnicalTaskUseCase {
   execute(data: DeleteTechnicalTaskRequestDto): Promise<void>;

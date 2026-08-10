@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import { LoginDto } from 'src/application/dtos/auth/session/login.dto';
-import { GoogleLoginDto } from 'src/application/dtos/auth/session/google-login.dto';
+import { LoginSchema, GoogleLoginSchema } from 'src/application/validations/auth.validation';
+
 import { ILoginUserUseCase } from 'src/domain/interfaces/use-cases/auth/session/ILoginUserUseCase';
 import { IAdminLoginUseCase } from 'src/domain/interfaces/use-cases/auth/session/IAdminLoginUseCase';
 import { IGoogleLoginUseCase } from 'src/domain/interfaces/use-cases/auth/session/IGoogleLoginUseCase';
@@ -19,9 +19,8 @@ export class LoginController {
     @inject(TYPES.CookieService) private readonly _cookieService: ICookieService,
   ) { }
 
-
   login = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const parsed = LoginDto.safeParse(req.body);
+    const parsed = LoginSchema.safeParse(req.body);
     if (!parsed.success) {
       return handleValidationError(formatZodErrors(parsed.error), next);
     }
@@ -41,7 +40,7 @@ export class LoginController {
   };
 
   adminLogin = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const parsed = LoginDto.safeParse(req.body);
+    const parsed = LoginSchema.safeParse(req.body);
     if (!parsed.success) {
       return handleValidationError(formatZodErrors(parsed.error), next);
     }
@@ -61,7 +60,7 @@ export class LoginController {
   };
 
   googleLogin = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const parsed = GoogleLoginDto.safeParse(req.body);
+    const parsed = GoogleLoginSchema.safeParse(req.body);
     if (!parsed.success) {
       return handleValidationError(formatZodErrors(parsed.error), next);
     }
@@ -80,6 +79,4 @@ export class LoginController {
     }
   };
 }
-
-
 

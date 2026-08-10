@@ -1,6 +1,6 @@
 import { IJobRoleRepository } from 'src/domain/interfaces/repositories/job-role/IJobRoleRepository';
 import { IGetAllJobRolesUseCase } from 'src/domain/interfaces/use-cases/admin/attributes/job-roles/IGetAllJobRolesUseCase';
-import { PaginatedJobRolesResultDto } from 'src/application/dtos/admin/attributes/job-roles/responses/paginated-job-roles-result.dto';
+import { PaginatedJobRolesResultDto } from 'src/application/dtos/job-role.dto';
 import { JobRoleMapper } from 'src/application/mappers/job/job-role.mapper';
 import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';
@@ -31,6 +31,4 @@ export class GetAllJobRolesUseCase implements IGetAllJobRolesUseCase {
     };
   }
 }
-
-
 

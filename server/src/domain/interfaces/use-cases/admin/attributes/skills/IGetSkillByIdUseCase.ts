@@ -1,4 +1,4 @@
-import { SkillResponseDto } from 'src/application/dtos/admin/attributes/skills/responses/skill-response.dto';
+import { SkillResponseDto } from 'src/application/dtos/skill.dto';
 
 export interface IGetSkillByIdUseCase {
   execute(skillId: string): Promise<SkillResponseDto>;

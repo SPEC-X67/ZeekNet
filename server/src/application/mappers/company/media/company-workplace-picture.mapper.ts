@@ -1,5 +1,5 @@
 import { CompanyWorkplacePictures } from 'src/domain/entities/company-workplace-pictures.entity';
-import { CompanyWorkplacePictureResponseDto } from 'src/application/dtos/company/media/responses/company-workplace-picture-response.dto';
+import { CompanyWorkplacePictureResponseDto } from 'src/application/dtos/company-media.dto';
 
 export class CompanyWorkplacePictureMapper {
   static toResponse(picture: CompanyWorkplacePictures, signedUrl?: string): CompanyWorkplacePictureResponseDto {
@@ -16,5 +16,4 @@ export class CompanyWorkplacePictureMapper {
     return pictures.map((picture, index) => this.toResponse(picture, signedUrls?.[index]));
   }
 }
-
 

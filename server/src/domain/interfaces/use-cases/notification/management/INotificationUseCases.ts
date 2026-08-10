@@ -1,4 +1,4 @@
-import { NotificationResponseDto } from 'src/application/dtos/notification/management/responses/notification-response.dto';
+import { NotificationResponseDto } from 'src/application/dtos/notification.dto';;
 import { CreateNotificationData } from 'src/domain/interfaces/repositories/notification/INotificationRepository';
 import { Notification } from 'src/domain/entities/notification.entity';
 

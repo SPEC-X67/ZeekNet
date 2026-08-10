@@ -3,13 +3,11 @@ import { ISeekerExperienceRepository } from 'src/domain/interfaces/repositories/
 import { IAddExperienceUseCase } from 'src/domain/interfaces/use-cases/seeker/profile/experience/IAddExperienceUseCase';
 import { NotFoundError, ValidationError } from 'src/domain/errors/errors';
 import { SeekerProfileMapper } from 'src/application/mappers/seeker/seeker-profile.mapper';
-import { ExperienceResponseDto } from 'src/application/dtos/seeker/profile/info/responses/seeker-profile-response.dto';
-import { AddExperienceRequestDto } from 'src/application/dtos/seeker/profile/experience/requests/add-experience-request.dto';
+import { ExperienceResponseDto, AddExperienceRequestDto } from 'src/application/dtos/seeker-experience.dto';
 
 import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';
 import { ERROR } from 'src/shared/constants/messages';
-
 
 @injectable()
 export class AddExperienceUseCase implements IAddExperienceUseCase {
@@ -48,7 +46,4 @@ export class AddExperienceUseCase implements IAddExperienceUseCase {
     return SeekerProfileMapper.experienceToResponse(experience);
   }
 }
-
-
-
 

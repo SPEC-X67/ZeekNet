@@ -17,13 +17,10 @@ import { IUploadResumeUseCase } from 'src/domain/interfaces/use-cases/seeker/med
 import { IRemoveResumeUseCase } from 'src/domain/interfaces/use-cases/seeker/media/IRemoveResumeUseCase';
 import { IUploadAvatarUseCase } from 'src/domain/interfaces/use-cases/seeker/media/IUploadAvatarUseCase';
 import { IUploadBannerUseCase } from 'src/domain/interfaces/use-cases/seeker/media/IUploadBannerUseCase';
-import { AddExperienceRequestDto } from 'src/application/dtos/seeker/profile/experience/requests/add-experience-request.dto';
-import { UpdateExperienceRequestDto } from 'src/application/dtos/seeker/profile/experience/requests/update-experience-request.dto';
-import { AddEducationRequestDto } from 'src/application/dtos/seeker/profile/education/requests/add-education-request.dto';
-import { UpdateEducationRequestDto } from 'src/application/dtos/seeker/profile/education/requests/update-education-request.dto';
-import { UploadResumeRequestDto } from 'src/application/dtos/seeker/media/requests/seeker-profile.dto';
-import { CreateSeekerProfileRequestDtoSchema } from 'src/application/dtos/seeker/profile/info/requests/create-seeker-profile-request.dto';
-import { UpdateSeekerProfileRequestDtoSchema } from 'src/application/dtos/seeker/profile/info/requests/update-seeker-profile-request.dto';
+import { AddExperienceRequestDto, UpdateExperienceRequestDto } from 'src/application/dtos/seeker-experience.dto';
+import { AddEducationRequestDto, UpdateEducationRequestDto } from 'src/application/dtos/seeker-education.dto';
+import { UploadResumeRequestDto } from 'src/application/dtos/seeker-media.dto';
+import { CreateSeekerProfileRequestSchema, UpdateSeekerProfileRequestSchema } from 'src/application/validations/seeker-profile.validation';
 import { formatZodErrors, handleAsyncError, sendSuccessResponse, sendCreatedResponse, validateUserId, badRequest, handleValidationError } from 'src/shared/utils';
 import { SUCCESS, VALIDATION } from 'src/shared/constants/messages';
 
@@ -56,7 +53,7 @@ export class SeekerProfileController {
     try {
       const userId = validateUserId(req);
 
-      const bodySchema = CreateSeekerProfileRequestDtoSchema.omit({ userId: true });
+      const bodySchema = CreateSeekerProfileRequestSchema.omit({ userId: true });
       const parsed = bodySchema.safeParse(req.body);
 
       if (!parsed.success) {
@@ -85,7 +82,7 @@ export class SeekerProfileController {
     try {
       const userId = validateUserId(req);
 
-      const bodySchema = UpdateSeekerProfileRequestDtoSchema.omit({ userId: true });
+      const bodySchema = UpdateSeekerProfileRequestSchema.omit({ userId: true });
       const parsed = bodySchema.safeParse(req.body);
 
       if (!parsed.success) {

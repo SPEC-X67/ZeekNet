@@ -4,10 +4,9 @@ import { IPaymentOrderRepository } from 'src/domain/interfaces/repositories/paym
 import { ICompanyProfileRepository } from 'src/domain/interfaces/repositories/company/ICompanyProfileRepository';
 import { NotFoundError } from 'src/domain/errors/errors';
 import { IGetPaymentHistoryUseCase } from 'src/domain/interfaces/use-cases/payment/history/IGetPaymentHistoryUseCase';
-import { PaymentResponseDto } from 'src/application/dtos/payment/responses/payment-response.dto';
+import { PaymentResponseDto } from 'src/application/dtos/payment.dto';;
 import { PaymentMapper } from 'src/application/mappers/payment/payment.mapper';
 import { ERROR } from 'src/shared/constants/messages';
-
 
 @injectable()
 export class GetPaymentHistoryUseCase implements IGetPaymentHistoryUseCase {

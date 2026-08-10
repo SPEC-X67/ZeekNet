@@ -1,11 +1,11 @@
 import { Response, NextFunction } from 'express';
 import { AuthenticatedRequest } from 'src/shared/types/authenticated-request';
-import { UpdateSubStageDtoSchema } from 'src/application/dtos/application/requests/update-sub-stage.dto';
+import { UpdateSubStageSchema, MoveApplicationStageSchema } from 'src/application/validations/job-application.validation';
 import { IMoveApplicationStageUseCase } from 'src/domain/interfaces/use-cases/application/pipeline/IMoveApplicationStageUseCase';
 import { IUpdateApplicationSubStageUseCase } from 'src/domain/interfaces/use-cases/application/pipeline/IUpdateApplicationSubStageUseCase';
 import { IGetJobATSPipelineUseCase } from 'src/domain/interfaces/use-cases/application/pipeline/IGetJobATSPipelineUseCase';
 import { IGetJobApplicationsForKanbanUseCase } from 'src/domain/interfaces/use-cases/application/pipeline/IGetJobApplicationsForKanbanUseCase';
-import { MoveApplicationStageDtoSchema } from 'src/application/dtos/application/requests/move-application-stage.dto';
+
 import { formatZodErrors, handleAsyncError, handleValidationError, sendSuccessResponse, validateUserId } from 'src/shared/utils';
 import { SUCCESS } from 'src/shared/constants/messages';
 import { injectable, inject } from 'inversify';
@@ -43,7 +43,7 @@ export class ATSPipelineController {
   };
 
   moveApplicationStage = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
-    const validationResult = MoveApplicationStageDtoSchema.safeParse(req.body);
+    const validationResult = MoveApplicationStageSchema.safeParse(req.body);
     if (!validationResult.success) {
       return handleValidationError(formatZodErrors(validationResult.error), next);
     }
@@ -67,7 +67,7 @@ export class ATSPipelineController {
   };
 
   updateApplicationSubStage = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
-    const validationResult = UpdateSubStageDtoSchema.safeParse(req.body);
+    const validationResult = UpdateSubStageSchema.safeParse(req.body);
     if (!validationResult.success) {
       return handleValidationError(formatZodErrors(validationResult.error), next);
     }

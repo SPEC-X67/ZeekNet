@@ -2,8 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import { IAdminGetUserByIdUseCase } from 'src/domain/interfaces/use-cases/admin/user/IAdminGetUserByIdUseCase';
 import { IBlockUserUseCase } from 'src/domain/interfaces/use-cases/admin/user/IBlockUserUseCase';
 import { IGetAllUsersUseCase } from 'src/domain/interfaces/use-cases/admin/user/IGetAllUsersUseCase';
-import { BlockUserDto } from 'src/application/dtos/admin/user/requests/block-user-request.dto';
-import { GetUsersQueryDtoSchema } from 'src/application/dtos/admin/user/requests/get-users-query.dto';
+import { BlockUserSchema, GetUsersQuerySchema } from 'src/application/validations/user.validation';
 import { formatZodErrors, handleAsyncError, handleValidationError, sendSuccessResponse } from 'src/shared/utils';
 import { SUCCESS } from 'src/shared/constants/messages';
 import { injectable, inject } from 'inversify';
@@ -18,7 +17,7 @@ export class AdminUserController {
   ) { }
 
   getAllUsers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const parsed = GetUsersQueryDtoSchema.safeParse(req.query);
+    const parsed = GetUsersQuerySchema.safeParse(req.query);
     if (!parsed.success) {
       return handleValidationError(formatZodErrors(parsed.error), next);
     }
@@ -42,7 +41,7 @@ export class AdminUserController {
   };
 
   blockUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const parsed = BlockUserDto.safeParse(req.body);
+    const parsed = BlockUserSchema.safeParse(req.body);
     if (!parsed.success) {
       return handleValidationError(formatZodErrors(parsed.error), next);
     }
@@ -56,5 +55,4 @@ export class AdminUserController {
     }
   };
 }
-
 

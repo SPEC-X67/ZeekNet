@@ -3,13 +3,11 @@ import { Skill } from 'src/domain/entities/skill.entity';
 import { ICreateSkillUseCase } from 'src/domain/interfaces/use-cases/admin/attributes/skills/ICreateSkillUseCase';
 import { BadRequestError, ConflictError } from 'src/domain/errors/errors';
 import { CreateInput } from 'src/domain/types/common.types';
-import { CreateSkillRequestDto } from 'src/application/dtos/admin/attributes/skills/requests/create-skill-request.dto';
-import { SkillResponseDto } from 'src/application/dtos/admin/attributes/skills/responses/skill-response.dto';
+import { CreateSkillRequestDto, SkillResponseDto } from 'src/application/dtos/skill.dto';
 import { SkillMapper } from 'src/application/mappers/skill/skill.mapper';
 import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';
 import { ERROR, VALIDATION } from 'src/shared/constants/messages';
-
 
 @injectable()
 export class CreateSkillUseCase implements ICreateSkillUseCase {

@@ -1,5 +1,5 @@
 import { CompanySubscription } from 'src/domain/entities/company-subscription.entity';
-import { CompanySubscriptionResponseDto } from 'src/application/dtos/subscription/responses/subscription-response.dto';
+import { CompanySubscriptionResponseDto } from 'src/application/dtos/company-subscription.dto';;
 
 type CompanySubscriptionWithActiveJobCount = CompanySubscription & { activeJobCount?: number };
 

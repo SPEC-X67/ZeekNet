@@ -14,7 +14,6 @@ export const TYPES = {
   ConversationRepository: Symbol.for('ConversationRepository'),
   ChatMessageRepository: Symbol.for('ChatMessageRepository'),
 
-
   // Use Cases - Auth
   LoginUserUseCase: Symbol.for('LoginUserUseCase'),
   AdminLoginUseCase: Symbol.for('AdminLoginUseCase'),
@@ -329,8 +328,4 @@ export const TYPES = {
   StripeWebhookController: Symbol.for('StripeWebhookController'),
   SubscriptionMiddleware: Symbol.for('SubscriptionMiddleware'),
 } as const;
-
-
-
-
 

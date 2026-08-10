@@ -56,10 +56,7 @@ const ATSCompensationSchema = new Schema<IATSCompensationDocument>(
   },
 );
 
-
-
 ATSCompensationSchema.index({ approvedAt: -1 });
 
 export const ATSCompensationModel = mongoose.model<IATSCompensationDocument>('ATSCompensation', ATSCompensationSchema);
-
 

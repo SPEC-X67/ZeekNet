@@ -2,7 +2,7 @@ import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';
 import { IGetCompensationUseCase } from 'src/domain/interfaces/use-cases/application/compensation/IGetCompensationUseCase';
 import { IATSCompensationRepository } from 'src/domain/interfaces/repositories/ats/IATSCompensationRepository';
-import { ATSCompensationResponseDto } from 'src/application/dtos/application/compensation/responses/ats-compensation.response.dto';
+import { ATSCompensationResponseDto } from 'src/application/dtos/ats-compensation.dto';
 import { ATSCompensationMapper } from 'src/application/mappers/ats/ats-compensation.mapper';
 
 @injectable()

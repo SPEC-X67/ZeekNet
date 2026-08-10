@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import { RequestOtpDto } from 'src/application/dtos/auth/verification/request-otp.use-case';
-import { VerifyOtpDto } from 'src/application/dtos/auth/verification/verify-otp.dto';
+import { RequestOtpSchema, VerifyOtpSchema } from 'src/application/validations/auth.validation';
+
 import { IRequestOtpUseCase } from 'src/domain/interfaces/use-cases/auth/verification/IRequestOtpUseCase';
 import { IVerifyOtpUseCase } from 'src/domain/interfaces/use-cases/auth/verification/IVerifyOtpUseCase';
 import { ICookieService } from 'src/presentation/services/ICookieService';
@@ -17,9 +17,8 @@ export class OtpController {
     @inject(TYPES.CookieService) private readonly _cookieService: ICookieService,
   ) { }
 
-
   request = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const parsed = RequestOtpDto.safeParse(req.body);
+    const parsed = RequestOtpSchema.safeParse(req.body);
     if (!parsed.success) {
       return handleValidationError(formatZodErrors(parsed.error), next);
     }
@@ -41,7 +40,7 @@ export class OtpController {
   };
 
   verify = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const parsed = VerifyOtpDto.safeParse(req.body);
+    const parsed = VerifyOtpSchema.safeParse(req.body);
     if (!parsed.success) {
       return handleValidationError(formatZodErrors(parsed.error), next);
     }

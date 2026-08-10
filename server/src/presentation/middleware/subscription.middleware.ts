@@ -27,13 +27,11 @@ export class SubscriptionMiddleware {
         return sendUnauthorizedResponse(res, ERROR.UNAUTHORIZED);
       }
 
-
       const companyProfile = await this._companyProfileRepository.findOne({ userId });
 
       if (!companyProfile) {
         return sendNotFoundResponse(res, ERROR.NOT_FOUND('Company profile'));
       }
-
 
       let subscription = await this._companySubscriptionRepository.findActiveByCompanyId(companyProfile.id);
 
@@ -86,7 +84,6 @@ export class SubscriptionMiddleware {
         return sendForbiddenResponse(res, SUBSCRIPTION.NO_ACTIVE_SUBSCRIPTION);
       }
 
-
       if (!subscription.canPostJob()) {
         const limit = subscription.jobPostLimit ?? 0;
         return sendForbiddenResponse(res, SUBSCRIPTION.LIMIT_EXCEEDED(limit, 'job posting'), {
@@ -117,7 +114,6 @@ export class SubscriptionMiddleware {
       if (!subscription) {
         return sendForbiddenResponse(res, SUBSCRIPTION.NO_ACTIVE_SUBSCRIPTION);
       }
-
 
       if (!subscription.canPostFeaturedJob()) {
         const limit = subscription.featuredJobLimit ?? 0;
@@ -150,13 +146,11 @@ export class SubscriptionMiddleware {
         return sendUnauthorizedResponse(res, ERROR.UNAUTHORIZED);
       }
 
-
       const companyProfile = await this._companyProfileRepository.findOne({ userId });
 
       if (!companyProfile) {
         return sendNotFoundResponse(res, ERROR.NOT_FOUND('Company profile'));
       }
-
 
       let subscription = await this._companySubscriptionRepository.findActiveByCompanyId(companyProfile.id);
 
@@ -205,7 +199,6 @@ export class SubscriptionMiddleware {
       if (!subscription) {
         return sendForbiddenResponse(res, SUBSCRIPTION.NO_ACTIVE_SUBSCRIPTION);
       }
-
 
       const plan = await this._subscriptionPlanRepository.findById(subscription.planId);
       const applicantAccessLimit = plan?.applicantAccessLimit || subscription.applicantAccessLimit || -1;

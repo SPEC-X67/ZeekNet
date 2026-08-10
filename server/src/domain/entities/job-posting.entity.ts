@@ -11,7 +11,6 @@ export interface PopulatedCompany {
   logo: string;
 }
 
-
 export class JobPosting {
   constructor(
     public readonly id: string,
@@ -83,7 +82,6 @@ export class JobPosting {
     ];
 
     let enabledStages = (data.enabledStages && data.enabledStages.length > 0) ? data.enabledStages : defaultEnabledStages;
-
 
     if (!enabledStages.includes(ATSStage.OFFER)) {
       enabledStages = [...enabledStages, ATSStage.OFFER];

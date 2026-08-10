@@ -9,8 +9,8 @@ import { ICompanySubscriptionRepository } from 'src/domain/interfaces/repositori
 import { IUserRepository } from 'src/domain/interfaces/repositories/user/IUserRepository';
 import { NotFoundError, ValidationError } from 'src/domain/errors/errors';
 import { ICreateCheckoutSessionUseCase } from 'src/domain/interfaces/use-cases/subscription/ICreateCheckoutSessionUseCase';
-import { CreateCheckoutSessionRequestDto } from 'src/application/dtos/subscription/requests/create-checkout-session.dto';
-import { CreateCheckoutSessionResponseDto } from 'src/application/dtos/subscription/responses/checkout-session-response.dto';
+import { CreateCheckoutSessionRequestDto, CreateCheckoutSessionResponseDto } from 'src/application/dtos/company-subscription.dto';;
+;
 import { StripeCheckoutMapper } from 'src/application/mappers/payment/stripe/stripe-checkout.mapper';
 
 @injectable()
@@ -35,8 +35,6 @@ export class CreateCheckoutSessionUseCase implements ICreateCheckoutSessionUseCa
     if (!companyProfile) {
       throw new NotFoundError(ERROR.NOT_FOUND('Company profile'));
     }
-
-
 
     const plan = await this._subscriptionPlanRepository.findById(planId);
     if (!plan) {

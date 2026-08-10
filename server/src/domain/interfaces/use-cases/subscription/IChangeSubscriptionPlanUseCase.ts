@@ -1,6 +1,5 @@
-import { ChangeSubscriptionPlanRequestDto } from 'src/application/dtos/subscription/requests/change-subscription-plan.dto';
-import { ChangeSubscriptionResult } from 'src/application/dtos/admin/subscription/responses/change-subscription-result.dto';
-
+import { ChangeSubscriptionPlanRequestDto } from 'src/application/dtos/company-subscription.dto';;
+import { ChangeSubscriptionResult } from 'src/application/dtos/company-subscription.dto';
 
 export interface IChangeSubscriptionPlanUseCase {
   execute(data: ChangeSubscriptionPlanRequestDto): Promise<ChangeSubscriptionResult>;

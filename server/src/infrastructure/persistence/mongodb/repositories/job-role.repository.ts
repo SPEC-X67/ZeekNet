@@ -28,5 +28,3 @@ export class JobRoleRepository extends RepositoryBase<JobRole, ModelDocument> im
   }
 }
 
-
-

@@ -3,7 +3,7 @@ import { Request, Response, NextFunction } from 'express';
 import { IUploadBusinessLicenseUseCase } from 'src/domain/interfaces/use-cases/company/media/IUploadBusinessLicenseUseCase';
 import { IUploadWorkplacePictureUseCase } from 'src/domain/interfaces/use-cases/company/media/IUploadWorkplacePictureUseCase';
 import { IDeleteImageUseCase } from 'src/domain/interfaces/use-cases/company/media/IDeleteImageUseCase';
-import { DeleteImageDtoSchema } from 'src/application/dtos/company/media/requests/delete-image.dto';
+import { DeleteImageSchema } from 'src/application/validations/company-media.validation';
 import { formatZodErrors, handleAsyncError, handleValidationError, sendSuccessResponse } from 'src/shared/utils';
 import { SUCCESS, VALIDATION } from 'src/shared/constants/messages';
 import { TYPES } from 'src/shared/constants/types';
@@ -47,7 +47,7 @@ export class CompanyUploadController {
   };
 
   deleteImage = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const parsed = DeleteImageDtoSchema.safeParse(req.body);
+    const parsed = DeleteImageSchema.safeParse(req.body);
     if (!parsed.success) {
       return handleValidationError(formatZodErrors(parsed.error), next);
     }
@@ -60,5 +60,4 @@ export class CompanyUploadController {
     }
   };
 }
-
 

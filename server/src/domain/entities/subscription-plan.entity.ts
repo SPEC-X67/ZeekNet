@@ -20,8 +20,6 @@ export class SubscriptionPlan {
     public readonly stripePriceIdYearly?: string,
   ) {}
 
-
-
   static create(data: {
     id: string;
     name: string;
@@ -64,6 +62,5 @@ export class SubscriptionPlan {
       data.stripePriceIdYearly,
     );
   }
-
 
 }

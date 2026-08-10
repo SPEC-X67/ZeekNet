@@ -5,7 +5,6 @@ import { ValidationError } from 'src/domain/errors/errors';
 import { IDeleteImageUseCase } from 'src/domain/interfaces/use-cases/company/media/IDeleteImageUseCase';
 import { VALIDATION } from 'src/shared/constants/messages';
 
-
 @injectable()
 export class DeleteImageUseCase implements IDeleteImageUseCase {
   constructor(

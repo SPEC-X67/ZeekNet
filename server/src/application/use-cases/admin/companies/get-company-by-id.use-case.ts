@@ -8,14 +8,13 @@ import { ICompanyOfficeLocationRepository } from 'src/domain/interfaces/reposito
 import { ICompanyTechStackRepository } from 'src/domain/interfaces/repositories/company/ICompanyTechStackRepository';
 import { ICompanyBenefitsRepository } from 'src/domain/interfaces/repositories/company/ICompanyBenefitsRepository';
 import { ICompanyWorkplacePicturesRepository } from 'src/domain/interfaces/repositories/company/ICompanyWorkplacePicturesRepository';
-import { CompanyWithVerificationResult } from 'src/application/dtos/admin/companies/responses/company-with-verification-result.dto';
+import { CompanyWithVerificationResult } from 'src/application/dtos/company-verification.dto';
 import { CompanyProfileMapper } from 'src/application/mappers/company/profile/company-profile.mapper';
 import { IS3Service } from 'src/domain/interfaces/services/IS3Service';
 import { NotFoundError } from 'src/domain/errors/errors';
 import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';
 import { ERROR } from 'src/shared/constants/messages';
-
 
 @injectable()
 export class GetCompanyByIdUseCase implements IGetCompanyByIdUseCase {
@@ -101,5 +100,4 @@ export class GetCompanyByIdUseCase implements IGetCompanyByIdUseCase {
     });
   }
 }
-
 

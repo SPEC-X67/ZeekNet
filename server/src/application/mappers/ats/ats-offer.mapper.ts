@@ -1,5 +1,5 @@
 import { ATSOffer } from 'src/domain/entities/ats-offer.entity';
-import { ATSOfferResponseDto } from 'src/application/dtos/application/offer/responses/ats-offer-response.dto';
+import { ATSOfferResponseDto } from 'src/application/dtos/ats-offer.dto';
 
 export class ATSOfferMapper {
   static toResponse(offer: ATSOffer): ATSOfferResponseDto {

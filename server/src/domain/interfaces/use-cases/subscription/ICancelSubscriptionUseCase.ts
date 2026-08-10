@@ -1,4 +1,4 @@
-import { CompanySubscriptionResponseDto } from 'src/application/dtos/subscription/responses/subscription-response.dto';
+import { CompanySubscriptionResponseDto } from 'src/application/dtos/company-subscription.dto';;
 
 export interface ICancelSubscriptionUseCase {
   execute(userId: string): Promise<CompanySubscriptionResponseDto>;

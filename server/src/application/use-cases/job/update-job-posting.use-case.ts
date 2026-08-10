@@ -1,16 +1,15 @@
 import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';
 import { IJobPostingRepository } from 'src/domain/interfaces/repositories/job/IJobPostingRepository';
-import { UpdateCompanyJobPostingDto } from 'src/application/dtos/company/job/requests/update-company-job-posting.dto';
+import { UpdateCompanyJobPostingDto } from 'src/application/dtos/job-posting.dto';
 import { NotFoundError, InternalServerError, ValidationError, AuthorizationError } from 'src/domain/errors/errors';
 import { JobPosting } from 'src/domain/entities/job-posting.entity';
 import { IUpdateJobPostingUseCase } from 'src/domain/interfaces/use-cases/job/IUpdateJobPostingUseCase';
 import { JobStatus } from 'src/domain/enums/job-status.enum';
 import { IGetCompanyProfileByUserIdUseCase } from 'src/domain/interfaces/use-cases/company/profile/info/IGetCompanyProfileByUserIdUseCase';
-import { JobPostingResponseDto } from 'src/application/dtos/admin/job/responses/job-posting-response.dto';
+import { JobPostingResponseDto } from 'src/application/dtos/public.dto';
 import { JobPostingMapper } from 'src/application/mappers/job/job-posting.mapper';
 import { ERROR } from 'src/shared/constants/messages';
-
 
 @injectable()
 export class UpdateJobPostingUseCase implements IUpdateJobPostingUseCase {

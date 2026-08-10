@@ -15,7 +15,6 @@ export class ResetPasswordUseCase implements IResetPasswordUseCase {
     @inject(TYPES.UserRepository) private readonly _userRepository: IUserRepository,
   ) { }
 
-
   async execute(token: string, newPassword: string): Promise<void> {
     const resetData = await this._passwordResetService.getResetToken(token);
     if (!resetData) {

@@ -1,11 +1,7 @@
 import { injectable, inject } from 'inversify';
 import { Response, NextFunction } from 'express';
 import { TYPES } from 'src/shared/constants/types';
-import { CreateJobPostingRequestDtoSchema } from 'src/application/dtos/admin/job/requests/create-job-posting-request.dto';
-import { UpdateJobPostingDto } from 'src/application/dtos/admin/job/requests/update-job-posting-request.dto';
-import { JobPostingQueryDto } from 'src/application/dtos/admin/job/requests/get-job-postings-query.dto';
-import { UpdateJobStatusDto } from 'src/application/dtos/company/job/requests/update-job-status.dto';
-import { ReopenJobDto } from 'src/application/dtos/company/job/requests/reopen-job.dto';
+import { CreateJobPostingRequestSchema, CompanyUpdateJobStatusSchema, ReopenJobSchema, UpdateJobPostingSchema, JobPostingQuerySchema } from 'src/application/validations/job-posting.validation';
 import { ICreateJobPostingUseCase } from 'src/domain/interfaces/use-cases/job/ICreateJobPostingUseCase';
 import { IGetCompanyJobPostingsUseCase } from 'src/domain/interfaces/use-cases/job/IGetCompanyJobPostingsUseCase';
 import { IUpdateJobPostingUseCase } from 'src/domain/interfaces/use-cases/job/IUpdateJobPostingUseCase';
@@ -35,7 +31,7 @@ export class CompanyJobPostingController {
 
   createJobPosting = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
     const userId = validateUserId(req);
-    const parsed = CreateJobPostingRequestDtoSchema.safeParse(req.body);
+    const parsed = CreateJobPostingRequestSchema.safeParse(req.body);
 
     if (!parsed.success) {
       return handleValidationError(formatZodErrors(parsed.error), next);
@@ -63,7 +59,7 @@ export class CompanyJobPostingController {
 
   getCompanyJobPostings = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
     const userId = validateUserId(req);
-    const parsed = JobPostingQueryDto.safeParse(req.query);
+    const parsed = JobPostingQuerySchema.safeParse(req.query);
     if (!parsed.success) {
       return handleValidationError(formatZodErrors(parsed.error), next);
     }
@@ -78,7 +74,7 @@ export class CompanyJobPostingController {
   };
 
   updateJobPosting = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
-    const bodyParsed = UpdateJobPostingDto.safeParse(req.body);
+    const bodyParsed = UpdateJobPostingSchema.safeParse(req.body);
     if (!bodyParsed.success) {
       return handleValidationError(formatZodErrors(bodyParsed.error), next);
     }
@@ -111,7 +107,7 @@ export class CompanyJobPostingController {
   };
 
   updateJobStatus = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
-    const bodyParsed = UpdateJobStatusDto.safeParse(req.body);
+    const bodyParsed = CompanyUpdateJobStatusSchema.safeParse(req.body);
 
     if (!bodyParsed.success) {
       return handleValidationError(formatZodErrors(bodyParsed.error), next);
@@ -145,7 +141,7 @@ export class CompanyJobPostingController {
   };
 
   reopenJob = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
-    const bodyParsed = ReopenJobDto.safeParse(req.body);
+    const bodyParsed = ReopenJobSchema.safeParse(req.body);
 
     if (!bodyParsed.success) {
       return handleValidationError(formatZodErrors(bodyParsed.error), next);
@@ -181,5 +177,4 @@ export class CompanyJobPostingController {
     }
   };
 }
-
 

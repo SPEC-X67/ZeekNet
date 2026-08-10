@@ -1,8 +1,7 @@
 import { IGetAllCompaniesUseCase } from 'src/domain/interfaces/use-cases/admin/companies/IGetAllCompaniesUseCase';
 import { ICompanyProfileRepository } from 'src/domain/interfaces/repositories/company/ICompanyProfileRepository';
 import { IS3Service } from 'src/domain/interfaces/services/IS3Service';
-import { GetCompaniesQueryDto } from 'src/application/dtos/admin/companies/requests/get-companies-query.dto';
-import { PaginatedCompaniesResultDto } from 'src/application/dtos/admin/companies/responses/paginated-companies-result.dto';
+import { GetCompaniesQueryDto, PaginatedCompaniesResultDto } from 'src/application/dtos/company-verification.dto';
 import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';
 

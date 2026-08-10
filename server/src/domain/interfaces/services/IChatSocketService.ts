@@ -1,5 +1,5 @@
-import { ChatMessageResponseDto } from 'src/application/dtos/chat/responses/chat-message-response.dto';
-import { ConversationResponseDto } from 'src/application/dtos/chat/responses/conversation-response.dto';
+import { ChatMessageResponseDto } from 'src/application/dtos/chat.dto';
+import { ConversationResponseDto } from 'src/application/dtos/chat.dto';
 
 export interface IChatSocketService {
     setIO(io: import('socket.io').Server): void;

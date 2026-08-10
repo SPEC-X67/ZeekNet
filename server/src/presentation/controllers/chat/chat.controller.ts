@@ -1,8 +1,7 @@
 import { Response, NextFunction } from 'express';
-import { CreateConversationRequestDtoSchema } from 'src/application/dtos/chat/requests/create-conversation-request.dto';
-import { SendMessageRequestDtoSchema } from 'src/application/dtos/chat/requests/send-message-request.dto';
-import { GetConversationsRequestDtoSchema } from 'src/application/dtos/chat/requests/get-conversations-request.dto';
-import { GetMessagesRequestDtoSchema } from 'src/application/dtos/chat/requests/get-messages-request.dto';
+import { CreateConversationRequestSchema, GetConversationsRequestSchema } from 'src/application/validations/chat.validation';
+import { SendMessageRequestSchema, GetMessagesRequestSchema } from 'src/application/validations/chat.validation';
+
 import { ICreateConversationUseCase } from 'src/domain/interfaces/use-cases/chat/ICreateConversationUseCase';
 import { ISendMessageUseCase } from 'src/domain/interfaces/use-cases/chat/ISendMessageUseCase';
 import { IGetConversationsUseCase } from 'src/domain/interfaces/use-cases/chat/IGetConversationsUseCase';
@@ -26,12 +25,11 @@ export class ChatController {
     @inject(TYPES.DeleteMessageUseCase) private readonly _deleteMessageUseCase: IDeleteMessageUseCase,
   ) { }
 
-
   createConversation = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = validateUserId(req);
 
-      const parsed = CreateConversationRequestDtoSchema.safeParse(req.body);
+      const parsed = CreateConversationRequestSchema.safeParse(req.body);
       if (!parsed.success) {
         handleValidationError(formatZodErrors(parsed.error), next);
         return;
@@ -52,7 +50,7 @@ export class ChatController {
     try {
       const userId = validateUserId(req);
 
-      const parsed = SendMessageRequestDtoSchema.safeParse(req.body);
+      const parsed = SendMessageRequestSchema.safeParse(req.body);
       if (!parsed.success) {
         handleValidationError(formatZodErrors(parsed.error), next);
         return;
@@ -73,7 +71,7 @@ export class ChatController {
     try {
       const userId = validateUserId(req);
 
-      const parsed = GetConversationsRequestDtoSchema.safeParse({
+      const parsed = GetConversationsRequestSchema.safeParse({
         userId,
         ...req.query,
       });
@@ -96,7 +94,7 @@ export class ChatController {
       const userId = validateUserId(req);
       const conversationId = req.params.conversationId;
 
-      const parsed = GetMessagesRequestDtoSchema.safeParse({
+      const parsed = GetMessagesRequestSchema.safeParse({
         userId,
         conversationId,
         ...req.query,

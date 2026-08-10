@@ -6,14 +6,13 @@ import { ICreateSubscriptionPlanUseCase } from 'src/domain/interfaces/use-cases/
 import { BadRequestError, ConflictError } from 'src/domain/errors/errors';
 import { ILogger } from 'src/domain/interfaces/services/ILogger';
 import { PriceType } from 'src/domain/entities/price-history.entity';
-import { CreateSubscriptionPlanDto } from 'src/application/dtos/admin/subscription/requests/create-subscription-plan.dto';
+import { CreateSubscriptionPlanDto } from 'src/application/dtos/subscription-plan.dto';
+import { SubscriptionPlanResponseDto } from 'src/application/dtos/subscription-plan.dto';
 import { CreateInput } from 'src/domain/types/common.types';
-import { SubscriptionPlanResponseDto } from 'src/application/dtos/admin/subscription/responses/subscription-plan-response.dto';
 import { SubscriptionPlanMapper } from 'src/application/mappers/subscription/subscription-plan.mapper';
 import { injectable, inject, optional } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';
 import { ERROR, VALIDATION } from 'src/shared/constants/messages';
-
 
 @injectable()
 export class CreateSubscriptionPlanUseCase implements ICreateSubscriptionPlanUseCase {
@@ -171,5 +170,4 @@ export class CreateSubscriptionPlanUseCase implements ICreateSubscriptionPlanUse
     return SubscriptionPlanMapper.toResponse(plan)!;
   }
 }
-
 

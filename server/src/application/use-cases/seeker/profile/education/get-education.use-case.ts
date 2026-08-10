@@ -3,12 +3,11 @@ import { ISeekerEducationRepository } from 'src/domain/interfaces/repositories/s
 import { IGetEducationUseCase } from 'src/domain/interfaces/use-cases/seeker/profile/education/IGetEducationUseCase';
 import { NotFoundError } from 'src/domain/errors/errors';
 import { SeekerProfileMapper } from 'src/application/mappers/seeker/seeker-profile.mapper';
-import { EducationResponseDto } from 'src/application/dtos/seeker/profile/info/responses/seeker-profile-response.dto';
+import { EducationResponseDto } from 'src/application/dtos/seeker-education.dto';
 
 import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';
 import { ERROR } from 'src/shared/constants/messages';
-
 
 @injectable()
 export class GetEducationUseCase implements IGetEducationUseCase {
@@ -28,7 +27,4 @@ export class GetEducationUseCase implements IGetEducationUseCase {
     return education.map(edu => SeekerProfileMapper.educationToResponse(edu));
   }
 }
-
-
-
 

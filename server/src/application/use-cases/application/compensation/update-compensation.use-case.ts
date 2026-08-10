@@ -7,8 +7,8 @@ import { IAddCommentUseCase } from 'src/domain/interfaces/use-cases/application/
 
 import { ATSStage } from 'src/domain/enums/ats-stage.enum';
 import { NotFoundError } from 'src/domain/errors/errors';
-import { UpdateCompensationRequestDto } from 'src/application/dtos/application/compensation/requests/update-compensation.dto';
-import { ATSCompensationResponseDto } from 'src/application/dtos/application/compensation/responses/ats-compensation.response.dto';
+import { UpdateCompensationRequestDto, ATSCompensationResponseDto } from 'src/application/dtos/ats-compensation.dto';
+
 import { ATSCompensationMapper } from 'src/application/mappers/ats/ats-compensation.mapper';
 import { IUserRepository } from 'src/domain/interfaces/repositories/user/IUserRepository';
 import { ATSCompensation } from 'src/domain/entities/ats-compensation.entity';
@@ -28,7 +28,6 @@ export class UpdateCompensationUseCase implements IUpdateCompensationUseCase {
     if (!existing) {
       throw new NotFoundError('Compensation record not found. Please initiate compensation first.');
     }
-
 
     const application = await this._jobApplicationRepository.findById(dto.applicationId);
     if (!application) {
@@ -64,7 +63,6 @@ export class UpdateCompensationUseCase implements IUpdateCompensationUseCase {
     if (dto.finalAgreed !== undefined) {
       updateData.finalAgreed = dto.finalAgreed;
     }
-
 
     if (dto.approvedAt || dto.finalAgreed) {
       updateData.approvedAt = dto.approvedAt || new Date();

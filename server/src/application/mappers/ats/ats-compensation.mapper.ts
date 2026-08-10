@@ -1,5 +1,5 @@
 import { ATSCompensation } from 'src/domain/entities/ats-compensation.entity';
-import { ATSCompensationResponseDto } from 'src/application/dtos/application/compensation/responses/ats-compensation.response.dto';
+import { ATSCompensationResponseDto } from 'src/application/dtos/ats-compensation.dto';
 
 export class ATSCompensationMapper {
   static toResponse(entity: ATSCompensation | null): ATSCompensationResponseDto | null {

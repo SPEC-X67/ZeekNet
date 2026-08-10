@@ -2,9 +2,9 @@ import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';
 import { ICompanyBenefitsRepository } from 'src/domain/interfaces/repositories/company/ICompanyBenefitsRepository';
 import { IGetCompanyBenefitUseCase } from 'src/domain/interfaces/use-cases/company/profile/benefits/IGetCompanyBenefitUseCase';
-import { GetCompanyBenefitsRequestDto } from 'src/application/dtos/company/profile/benefits/requests/company-benefits.dto';
+import { GetCompanyBenefitsRequestDto } from 'src/application/dtos/company-benefit.dto';
 import { IGetCompanyIdByUserIdUseCase } from 'src/domain/interfaces/use-cases/admin/companies/IGetCompanyIdByUserIdUseCase';
-import { CompanyBenefitResponseDto } from 'src/application/dtos/company/profile/benefits/responses/company-benefit-response.dto';
+import { CompanyBenefitResponseDto } from 'src/application/dtos/company-benefit.dto';
 import { CompanyBenefitMapper } from 'src/application/mappers/company/profile/company-benefit.mapper';
 
 @injectable()

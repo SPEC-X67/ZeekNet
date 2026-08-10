@@ -8,8 +8,8 @@ import { IATSCommentRepository } from 'src/domain/interfaces/repositories/ats/IA
 import { ATSStage, ATSSubStage } from 'src/domain/enums/ats-stage.enum';
 import { NotFoundError, ValidationError } from 'src/domain/errors/errors';
 import { getDefaultSubStage, isValidSubStageForStage } from 'src/domain/utils/ats-pipeline.util';
-import { MoveApplicationStageDto } from 'src/application/dtos/application/requests/move-application-stage.dto';
-import { JobApplicationResponseDto } from 'src/application/dtos/application/responses/job-application-response.dto';
+import { MoveApplicationStageDto, JobApplicationResponseDto } from 'src/application/dtos/job-application.dto';
+
 import { IMailerService } from 'src/domain/interfaces/services/IMailerService';
 import { IEmailTemplateService } from 'src/domain/interfaces/services/IEmailTemplateService';
 import { IUserRepository } from 'src/domain/interfaces/repositories/user/IUserRepository';

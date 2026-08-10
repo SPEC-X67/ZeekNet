@@ -1,5 +1,4 @@
-import { CompanyWithVerificationResult } from 'src/application/dtos/admin/companies/responses/company-with-verification-result.dto';
-
+import { CompanyWithVerificationResult } from 'src/application/dtos/company-verification.dto';
 
 export interface IGetCompanyByIdUseCase {
   execute(companyId: string): Promise<CompanyWithVerificationResult>;

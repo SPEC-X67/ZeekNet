@@ -36,8 +36,6 @@ export class StripeService implements IStripeService {
     this._webhookSecret = env.STRIPE_WEBHOOK_SECRET;
   }
 
-  
-
   async createCustomer(params: CreateCustomerParams): Promise<PaymentCustomer> {
     try {
       const customer = await this._stripe.customers.create({

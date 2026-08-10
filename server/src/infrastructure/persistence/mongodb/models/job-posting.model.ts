@@ -4,7 +4,6 @@ import { JobStatus } from 'src/domain/enums/job-status.enum';
 import { JobClosureType } from 'src/domain/enums/job-closure-type.enum';
 import { ATSStage } from 'src/domain/enums/ats-stage.enum';
 
-
 export interface JobPostingDocument extends Document {
   _id: Types.ObjectId;
   company_id: Types.ObjectId;

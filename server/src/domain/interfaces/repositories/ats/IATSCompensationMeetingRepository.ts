@@ -8,7 +8,6 @@ export interface IATSCompensationMeetingRepository {
   delete(id: string): Promise<boolean>;
 }
 
-
 export interface IATSCompensationMeetingRepository {
   create(meeting: ATSCompensationMeeting): Promise<ATSCompensationMeeting>;
   findById(id: string): Promise<ATSCompensationMeeting | null>;
@@ -16,7 +15,6 @@ export interface IATSCompensationMeetingRepository {
   update(id: string, updateData: Partial<ATSCompensationMeeting>): Promise<ATSCompensationMeeting | null>;
   delete(id: string): Promise<boolean>;
 }
-
 
 export interface IATSCompensationMeetingRepository {
   create(meeting: ATSCompensationMeeting): Promise<ATSCompensationMeeting>;

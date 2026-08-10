@@ -1,44 +1,45 @@
-
 version: '3.8'
 
 services:
-  server:
-    image: ${DOCKER_USERNAME}/zeeknet-server:latest
-    container_name: zeeknet-server
+  zeeknet-backend:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: zeeknet-backend
     restart: always
-    ports:
-      - "4000:4000"
     env_file:
-      - ./server/.env
+      - .env
     depends_on:
-      - mongo
-      - redis
+      - zeeknet-redis
     networks:
-      - app-network
+      - zeeknet-internal
+      - web-network
 
-  mongo:
-    image: mongo:latest
-    container_name: mongo
+  zeeknet-frontend:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: zeeknet-frontend
     restart: always
-    ports:
-      - "27017:27017" # Exposed to host but protected by firewall usually
-    volumes:
-      - mongo_data:/data/db
+    env_file:
+      - .env
     networks:
-      - app-network
+      - web-network
 
-  redis:
+  zeeknet-redis:
     image: redis:alpine
-    container_name: redis
+    container_name: zeeknet-redis
     restart: always
-    ports:
-      - "6379:6379"
+    volumes:
+      - zeeknet_redis_data:/data
     networks:
-      - app-network
+      - zeeknet-internal
 
 networks:
-  app-network:
+  zeeknet-internal:
     driver: bridge
+  web-network:
+    external: true
 
 volumes:
-  mongo_data:
+  zeeknet_redis_data:

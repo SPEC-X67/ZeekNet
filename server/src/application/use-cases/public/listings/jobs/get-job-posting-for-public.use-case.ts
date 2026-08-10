@@ -7,13 +7,12 @@ import { IUserRepository } from 'src/domain/interfaces/repositories/user/IUserRe
 import { ICompanyWorkplacePicturesRepository } from 'src/domain/interfaces/repositories/company/ICompanyWorkplacePicturesRepository';
 import { IGetJobPostingForPublicUseCase } from 'src/domain/interfaces/use-cases/public/listings/jobs/IGetJobPostingForPublicUseCase';
 import { BadRequestError, NotFoundError } from 'src/domain/errors/errors';
-import { JobPostingDetailResponseDto } from 'src/application/dtos/admin/job/responses/job-posting-response.dto';
+import { JobPostingDetailResponseDto } from 'src/application/dtos/public.dto';
 import { JobPostingMapper } from 'src/application/mappers/job/job-posting.mapper';
 import { CompanyProfileMapper } from 'src/application/mappers/company/profile/company-profile.mapper';
 import { CompanyProfile } from 'src/domain/entities/company-profile.entity';
 import { IS3Service } from 'src/domain/interfaces/services/IS3Service';
 import { ERROR, VALIDATION } from 'src/shared/constants/messages';
-
 
 @injectable()
 export class GetJobPostingForPublicUseCase implements IGetJobPostingForPublicUseCase {
@@ -76,8 +75,7 @@ export class GetJobPostingForPublicUseCase implements IGetJobPostingForPublicUse
         workplacePictures: [],
       };
     }
-    
-    
+
     const companyProfile = await this._companyProfileRepository.findById(companyId);
 
     if (!companyProfile) {
@@ -91,15 +89,11 @@ export class GetJobPostingForPublicUseCase implements IGetJobPostingForPublicUse
       };
     }
 
-    
     const user = await this._userRepository.findById(companyProfile.userId);
     if (user && user.isBlocked) {
       throw new NotFoundError(ERROR.NOT_FOUND('Job posting')); 
     }
 
-    
-    
-    
     const allWorkplacePictures = await this._companyWorkplacePicturesRepository.findMany({
       companyId: companyProfile.id,
     });
@@ -128,5 +122,4 @@ export class GetJobPostingForPublicUseCase implements IGetJobPostingForPublicUse
     );
   }
 }
-
 

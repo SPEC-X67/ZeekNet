@@ -1,9 +1,9 @@
 import { IJobPostingRepository } from 'src/domain/interfaces/repositories/job/IJobPostingRepository';
 import { IAdminGetAllJobsUseCase } from 'src/domain/interfaces/use-cases/admin/job/IAdminGetAllJobsUseCase';
 import { JobStatus } from 'src/domain/enums/job-status.enum';
-import { GetAllJobsQueryDtoType } from 'src/application/dtos/admin/job/requests/get-all-jobs-query.dto';
+import { GetAllJobsQueryDtoType, AdminJobListResponseDto } from 'src/application/dtos/job-posting.dto';
 import { JobPostingMapper } from 'src/application/mappers/job/job-posting.mapper';
-import { AdminJobListResponseDto } from 'src/application/dtos/admin/job/responses/admin-job-response.dto';
+
 import { IS3Service } from 'src/domain/interfaces/services/IS3Service';
 import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';
@@ -100,5 +100,4 @@ export class GetAllJobsUseCase implements IAdminGetAllJobsUseCase {
     };
   }
 }
-
 

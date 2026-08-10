@@ -6,7 +6,6 @@ import { injectable, inject } from 'inversify';
 import { TYPES } from 'src/shared/constants/types';
 import { ERROR } from 'src/shared/constants/messages';
 
-
 @injectable()
 export class DeleteSkillUseCase implements IDeleteSkillUseCase {
   constructor(@inject(TYPES.SkillRepository) private readonly _skillRepository: ISkillRepository) {}

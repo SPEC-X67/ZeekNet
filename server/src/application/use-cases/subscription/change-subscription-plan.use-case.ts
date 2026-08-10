@@ -8,8 +8,8 @@ import { ICompanySubscriptionRepository } from 'src/domain/interfaces/repositori
 import { IJobPostingRepository } from 'src/domain/interfaces/repositories/job/IJobPostingRepository';
 import { NotFoundError, ValidationError } from 'src/domain/errors/errors';
 import { ILogger } from 'src/domain/interfaces/services/ILogger';
-import { ChangeSubscriptionPlanRequestDto } from 'src/application/dtos/subscription/requests/change-subscription-plan.dto';
-import { ChangeSubscriptionResult } from 'src/application/dtos/admin/subscription/responses/change-subscription-result.dto';
+import { ChangeSubscriptionPlanRequestDto } from 'src/application/dtos/company-subscription.dto';;
+import { ChangeSubscriptionResult } from 'src/application/dtos/company-subscription.dto';
 import { IChangeSubscriptionPlanUseCase } from 'src/domain/interfaces/use-cases/subscription/IChangeSubscriptionPlanUseCase';
 import { BillingCycle } from 'src/domain/enums/billing-cycle.enum';
 import { JobStatus } from 'src/domain/enums/job-status.enum';
@@ -164,7 +164,4 @@ export class ChangeSubscriptionPlanUseCase implements IChangeSubscriptionPlanUse
     };
   }
 }
-
-
-
 

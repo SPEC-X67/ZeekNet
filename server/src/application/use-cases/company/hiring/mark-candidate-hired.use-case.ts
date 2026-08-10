@@ -46,21 +46,17 @@ export class MarkCandidateHiredUseCase implements IMarkCandidateHiredUseCase {
       throw new ValidationError('You can only mark candidates as hired for your own job postings');
     }
 
-
     if (application.stage === ATSStage.HIRED) {
       throw new ValidationError('Candidate is already marked as hired');
     }
-
 
     if (job.status === JobStatus.CLOSED) {
       throw new ValidationError('Cannot mark candidate as hired for a closed job');
     }
 
-
     await this._jobApplicationRepository.update(applicationId, {
       stage: ATSStage.HIRED,
     });
-
 
     const currentFilled = job.filledVacancies ?? 0;
     const newFilled = currentFilled + 1;
@@ -69,7 +65,6 @@ export class MarkCandidateHiredUseCase implements IMarkCandidateHiredUseCase {
     await this._jobPostingRepository.update(job.id, {
       filledVacancies: newFilled,
     });
-
 
     if (newFilled >= totalVacancies && job.status === JobStatus.ACTIVE) {
       await this.autoCloseJob(job.id, applicationId);
@@ -82,25 +77,18 @@ export class MarkCandidateHiredUseCase implements IMarkCandidateHiredUseCase {
       throw new NotFoundError(ERROR.NOT_FOUND('Job posting'));
     }
 
-
     await this._jobPostingRepository.update(jobId, {
       status: JobStatus.CLOSED,
       closureType: JobClosureType.AUTO_FILLED,
       closedAt: new Date(),
     });
 
-
     const allApplications = await this._jobApplicationRepository.findByJobId(jobId);
     const nonHiredApplications = allApplications.filter(
       (app) => app.id !== hiredApplicationId && app.stage !== ATSStage.HIRED,
     );
 
-
     for (const application of nonHiredApplications) {
-
-
-
-
 
       const seeker = await this._userRepository.findById(application.seekerId);
       if (seeker && seeker.email) {

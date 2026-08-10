@@ -49,7 +49,6 @@ export class SeekerRouter {
     this.router.post(APP_ROUTES.SEEKER.PROFILE_AVATAR, uploadSingle('avatar'), this._seekerProfileController.uploadAvatar);
     this.router.post(APP_ROUTES.SEEKER.PROFILE_BANNER, uploadSingle('banner'), this._seekerProfileController.uploadBanner);
 
-
     this.router.post(APP_ROUTES.SEEKER.APPLICATIONS, uploadResume('resume'), this._seekerJobApplicationController.createApplication);
     this.router.post(APP_ROUTES.SEEKER.APPLICATIONS_ANALYZE_RESUME, uploadResume('resume'), this._seekerJobApplicationController.analyzeResume);
     this.router.get(APP_ROUTES.SEEKER.APPLICATIONS, this._seekerJobApplicationController.getApplications);
