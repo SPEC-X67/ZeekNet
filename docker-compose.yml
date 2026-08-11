@@ -13,7 +13,6 @@ services:
     environment:
       - VIRTUAL_HOST=${VIRTUAL_HOST}
       - VIRTUAL_PATH=/api
-      - VIRTUAL_DEST=/api
       - VIRTUAL_PORT=4000
     depends_on:
       - zeeknet-redis
