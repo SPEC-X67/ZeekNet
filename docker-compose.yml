@@ -31,7 +31,7 @@ services:
       - .env
     environment:
       - VIRTUAL_HOST=${VIRTUAL_HOST}
-      - LETSENCRYPT_HOST=${LETSENCRYPT_HOST}
+      - LETSENCRYPT_HOST=${VIRTUAL_HOST}
     networks:
       - web-network
 
