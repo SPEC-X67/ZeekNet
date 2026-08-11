@@ -2,6 +2,7 @@ version: '3.8'
 
 services:
   zeeknet-backend:
+    image: ghcr.io/${REGISTRY_OWNER}/zeeknet-backend:latest
     build:
       context: ./server
       dockerfile: Dockerfile
@@ -16,6 +17,7 @@ services:
       - web-network
 
   zeeknet-frontend:
+    image: ghcr.io/${REGISTRY_OWNER}/zeeknet-frontend:latest
     build:
       context: ./client
       dockerfile: Dockerfile
