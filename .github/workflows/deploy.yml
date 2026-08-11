@@ -61,5 +61,6 @@ jobs:
               git clone https://github.com/${{ github.repository }}.git .
             fi
             echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin || true
+            export REGISTRY_OWNER=${{ github.repository_owner }}
             docker-compose pull || docker compose pull
             docker-compose up -d --remove-orphans || docker compose up -d --remove-orphans
