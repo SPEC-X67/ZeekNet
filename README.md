@@ -1,149 +1,107 @@
-# 🚀 ZeekNet – Next-Gen Job Portal Platform
+# ZeekNet - Job Portal Platform
 
-[![React 19](https://img.shields.io/badge/Frontend-React_19-61DAFB?logo=react&logoColor=black)](https://react.dev/)
-[![Node.js](https://img.shields.io/badge/Backend-Node.js-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
-[![MongoDB](https://img.shields.io/badge/Database-MongoDB-47A248?logo=mongodb&logoColor=white)](https://www.mongodb.com/)
-[![TypeScript](https://img.shields.io/badge/Language-TypeScript-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Clean Architecture](https://img.shields.io/badge/Architecture-Clean-FF6600?logo=architecture&logoColor=white)](#-architecture)
-
-ZeekNet is a high-performance, full-stack job portal designed with **Clean Architecture** principles. It delivers a seamless experience for job seekers, companies, and administrators through a modular, scalable, and maintainable codebase.
+ZeekNet is a full-stack job portal platform built using Clean Architecture principles. It connects job seekers with hiring companies, offering real-time candidate evaluation, automated resume scoring, candidate pipeline management, and subscription features.
 
 ---
 
-## 🌟 Key Features
+## Key Features
 
-### 🔍 For Job Seekers
-- **Smart Search**: Advanced filtering by category, location, and salary.
-- **Application Tracking**: Real-time status updates on your job applications.
-- **Dynamic Profiles**: Build and showcase a professional digital resume.
-- **Real-time Messaging**: Communicate directly with employers via an integrated chat system.
+### For Job Seekers
+- **Job Search**: Filtering by role, skills, location, and salary ranges.
+- **Application Tracking**: Real-time status updates on submitted applications.
+- **Digital Resume**: Profile builder with work experience, education, and skills.
+- **Real-Time Communication**: Messaging interface powered by Socket.io.
 
-### 🏢 For Companies
-- **Unified Dashboard**: Manage job postings, applicants, and company settings.
-- **AI-Powered ATS**: Automated scoring and parsing for efficient candidate screening.
-- **Verification System**: Secure company verification to maintain platform trust.
-- **Subscription tiers**: Flexible plans integrated with **Stripe** for featured listings.
+### For Companies
+- **Applicant Tracking System (ATS)**: Pipeline management, interview scheduling, and AI-assisted candidate evaluation.
+- **Company Verification**: Multi-stage business license verification.
+- **Subscription Management**: Tiered employer plans integrated with Stripe.
+- **Job Management**: Create, publish, close, and feature job openings.
 
-### 🛡️ For Administrators
-- **Total Control**: Manage users, verifies companies, and moderates content.
-- **Analytics Hub**: Deep insights into platform growth and engagement.
-- **System Health**: Monitor live connections and background processes.
-
----
-
-## 🛠️ Technology Stack
-
-### Frontend Ecosystem
-- **Core**: React 19, Vite, TypeScript
-- **State**: Redux Toolkit (RTK)
-- **Styling**: Tailwind CSS 4, Framer Motion
-- **UI Components**: Radix UI primitives, Lucide React icons
-- **Data Fetching**: Axios, Socket.io-client
-
-### Backend Infrastructure
-- **Runtime**: Node.js, Express
-- **Database**: MongoDB (Mongoose ODM), Redis (Caching)
-- **Real-time**: Socket.io
-- **Security**: JWT (Access/Refresh tokens), Zod validation
-- **Cloud**: AWS S3 (Media), Nodemailer (Emails), Stripe (Payments)
-- **Intelligence**: Groq AI integration for ATS capabilities
+### For Administrators
+- **Platform Management**: User moderation, company verification workflows, and system analytics.
+- **Content Moderation**: Management of job categories, skills, and system roles.
 
 ---
 
-## 🏗️ Architecture
+## Architecture & Tech Stack
 
-ZeekNet follows **Clean Architecture** to ensure the business logic remains independent of external frameworks.
+### Frontend
+- **Framework**: React 19 with Vite & TypeScript
+- **State Management**: Redux Toolkit (RTK)
+- **Styling**: Tailwind CSS, Framer Motion, Radix UI Primitives
 
-```mermaid
-graph TD
-    subgraph Presentation
-        Controller --> UseCase
-        Routes --> Controller
-    end
-    subgraph Application
-        UseCase --> Entity
-        UseCase --> RepositoryInterface
-    end
-    subgraph Infrastructure
-        RepositoryImpl --> RepositoryInterface
-        RepositoryImpl --> DBModel
-    end
-```
+### Backend
+- **Architecture**: Clean Architecture (Domain, Use Cases, Infrastructure, Presentation)
+- **Runtime**: Node.js, Express.js with TypeScript
+- **Database**: MongoDB (Mongoose ORM), Redis (Caching & Sessions)
+- **Storage & Messaging**: AWS S3, Socket.io, Nodemailer, Stripe, Groq AI
 
-### Layer Responsibilities
-- **Presentation**: Express routes, controllers, and middleware.
-- **Application**: Business use cases and orchestration logic.
-- **Domain**: Pure business entities and domain interfaces.
-- **Infrastructure**: Database implementations and external API integrations.
+### Infrastructure
+- **Containerization**: Docker, Docker Compose v2
+- **Reverse Proxy**: Nginx Proxy with Automated Let's Encrypt SSL/TLS
+- **CI/CD**: GitHub Actions & GitHub Container Registry (`ghcr.io`)
+- **Hosting**: AWS EC2
 
 ---
 
-## 🚀 Getting Started
-
-### Prerequisites
-- Node.js **v18+**
-- MongoDB instance (Local or Atlas)
-- Redis server (Optional for caching)
-
-### 1. Installation
-```bash
-# Clone the repository
-git clone https://github.com/shamnxd/ZeekNet.git
-cd ZeekNet
-
-# Install dependencies
-cd client && npm install
-cd ../server && npm install
-```
-
-### 2. Configuration
-Create a `.env` in `server/` and `.env.local` in `client/` following the variables provided in the source code.
-
-### 3. Execution
-```bash
-# Run both servers for development
-# Terminal 1 (Backend)
-cd server && npm run dev
-
-# Terminal 2 (Frontend)
-cd client && npm run dev
-```
-
----
-
-## 📁 Project Structure
+## Clean Architecture Structure
 
 ```text
 ZeekNet/
-├── client/          # Vite-powered React Frontend
-│   └── src/
-│       ├── api/     # Service layer for API calls
-│       ├── components/ # Atomic UI & Business components
-│       └── store/   # Redux logic
-└── server/          # Express-powered Backend
+├── client/              # Vite React Frontend
+└── server/              # Node.js TypeScript Backend
     └── src/
-        ├── application/ # Use Case logic
-        ├── domain/      # Business Entities
-        ├── infrastructure/ # DB & Third-party services
-        └── presentation/ # Routes & Controllers
+        ├── domain/          # Entities & Business Interfaces
+        ├── application/     # Use Cases & Validation Schemas
+        ├── infrastructure/  # DB Repositories, Caching & External APIs
+        └── presentation/    # Express Controllers, Routes & Middleware
 ```
 
 ---
 
-## 🤝 Contributing
-Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+## Local Development
 
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+### Prerequisites
+- Node.js v18 or later
+- MongoDB Atlas or local MongoDB instance
+- Redis server instance
+
+### Setup Instructions
+
+1. **Clone Repository**
+   ```bash
+   git clone https://github.com/shamnxd/ZeekNet.git
+   cd ZeekNet
+   ```
+
+2. **Configure Environment Variables**
+   Copy `.env.example` to `.env` in the root directory and update with your local development credentials:
+   ```bash
+   cp .env.example .env
+   ```
+
+3. **Install Dependencies & Start Application**
+   ```bash
+   # Terminal 1: Backend Server
+   cd server
+   npm install
+   npm run dev
+
+   # Terminal 2: Frontend Client
+   cd ../client
+   npm install
+   npm run dev
+   ```
 
 ---
 
-## 📄 License
-Distributed under the **ISC License**. See `LICENSE` for more information.
+## Deployment
+
+Refer to the complete [DEPLOYMENT.md](DEPLOYMENT.md) guide for instructions on configuring Docker, Redis, central Nginx proxy, SSL certificates, and automated GitHub Actions CI/CD workflows on AWS EC2.
 
 ---
-<p align="center">Built with ⚡ by <b>Shamnad T</b></p>
 
+## License
+
+This project is licensed under the ISC License.
