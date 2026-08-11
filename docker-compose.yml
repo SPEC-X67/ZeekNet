@@ -10,6 +10,11 @@ services:
     restart: always
     env_file:
       - .env
+    environment:
+      - VIRTUAL_HOST=${VIRTUAL_HOST}
+      - VIRTUAL_PATH=/api
+      - VIRTUAL_DEST=/
+      - VIRTUAL_PORT=4000
     depends_on:
       - zeeknet-redis
     networks:
@@ -25,6 +30,9 @@ services:
     restart: always
     env_file:
       - .env
+    environment:
+      - VIRTUAL_HOST=${VIRTUAL_HOST}
+      - LETSENCRYPT_HOST=${LETSENCRYPT_HOST}
     networks:
       - web-network
 
