@@ -18,6 +18,7 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
+          command_timeout: 15m
           script: |
             mkdir -p ~/apps/ZeekNet
             cd ~/apps/ZeekNet
